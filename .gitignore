@@ -1,0 +1,82 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.o
+*.so
+
+# ignoring some files we don't want on our repo
+# e.g. nasty editor backup files and OS X FS information
+*~
+
+problemset10/DEBUG
+
+# netbeans
+nbproject/
+
+#Eclipse
+.settings
+*.pydevproject
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.snap
+
+# CDT-specific
+.cproject
+
+
+#OSX
+
+.DS_Store
+Icon?
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+#Linux
+!.gitignore
+*~
+*.sw[a-p]
+
+# KDE
+.directory
+
+#Windows
+
+# Windows image file caches
+Thumbs.db 
+
+# Folder config file
+Desktop.ini
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+
+#git
+*.orig
+
