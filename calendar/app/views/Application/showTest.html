@@ -1,0 +1,78 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+<header>
+	<h1>${user.name}'s Calendar: ${calendar.name}:</h1>
+	<p> Month: ${cal.MONTH}  </p>
+</header>
+
+<body>
+	<div id="nextMonth">
+		<a href="@{Application.showTest(user.getdefaultCalendar().getId(),user.name ,user.getdefaultCalendar().getName(),next)}"> next </a>
+	</div>
+	
+	<div id="prevousMonth">
+		<a href="@{Application.showTest(user.getdefaultCalendar().getId(),user.name ,user.getdefaultCalendar().getName(),prev)}"> previous </a>
+	</div>
+	
+	<table id="calendar">
+		<tr>
+			<td class="title"> Mo </td>
+			<td class="title"> Di </td>
+			<td class="title"> Mi </td>	
+			<td class="title"> Do </td>	
+			<td class="title"> Fr </td>	
+			<td class="title"> Sa </td>	
+			<td class="title"> So </td>	
+		</tr>
+		${cal.set(java.util.Calendar.DAY_OF_MONTH, 1)}
+		%{ 
+			int tmp = 1;
+			int counter = 1;
+			int year = date.getYear()+1900;;
+			int month = date.getMonth()+1;
+			
+			
+			
+			for(int i = 0; i < 6; i++){
+				
+				out.println('<tr>');
+				for(int j = 0; j < 7; j++){
+					// gebe hier date of month aus
+					// 1. vorzellen(leer), 2. erster bis letzter tag, 3. fill-in
+					if(tmp  <= bound){
+						out.println('<td class="entry"> - </td>');
+					}else if(counter <= bound2){
+						out.println('<td class="entry"> ');
+						//System.out.println(year);
+						if(myCalendar.hasEventOnDay(counter, month, year)){	
+							%}	
+								<a href="@{Application.showEventsOfDay(calendar.getId() ,user.name, calendar.name,counter,month,year)}"> ${counter} </a>
+							{%
+						}else{
+							out.println(counter+'</td>');	
+						}
+						counter++;
+					}else{
+						out.println('<td class="entry"> - </td>');
+					}
+					tmp++;
+				}
+				out.println('</tr>');
+			}
+		%} 
+	
+	</table>
+	<table id="events">
+		list here the events of a chosen day
+	</table>
+	
+	<div id="Nav">
+		#{if user==me} 
+ 			<a href="@{Application.addEvent(calendar.getId(), me.name)}"> New Event</a>  <br>
+		#{/if}
+	</div>
+</body>	
+
+<a href="@{Application.showCalendars(user.name, s_date)}">Back</a>
+<a href="@{Application.index()}">Home</a>
+<a href="@{Secure.logout()}">Log out</a>

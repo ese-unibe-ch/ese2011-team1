@@ -1,0 +1,20 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>${me.name}'s Calendars:</h1>
+	<p> Date Format: <b> MM/dd/yyyy </b> , Eg: 2. January 1965 is then: 01/02/1965 <br> 
+	If you dont care about the format, a default date will be taken! </p>
+	${calendarID}
+	<form action="@{Application.creatEvent()}" method="GET">
+		<ul>
+			<input type="hidden" name="calendarID" value="${calendarID}" />
+			<li>Name:</li><input type="text" name="name" value="" />
+			<li>Start:</li><input type="text" name="start" value="" />
+			<li>End:</li><input type="text" name="end" value="" />
+			<li>Is Public:</li><input type="checkbox" name="is_visible" />	
+		</ul>
+		<input type="submit" value="Save" />
+	</form>
+
+<a href="@{Application.index()}">Home</a>
+<a href="@{Secure.logout()}">Log out</a>

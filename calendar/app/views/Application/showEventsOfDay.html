@@ -1,0 +1,24 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>${me.name} is watching events of the ${day}/${month}/${year} on ${calendarName}</h1>
+	<p>
+		Here are ${user.name}'s Events from calendar <b> ${calendarName}</b>
+	</p>
+	#{list items:events, as:'event'}
+		<p>
+			<li>
+				<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} #{if user==me},  
+				<b>is_visible</b>:${event.is_visible} #{/if} 
+				#{if user==me} <b><a href="@{Application.editEvent(event.getId(), calendarId, me.name )}"> Edit </a></b>  
+				<b><a href="@{Application.removeEvent(calendarId, event.getId() )}"> Remove </a></b>  #{/if}
+				 
+			</li>  
+		</p>
+	#{/list}
+	#{if user==me} 
+ 			<a href="@{Application.addEvent(calendarId, me.name)}"> New Event</a>  <br>
+	#{/if}
+	
+<a href="@{Application.index()}">Home</a>  
+<a href="@{Secure.logout()}">Log out</a> 

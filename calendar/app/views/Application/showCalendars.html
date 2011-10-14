@@ -1,0 +1,16 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>${me.name} is watching ${user.name}'s calendars</h1>
+	<p>
+		Here is ${user.name}'s Calendar:
+	</p>
+	
+	#{list items:calendars, as:'calendar'}
+		<p>
+			${calendar.name}: <li><a href="@{Application.showEvents(calendar.getId() ,user.name, calendar.name)}"> text based</a>  
+			|| <a href="@{Application.showTest(calendar.getId(),user.name ,calendar.name,s_date)}"> graphical</a></li>
+		</p>
+	#{/list}
+<a href="@{Application.index()}">Home</a>
+<a href="@{Secure.logout()}">Log out</a>

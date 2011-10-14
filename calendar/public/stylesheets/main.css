@@ -1,0 +1,68 @@
+a {
+  font-style: italic;
+}
+
+li {
+  list-style-type: disc;
+}
+
+body{ 
+background-color:#FFFFCC;
+margin-left:100px; }
+*{ color:blue;
+}
+
+p,li{ 
+	font-size:100%;
+    line-height:100%;
+    font-family:Helvetica,Arial,sans-serif;
+    letter-spacing:0.2em;
+    word-spacing:0.1em; 
+}
+
+table#calendar {
+  width: 80%;
+  table-layout: fixed;
+  vertical-align: middle;
+  margin-bottom: 30px;
+}
+
+table#calendar a {
+  font-style:normal;
+  display: block;
+  position: relative;
+  line-height: 50px;
+  text-decoration: none;
+}
+
+table#calendar td {
+  text-align: center;
+  background-color: #FFF;
+  height: 50px;
+  border: solid 1px #000;
+}
+
+table#calendar td.title {
+  background-color: #F0F0F0;
+  font-weight: bold;
+}
+
+table#calendar td#selected {
+  background-color: #F00;
+}
+
+table#calendar td#today {
+  background-color: #FF0;
+}
+
+#prevMonth, #nextMonth {
+  position: absolute;
+}
+
+#prevMonth {
+  left: 20px;
+}
+
+#nextMonth {
+  right: 270px;
+}
