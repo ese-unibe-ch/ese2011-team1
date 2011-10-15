@@ -2,16 +2,16 @@
 #{set title:'Home' /}
 <header>
 	<h1>${user.name}'s Calendar: ${calendar.name}:</h1>
-	<p> Month: ${cal.MONTH}  </p>
+	<p> Month: ${cal.getDisplayName(cal.MONTH, cal.LONG, Locale.GERMAN)}  </p>
 </header>
 
 <body>
 	<div id="nextMonth">
-		<a href="@{Application.showTest(user.getdefaultCalendar().getId(),user.name ,user.getdefaultCalendar().getName(),next)}"> next </a>
+		<a href="@{Application.showTest(calendar.getId(),user.name ,calendar.getName(),next)}"> next </a>
 	</div>
 	
 	<div id="prevousMonth">
-		<a href="@{Application.showTest(user.getdefaultCalendar().getId(),user.name ,user.getdefaultCalendar().getName(),prev)}"> previous </a>
+		<a href="@{Application.showTest(calendar.getId(),user.name ,calendar.getName(),prev)}"> previous </a>
 	</div>
 	
 	<table id="calendar">
@@ -44,9 +44,9 @@
 					}else if(counter <= bound2){
 						out.println('<td class="entry"> ');
 						//System.out.println(year);
-						if(myCalendar.hasEventOnDay(counter, month, year)){	
+						if(calendar.hasEventOnDay(counter, month, year)){	
 							%}	
-								<a href="@{Application.showEventsOfDay(calendar.getId() ,user.name, calendar.name,counter,month,year)}"> ${counter} </a>
+								<a href="@{Application.showEventsOfDay(calendar.getId(), user.name, calendar.name,counter,month,year)}"> ${counter} </a>
 							{%
 						}else{
 							out.println(counter+'</td>');	

@@ -85,7 +85,7 @@ public class Application extends Controller {
     	if(!name.isEmpty()){
     		// mache user mit default daten:
     		user = new User(name, "123");
-        	event=new Event(now, now,"abc",true);
+        	event=new Event(now, now,"abc",true, false, 0);
         	//user.calendar.
         	user.getdefaultCalendar().addEvent(event);
         	
@@ -97,7 +97,7 @@ public class Application extends Controller {
     }
     
     public static void creatEvent(@Required long calendarID, @Required String name,
-    		@Required String start,@Required String end, boolean is_visible){
+    		@Required String start,@Required String end, boolean is_visible, String is_repeated){
     	
     	User me = Database.users.get(Security.connected());
     	Calendar calendar = me.getCalendarById(calendarID);
@@ -114,8 +114,11 @@ public class Application extends Controller {
         	d_start = new Date(1,1,1);
         	d_end = new Date(1,1,1);
         }
-           
-    	Event e = new Event(d_start, d_end, name, is_visible);
+        System.out.println(is_repeated);
+        boolean repeated = is_repeated.equals("0") ? false : true;
+        int intervall = Integer.parseInt(is_repeated);
+    	Event e = new Event(d_start, d_end, name, is_visible, repeated, intervall);
+    	
     	calendar.addEvent(e);
     	showEvents(calendarID, me.name, calendar.getName());
     }
@@ -169,8 +172,57 @@ public class Application extends Controller {
     	User me = Database.users.get(Security.connected());
     	User user = Database.users.get(username);
     	Calendar calendar = user.getCalendarById(calendarId);
+    	PriorityQueue<Event> eventsCopy = new PriorityQueue<Event>(calendar.getEvents());
+    	GregorianCalendar c = new java.util.GregorianCalendar();
+    	for (Event a : calendar.getEvents()) {
+    		if (a.isRepeatable()) {
+    			Event e = a;
+    			int newMonth = e.getStart().getMonth();
+    			int newYear = e.getStart().getYear();
+    			int intervall = e.getIntervall();
+    			
+    			int newStartDay = e.getStart().getDate();
+				int newEndDay = e.getEnd().getDate();
+    			
+    			// daily and weekly events
+    			if (intervall == 1 || intervall == 7) {
+    				
+    				c.set(c.DAY_OF_MONTH, e.getStart().getMonth());
+    		    	int maxMonthDay = c.getActualMaximum(c.DAY_OF_MONTH);
+	    			while(newStartDay + intervall < maxMonthDay) {
+	    				newStartDay = e.getStart().getDate() + intervall;
+		    			newEndDay = e.getEnd().getDate() + intervall;
+		    			System.out.println("startDay: " + e.getStart().getDate() + "/ new Start Day: " + newStartDay);
+		    			Date newstartDate = new Date(newYear, newMonth, newStartDay);
+		    			Date newEndDate = new Date(newYear, newMonth, newEndDay);
+		    			Event newEvent = new Event(newstartDate, newEndDate, a.name, a.is_visible, false, intervall);
+		    			System.out.println("start: " + newEvent.start + "end: " + newEvent.end);
+		    			e = newEvent;
+		    			if (!eventsCopy.contains(newEvent)) {
+		    				eventsCopy.add(newEvent);
+		    			}
+	    			}
+    			}
+    			
+    			if (intervall == 30) {
+    				newStartDay = e.getStart().getDate();
+	    			newEndDay = e.getEnd().getDate();
+	    			System.out.println("startDay: " + e.getStart().getDate() + "/ new Start Day: " + newStartDay);
+	    			Date newstartDate = new Date(newYear, (newMonth+1)%12, newStartDay);
+	    			Date newEndDate = new Date(newYear, (newMonth+1)%12, newEndDay);
+	    			Event newEvent = new Event(newstartDate, newEndDate, a.name, a.is_visible, true, intervall);
+	    			System.out.println("start: " + newEvent.start + "end: " + newEvent.end);
+	    			e = newEvent;
+	    			eventsCopy.add(newEvent);
+    			}
+    			
+    			
+    			
+    		}
+    	}
+    	Calendar newCalendar = new Calendar(calendarName, user);
+    	calendar.setEvents(eventsCopy);
     	
-    	Calendar myCalendar = me.getdefaultCalendar();
     	//DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     	Date d = null;
     	//String date = "02/10/2011";
@@ -197,7 +249,7 @@ public class Application extends Controller {
     	String next = Integer.toString(day)+"/"+Integer.toString((month+1)%12)+"/"+Integer.toString(year);
     	String prev = Integer.toString(day)+"/"+Integer.toString((month-1))+"/"+Integer.toString(year);
     	System.out.println("prev: "+ prev + " next: " + next);
-    	render(me, date, cal, bound, bound2, myCalendar, calendar, user, prev, next, s_date);
+    	render(me, date, cal, bound, bound2, calendar, newCalendar, user, prev, next, s_date);
     }
 
     

@@ -8,14 +8,14 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 
-public class Calendar {
+public class Calendar implements Cloneable {
 	private String name;
 	public User owner;
 	private PriorityQueue<Event> events;
 	public long id;
 	private static long counter;
 	
-	public Calendar(String name, User owner){
+	public Calendar(String name, User owner) {
 		this.name = name;
 		this.owner = owner;
 		events = new PriorityQueue<Event>();
@@ -35,8 +35,8 @@ public class Calendar {
 		return this.id;
 	}
 	
-	public void addEvent(Date startDate, Date endDate, String name, boolean is_visible){
-		Event ev = new Event(startDate, endDate, name, is_visible);
+	public void addEvent(Date startDate, Date endDate, String name, boolean is_visible, boolean isRepeated, int intervall){
+		Event ev = new Event(startDate, endDate, name, is_visible, isRepeated, intervall);
 		events.add(ev);
 	}
 	
@@ -146,7 +146,23 @@ public class Calendar {
 	public void removeEvent(long id){
 		for(Event e : events) if(e.getId() == id) events.remove(e); 
 	}
+
+	public PriorityQueue<Event> getEvents() {
+		return this.events;
+	}
 	
+	public Calendar clone() {
+		Calendar newCalendar = new Calendar(name, owner);
+		newCalendar.setEvents(events);
+		return newCalendar;
+	}
 	
-	
+	private void incrementCounter() {
+		counter++;
+	}
+
+	public void setEvents(PriorityQueue<Event> events) {
+		this.events = events;
+	}
+
 }

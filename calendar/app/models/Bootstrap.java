@@ -16,7 +16,7 @@ public class Bootstrap extends Job {
     	
     	// dataset 1
     	user = new User("simplay", "123");
-    	event=new Event(now, now,"abc",true);
+    	event=new Event(now, now,"abc",true, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
     	Calendar cal = new Calendar("2nd simplay", user);
@@ -29,25 +29,25 @@ public class Bootstrap extends Job {
     	
     	// dataset 2
     	user = new User("mib", "1337");
-    	event=new Event(now, now,"mib_ev1",true);
+    	event=new Event(now, now,"mib_ev1",true, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
-    	event=new Event(now, now,"mib_ev2",false);
+    	event=new Event(now, now,"mib_ev2",false, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
-    	event=new Event(now, now,"mib_ev3",true);
+    	event=new Event(now, now,"mib_ev3",true, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
     	
     	cal = new Calendar("second mib", user);
     	
-    	event=new Event(now, now,"second mib_ev1",false);
+    	event=new Event(now, now,"second mib_ev1",false, false, 0);
     	cal.addEvent(event);
     	
-    	event=new Event(now, now,"second mib_ev2",true);
+    	event=new Event(now, now,"second mib_ev2",true, false, 0);
     	cal.addEvent(event);
     	
-    	event=new Event(now, now,"second mib_ev3",true);
+    	event=new Event(now, now,"second mib_ev3",true, false, 0);
     	cal.addEvent(event);
     	
     	user.addCalendar(cal);
@@ -57,25 +57,25 @@ public class Bootstrap extends Job {
     	
     	
     	user = new User("simon", "1337");
-    	event=new Event(now, now,"simonb_ev1",true);
+    	event=new Event(now, now,"simonb_ev1",true, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
-    	event=new Event(now, now,"simon_ev2",false);
+    	event=new Event(now, now,"simon_ev2",false, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
-    	event=new Event(now, now,"simon_ev3",true);
+    	event=new Event(now, now,"simon_ev3",true, false, 0);
     	user.getdefaultCalendar().addEvent(event);
     	
     	
     	cal = new Calendar("second simon", user);
     	
-    	event=new Event(now, now,"second simon_ev1",false);
+    	event=new Event(now, now,"second simon_ev1",false, false, 0);
     	cal.addEvent(event);
     	
-    	event=new Event(now, now,"second simon_ev2",true);
+    	event=new Event(now, now,"second simon_ev2",true, false, 0);
     	cal.addEvent(event);
     	
-    	event=new Event(now, now,"second simon_ev3",true);
+    	event=new Event(now, now,"second simon_ev3",true, false, 0);
     	cal.addEvent(event);
     	
     	user.addCalendar(cal);

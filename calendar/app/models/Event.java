@@ -7,15 +7,19 @@ public class Event implements Comparable<Event> {
 	public String name;
 	public boolean is_visible;
 	public long id;
+	public boolean is_repeatable;
+	public int intervall;
 	private static long counter;
 	
-	public Event(Date start, Date end, String name, boolean is_visible){
+	public Event(Date start, Date end, String name, boolean is_visible, boolean isRepeated, int intervall){
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.is_visible = is_visible;
 		counter++;
 		this.id = counter;
+		this.is_repeatable = isRepeated;
+		this.intervall = intervall;
 	}
 	
 	/*
@@ -52,6 +56,14 @@ public class Event implements Comparable<Event> {
 	@Override
 	public int compareTo(Event e) {
 		return this.getStart().compareTo(e.getStart());
+	}
+
+	public boolean isRepeatable() {
+		return this.is_repeatable;
+	}
+
+	public int getIntervall() {
+		return this.intervall;
 	}
 	
 	
