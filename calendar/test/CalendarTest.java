@@ -20,7 +20,7 @@ public class CalendarTest extends UnitTest{
 	public void setUp() throws Exception {
 		this.owner = new User("hans", "123");
 		this.calendar = new Calendar("Calendar", this.owner);
-		this.event = new Event(new Date(1,1,1), new Date(1,1,2),"anEvent", false);
+		this.event = new Event(new Date(1,1,1), new Date(1,1,2),"anEvent", false, false, 0);
 	}
 	
 	@Test

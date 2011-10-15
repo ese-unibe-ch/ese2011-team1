@@ -15,7 +15,7 @@ public class EventTest extends UnitTest{
 	@Before
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234");
-		this.event = new Event(new Date(1,1,1), new Date(1,1,2),"anEvent", false);
+		this.event = new Event(new Date(1,1,1), new Date(1,1,2),"anEvent", false, false, 0);
 	}
 	
 	@Test

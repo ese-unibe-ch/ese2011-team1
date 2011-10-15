@@ -15,6 +15,16 @@ public class Event implements Comparable<Event> {
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 
+	
+	/**
+	 * 
+	 * @param start the starting Date
+	 * @param end the ending Date
+	 * @param name name and description of Event
+	 * @param is_visible flag, determines visibility for other users
+	 * @param isRepeated flag, used for repeating Events
+	 * @param intervall determines repetition interval. Possibilities: DAY (1), WEEK(7), MONTH(30), YEAR(265)
+	 */
 	public Event(Date start, Date end, String name, boolean is_visible,
 			boolean isRepeated, int intervall) {
 		this.start = start;

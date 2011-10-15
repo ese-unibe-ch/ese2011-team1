@@ -23,6 +23,6 @@ public class UserTest extends UnitTest{
 	
 	@Test
 	public void testGetCalendarIteratorUser() {
-		assertNotNull(user.getCalendar());
+		assertNotNull(user.getCalendars());
 	}
 }
