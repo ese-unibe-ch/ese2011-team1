@@ -1,4 +1,7 @@
 package models;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Event implements Comparable<Event> {
@@ -10,8 +13,10 @@ public class Event implements Comparable<Event> {
 	public boolean is_repeatable;
 	public int intervall;
 	private static long counter;
-	
-	public Event(Date start, Date end, String name, boolean is_visible, boolean isRepeated, int intervall){
+	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+
+	public Event(Date start, Date end, String name, boolean is_visible,
+			boolean isRepeated, int intervall) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
@@ -21,38 +26,42 @@ public class Event implements Comparable<Event> {
 		this.is_repeatable = isRepeated;
 		this.intervall = intervall;
 	}
-	
+
 	/*
 	 * Getters
 	 */
-	
-	public Date getStart(){
+
+	public Date getStart() {
 		return this.start;
 	}
-	
-	public Date getEnd(){
+
+	public Date getEnd() {
 		return this.end;
 	}
-	
-	public boolean isVisible(){
+
+	public boolean isVisible() {
 		return this.is_visible;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
-	
-	public long getId(){
+
+	public long getId() {
 		return this.id;
 	}
-	
-	public void edit(Date start, Date end, String name, boolean is_visible){
+
+	public String getParsedDate(Date d) {
+		return dateFormat.format(d);
+	}
+
+	public void edit(Date start, Date end, String name, boolean is_visible) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.is_visible = is_visible;
 	}
-	
+
 	@Override
 	public int compareTo(Event e) {
 		return this.getStart().compareTo(e.getStart());
@@ -65,7 +74,5 @@ public class Event implements Comparable<Event> {
 	public int getIntervall() {
 		return this.intervall;
 	}
-	
-	
-	
+
 }

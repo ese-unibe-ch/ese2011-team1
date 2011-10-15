@@ -8,6 +8,18 @@ So far, there are only some parts of the code "nice" presented by a gui or css f
 Still missing are some error checks: up to now, there are some requirements.
 Furthermore, there should be even more test modules but there are a few. Due the code is going to change in the next days, there well some error checks added probably.
 
+
+<h2>Administration</h2>
+<p>
+	<li>
+		<a href="@{Application.showMe(s_date)}))}"> show my calendars</a>   <br>
+		<a href="@{Application.showTest(me.getdefaultCalendar().getId(),me.name ,me.getdefaultCalendar().getName(), s_date)}"> test</a>   <br>
+	    <a id="newUser" href="#">Add new user</a> <br>
+	    <a href="@{Secure.login()}"> Log in</a>   <br>
+		<a href="@{Secure.logout()}">Log out</a>  <br>
+	</li>
+</p>
+
 #{ifnot users}
     <p>
         no users available
@@ -26,20 +38,6 @@ Furthermore, there should be even more test modules but there are a few. Due the
     #{/list}
 </ul>
 </p>
-
-<h2>Administration</h2>
-<p>
-	<li>
-		<a href="@{Application.showMe(s_date)}))}"> show my calendars</a>   <br>
-		<a href="@{Application.showTest(me.getdefaultCalendar().getId(),me.name ,me.getdefaultCalendar().getName(), s_date)}"> test</a>   <br>
-	    <a id="newUser" href="#">Add new user</a> <br>
-	    <a href="@{Secure.login()}"> Log in</a>   <br>
-		<a href="@{Secure.logout()}">Log out</a>  <br>
-	</li>
-</p>
-
-
-
 
 
 <script type="text/javascript" charset="utf-8">
