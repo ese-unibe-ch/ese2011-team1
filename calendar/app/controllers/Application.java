@@ -199,8 +199,8 @@ public class Application extends Controller {
 				if (intervall == 1 || intervall == 7) {
 
 					c.set(c.DAY_OF_MONTH, e.getStart().getMonth());
-					int maxMonthDay = c.getActualMaximum(c.DAY_OF_MONTH);
-					while (newStartDay + intervall < maxMonthDay) {
+					int maxMonthDay = c.getMaximum(c.DAY_OF_MONTH);
+					while (newStartDay + intervall <= maxMonthDay) {
 						newStartDay = e.getStart().getDate() + intervall;
 						newEndDay = e.getEnd().getDate() + intervall;
 						System.out.println("startDay: "
@@ -242,9 +242,7 @@ public class Application extends Controller {
 		Calendar newCalendar = new Calendar(calendarName, user);
 		calendar.setEvents(eventsCopy);
 
-		// DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		Date d = null;
-		// String date = "02/10/2011";
 
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 		Date date = null;
@@ -266,9 +264,9 @@ public class Application extends Controller {
 
 		String next = Integer.toString(day) + "/"
 				+ Integer.toString((month + 1) % 12) + "/"
-				+ Integer.toString(year);
+				+ Integer.toString(year) + ", 12:00";
 		String prev = Integer.toString(day) + "/"
-				+ Integer.toString((month - 1)) + "/" + Integer.toString(year);
+				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
 		System.out.println("prev: " + prev + " next: " + next);
 		render(me, date, cal, bound, bound2, calendar, newCalendar, user, prev,
 				next, s_date);
