@@ -5,7 +5,7 @@
 	#{list items:calendars, as:'calendar'}
 		<p>
 			${calendar.name}: <li><a href="@{Application.showEvents(calendar.getId(), me.name, calendar.name)}">text based </a> 
-		|| <a href="@{Application.showTest(calendar.getId(),me.name ,calendar.name,s_date)})}"> graphical</a></li>
+		|| <a href="@{Application.showTest(calendar.getId(),me.name ,calendar.name,s_date,0,0,0)})}"> graphical</a></li>
 		</p>
 	#{/list}
 	

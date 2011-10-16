@@ -56,7 +56,7 @@
 						
 						if(calendar.hasEventOnDay(counter, month, year)){
 							%} 
-								<a href="@{Application.showEventsOfDay(calendar.getId(), user.name, calendar.name, counter, month, year)}"> ${counter} </a>
+								<a href="@{Application.showTest(calendar.getId(),user.name ,calendar.name,s_date,counter,month,year)})}"> ${counter}</a>
 							{%
 						}else{
 							out.println(counter+'</td>');	
@@ -73,7 +73,24 @@
 	
 	</table>
 	<table id="events">
-		list here the events of a chosen day
+		#{if yyear!=0}
+			<h2>${user.name}'s events of the ${dday}/${mmonth}/${yyear} </h2>
+			
+			#{list items:events, as:'event'}
+				<p>
+					<li>
+						<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} #{if user==me},  
+						<b>is_visible</b>:${event.is_visible} #{/if} 
+						#{if user==me} <b><a href="@{Application.editEvent(event.getId(), calendarId, me.name )}"> Edit </a></b>  
+						<b><a href="@{Application.removeEvent(calendarId, event.getId() )}"> Remove </a></b>  #{/if}
+					</li>  
+				</p>
+			#{/list}
+			
+			#{if user==me} 
+		 			<a href="@{Application.addEvent(calendarId, me.name)}"> New Event</a>  <br>
+			#{/if}
+		#{/if}
 	</table>
 	
 	<div id="Nav">

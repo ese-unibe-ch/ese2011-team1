@@ -178,11 +178,15 @@ public class Application extends Controller {
 	}
 
 	public static void showTest(long calendarId, String username,
-			String calendarName, String s_date) {
+			String calendarName, String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
-
+		
+		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId).getEventsOfDay(dday, mmonth, yyear);
+    	Calendar calendars = user.getCalendarById(calendarId); // just for hotfix --> remove later
+    	LinkedList<Event> events = allVisibleEvents;
+		
 		Date d = null;
 
 		java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -209,7 +213,7 @@ public class Application extends Controller {
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
 		render(me, date, cal, bound, bound2, calendar, user, prev,
-				next, s_date, today, thisMonth);
+				next, s_date, today, thisMonth, events, calendarName, calendars, calendarId, dday, mmonth, yyear);
 	}
 
 }
