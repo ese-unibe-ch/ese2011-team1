@@ -3,6 +3,7 @@ package models;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,12 +14,14 @@ public class Calendar implements Cloneable {
 	public User owner;
 	private PriorityQueue<Event> events;
 	public long id;
+	private LinkedList<Event> repeatingEvents;
 	private static long counter;
 
 	public Calendar(String name, User owner) {
 		this.name = name;
 		this.owner = owner;
 		events = new PriorityQueue<Event>();
+		repeatingEvents = new LinkedList<Event>();
 		counter++;
 		this.id = counter;
 	}
@@ -36,14 +39,20 @@ public class Calendar implements Cloneable {
 	}
 
 	public void addEvent(Date startDate, Date endDate, String name,
-			boolean is_visible, boolean isRepeated, int intervall) {
-		Event ev = new Event(startDate, endDate, name, is_visible, isRepeated,
+			boolean is_visible, boolean isRepeating, int intervall) {
+		Event ev = new Event(startDate, endDate, name, is_visible, isRepeating,
 				intervall);
 		events.add(ev);
+		if (ev.isRepeating()) {
+			repeatingEvents.add(ev);
+		}
 	}
 
 	public void addEvent(Event e) {
 		events.add(e);
+		if (e.isRepeating()) {
+			repeatingEvents.add(e);
+		}
 	}
 
 	/**
@@ -115,7 +124,6 @@ public class Calendar implements Cloneable {
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
 				+ ", 12:00";
-		System.out.println(dateString);
 		try {
 			comp = dateFormat.parse(dateString);
 		} catch (ParseException e) {
@@ -134,18 +142,26 @@ public class Calendar implements Cloneable {
 
 	public boolean hasEventOnDay(int day, int month, int year) {
 		boolean flag = false;
-		// Date comp = new Date(day,month,year);
-
 		Date comp = null;
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
 				+ ", 12:00";
-		// System.out.println(dateString);
 		try {
 			comp = dateFormat.parse(dateString);
 		} catch (ParseException e) {
 		}
+		
+		ArrayList<Event> repeatingEvents = new ArrayList<Event>(this.repeatingEvents);
+			for (Event repeatingEvent : repeatingEvents) {
+				if (repeatingEvent.getStart().before(comp)) {
+					Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
+					if (!containsSameID(events, nextRepetition.getBaseID())) {
+						this.events.add(nextRepetition);
+						this.repeatingEvents.add(nextRepetition);
+					}
+				}
+			}
 
 		for (Event e : events)
 			if (e.start.getDate() == comp.getDate()
@@ -154,6 +170,16 @@ public class Calendar implements Cloneable {
 				flag = true;
 			}
 		return flag;
+	}
+
+	private boolean containsSameID(PriorityQueue<Event> events, long baseID) {
+		boolean contains = false;
+		for (Event e : events) {
+			if (e.getBaseID() == baseID) {
+				contains = true;
+			}
+		}
+		return contains;
 	}
 
 	public Event getEventById(long id) {
@@ -173,20 +199,6 @@ public class Calendar implements Cloneable {
 
 	public PriorityQueue<Event> getEvents() {
 		return this.events;
-	}
-
-	public Calendar clone() {
-		Calendar newCalendar = new Calendar(name, owner);
-		newCalendar.setEvents(events);
-		return newCalendar;
-	}
-
-	private void incrementCounter() {
-		counter++;
-	}
-
-	public void setEvents(PriorityQueue<Event> events) {
-		this.events = events;
 	}
 
 }

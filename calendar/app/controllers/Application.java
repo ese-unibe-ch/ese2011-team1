@@ -182,65 +182,6 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
-		PriorityQueue<Event> eventsCopy = new PriorityQueue<Event>(
-				calendar.getEvents());
-		GregorianCalendar c = new java.util.GregorianCalendar();
-		for (Event a : calendar.getEvents()) {
-			if (a.isRepeatable()) {
-				Event e = a;
-				int newMonth = e.getStart().getMonth();
-				int newYear = e.getStart().getYear();
-				int intervall = e.getIntervall();
-
-				int newStartDay = e.getStart().getDate();
-				int newEndDay = e.getEnd().getDate();
-
-				// daily and weekly events
-				if (intervall == 1 || intervall == 7) {
-
-					c.set(c.DAY_OF_MONTH, e.getStart().getMonth());
-					int maxMonthDay = c.getMaximum(c.DAY_OF_MONTH);
-					while (newStartDay + intervall <= maxMonthDay) {
-						newStartDay = e.getStart().getDate() + intervall;
-						newEndDay = e.getEnd().getDate() + intervall;
-						System.out.println("startDay: "
-								+ e.getStart().getDate() + "/ new Start Day: "
-								+ newStartDay);
-						Date newstartDate = new Date(newYear, newMonth,
-								newStartDay);
-						Date newEndDate = new Date(newYear, newMonth, newEndDay);
-						Event newEvent = new Event(newstartDate, newEndDate,
-								a.name, a.is_visible, false, intervall);
-						System.out.println("start: " + newEvent.start + "end: "
-								+ newEvent.end);
-						e = newEvent;
-						if (!eventsCopy.contains(newEvent)) {
-							eventsCopy.add(newEvent);
-						}
-					}
-				}
-
-				if (intervall == 30) {
-					newStartDay = e.getStart().getDate();
-					newEndDay = e.getEnd().getDate();
-					System.out.println("startDay: " + e.getStart().getDate()
-							+ "/ new Start Day: " + newStartDay);
-					Date newstartDate = new Date(newYear, (newMonth + 1) % 12,
-							newStartDay);
-					Date newEndDate = new Date(newYear, (newMonth + 1) % 12,
-							newEndDay);
-					Event newEvent = new Event(newstartDate, newEndDate,
-							a.name, a.is_visible, true, intervall);
-					System.out.println("start: " + newEvent.start + "end: "
-							+ newEvent.end);
-					e = newEvent;
-					eventsCopy.add(newEvent);
-				}
-
-			}
-		}
-		Calendar newCalendar = new Calendar(calendarName, user);
-		calendar.setEvents(eventsCopy);
 
 		Date d = null;
 
@@ -258,8 +199,6 @@ public class Application extends Controller {
 		int bound = (((cal.get(java.util.Calendar.DAY_OF_WEEK) - 2) + 7) % 7);
 		int bound2 = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
 
-		// showEvents(long calendarId, String username, String calendarName)
-
 		int day = date.getDate() + 1;
 		int month = date.getMonth() + 1;
 		int year = date.getYear() + 1900;
@@ -269,8 +208,7 @@ public class Application extends Controller {
 				+ Integer.toString(year) + ", 12:00";
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
-		//System.out.println("prev: " + prev + " next: " + next);
-		render(me, date, cal, bound, bound2, calendar, newCalendar, user, prev,
+		render(me, date, cal, bound, bound2, calendar, user, prev,
 				next, s_date, today, thisMonth);
 	}
 

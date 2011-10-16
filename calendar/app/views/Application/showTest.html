@@ -54,9 +54,9 @@
 					// 3 - normal day
 						else out.println('<td class="entry"> ');
 						
-						if(calendar.hasEventOnDay(counter, month, year)){	
+						if(calendar.hasEventOnDay(counter, month, year)){
 							%} 
-								<a href="@{Application.showEventsOfDay(calendar.getId(), user.name, calendar.name,counter,month,year)}"> ${counter} </a>
+								<a href="@{Application.showEventsOfDay(calendar.getId(), user.name, calendar.name, counter, month, year)}"> ${counter} </a>
 							{%
 						}else{
 							out.println(counter+'</td>');	

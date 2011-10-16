@@ -10,7 +10,8 @@ public class Event implements Comparable<Event> {
 	public String name;
 	public boolean is_visible;
 	public long id;
-	public boolean is_repeatable;
+	public long baseID;
+	public boolean is_repeating;
 	public int intervall;
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
@@ -26,14 +27,14 @@ public class Event implements Comparable<Event> {
 	 * @param intervall determines repetition interval. Possibilities: DAY (1), WEEK(7), MONTH(30), YEAR(265)
 	 */
 	public Event(Date start, Date end, String name, boolean is_visible,
-			boolean isRepeated, int intervall) {
+			boolean is_repeating, int intervall) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.is_visible = is_visible;
 		counter++;
 		this.id = counter;
-		this.is_repeatable = isRepeated;
+		this.is_repeating = is_repeating;
 		this.intervall = intervall;
 	}
 
@@ -77,12 +78,29 @@ public class Event implements Comparable<Event> {
 		return this.getStart().compareTo(e.getStart());
 	}
 
-	public boolean isRepeatable() {
-		return this.is_repeatable;
+	public boolean isRepeating() {
+		return this.is_repeating;
 	}
 
 	public int getIntervall() {
 		return this.intervall;
+	}
+
+	//TODO: fix ugly date instantiation
+	public Event getNextRepetitionEvent() {
+		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall);
+		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall);
+		Event newEvent = new Event(nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
+		newEvent.setBaseID(this.id);
+		return newEvent;
+	}
+
+	public void setBaseID(long ID) {
+		this.baseID = ID;
+	}
+	
+	public long getBaseID() {
+		return this.baseID;
 	}
 
 }
