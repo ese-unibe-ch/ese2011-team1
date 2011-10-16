@@ -245,6 +245,8 @@ public class Application extends Controller {
 		Date d = null;
 
 		java.util.Calendar cal = java.util.Calendar.getInstance();
+		int today = cal.get(java.util.Calendar.DAY_OF_MONTH);
+		int thisMonth = cal.get(java.util.Calendar.MONTH);
 		Date date = null;
 
 		try {
@@ -267,9 +269,9 @@ public class Application extends Controller {
 				+ Integer.toString(year) + ", 12:00";
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
-		System.out.println("prev: " + prev + " next: " + next);
+		//System.out.println("prev: " + prev + " next: " + next);
 		render(me, date, cal, bound, bound2, calendar, newCalendar, user, prev,
-				next, s_date);
+				next, s_date, today, thisMonth);
 	}
 
 }

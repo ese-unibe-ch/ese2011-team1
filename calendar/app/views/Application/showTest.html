@@ -31,21 +31,31 @@
 			int year = date.getYear()+1900;;
 			int month = date.getMonth()+1;
 			
-			
-			
 			for(int i = 0; i < 6; i++){
 				
 				out.println('<tr>');
 				for(int j = 0; j < 7; j++){
+				
 					// gebe hier date of month aus
 					// 1. vorzellen(leer), 2. erster bis letzter tag, 3. fill-in
-					if(tmp  <= bound){
+					
+					if (tmp  <= bound){
 						out.println('<td class="entry"> - </td>');
-					}else if(counter <= bound2){
-						out.println('<td class="entry"> ');
-						//System.out.println(year);
+					} else if(counter <= bound2){
+					
+				// Layout of day can be seperated into 3 categories:
+					// 1 - today
+						if (i*7+j-bound+1  == today && thisMonth == month-1) 
+							out.println('<td class="today"> ');
+						
+					// 2 - selected --> can't be implemented yet, events are not shown on same page!
+						//else if () out.println('<td class="selected"> ');
+						
+					// 3 - normal day
+						else out.println('<td class="entry"> ');
+						
 						if(calendar.hasEventOnDay(counter, month, year)){	
-							%}	
+							%} 
 								<a href="@{Application.showEventsOfDay(calendar.getId(), user.name, calendar.name,counter,month,year)}"> ${counter} </a>
 							{%
 						}else{

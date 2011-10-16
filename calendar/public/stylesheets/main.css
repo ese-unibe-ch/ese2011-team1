@@ -1,18 +1,21 @@
 a {
-  font-style: italic;
+	font-style: italic;
 }
 
 li {
-  list-style-type: disc;
+	list-style-type: disc;
 }
 
-body{ 
-background-color:#FFFFFF;
-margin-left:100px; }
-*{ color:black;
+body { 
+	background-color:#FFFFFF;
+	margin-left:100px;
 }
 
-p,li{ 
+* { 
+	color:black;
+}
+
+p,li { 
 	font-size:100%;
     line-height:100%;
     font-family:Helvetica,Arial,sans-serif;
@@ -47,12 +50,16 @@ table#calendar td.title {
   font-weight: bold;
 }
 
-table#calendar td#selected {
-  background-color: #F00;
+table#calendar td.selected {
+  background-color: #FFFACD;
 }
 
-table#calendar td#today {
-  background-color: #FF0;
+table#calendar td.today {
+  background-color: #ADD8E6;
+}
+
+table#calendar a {
+  font-weight: bold;
 }
 
 #prevMonth, #nextMonth {
