@@ -178,7 +178,7 @@ public class Application extends Controller {
 	}
 
 	public static void showTest(long calendarId, String username,
-			String calendarName, String s_date, int dday, int mmonth, int yyear) {
+		String calendarName, String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
@@ -206,10 +206,18 @@ public class Application extends Controller {
 		int day = date.getDate() + 1;
 		int month = date.getMonth() + 1;
 		int year = date.getYear() + 1900;
-
+		
+		int dfyear = 0;
+		if(date.getMonth() == 10){
+			dfyear++;
+		}
+		if(date.getMonth() == 11){
+			dfyear++;
+		}
+		
 		String next = Integer.toString(day) + "/"
 				+ Integer.toString((month + 1) % 12) + "/"
-				+ Integer.toString(year) + ", 12:00";
+				+ Integer.toString(year+dfyear) + ", 12:00";
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
 		render(me, date, cal, bound, bound2, calendar, user, prev,
