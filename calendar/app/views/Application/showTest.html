@@ -53,8 +53,9 @@
 						
 					// 3 - normal day
 						else out.println('<td class="entry"> ');
-						
+						System.out.println(counter+" "+month+" "+year)
 						if(calendar.hasEventOnDay(counter, month, year)){
+							
 							%} 
 								<a href="@{Application.showTest(calendar.getId(),user.name ,calendar.name,s_date,counter,month,year)})}"> ${counter}</a>
 							{%
