@@ -148,10 +148,8 @@ public class Calendar {
 				+ ", 12:00";
 		try {
 			comp = dateFormat.parse(dateString);
-			System.out.println("comp.getDate: " + comp.getDate() + ", " + comp.getMonth() + ", " + comp.getYear());
 			
 		} catch (ParseException e) {
-			System.out.println("failed to parse date");
 		}
 		
 		for (Event repeatingEvent: this.repeatingEvents) {
