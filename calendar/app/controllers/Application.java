@@ -83,6 +83,33 @@ public class Application extends Controller {
 		render(me, user, events, calendarName, calendars, calendarId, day,
 				month, year);
 	}
+	
+	public static void showRegistration()
+    {
+    	render();
+    }
+    
+    public static void RegUser(@Required String name, @Required String password)
+    {
+    	if(Database.userAlreadyRegistrated(name))
+    	{
+    		flash.error("Username (" + name + ") already exists!");
+    		showRegistration();
+    	}
+    	else if(validation.hasErrors())
+    	{
+    		params.flash();
+    		validation.keep();
+    		flash.error("All fields required!");
+    		showRegistration();
+    	}
+    	else
+    	{
+    		User user = new User(name, password);
+    		Database.addUser(user);
+    		index();
+    	}
+    }
 
 	public static void newUser(@Required String name) {
 		User user;
