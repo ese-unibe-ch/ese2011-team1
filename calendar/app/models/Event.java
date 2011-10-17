@@ -36,6 +36,7 @@ public class Event implements Comparable<Event> {
 		this.id = counter;
 		this.is_repeating = is_repeating;
 		this.intervall = intervall;
+		this.baseID = id;
 	}
 
 	/*
@@ -66,11 +67,13 @@ public class Event implements Comparable<Event> {
 		return dateFormat.format(d);
 	}
 
-	public void edit(Date start, Date end, String name, boolean is_visible) {
+	public void edit(Date start, Date end, String name, boolean is_visible, boolean is_repeated, int intervall) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.is_visible = is_visible;
+		this.is_repeating = is_repeated;
+		this.intervall = intervall;
 	}
 
 	@Override
@@ -88,10 +91,18 @@ public class Event implements Comparable<Event> {
 
 	//TODO: fix ugly date instantiation
 	public Event getNextRepetitionEvent() {
-		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall);
-		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall);
+		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall, start.getHours(), start.getMinutes());
+		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, start.getHours(), start.getMinutes());
+		if (intervall == 30) {
+			nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+			nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+		}
+		if (intervall == 265) {
+			nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
+			nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+		}
 		Event newEvent = new Event(nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
-		newEvent.setBaseID(this.id);
+		newEvent.setBaseID(this.baseID);
 		return newEvent;
 	}
 

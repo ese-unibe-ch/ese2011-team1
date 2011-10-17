@@ -54,6 +54,10 @@ public class Calendar implements Cloneable {
 			repeatingEvents.add(e);
 		}
 	}
+	
+	public void addToRepeated(Event e) {
+		this.repeatingEvents.add(e);
+	}
 
 	/**
 	 * obtain a list of events a user is allowed to see in a calendar for a
@@ -128,12 +132,13 @@ public class Calendar implements Cloneable {
 			comp = dateFormat.parse(dateString);
 		} catch (ParseException e) {
 		}
-
+		
 		for (Event e : events)
 			if (e.start.getDate() == comp.getDate()
 					&& e.start.getMonth() == comp.getMonth()
-					&& e.start.getYear() == comp.getYear())
-				result.add(e);
+					&& e.start.getYear() == comp.getYear()) {
+					result.add(e);
+			}
 
 		for (Event e : result)
 			System.out.println(e.name);
@@ -152,16 +157,14 @@ public class Calendar implements Cloneable {
 		} catch (ParseException e) {
 		}
 		
-		ArrayList<Event> repeatingEvents = new ArrayList<Event>(this.repeatingEvents);
-			for (Event repeatingEvent : repeatingEvents) {
-				if (repeatingEvent.getStart().before(comp)) {
-					Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
-					if (!containsSameID(events, nextRepetition.getBaseID())) {
-						this.events.add(nextRepetition);
-						this.repeatingEvents.add(nextRepetition);
-					}
+		for (Event repeatingEvent : this.repeatingEvents) {
+			while(repeatingEvent.getStart().before(comp)) {
+				repeatingEvent = repeatingEvent.getNextRepetitionEvent();
+				if (!containsSameElement(new LinkedList<Event>(this.events), repeatingEvent)) {
+					events.add(repeatingEvent);
 				}
 			}
+		}
 
 		for (Event e : events)
 			if (e.start.getDate() == comp.getDate()
@@ -172,10 +175,12 @@ public class Calendar implements Cloneable {
 		return flag;
 	}
 
-	private boolean containsSameID(PriorityQueue<Event> events, long baseID) {
+	private boolean containsSameElement(LinkedList<Event> events, Event repeatingEvent) {
 		boolean contains = false;
-		for (Event e : events) {
-			if (e.getBaseID() == baseID) {
+		for (Event e : this.events) {
+			if (e.getBaseID() == repeatingEvent.getBaseID() && e.start.getDate() == repeatingEvent.start.getDate()
+					&& e.start.getMonth() == repeatingEvent.start.getMonth()
+					&& e.start.getYear() == repeatingEvent.start.getYear()) {
 				contains = true;
 			}
 		}
@@ -192,13 +197,21 @@ public class Calendar implements Cloneable {
 
 	// removes an event by its id
 	public void removeEvent(long id) {
+		LinkedList<Event> events = new LinkedList<Event>(this.events);
 		for (Event e : events)
-			if (e.getId() == id)
-				events.remove(e);
+			if (e.getId() == id) {
+				this.events.remove(e);
+				this.repeatingEvents.remove(e);
+			}
 	}
-
-	public PriorityQueue<Event> getEvents() {
-		return this.events;
+	
+	public void removeRepeatingEvents(Event event) {
+		LinkedList<Event> events = new LinkedList<Event>(this.events);
+		for (Event e : events) {
+			if(e.getBaseID() == event.getBaseID()) {
+				removeEvent(e.getId());
+			}
+		}
 	}
-
+	
 }
