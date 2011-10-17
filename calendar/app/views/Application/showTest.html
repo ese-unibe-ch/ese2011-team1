@@ -48,13 +48,16 @@
 						if (i*7+j-bound+1  == today.get(java.util.Calendar.DAY_OF_MONTH) 
 								&& month-1 == today.get(java.util.Calendar.MONTH)
 							 	&& year == today.get(java.util.Calendar.YEAR)) 
-							out.println('<td class="today"> ');
+							{out.println('<td class="today"> ');}
 						
-					// 2 - selected --> can't be implemented yet, events are not shown on same page!
-						//else if () out.println('<td class="selected"> ');
+					// 2 - selected
+						else if (i*7+j-bound+1 == dday) 
+							{out.println('<td class="selected"> ');}
 						
 					// 3 - normal day
-						else out.println('<td class="entry"> ');
+						else 
+							{out.println('<td class="entry"> ');}
+						
 						System.out.println(counter+" "+month+" "+year)
 						if(calendar.hasEventOnDay(counter, month, year)){
 							
