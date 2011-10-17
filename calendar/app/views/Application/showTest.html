@@ -2,7 +2,7 @@
 #{set title:'Home' /}
 <header>
 	<h1>${user.name}'s Calendar: ${calendar.name}:</h1>
-	<p> Month: ${cal.getDisplayName(cal.MONTH, cal.LONG, Locale.GERMAN)}  </p>
+	<p> Month: ${cal.getDisplayName(cal.MONTH, cal.LONG, Locale.GERMAN)} ${cal.get(cal.YEAR)} </p>
 </header>
 
 <body>
