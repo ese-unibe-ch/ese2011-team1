@@ -14,10 +14,6 @@ public class Bootstrap extends Job {
 		User user;
 		Event event;
 		Date now = new Date();
-		System.out
-				.println(now
-						+ "-----------------------------------------------------------------------");
-
 		// dataset 1
 		user = new User("simplay", "123");
 		event = new Event(now, now, "abc", true, false, 0);

@@ -140,8 +140,6 @@ public class Calendar implements Cloneable {
 					result.add(e);
 			}
 
-		for (Event e : result)
-			System.out.println(e.name);
 		return result;
 	}
 
@@ -154,6 +152,7 @@ public class Calendar implements Cloneable {
 				+ ", 12:00";
 		try {
 			comp = dateFormat.parse(dateString);
+			
 		} catch (ParseException e) {
 		}
 		
