@@ -45,7 +45,9 @@
 					
 				// Layout of day can be seperated into 3 categories:
 					// 1 - today
-						if (i*7+j-bound+1  == today && thisMonth == month-1) 
+						if (i*7+j-bound+1  == today.get(java.util.Calendar.DAY_OF_MONTH) 
+								&& month-1 == today.get(java.util.Calendar.MONTH)
+							 	&& year == today.get(java.util.Calendar.YEAR)) 
 							out.println('<td class="today"> ');
 						
 					// 2 - selected --> can't be implemented yet, events are not shown on same page!

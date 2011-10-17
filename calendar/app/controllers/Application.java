@@ -200,9 +200,10 @@ public class Application extends Controller {
 		
 		Date d = null;
 
+		//"today" is used for calculating the current day/year/month and coloring it blue
+		java.util.Calendar today = java.util.Calendar.getInstance();
 		java.util.Calendar cal = java.util.Calendar.getInstance();
-		int today = cal.get(java.util.Calendar.DAY_OF_MONTH);
-		int thisMonth = cal.get(java.util.Calendar.MONTH);
+
 		Date date = null;
 
 		try {
@@ -232,7 +233,7 @@ public class Application extends Controller {
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
 		render(me, date, cal, bound, bound2, calendar, user, prev,
-				next, s_date, today, thisMonth, events, calendarName, calendars, calendarId, dday, mmonth, yyear);
+				next, s_date, today, events, calendarName, calendars, calendarId, dday, mmonth, yyear);
 	}
 
 }
