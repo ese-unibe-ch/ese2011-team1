@@ -117,12 +117,16 @@ public class Event implements Comparable<Event> {
 
 	
 	/**
+	 * This method compares a provided Date with the repetitions
+	 * of this Event until the provided Date is smaller than the start date of the calculated repetition.
+	 * If one of the repetitions has the same date as the provided date, this repetition will be returned.
 	 * 
-	 * @param compDate
+	 * @param compDate the date which is compared to the calculated repetitions.
 	 * @return null if no repetition of any Event occurs on the specified Date.
+	 * Event repeatingEventOnDay if repeatingEventOnDay.getStart().getDate() == compDate.getDate().
 	 * 
 	 */
-	public Event getRepetitionOfDate(Date compDate) {
+	public Event getRepetitionOnDate(Date compDate) {
 		Event repeatingEventOnDay = null;
 		Event repeatingEvent = this;
 		while(repeatingEvent.getStart().before(compDate)) {

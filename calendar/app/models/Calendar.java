@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-public class Calendar implements Cloneable {
+public class Calendar {
 	private String name;
 	public User owner;
 	private PriorityQueue<Event> events;
@@ -38,16 +38,11 @@ public class Calendar implements Cloneable {
 		return this.id;
 	}
 
-	public void addEvent(Date startDate, Date endDate, String name,
-			boolean is_visible, boolean isRepeating, int intervall) {
-		Event ev = new Event(startDate, endDate, name, is_visible, isRepeating,
-				intervall);
-		events.add(ev);
-		if (ev.isRepeating()) {
-			repeatingEvents.add(ev);
-		}
-	}
-
+	/**
+	 * Adds a given event to this calendars list of events.
+	 * If the provided event is a repeating event, it will also be added to the repeatingEvents list.
+	 * @param e event which is added to events, and if repeating, to repeatingEvents.
+	 */
 	public void addEvent(Event e) {
 		events.add(e);
 		if (e.isRepeating()) {
@@ -62,6 +57,7 @@ public class Calendar implements Cloneable {
 	/**
 	 * obtain a list of events a user is allowed to see in a calendar for a
 	 * given date.
+	 * 
 	 **/
 	public LinkedList<Event> getDayEvents(Date day, User requester) {
 		// temporary result linked list
@@ -152,24 +148,26 @@ public class Calendar implements Cloneable {
 				+ ", 12:00";
 		try {
 			comp = dateFormat.parse(dateString);
+			System.out.println("comp.getDate: " + comp.getDate() + ", " + comp.getMonth() + ", " + comp.getYear());
 			
 		} catch (ParseException e) {
+			System.out.println("failed to parse date");
 		}
 		
 		for (Event repeatingEvent: this.repeatingEvents) {
-			Event repeatingEventOnDay = repeatingEvent.getRepetitionOfDate(comp);
+			Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
 			if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
-				System.out.println("added: " + repeatingEventOnDay.start);
 				events.add(repeatingEventOnDay);
 			}
 		}
 		
-		for (Event e : events)
+		for (Event e : events) {
 			if (e.start.getDate() == comp.getDate()
 					&& e.start.getMonth() == comp.getMonth()
 					&& e.start.getYear() == comp.getYear()) {
 				flag = true;
 			}
+		}
 		return flag;
 	}
 
@@ -193,7 +191,10 @@ public class Calendar implements Cloneable {
 		return result;
 	}
 
-	// removes an event by its id
+	/**
+	 * Removes an event from this calendars list of events and from the list of repeating events.
+	 * @param id id of the event to be removed.
+	 */
 	public void removeEvent(long id) {
 		LinkedList<Event> events = new LinkedList<Event>(this.events);
 		for (Event e : events)
@@ -203,6 +204,12 @@ public class Calendar implements Cloneable {
 			}
 	}
 	
+	/**
+	 * Removes all events with the same baseID from this calendars list of events and this calendars list of public events.
+	 * The provided events baseID is compared with all events from this calendar, matching events will be removed.
+	 * @param event the event to be removed along with all events with the same baseID
+	 * @see {@link Calendar#removeEvent(long id)}
+	 */
 	public void removeRepeatingEvents(Event event) {
 		LinkedList<Event> events = new LinkedList<Event>(this.events);
 		for (Event e : events) {
@@ -210,6 +217,14 @@ public class Calendar implements Cloneable {
 				removeEvent(e.getId());
 			}
 		}
+	}
+
+	public PriorityQueue<Event> getEvents() {
+		return this.events;
+	}
+
+	public LinkedList<Event> getRepeatingEvents() {
+		return this.repeatingEvents;
 	}
 	
 }
