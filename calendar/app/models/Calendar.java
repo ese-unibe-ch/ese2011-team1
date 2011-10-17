@@ -156,15 +156,14 @@ public class Calendar implements Cloneable {
 		} catch (ParseException e) {
 		}
 		
-		for (Event repeatingEvent : this.repeatingEvents) {
-			while(repeatingEvent.getStart().before(comp)) {
-				repeatingEvent = repeatingEvent.getNextRepetitionEvent();
-				if (!containsSameElement(new LinkedList<Event>(this.events), repeatingEvent)) {
-					events.add(repeatingEvent);
-				}
+		for (Event repeatingEvent: this.repeatingEvents) {
+			Event repeatingEventOnDay = repeatingEvent.getRepetitionOfDate(comp);
+			if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
+				System.out.println("added: " + repeatingEventOnDay.start);
+				events.add(repeatingEventOnDay);
 			}
 		}
-
+		
 		for (Event e : events)
 			if (e.start.getDate() == comp.getDate()
 					&& e.start.getMonth() == comp.getMonth()

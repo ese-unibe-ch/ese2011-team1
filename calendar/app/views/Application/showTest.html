@@ -85,9 +85,9 @@
 				<p>
 					<li>
 						<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} #{if user==me},  
-						<b>is_visible</b>:${event.is_visible} #{/if} 
+						<b>is_visible</b>:${event.is_visible} #{/if} <br>
 						#{if user==me} <b><a href="@{Application.editEvent(event.getId(), calendarId, me.name, s_date, dday, mmonth, yyear)}"> Edit </a></b> <br>
-						<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b>  
+						<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b> <br>
 						#{if event.is_repeating}<b><a href="@{Application.removeRepeatingEvents(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove All Repeating </a></b>  #{/if}
 						#{/if}
 						

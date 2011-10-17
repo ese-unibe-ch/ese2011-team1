@@ -8,7 +8,7 @@
 	<p> Date Format: <b> dd/MM/yyyy, HH:mm </b> , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 <br> 
 	If you dont care about the format, a default date will be taken! </p>
 	${calendarID}
-	<form action="@{Application.creatEvent()}" method="GET">
+	<form action="@{Application.createEvent()}" method="GET">
 		<ul>
 			<input type="hidden" name="calendarID" value="${calendarID}" />
 			<li>Name:</li><input type="text" name="name" value="" />

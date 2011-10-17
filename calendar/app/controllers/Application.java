@@ -130,7 +130,7 @@ public class Application extends Controller {
 		}
 	}
 
-	public static void creatEvent(@Required long calendarID,
+	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, boolean is_visible, String is_repeated, String s_date, int dday, int mmonth, int yyear) {
 

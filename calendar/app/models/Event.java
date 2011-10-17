@@ -2,6 +2,7 @@ package models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Comparable<Event> {
@@ -112,6 +113,25 @@ public class Event implements Comparable<Event> {
 	
 	public long getBaseID() {
 		return this.baseID;
+	}
+
+	
+	/**
+	 * 
+	 * @param compDate
+	 * @return null if no repetition of any Event occurs on the specified Date.
+	 * 
+	 */
+	public Event getRepetitionOfDate(Date compDate) {
+		Event repeatingEventOnDay = null;
+		Event repeatingEvent = this;
+		while(repeatingEvent.getStart().before(compDate)) {
+			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
+			if (repeatingEvent.getStart().getDate() == compDate.getDate()) {
+				repeatingEventOnDay = repeatingEvent;
+			}
+		}
+		return repeatingEventOnDay;
 	}
 
 }
