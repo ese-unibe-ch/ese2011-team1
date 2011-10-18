@@ -31,7 +31,7 @@ public class Bootstrap extends Job {
 		event = new Event(now, now, "mib_ev1", true, false, 0);
 		user.getdefaultCalendar().addEvent(event);
 
-		event = new Event(now, now, "mib_ev2", true, false, 0);
+		event = new Event(now, now, "mib_ev2", false, false, 0);
 		user.getdefaultCalendar().addEvent(event);
 
 		event = new Event(now, now, "mib_ev3", true, false, 0);
@@ -39,7 +39,7 @@ public class Bootstrap extends Job {
 
 		cal = new Calendar("second mib", user);
 
-		event = new Event(now, now, "second mib_ev1", true, false, 0);
+		event = new Event(now, now, "second mib_ev1", false, false, 0);
 		cal.addEvent(event);
 
 		event = new Event(now, now, "second mib_ev2", true, false, 0);

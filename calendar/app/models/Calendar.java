@@ -128,10 +128,9 @@ public class Calendar {
 			comp = dateFormat.parse(dateString);
 		} catch (ParseException e) {
 		}
-		
 		boolean is_owner = owner == requester;
 		for (Event e : events)
-			if (e.isVisible() || is_owner) {
+			if(is_owner || e.is_visible){
 				if (e.start.getDate() == comp.getDate()
 						&& e.start.getMonth() == comp.getMonth()
 						&& e.start.getYear() == comp.getYear()) {
@@ -155,9 +154,8 @@ public class Calendar {
 		} catch (ParseException e) {
 		}
 		boolean is_owner = owner == requester;
-		
 		for (Event repeatingEvent: this.repeatingEvents) {
-			if (repeatingEvent.isVisible() || is_owner) {
+			if(is_owner || repeatingEvent.is_visible){
 				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
 				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
 					events.add(repeatingEventOnDay);
@@ -166,7 +164,7 @@ public class Calendar {
 		}
 		
 		for (Event e : events) {
-			if (e.isVisible() || is_owner) {
+			if(is_owner || e.is_visible){
 				if (e.start.getDate() == comp.getDate()
 						&& e.start.getMonth() == comp.getMonth()
 						&& e.start.getYear() == comp.getYear()) {
