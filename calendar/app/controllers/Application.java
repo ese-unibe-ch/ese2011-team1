@@ -24,6 +24,7 @@ import play.mvc.With;
 public class Application extends Controller {
 
 	static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+	public static String message = null;
 
 	public static void index() {
 		User me = Database.users.get(Security.connected());
@@ -73,9 +74,8 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		// Date d = new Date(1,1,1);
-		// System.out.println(username);
 		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventsOfDay(day, month, year);
+				.getEventsOfDay(day, month, year, me);
 
 		Calendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = allVisibleEvents;
@@ -83,6 +83,33 @@ public class Application extends Controller {
 		render(me, user, events, calendarName, calendars, calendarId, day,
 				month, year);
 	}
+	
+	public static void showRegistration()
+    {
+    	render();
+    }
+    
+    public static void RegUser(@Required String name, @Required String password)
+    {
+    	if(Database.userAlreadyRegistrated(name))
+    	{
+    		flash.error("Username (" + name + ") already exists!");
+    		showRegistration();
+    	}
+    	else if(validation.hasErrors())
+    	{
+    		params.flash();
+    		validation.keep();
+    		flash.error("All fields required!");
+    		showRegistration();
+    	}
+    	else
+    	{
+    		User user = new User(name, password);
+    		Database.addUser(user);
+    		index();
+    	}
+    }
 
 	public static void newUser(@Required String name) {
 		User user;
@@ -103,9 +130,9 @@ public class Application extends Controller {
 		}
 	}
 
-	public static void creatEvent(@Required long calendarID,
+	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
-			@Required String end, boolean is_visible, String is_repeated) {
+			@Required String end, boolean is_visible, String is_repeated, String s_date, int dday, int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
@@ -119,22 +146,21 @@ public class Application extends Controller {
 			d_start = dateFormat.parse(start);
 			d_end = dateFormat.parse(end);
 		} catch (Exception e) {
-			d_start = new Date(1, 1, 1);
-			d_end = new Date(1, 1, 1);
+			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
 		}
-		System.out.println(is_repeated);
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event e = new Event(d_start, d_end, name, is_visible, repeated,
 				intervall);
 
 		calendar.addEvent(e);
-		showEvents(calendarID, me.name, calendar.getName());
+		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 
 	public static void saveEditedEvent(@Required long eventID,
 			@Required long calendarID, @Required String name,
-			@Required String start, @Required String end, boolean is_visible) {
+			@Required String start, @Required String end, boolean is_visible, String is_repeated, String s_date, int dday, int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
@@ -143,55 +169,69 @@ public class Application extends Controller {
 
 		Date d_start = null;
 		Date d_end = null;
+		boolean repeated = is_repeated.equals("0") ? false : true;
+		int intervall = Integer.parseInt(is_repeated);
+		Event event = calendar.getEventById(eventID);
+		if (repeated) {
+			calendar.addToRepeated(event);
+		}
 
 		try {
 			d_start = dateFormat.parse(start);
 			d_end = dateFormat.parse(end);
 		} catch (Exception e) {
-			d_start = new Date(1, 1, 1);
-			d_end = new Date(1, 1, 1);
+			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+			editEvent(eventID, calendarID, name, s_date, dday, mmonth, yyear, message);
 		}
-
-		Event event = calendar.getEventById(eventID);
-		event.edit(d_start, d_end, name, is_visible);
-		showEvents(calendarID, me.name, calendar.getName());
+	
+		event.edit(d_start, d_end, name, is_visible, repeated, intervall);
+		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 
-	public static void editEvent(long eventID, long calendarID, String name) {
+	public static void editEvent(long eventID, long calendarID, String name, String s_date, int dday, int mmonth, int yyear, String message) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventID);
-		render(me, calendar, event, calendarID, eventID);
+		render(me, calendar, event, calendarID, eventID, s_date, dday, mmonth, yyear, message);
 	}
 
-	public static void addEvent(long calendarID, String name) {
+	public static void addEvent(long calendarID, String name, String s_date, int dday, int mmonth, int yyear, String message) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
-		render(me, calendar, calendarID);
+		render(me, calendar, calendarID, s_date, dday, mmonth, yyear, message);
 	}
 
-	public static void removeEvent(long calendarID, long eventID) {
+	public static void removeEvent(long calendarID, long eventID, String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 		calendar.removeEvent(eventID);
-		showEvents(calendarID, me.name, calendar.getName());
+		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
-
+	
+	public static void removeRepeatingEvents(long calendarID, long eventId, String s_date, int dday, int mmonth, int yyear) {
+		User me = Database.users.get(Security.connected());
+		Calendar calendar = me.getCalendarById(calendarID);
+		Event event = calendar.getEventById(eventId);
+		calendar.removeRepeatingEvents(event);
+		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
+	}
+	
 	public static void showTest(long calendarId, String username,
-		String calendarName, String s_date, int dday, int mmonth, int yyear) {
+		String calendarName, String s_date, int dday, int mmonth, int yyear, String message) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
 		
-		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId).getEventsOfDay(dday, mmonth, yyear);
+		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId).getEventsOfDay(dday, mmonth, yyear, me);
     	Calendar calendars = user.getCalendarById(calendarId); // just for hotfix --> remove later
     	LinkedList<Event> events = allVisibleEvents;
 		
 		Date d = null;
 
+		//"today" is used for calculating the current day/year/month and coloring it blue
+		java.util.Calendar today = java.util.Calendar.getInstance();
 		java.util.Calendar cal = java.util.Calendar.getInstance();
-		int today = cal.get(java.util.Calendar.DAY_OF_MONTH);
-		int thisMonth = cal.get(java.util.Calendar.MONTH);
+
 		Date date = null;
 
 		try {
@@ -221,7 +261,7 @@ public class Application extends Controller {
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
 		render(me, date, cal, bound, bound2, calendar, user, prev,
-				next, s_date, today, thisMonth, events, calendarName, calendars, calendarId, dday, mmonth, yyear);
+				next, s_date, today, events, calendarName, calendars, calendarId, dday, mmonth, yyear, message);
 	}
 
 }

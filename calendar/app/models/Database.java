@@ -41,4 +41,17 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     	userList.addAll(users.values());
     	return userList;
     }
+    
+    public static boolean userAlreadyRegistrated(String newUserName) {
+    	List<User> userList = new ArrayList<User>();
+    	userList.addAll(users.values());
+    	
+    	for (User u : userList)
+    	{
+    		if(u.getName().equals(newUserName))
+    			return true;
+    	}
+    	return false;
+    }
+
 }

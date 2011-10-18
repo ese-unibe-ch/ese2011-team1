@@ -2,10 +2,13 @@
 #{set title:'Home' /}
 
 <h1>${me.name}'s Calendars:</h1>
+	#{if message}
+		<font style = "font-size: 30px; color: red;">${message}</font>
+	#{/if}
 	<p> Date Format: <b> dd/MM/yyyy, HH:mm </b> , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 <br> 
 	If you dont care about the format, a default date will be taken! </p>
 	${calendarID}
-	<form action="@{Application.creatEvent()}" method="GET">
+	<form action="@{Application.createEvent()}" method="GET">
 		<ul>
 			<input type="hidden" name="calendarID" value="${calendarID}" />
 			<li>Name:</li><input type="text" name="name" value="" />
@@ -20,6 +23,10 @@
 				<option value="30">monthly</option>
 				<option value="365">yearly 
 			</select>	
+			<input type="hidden" name="s_date" value="${s_date}" />
+			<input type="hidden" name="dday" value="${dday}" />
+			<input type="hidden" name="mmonth" value="${mmonth}" />
+			<input type="hidden" name="yyear" value="${yyear}" />
 		</ul>
 		<input type="submit" value="Save" />
 	</form>

@@ -6,7 +6,7 @@ import models.*;
 
 public class ApplicationTest extends FunctionalTest {
 
-    @Test
+    @Test @Ignore
     public void testThatIndexPageWorks() {
         Response response = GET("/");
         assertIsOk(response);

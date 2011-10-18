@@ -2,6 +2,19 @@ a {
 	font-style: italic;
 }
 
+A:link {
+	color: blue;
+}
+A:visited {
+	color: blue;
+}
+A:active {
+	color: blue;
+}
+A:hover {
+	text-decoration: underline; color: silver;
+}
+
 li {
 	list-style-type: disc;
 }
