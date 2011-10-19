@@ -158,7 +158,10 @@ public class Calendar {
 			if(is_owner || repeatingEvent.is_visible){
 				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
 				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
-					events.add(repeatingEventOnDay);
+					if(!repeatingEventOnDay.isDirty){
+						//System.out.println(repeatingEventOnDay.start);
+						events.add(repeatingEventOnDay);
+					}
 				}
 			}
 		}
@@ -200,12 +203,61 @@ public class Calendar {
 	 * @param id id of the event to be removed.
 	 */
 	public void removeEvent(long id) {
-		LinkedList<Event> events = new LinkedList<Event>(this.events);
-		for (Event e : events)
-			if (e.getId() == id) {
-				this.events.remove(e);
-				this.repeatingEvents.remove(e);
+		
+		
+		if(getEventById(id).is_repeating){
+			LinkedList<Event> events = new LinkedList<Event>(this.events);
+			System.out.println("i am repeating");
+			for (Event e : events){
+				if (e.getId() == id) {
+					System.out.println("i am repeating");
+					// mache hier löschprozedur für repeating events
+					// idee1: berechne nächten event e' nach e gem. intervall
+					// entferne alle diese repeating events via removeRepeatingEvents(Event event)
+					// erzeuge neuen repeating event, startend bei e' mit selben intervall 
+					// dazu mache: 1. finde heraus ob e ist repeating event bzw der assozierte e.baseID event.
+					// wenn ja, mache das oben, sonst reguläres löschen
+					Event baseEvent = getEventById(e.baseID); // korrektes nächstes date
+					int intervall = baseEvent.intervall;
+					Date nextRepStartDate = new Date(e.start.getYear(),e.start.getMonth(), e.start.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
+					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
+					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
+					
+					System.out.println("old: "+e.start + " new: "+nextRepStartDate);
+					
+					
+					// iteriere nun über alle event von base bis lücke-1 und modifiziere alle vor lücke
+					for (Event ee : events){
+						if (ee.baseID == e.baseID) {
+							ee.baseID = ee.id;
+							ee.is_repeating = false;
+						}
+					}
+					
+					baseEvent.baseID = baseEvent.id;
+					baseEvent.is_repeating = false;
+					
+					// entferne nun lücke
+					this.events.remove(e);
+					this.repeatingEvents.remove(e);
+					
+					// füge ab nextevent neue repeating struktur ein
+					this.events.add(nextEvent);
+					if (nextEvent.isRepeating()) {
+						repeatingEvents.add(e);
+					}
+				}
 			}
+		// sonst, wenn event kein repeating event ist	
+		}else{ 
+			LinkedList<Event> events = new LinkedList<Event>(this.events);
+			System.out.println("im NOT repeating");
+			for (Event e : events)
+				if (e.getId() == id) {
+					this.events.remove(e);
+					this.repeatingEvents.remove(e);
+				}
+		}
 	}
 	
 	/**
