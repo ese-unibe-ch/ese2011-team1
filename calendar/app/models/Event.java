@@ -95,22 +95,35 @@ public class Event implements Comparable<Event> {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall, start.getHours(), start.getMinutes());
 		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, start.getHours(), start.getMinutes());
 		if (intervall == 30) {
-			//System.out.println(start.getMonth());
-			int k = start.getMonth()+1;
-			System.out.println(start.getDate());
+			
+			// get month of start to be corrected: add a extra variable for end.getMonth()
+			int k = start.getMonth()+1; 
 			int delta = 0;
-			if(start.getDate()==31){ // if we have a month with 31 days as rep. event marked
-					
-				if(k==7 || k==12)delta = -1; // if we have december or june
-				//delta--;
+			
+			// if we have a month with 31 days as rep. event marked
+			if(start.getDate()==31){ 
+				
+				// if we have december or june
+				if(k==7 || k==12)delta = -1; 
 				nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
 				nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
+			
+			// if we have a leap year
+			}else if(start.getDate()==29 && start.getMonth() == 1){
+				nextRepStartDate = new Date(start.getYear()+4, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear()+4, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
 			}
 			
 		}
 		if (intervall == 365) {	
-			nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
-			nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+			// if we have a leap year, remember february is equals 1
+			if(start.getDate()==29 && start.getMonth() == 1){
+				nextRepStartDate = new Date(start.getYear()+4, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear()+4, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+			}else{
+				nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+			}
 		}
 		Event newEvent = new Event(nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
 		newEvent.setBaseID(this.baseID);
