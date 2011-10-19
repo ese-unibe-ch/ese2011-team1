@@ -95,9 +95,18 @@ public class Event implements Comparable<Event> {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall, start.getHours(), start.getMinutes());
 		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, start.getHours(), start.getMinutes());
 		if (intervall == 30) {
-			System.out.println("blup");
-			nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-			nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+			//System.out.println(start.getMonth());
+			int k = start.getMonth()+1;
+			System.out.println(start.getDate());
+			int delta = 0;
+			if(start.getDate()==31){ // if we have a month with 31 days as rep. event marked
+					
+				if(k==7 || k==12)delta = -1; // if we have december or june
+				//delta--;
+				nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
+			}
+			
 		}
 		if (intervall == 365) {	
 			nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
