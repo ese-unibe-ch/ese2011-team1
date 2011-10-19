@@ -16,7 +16,7 @@ public class Event implements Comparable<Event> {
 	public int intervall;
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-
+	public boolean isDirty = false;
 	
 	/**
 	 * 
@@ -39,7 +39,7 @@ public class Event implements Comparable<Event> {
 		this.intervall = intervall;
 		this.baseID = id;
 	}
-
+	
 	/*
 	 * Getters
 	 */
@@ -95,10 +95,11 @@ public class Event implements Comparable<Event> {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall, start.getHours(), start.getMinutes());
 		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, start.getHours(), start.getMinutes());
 		if (intervall == 30) {
+			System.out.println("blup");
 			nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
 			nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
 		}
-		if (intervall == 265) {
+		if (intervall == 365) {	
 			nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
 			nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
 		}
