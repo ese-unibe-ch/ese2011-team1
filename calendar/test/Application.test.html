@@ -1,7 +1,93 @@
 *{ You can use plain selenium command using the selenium tag }*
 
-#{selenium}
+#{selenium 'Check the login page with just a user as login'}
     // Open the home page, and check that no error occured
+    
+    clearSession()
     open('/')
+    waitForPageToLoad(1000)
     assertNotTitle('Application error')
+    assertTitle('Login')
+	assertTextPresent('Remember me')
+	 
+	// no user for login
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('Oops, unknown username or password.')
+	
+	//input: a user but no password
+	type('username', 'simplay')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('Oops, unknown username or password.')
+	
 #{/selenium}
+
+#{selenium 'Check the login page with user and password and the log out button'}
+
+	clearSession()
+    open('/')
+    waitForPageToLoad(1000)
+	
+	//input: a password but no user
+	type('password', '123')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('Oops, unknown username or password.')
+	
+	//right login
+	type('username', 'simplay')
+	type('password', '123')
+	clickAndWait('css=input[type=submit]')
+	waitForPageToLoad(1000)
+	assertTitle('Home')
+	assertTextPresent('Calendar Team1 - Hello simplay')
+	clickAndWait('link=Log out')
+	assertTextPresent('You have been logged out.')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('Oops, unknown username or password.')
+	
+
+#{/selenium}
+
+#{selenium 'Test Registrate a new user and trying to register a same user again'}
+	clearSession()
+	clearSession()
+	open('/')
+	waitForPageToLoad(1000)
+	type('username', 'simplay')
+	type('password', '123')
+	clickAndWait('css=input[type=submit]')
+	waitForPageToLoad(1000)
+	assertTitle('Home')
+	assertTextPresent('Calendar Team1 - Hello simplay')
+	clickAndWait('link=Registrate new User')
+	assertTextPresent('Registration:')
+	assertTextPresent('Name:')
+	assertTextPresent('Password:')
+	type('name', 'Francis')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('All fields required!')
+	assertTextPresent('Required')
+	type('name', '')
+	type('password', '123')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('All fields required!')
+	assertTextPresent('Required')
+	type('name', 'Francis')
+	clickAndWait('css=input[type=submit]')
+	assertTitle('Home')
+	assertTextPresent('Francis')
+	assertTextPresent('Calendar Team1 - Hello simplay')
+	clickAndWait('link=Registrate new User')
+	assertTextPresent('Registration:')
+	assertTextPresent('Name:')
+	assertTextPresent('Password:')
+	type('name', 'Francis')
+	type('password', '123')
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('Username (Francis) already exists!')
+	
+#{/selenium}
+	
+	
+	
+	
+	
