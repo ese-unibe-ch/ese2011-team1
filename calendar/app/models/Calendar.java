@@ -236,7 +236,7 @@ public class Calendar {
 					
 					// adde hier alle in this.events.add(nextEvent) bis 1 kleiner als lücke
 					// HIER CODE EINFÜGEN
-					this.events.add(base);
+					//this.events.add(base);
 					
 					// füge neuer repeating baseEvent ein (ein intervall nach der lücke)
 					this.events.add(nextEvent);
