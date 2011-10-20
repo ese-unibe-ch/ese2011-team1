@@ -221,30 +221,15 @@ public class Calendar {
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),e.start.getMonth(), e.start.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
-					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
-					
+					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);		
 					System.out.println("old: "+e.start + " new: "+nextRepStartDate);
+					removeRepeatingEvents(baseEvent);
 					
+					// adde hier alle in this.events.add(nextEvent) bis 1 kleiner als lücke
 					
-					// iteriere nun über alle event von base bis lücke-1 und modifiziere alle vor lücke
-					for (Event ee : events){
-						if (ee.baseID == e.baseID) {
-							ee.baseID = ee.id;
-							ee.is_repeating = false;
-						}
-					}
-					
-					baseEvent.baseID = baseEvent.id;
-					baseEvent.is_repeating = false;
-					
-					// entferne nun lücke
-					this.events.remove(e);
-					this.repeatingEvents.remove(e);
-					
-					// füge ab nextevent neue repeating struktur ein
 					this.events.add(nextEvent);
-					if (nextEvent.isRepeating()) {
-						repeatingEvents.add(e);
+					if (nextEvent.isRepeating()) { //unnötig
+						repeatingEvents.add(nextEvent);
 					}
 				}
 			}
@@ -270,6 +255,7 @@ public class Calendar {
 		LinkedList<Event> events = new LinkedList<Event>(this.events);
 		for (Event e : events) {
 			if(e.getBaseID() == event.getBaseID()) {
+				e.is_repeating = false; // ultra important , otherwise we will have an infinite recursion!!!
 				removeEvent(e.getId());
 			}
 		}
