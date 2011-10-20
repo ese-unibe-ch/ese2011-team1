@@ -49,7 +49,6 @@
 
 #{selenium 'Test Registrate a new user and trying to register a same user again'}
 	clearSession()
-	clearSession()
 	open('/')
 	waitForPageToLoad(1000)
 	type('username', 'simplay')
@@ -84,10 +83,39 @@
 	type('password', '123')
 	clickAndWait('css=input[type=submit]')
 	assertTextPresent('Username (Francis) already exists!')
+	goBack()
+	waitForPageToLoad(1000)
+	goBack()
+	waitForPageToLoad(1000)
 	
 #{/selenium}
 	
+#{selenium 'Creating a new event'}
+	
+	
+	clickAndWait('link=show my calendars')
+	waitForPageToLoad(1000)
+	assertTextPresent('simplay's Calendars:')
+	assertTextPresent('Home')
+	assertTextPresent('Log out')
+	clickAndWait('link=simplay's first calendar')
+	waitForPageToLoad(1000)
+	assertTextPresent('simplay's Calendar: simplay's first calendar:')
+	clickAndWait('link=New Event')
+	assertTextPresent('simplay's Calendars:')
+	assertTextPresent('Date Format: dd/MM/yyyy, HH:mm , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 
+If you dont care about the format, a default date will be taken!')
+	assertTextPresent('Name:') 
+	assertTextPresent('Start:') 
+	assertTextPresent('End:') 
+	assertTextPresent('Is Public:')
+	type('name', 'Holidays Begin')
+	type('start', '23.12.2011, 12:00')
+	type('end', '23.10.2011', 13:00')
+	check(is_visible)
+	clickAndWait('css=input[type=submit]')
 	
 	
 	
+#{/selenium}
 	
