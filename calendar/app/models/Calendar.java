@@ -203,7 +203,7 @@ public class Calendar {
 	 * @param id id of the event to be removed.
 	 */
 	public void removeEvent(long id) {
-		
+		// funktioniert atm nur für repeating events mit intervall = 1 | 7 oder für not-repeating events
 		
 		if(getEventById(id).is_repeating){
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
@@ -223,10 +223,22 @@ public class Calendar {
 					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);		
 					System.out.println("old: "+e.start + " new: "+nextRepStartDate);
+					// finde daten heraus, welche man wieder in ab baseEven{old} einfügen muss
+					// bemerke: kann beliebig viele "löcher" haben.
+					// iteriere ab base bis kleiner als lücke und ermittle daten: 
+					// if(has_an_event_in date_i) then vermerke, dass zu adden
+					// nach removeRepeatingEvents diese dann in this.events hinzufügen
+					
+					// HIER CODE EINFÜGEN
+					
+					// entferne die repeating events und mache dann neu
 					removeRepeatingEvents(baseEvent);
 					
 					// adde hier alle in this.events.add(nextEvent) bis 1 kleiner als lücke
+					// HIER CODE EINFÜGEN
+					this.events.add(base);
 					
+					// füge neuer repeating baseEvent ein (ein intervall nach der lücke)
 					this.events.add(nextEvent);
 					if (nextEvent.isRepeating()) { //unnötig
 						repeatingEvents.add(nextEvent);
