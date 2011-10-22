@@ -5,6 +5,9 @@ import java.util.LinkedList;
 public class User {
 	public String name;
 	public LinkedList<Calendar> calendar;
+	
+	// in this list we store all calendars of other user which we want to display in our calendar
+	public LinkedList<Calendar> observedCalendars; 
 	public String password;
 	public long id;
 	private static long counter;
@@ -20,6 +23,8 @@ public class User {
 		this.id = counter;
 
 		calendar = new LinkedList<Calendar>();
+		otherCalendars = new LinkedList<Calendar>();
+		
 		// each user x has a default a calender called: x's first calendar
 		calendar.add(new Calendar(name + "'s first calendar", this));
 
@@ -67,6 +72,10 @@ public class User {
 
 	public void addCalendar(Calendar cal) {
 		calendar.add(cal);
+	}
+	
+	public void addCalendarToObervedCalendars(Calendar cal){
+		observedCalendars.add(cal);
 	}
 
 }
