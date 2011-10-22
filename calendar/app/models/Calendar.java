@@ -44,10 +44,60 @@ public class Calendar {
 	 * @param e event which is added to events, and if repeating, to repeatingEvents.
 	 */
 	public void addEvent(Event e) {
-		events.add(e);
-		if (e.isRepeating()) {
-			repeatingEvents.add(e);
+		// teste ob dieser eventbereits in liste ist
+		// wenn doch, dann adde diesen nicht!
+		System.out.println(!compareCalendarEvents(e));
+		if(!compareCalendarEvents(e)){
+			events.add(e);
+			if (e.isRepeating()) {
+				repeatingEvents.add(e);
+			}
 		}
+		
+	}
+	
+	// test if in this.events or in repeatingEvents is an event with same date (start,end) and name as ev1
+	private boolean compareCalendarEvents(Event ev1){
+		boolean flag = false; 
+		for(Event comp : this.events){
+			if(comp.name.equals(ev1.name))
+				if(		comp.start.getYear() == ev1.start.getYear() &&
+						comp.start.getMonth() == ev1.start.getMonth() &&
+						comp.start.getDate() == ev1.start.getDate() &&
+						comp.start.getMinutes() == ev1.start.getMinutes() &&
+						comp.start.getSeconds() == ev1.start.getSeconds()// &&
+						//comp.end.getYear() == ev1.end.getYear() &&
+						//comp.end.getMonth() == ev1.end.getMonth() &&
+						//comp.end.getDate() == ev1.end.getDate() &&
+						//comp.end.getMinutes() == ev1.end.getMinutes() &&
+						//comp.end.getSeconds() == ev1.end.getSeconds()
+						
+				){
+					flag = true;
+					break;
+				}
+		}
+		if(!flag){
+			for(Event comp : this.repeatingEvents){
+				if(comp.name.equals(ev1.name))
+					if(		comp.start.getYear() == ev1.start.getYear() &&
+							comp.start.getMonth() == ev1.start.getMonth() &&
+							comp.start.getDate() == ev1.start.getDate() &&
+							comp.start.getMinutes() == ev1.start.getMinutes() &&
+							comp.start.getSeconds() == ev1.start.getSeconds() //&&
+							//comp.end.getYear() == ev1.end.getYear() &&
+							//comp.end.getMonth() == ev1.end.getMonth() &&
+							//comp.end.getDate() == ev1.end.getDate() &&
+							//comp.end.getMinutes() == ev1.end.getMinutes() &&
+							//comp.end.getSeconds() == ev1.end.getSeconds()
+							
+					){
+						flag = true;
+						break;
+					}
+			}
+		}
+		return flag;
 	}
 	
 	public void addToRepeated(Event e) {
@@ -140,7 +190,8 @@ public class Calendar {
 
 		return result;
 	}
-
+	
+	// mache hier auch reperatur wengen event adden!!!!
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
 		boolean flag = false;
 		Date comp = null;
@@ -160,7 +211,7 @@ public class Calendar {
 				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
 					if(!repeatingEventOnDay.isDirty){
 						//System.out.println(repeatingEventOnDay.start);
-						events.add(repeatingEventOnDay);
+						if(!compareCalendarEvents(repeatingEventOnDay)) events.add(repeatingEventOnDay);
 					}
 				}
 			}
@@ -178,6 +229,7 @@ public class Calendar {
 		return flag;
 	}
 	
+	/// fixe hier das adden!!! wenn schon vorhanden, dann nicht nochmals adden!!!
 	public boolean hasEventOnDay(Date date, User requester) {
 		boolean flag = false;
 		Date comp = date;
@@ -189,7 +241,8 @@ public class Calendar {
 				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
 					if(!repeatingEventOnDay.isDirty){
 						//System.out.println(repeatingEventOnDay.start);
-						events.add(repeatingEventOnDay);
+						//check neu :::
+						if(!compareCalendarEvents(repeatingEventOnDay)) events.add(repeatingEventOnDay);
 					}
 				}
 			}
@@ -297,6 +350,7 @@ public class Calendar {
 					removeRepeatingEvents(baseEvent);
 					
 					// add for each date in the collected date list a event into this.events
+					// equals all events previous victim
 					for(Date d : previousDates){
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(d, d, e.name, e.is_visible, true, intervall);
@@ -304,10 +358,15 @@ public class Calendar {
 					}
 					
 					// add the event after our victim (1 date interval afterwards) into this.events and repeatingEvents
-					this.events.add(nextEvent);
-					if (nextEvent.isRepeating()) { //unnötig
-						repeatingEvents.add(nextEvent);
+					// or check for next free slot , ie find this date c
+					
+					if(!compareCalendarEvents(nextEvent)){
+						this.events.add(nextEvent);
+						if (nextEvent.isRepeating()) { //unnötig
+							repeatingEvents.add(nextEvent);
+						}
 					}
+					
 				}
 			}
 			
