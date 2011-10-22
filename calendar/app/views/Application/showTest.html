@@ -91,7 +91,7 @@
 							<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b> <br>
 							#{if event.is_repeating}
 								<b><a href="@{Application.removeRepeatingEvents(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove All Repeating </a></b><br>  
-								<b> <a href="">Cancel Repetition from here </a></b>
+								<b> <a href="@{Application.cancelRepEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}">Cancel Repetition from here </a></b>
 							#{/if}
 						#{/if}
 						
