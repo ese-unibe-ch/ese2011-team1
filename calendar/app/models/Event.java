@@ -93,7 +93,7 @@ public class Event implements Comparable<Event> {
 	//TODO: fix ugly date instantiation and fix correct calculation for monthly repeating events
 	public Event getNextRepetitionEvent() {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(), start.getDate() + intervall, start.getHours(), start.getMinutes());
-		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, start.getHours(), start.getMinutes());
+		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(), end.getDate() + intervall, end.getHours(), end.getMinutes());
 		
 		if (intervall == 30) {
 			
@@ -117,7 +117,7 @@ public class Event implements Comparable<Event> {
 					if(k==7 || k==12) delta = -1; 
 					
 					nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
-					nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), end.getHours(), end.getMinutes());
 				
 				// if we have an event on the 29th of a month
 				}else if(start.getDate()==29){
@@ -125,16 +125,16 @@ public class Event implements Comparable<Event> {
 					// if current month is january and a leap-year
 					if(k==1 && yearType != 0){
 						nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
-						nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
+						nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), end.getHours(), end.getMinutes());
 					// if we have mar, mai, jun, jul, okt or dez
 					}else{
 						nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-						nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+						nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), end.getHours(), end.getMinutes());
 					}
 				// all other days as event in the months: jan, mar, mai, jun, jul, okt or dez	
 				}else{
 					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), end.getHours(), end.getMinutes());
 				}
 				
 			// if it is feb ==> 28er or 29er month
@@ -142,54 +142,27 @@ public class Event implements Comparable<Event> {
 				// if we have a leap year
 				if(yearType == 0){
 					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), end.getHours(), end.getMinutes());
 				}else{
 					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), end.getHours(), end.getMinutes());
 				}
 				
 				
 			// if it is apr, aug, sep or nov => 30er months
 			}else{
 				nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-				nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), end.getHours(), end.getMinutes());
 			}
-			
-			
-			/*
-			// if we have a month with 31 days as rep. event marked
-			if(start.getDate()==31){ 
-				
-				// if we have december or july
-				if(k==7 || k==12)delta = 1; 
-				
-				nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, 30, start.getHours(), start.getMinutes());
-				//System.out.println(nextRepStartDate);
-				nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, 30, end.getHours(), end.getMinutes());
-			
-			// if we have a leap year
-			}else if(start.getDate()==29 && start.getMonth() == 1){
-				nextRepStartDate = new Date(start.getYear()+4, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
-				nextRepEndDate = new Date(end.getYear()+4, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
-			
-			}else if(start.getDate()==30){
-				
-			}
-			
-			
-			
-			//nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
-			//nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
-			*/
 		}
 		if (intervall == 365) {	
 			// if we have a leap year, remember february is equals 1
 			if(start.getDate()==29 && start.getMonth() == 1){
 				nextRepStartDate = new Date(start.getYear()+4, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
-				nextRepEndDate = new Date(end.getYear()+4, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear()+4, end.getMonth(), end.getDate(), end.getHours(), end.getMinutes());
 			}else{
 				nextRepStartDate = new Date(start.getYear()+1, start.getMonth(), start.getDate(), start.getHours(), start.getMinutes());
-				nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), end.getHours(), end.getMinutes());
 			}
 		}
 		Event newEvent = new Event(nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
