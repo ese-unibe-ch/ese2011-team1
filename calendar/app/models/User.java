@@ -23,7 +23,7 @@ public class User {
 		this.id = counter;
 
 		calendar = new LinkedList<Calendar>();
-		otherCalendars = new LinkedList<Calendar>();
+		observedCalendars = new LinkedList<Calendar>();
 		
 		// each user x has a default a calender called: x's first calendar
 		calendar.add(new Calendar(name + "'s first calendar", this));
@@ -69,10 +69,18 @@ public class User {
 		}
 		return result;
 	}
-
+	
+	/*
+	 * add a new owned calendar into our calendar list 
+	 */
+	
 	public void addCalendar(Calendar cal) {
 		calendar.add(cal);
 	}
+	
+	/*
+	 * add a new Calendar of another user into our oberserved calendar list. 
+	 */
 	
 	public void addCalendarToObervedCalendars(Calendar cal){
 		observedCalendars.add(cal);
