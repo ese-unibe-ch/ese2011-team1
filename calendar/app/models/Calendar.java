@@ -433,7 +433,16 @@ public class Calendar {
 			}
 		}
 	}
-
+	
+	/**
+	 * End repetition of an repeating event from a given date cancelDate
+	 * remove all repeating dates after cancelDate, which are already calculated.
+	 * Mark all such repeating events till and with canelDate as NOT repeating. 
+	 */
+	public void cancelRepeatingEventRepetitionFromDate(Date cancelDate){
+		
+	}
+	
 	public PriorityQueue<Event> getEvents() {
 		return this.events;
 	}
