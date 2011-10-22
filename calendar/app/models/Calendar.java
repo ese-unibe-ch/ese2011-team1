@@ -284,6 +284,7 @@ public class Calendar {
 	 * Removes an event from this calendars list of events and from the list of repeating events.
 	 * @param id id of the event to be removed.
 	 */
+	@SuppressWarnings("deprecation")
 	public void removeEvent(long id) {
 		// we call the event we are going to delete victim event or simply victim
 		// REM:
@@ -344,6 +345,41 @@ public class Calendar {
 						
 						// remove last element of list, this is the victim we want to delete
 						previousDates.removeLast();
+					}else if(intervall == 30){
+						Date current = baseEvent.start;
+						while(current.compareTo(nextRepStartDate) == -1){
+							if(hasEventOnDay(current, owner)){
+								// fix for wholes in interval previous victim
+								LinkedList<Event> dayevents = getDayEvents(current, owner);
+								if(hasName(e.name, dayevents)) 
+									previousDates.add(current);
+							}
+							
+							// get next date depending an interval-step-size
+							current =  new Date(current.getYear(),current.getMonth()+1, current.getDate(),
+									current.getHours(), current.getMinutes());
+						}
+					}else if(intervall == 365){
+						Date current = baseEvent.start;
+						while(current.compareTo(nextRepStartDate) == -1){
+							if(hasEventOnDay(current, owner)){
+								// fix for wholes in interval previous victim
+								LinkedList<Event> dayevents = getDayEvents(current, owner);
+								if(hasName(e.name, dayevents)) 
+									previousDates.add(current);
+							}
+							
+							// get next date depending an interval-step-size
+							current =  new Date(current.getYear()+1,current.getMonth(), current.getDate(),
+									current.getHours(), current.getMinutes());
+						}
+					}else{
+						// if we are inside this block something went horribly wrong => doomed
+						try {
+							throw new Exception("huge error - damnit");
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 					}
 					
 					// remove all repeating events correlated to baseEvent
