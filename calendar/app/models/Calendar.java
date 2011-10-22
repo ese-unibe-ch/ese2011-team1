@@ -232,82 +232,86 @@ public class Calendar {
 	 * @param id id of the event to be removed.
 	 */
 	public void removeEvent(long id) {
+		// we call the event we are going to delete victim event or simply victim
+		// REM:
 		// funktioniert atm nur für repeating events mit intervall = 1 | 7 oder für not-repeating events
+		// ERROR end NOT equal d => fix it later!!! fix END
+		// fix: conserve wholes after victim
+		// fix: multiple times add same event
 		
+		// if our victim is a repeating event
 		if(getEventById(id).is_repeating){
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
 			System.out.println("i am repeating");
 			for (Event e : events){
 				if (e.getId() == id) {
-					System.out.println("i am repeating");
-					// mache hier löschprozedur für repeating events
-					// idee1: berechne nächten event e' nach e gem. intervall
-					// entferne alle diese repeating events via removeRepeatingEvents(Event event)
-					// erzeuge neuen repeating event, startend bei e' mit selben intervall 
-					// dazu mache: 1. finde heraus ob e ist repeating event bzw der assozierte e.baseID event.
-					// wenn ja, mache das oben, sonst reguläres löschen
+
+					// calculate next event e' after e, depending on intervall size
+					// remove all those repeating events by calling removeRepeatingEvents(Event event)
+					// create new repeating event, which starts at e' and same intervall value
+					// 1. test, if e is a repeating event respectivly the correlated event to e.baseID
+					// if yes, then do what desribed abouve, else delete regulary
+					
+					// calculate next date after victim event
 					Event baseEvent = getEventById(e.baseID); // korrektes nächstes date
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),e.start.getMonth(), e.start.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
 					nextEvent.baseID = nextEvent.id;
-					System.out.println("old: "+e.start + " new: "+nextRepStartDate);
-					// finde daten heraus, welche man wieder in ab baseEven{old} einfügen muss
-					// bemerke: kann beliebig viele "löcher" haben.
-					// iteriere ab base bis kleiner als lücke und ermittle daten: 
-					// if(has_an_event_in date_i) then vermerke, dass zu adden
-					// nach removeRepeatingEvents diese dann in this.events hinzufügen
 					
-					System.out.println(baseEvent.start);
+					//System.out.println("old: "+e.start + " new: "+nextRepStartDate);
+	
+					// this list contains all dates of repeating events of baseEvent, till 1 event before victim event
 					LinkedList<Date> previousDates = new LinkedList<Date>();
-					// HIER CODE EINFÜGEN
 					if(intervall == 7 || intervall == 1){
 						
 						Date current = baseEvent.start;
-						System.out.println("iterate from "+current + " to " +nextRepStartDate);
-						System.out.println(current.compareTo(nextRepStartDate));
 						
-						
+						// iterate in interval steps iterate from "baseEvent.start" to "nextRepStartDate"
+						// to find dates, which we have to reinsert starting from baseEven{old}
+						// remark: there could be arbitrary many whole in the interval previous and afterwards our victim a
 						while(current.compareTo(nextRepStartDate) == -1){
-							// remember this date in iteration:
-							
 							// if this date is in the calendar as an event
 							// then add it to the list of dates we should recreate events
 							// remark: this is needed since we could have whole in repeating event series
 							// if we would not do such a check, then we would have a events with dates 
-							// we did not have in the calender to it's previous state
+							// we did not have in the calendar to it's previous state
 							if(hasEventOnDay(current, owner)){
-								System.out.println("has");
-								previousDates.add(current);
+								// fix for wholes in interval previous victim
+								LinkedList<Event> dayevents = getDayEvents(current, owner);
+								if(hasName(e.name, dayevents)) 
+									previousDates.add(current);
 							}
 							
-							
-							// get next
+							// get next date depending an interval-step-size
 							current =  new Date(current.getYear(),current.getMonth(), current.getDate() + intervall,
 									current.getHours(), current.getMinutes());
 						}
-						previousDates.removeLast(); // since otherwise we would readd removed event
+						
+						// remove last element of list, this is the victim we want to delete
+						previousDates.removeLast();
 					}
 					
-					// entferne die repeating events und mache dann neu
+					// remove all repeating events correlated to baseEvent
 					removeRepeatingEvents(baseEvent);
 					
-					// adde hier alle in this.events.add(nextEvent) bis 1 kleiner als lücke
+					// add for each date in the collected date list a event into this.events
 					for(Date d : previousDates){
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(d, d, e.name, e.is_visible, true, intervall);
 						this.events.add(ev);
 					}
 					
-					// füge neuer repeating baseEvent ein (ein intervall nach der lücke)
+					// add the event after our victim (1 date interval afterwards) into this.events and repeatingEvents
 					this.events.add(nextEvent);
 					if (nextEvent.isRepeating()) { //unnötig
 						repeatingEvents.add(nextEvent);
 					}
 				}
 			}
-		// sonst, wenn event kein repeating event ist	
+			
+		// else if our victim is not a repeating event
 		}else{ 
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
 			System.out.println("im NOT repeating");
@@ -341,6 +345,22 @@ public class Calendar {
 
 	public LinkedList<Event> getRepeatingEvents() {
 		return this.repeatingEvents;
+	}
+	
+	/**
+	 * helper to test if there are events in a given list which have the same name as "name"
+	 * if yes, then return true, otherwise return false.
+	 * @param name
+	 * @param dayevents
+	 * @return boolean
+	 */
+	private boolean hasName(String name, LinkedList<Event> dayevents){
+		boolean flag= false;
+		for(Event ev : dayevents)
+			if(ev.name.equals(name))flag=true;
+		
+		
+		return flag;
 	}
 	
 }
