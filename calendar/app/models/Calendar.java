@@ -177,6 +177,35 @@ public class Calendar {
 		}
 		return flag;
 	}
+	
+	public boolean hasEventOnDay(Date date, User requester) {
+		boolean flag = false;
+		Date comp = date;
+		
+		boolean is_owner = owner == requester;
+		for (Event repeatingEvent: this.repeatingEvents) {
+			if(is_owner || repeatingEvent.is_visible){
+				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
+				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
+					if(!repeatingEventOnDay.isDirty){
+						//System.out.println(repeatingEventOnDay.start);
+						events.add(repeatingEventOnDay);
+					}
+				}
+			}
+		}
+		
+		for (Event e : events) {
+			if(is_owner || e.is_visible){
+				if (e.start.getDate() == comp.getDate()
+						&& e.start.getMonth() == comp.getMonth()
+						&& e.start.getYear() == comp.getYear()) {
+					flag = true;
+				}
+			}
+		}
+		return flag;
+	}
 
 	private boolean containsSameElement(LinkedList<Event> events, Event repeatingEvent) {
 		boolean contains = false;
@@ -221,7 +250,8 @@ public class Calendar {
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),e.start.getMonth(), e.start.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
-					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);		
+					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
+					nextEvent.baseID = nextEvent.id;
 					System.out.println("old: "+e.start + " new: "+nextRepStartDate);
 					// finde daten heraus, welche man wieder in ab baseEven{old} einfügen muss
 					// bemerke: kann beliebig viele "löcher" haben.
@@ -229,14 +259,46 @@ public class Calendar {
 					// if(has_an_event_in date_i) then vermerke, dass zu adden
 					// nach removeRepeatingEvents diese dann in this.events hinzufügen
 					
+					System.out.println(baseEvent.start);
+					LinkedList<Date> previousDates = new LinkedList<Date>();
 					// HIER CODE EINFÜGEN
+					if(intervall == 7 || intervall == 1){
+						
+						Date current = baseEvent.start;
+						System.out.println("iterate from "+current + " to " +nextRepStartDate);
+						System.out.println(current.compareTo(nextRepStartDate));
+						
+						
+						while(current.compareTo(nextRepStartDate) == -1){
+							// remember this date in iteration:
+							
+							// if this date is in the calendar as an event
+							// then add it to the list of dates we should recreate events
+							// remark: this is needed since we could have whole in repeating event series
+							// if we would not do such a check, then we would have a events with dates 
+							// we did not have in the calender to it's previous state
+							if(hasEventOnDay(current, owner)){
+								System.out.println("has");
+								previousDates.add(current);
+							}
+							
+							
+							// get next
+							current =  new Date(current.getYear(),current.getMonth(), current.getDate() + intervall,
+									current.getHours(), current.getMinutes());
+						}
+						previousDates.removeLast(); // since otherwise we would readd removed event
+					}
 					
 					// entferne die repeating events und mache dann neu
 					removeRepeatingEvents(baseEvent);
 					
 					// adde hier alle in this.events.add(nextEvent) bis 1 kleiner als lücke
-					// HIER CODE EINFÜGEN
-					//this.events.add(base);
+					for(Date d : previousDates){
+						// ERROR end NOT equal d => fix it later!!!
+						Event ev = new Event(d, d, e.name, e.is_visible, true, intervall);
+						this.events.add(ev);
+					}
 					
 					// füge neuer repeating baseEvent ein (ein intervall nach der lücke)
 					this.events.add(nextEvent);
