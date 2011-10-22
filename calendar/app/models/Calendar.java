@@ -353,7 +353,7 @@ public class Calendar {
 					// equals all events previous victim
 					for(Date d : previousDates){
 						// ERROR end NOT equal d => fix it later!!!
-						Event ev = new Event(d, d, e.name, e.is_visible, true, intervall);
+						Event ev = new Event(d, d, e.name, e.is_visible, false, intervall);
 						this.events.add(ev);
 					}
 					
