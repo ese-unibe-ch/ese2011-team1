@@ -118,23 +118,41 @@ public class Event implements Comparable<Event> {
 					
 					nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
 					nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
-				}else{
+				
+				// if we have an event on the 29th of a month
+				}else if(start.getDate()==29){
 					
+					// if current month is january and a leap-year
+					if(k==1 && yearType != 0){
+						nextRepStartDate = new Date(start.getYear(), start.getMonth()+2+delta, start.getDate(), start.getHours(), start.getMinutes());
+						nextRepEndDate = new Date(end.getYear(), end.getMonth()+2+delta, end.getDate(), start.getHours(), start.getMinutes());
+					// if we have mar, mai, jun, jul, okt or dez
+					}else{
+						nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+						nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
+					}
+				// all other days as event in the months: jan, mar, mai, jun, jul, okt or dez	
+				}else{
+					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
 				}
 				
 			// if it is feb ==> 28er or 29er month
 			}else if(month == 2){
 				// if we have a leap year
 				if(yearType == 0){
-					
+					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
 				}else{
-					
+					nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+					nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
 				}
 				
 				
 			// if it is apr, aug, sep or nov => 30er months
 			}else{
-				
+				nextRepStartDate = new Date(start.getYear(), start.getMonth()+1, start.getDate(), start.getHours(), start.getMinutes());
+				nextRepEndDate = new Date(end.getYear(), end.getMonth()+1, end.getDate(), start.getHours(), start.getMinutes());
 			}
 			
 			
