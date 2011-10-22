@@ -131,11 +131,20 @@
 #{/selenium}
 	
 #{selenium 'Creating a event with false input'}
-	
 	clickAndWait('link=Home')
 	assertTextPresent('Administration')
 	clickAndWait('link=show my calendars')
 	clickAndWait('link=simplay's first calendar')
-	
+	assertTextPresent('previous')
+	assertTextPresent('next')
+	clickAndWait('link=New Event')
+	assertTextPresent('Repeatable:')
+	type('name', 'Wrong Date')
+	type('start', '23/12/9999999')
+	type('end', '23/10/2011, 13:00')
+	check(is_visible)
+	clickAndWait('css=input[type=submit]')
+	assertTextPresent('INVALID INPUT: PLEASE TRY AGAIN!')
+		
 #{/selenium}
 	
