@@ -208,6 +208,14 @@ public class Application extends Controller {
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 	
+	public static void cancelRepEvent(long calendarID, long eventID, String s_date, int dday, int mmonth, int yyear){
+		User me = Database.users.get(Security.connected());
+		Calendar calendar = me.getCalendarById(calendarID);	
+		Date cancelDate = calendar.getEventById(eventID).start;
+		calendar.cancelRepeatingEventRepetitionFromDate(cancelDate);
+		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
+	}
+	
 	public static void removeRepeatingEvents(long calendarID, long eventId, String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
