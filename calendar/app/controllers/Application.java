@@ -130,15 +130,13 @@ public class Application extends Controller {
 		}
 	}
 
-	public static void createEvent(@Required long calendarID,
-			@Required String name, @Required String start,
+	public static void createEvent(@Required long calendarID, @Required String name, @Required String start,
 			@Required String end, boolean is_visible, String is_repeated, String s_date, int dday, int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 
-		// covert dates
-
+		// convert dates
 		Date d_start = null;
 		Date d_end = null;
 
@@ -224,8 +222,9 @@ public class Application extends Controller {
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 	
-	public static void showTest(long calendarId, String username,
-		String calendarName, String s_date, int dday, int mmonth, int yyear, String message) {
+	public static void showTest(long calendarId, String username, String calendarName, 
+			String s_date, int dday, int mmonth, int yyear, String message) {
+		
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
@@ -268,8 +267,69 @@ public class Application extends Controller {
 				+ Integer.toString(year+dfyear) + ", 12:00";
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year) + ", 12:00";
-		render(me, date, cal, bound, bound2, calendar, user, prev,
-				next, s_date, today, events, calendarName, calendars, calendarId, dday, mmonth, yyear, message);
+		
+		boolean faved = me.isCalendarObserved(calendarId);
+		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
+		LinkedList<Long> shownObservedCalendars = me.getShownObservedCalendars();
+		System.out.println("Markierte beim Neuladen: "+shownObservedCalendars.size());
+		
+		/* TODO
+		 * 
+		 * IDs von markierten, befreundeten Kalendern sind in shownObservedCalendars gespeichert.
+		 * Die Events dieser Kalender müssen nun noch zu den angezeigten Events hinzugefügt werden.
+		 * 
+		 */
+		
+		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 
+				today, events, calendarName, calendars, calendarId, dday, mmonth, 
+				yyear, message, faved, observedCalendars, shownObservedCalendars);
 	}
-
+	
+	/**
+	 * Observe (or "follow") a certain calendar of a user.
+	 */
+	public static void addObserve(String username, long calendarId, String calendarName, 
+			String s_date, int dday, int mmonth, int yyear, String message) {
+		User me = Database.users.get(Security.connected());
+		User user = Database.users.get(username);
+		
+		//find calendar by ID
+		Calendar cal = user.getCalendarById(calendarId);
+		me.addObservedCalendar(cal);
+		showTest(calendarId, username, calendarName, s_date, dday, mmonth, yyear, message);
+	}
+	
+	public static void removeObserve(String username, long calendarId, String calendarName, 
+			String s_date, int dday, int mmonth, int yyear, String message) {
+		User me = Database.users.get(Security.connected());
+		User user = Database.users.get(username);
+		
+		//find calendar by ID
+		Calendar cal = user.getCalendarById(calendarId);
+		me.removeObservedCalendar(cal);
+		showTest(calendarId, username, calendarName, s_date, dday, mmonth, yyear, message);
+	}
+	
+	/**
+	 * Changes which observed calendars are really shown.
+	 * 
+	 * @param calID ID of the calendar to be removed / added to view
+	 * @param chk A boolean value, indicating if we're adding or removing a observed calendar
+	 */
+	public static void changeObservedCalendars(@Required String username, @Required long calendarId, @Required String calendarName, 
+			@Required String s_date, @Required int dday, @Required int mmonth, @Required int yyear, @Required String message, 
+			@Required long calID, @Required boolean chk) {
+		
+		User user = Database.users.get(username);
+		System.out.println("username = "+username+", calID = "+calID+", chk = "+chk);
+		
+		if (chk == true) {
+			user.addShownObservedCalendar(calID);
+		}
+		else {
+			user.removeShownObservedCalendar(calID);
+		}
+		
+		showTest(calendarId, user.name, calendarName, s_date, dday, mmonth, yyear, message);
+	}
 }

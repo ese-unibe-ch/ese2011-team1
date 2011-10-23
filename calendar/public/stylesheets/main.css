@@ -37,7 +37,8 @@ p,li {
 }
 
 table#calendar {
-  width: 80%;
+  float:left;
+  width: 70%;
   table-layout: fixed;
   vertical-align: middle;
   margin-bottom: 30px;
@@ -84,5 +85,12 @@ table#calendar a {
 }
 
 #nextMonth {
-  right: 20%;
+  right: 30%;
 }
+
+form#calendarform {
+  width: 15%;
+  right: 20px;
+  margin-bottom: 30px;
+}
+

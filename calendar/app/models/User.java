@@ -7,7 +7,8 @@ public class User {
 	public LinkedList<Calendar> calendar;
 	
 	// in this list we store all calendars of other user which we want to display in our calendar
-	public LinkedList<Calendar> observedCalendars; 
+	public LinkedList<Calendar> observedCalendars;
+	public LinkedList<Long> shownObservedCalendars;
 	public String password;
 	public long id;
 	private static long counter;
@@ -24,6 +25,7 @@ public class User {
 
 		calendar = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
+		shownObservedCalendars = new LinkedList<Long>();
 		
 		// each user x has a default a calender called: x's first calendar
 		calendar.add(new Calendar(name + "'s first calendar", this));
@@ -82,8 +84,46 @@ public class User {
 	 * add a new Calendar of another user into our oberserved calendar list. 
 	 */
 	
-	public void addCalendarToObervedCalendars(Calendar cal){
+	public void addObservedCalendar(Calendar cal){
 		observedCalendars.add(cal);
+	}
+	
+	public void removeObservedCalendar(Calendar cal){
+		observedCalendars.remove(cal);
+	}
+	
+	/**
+	 * Adds a new ID from a observed calendar to be shown.
+	 */
+	public void addShownObservedCalendar(long calID){
+		shownObservedCalendars.add(calID);
+	}
+	
+	/**
+	 * Adds a new ID for a observed calendar to be shown.
+	 */
+	public void removeShownObservedCalendar(long calID){
+		shownObservedCalendars.remove(calID);
+	}
+	
+	/**
+	 * Returns true, if calendar with given calID is observed, false otherwise.
+	 * 
+	 */
+	public boolean isCalendarObserved(long calID) {
+		for (Calendar cal : observedCalendars) {
+			if (cal.id == calID)
+				return true;
+		}
+		return false;
+	}
+	
+	public LinkedList<Calendar> getObservedCalendars() {
+		return observedCalendars;
+	}
+	
+	public LinkedList<Long> getShownObservedCalendars() {
+		return shownObservedCalendars;
 	}
 
 }

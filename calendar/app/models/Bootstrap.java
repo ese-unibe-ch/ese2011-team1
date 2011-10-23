@@ -11,26 +11,29 @@ public class Bootstrap extends Job {
 	public void doJob() {
 		// Event(Date start, Date end, String name, boolean is_visible)
 
-		User user;
+		User simplay;
 		Event event;
 		Date now = new Date();
 		// dataset 1
-		user = new User("simplay", "123");
+		simplay = new User("simplay", "123");
 		event = new Event(now, now, "abc", true, false, 0);
-		user.getdefaultCalendar().addEvent(event);
+		simplay.getdefaultCalendar().addEvent(event);
 
-		Calendar cal = new Calendar("2nd simplay", user);
-		user.addCalendar(cal);
+		Calendar cal = new Calendar("2nd simplay", simplay);
+		simplay.addCalendar(cal);
 
-		cal = new Calendar("3rd simplay", user);
-		user.addCalendar(cal);
-		Database.addUser(user);
+		cal = new Calendar("3rd simplay", simplay);
+		simplay.addCalendar(cal);
+		Database.addUser(simplay);
 
 		// dataset 2
+		User user;
 		user = new User("mib", "1337");
 		event = new Event(now, now, "mib_ev1", true, false, 0);
 		user.getdefaultCalendar().addEvent(event);
-
+		simplay.addObservedCalendar(user.getdefaultCalendar());
+		simplay.addShownObservedCalendar(4);
+		
 		event = new Event(now, now, "mib_ev2", false, false, 0);
 		user.getdefaultCalendar().addEvent(event);
 
@@ -55,7 +58,8 @@ public class Bootstrap extends Job {
 		user = new User("simon", "1337");
 		event = new Event(now, now, "simonb_ev1", true, false, 0);
 		user.getdefaultCalendar().addEvent(event);
-
+		simplay.addObservedCalendar(user.getdefaultCalendar());
+		
 		event = new Event(now, now, "simon_ev2", false, false, 0);
 		user.getdefaultCalendar().addEvent(event);
 
