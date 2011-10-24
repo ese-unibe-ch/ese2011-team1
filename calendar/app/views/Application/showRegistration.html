@@ -1,0 +1,31 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Registration:</h1>
+
+#{if flash.error}
+	<p style="color:#c00">
+		${flash.error}
+	</p>
+#{/if}
+
+#{form @Application.RegUser()}
+<p>
+	<label for="name"> Name: </label>
+	<input type="text" name="name" id="name" value ="${flash.name}" />
+	<span class ="error" style="color:#c00"> #{error 'name' /}</span>
+</p>
+<p>
+	<label for="password"> Password: </label>
+	<input type="password" name="password" id="password" value ="${flash.password}"/ >
+	<span class ="error" style="color:#c00"> #{error 'password' /}</span>
+</p>
+<hr />
+<p>
+	<input type="submit" value="Submit"/>
+</p>
+
+<p>
+	<a href="@{Application.index()}">Home</a>
+</p>
+#{/form}

@@ -439,44 +439,8 @@ public class Calendar {
 	 * remove all repeating dates after cancelDate, which are already calculated.
 	 * Mark all such repeating events till and with canelDate as NOT repeating. 
 	 */
-	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent){
-		System.out.println("cancel from this event: " +cancelEvent.start);
-		boolean flag = true;
-		Date cursor = cancelEvent.start;
-		int intervall = cancelEvent.intervall;
-		Event from = getEventById(cancelEvent.baseID);
-		LinkedList<Event> res = getEventRepeatingFromTo(from, cancelEvent.start);
-		res.add(cancelEvent);
-		for(Event e : res)e.is_repeating = false;
-		// output of events
+	public void cancelRepeatingEventRepetitionFromDate(Date cancelDate){
 		
-		for(Event e : res)System.out.println(e.start);		
-		removeRepeatingEvents(cancelEvent);
-		for(Event e : res)addEvent(e);
-	}
-	/**
-	 * Starting from an Event "from" put in from.interval steps till "to" events in the calendar
-	 * @param from
-	 * @param to
-	 */
-	public LinkedList<Event> getEventRepeatingFromTo(Event from, Date to){
-		Event cursor = from;
-		LinkedList<Event> result = new LinkedList<Event>();
-		while(true){
-			if(		cursor.start.getYear() ==to.getYear() &&
-					cursor.start.getMonth() ==to.getMonth() &&
-					cursor.start.getDate() == to.getDate() &&
-					cursor.start.getMinutes() == to.getMinutes() &&
-					cursor.start.getSeconds() == to.getSeconds()// &&				
-			){
-				break;
-			}
-			
-			result.add(cursor);
-			// get next cursor
-			cursor = cursor.getNextRepetitionEvent();
-		}
-		return result;
 	}
 	
 	public PriorityQueue<Event> getEvents() {

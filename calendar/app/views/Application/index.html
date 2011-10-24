@@ -1,0 +1,69 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Calendar Team1 - Hello ${me.name}</h1>
+
+<h2>News:</h2>
+<h3><u>Log [week1]:</u></h3>
+<li>fixed calendar view </li>
+<li>added repeating events</li>
+<li>added internal user registration</li>
+<li>improved date format, html- and css files</li>
+<h2>Administration</h2>
+<p>
+	
+		<a href="@{Application.showMe(s_date)}))}"> show my calendars</a>   <br>
+		<!-- remove soon  <a href="@{Application.showTest(me.getdefaultCalendar().getId(),me.name ,me.getdefaultCalendar().getName(), s_date)}"> test</a>   <br> -->
+	    <!-- <a id="newUser" href="#">Add new user</a> <br> -->
+	    <a href="@{Application.showRegistration()}"> Registrate new User</a>   <br>
+	    <a href="@{Secure.login()}"> Log in</a>   <br>
+		<a href="@{Secure.logout()}">Log out</a>  <br>
+	
+</p>
+
+#{ifnot users}
+    <p>
+        no users available
+    </p>
+#{/ifnot}
+
+<p>
+<b>Other Users:</b>
+<ul>
+    #{list items:users, as:'data'}
+        #{ifnot data==me}
+	        <li>
+	            	<a href="@{Application.showCalendars(data.name, s_date)}">${data.name}</a>        
+	        </li>
+        #{/ifnot}
+    #{/list}
+</ul>
+</p>
+
+<!-- remove soon --> 
+<script type="text/javascript" charset="utf-8">
+    $('#newUser').click(function(){
+        $.post('@{newUser()}', {name: prompt('Task title ?')},function(user){
+        	$('ul').prepend(
+        			   '<li>'+user.name+'</li>'		
+        	)	
+        }, 'json')  
+    })
+</script>
+
+#{form @Application.searchForUser()}
+<p>
+	<label><b>Search User:</b></label>
+	<br>
+		<input type = "text" name = "userName" id = "userName"/>
+		<input type = "submit" value = "Search"/>
+	</br>
+</p>
+#{if flash.error}
+	<p style="color:#c00">
+		${flash.error}
+	</p>
+#{/if}
+#{/form}
+
+

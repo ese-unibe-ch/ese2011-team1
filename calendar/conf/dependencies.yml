@@ -1,0 +1,5 @@
+# Application dependencies
+
+require:
+    require:
+        - play -> secure

@@ -1,0 +1,12 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+<h1>${me.name}'s Calendars:</h1>
+<p>
+	#{list items:calendars, as:'calendar'}
+		<p>
+			<li> <a href="@{Application.showTest(calendar.getId(),me.name ,calendar.name,s_date,0,0,0)})}"> ${calendar.name}</a></li>
+		</p>
+	#{/list}
+	
+<a href="@{Application.index()}">Home</a>
+<a href="@{Secure.logout()}">Log out</a>

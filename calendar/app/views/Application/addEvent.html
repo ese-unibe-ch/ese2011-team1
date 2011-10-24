@@ -1,0 +1,35 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>${me.name}'s Calendars:</h1>
+	#{if message}
+		<font style = "font-size: 30px; color: red;">${message}</font>
+	#{/if}
+	<p> Date Format: <b> dd/MM/yyyy, HH:mm </b> , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 <br> 
+	Adding a new Event </p>
+	${calendarID}
+	<form action="@{Application.createEvent()}" method="GET">
+		<ul>
+			<input type="hidden" name="calendarID" value="${calendarID}" />
+			<li>Name:</li><input type="text" name="name" value="" />
+			<li>Start: </li><input type="text" name="start" value="dd/MM/yyyy, HH:mm" />
+			<li>End: </li><input type="text" name="end" value="dd/MM/yyyy, HH:mm" />
+			<li>Is Public:</li><input type="checkbox" name="is_visible" />	
+			<br> Repeatable:
+			<select name="is_repeated">
+				<option value="0">-</option>
+				<option value="1">daily</option>
+				<option value="7">weekly</option>
+				<option value="30">monthly</option>
+				<option value="365">yearly 
+			</select>	
+			<input type="hidden" name="s_date" value="${s_date}" />
+			<input type="hidden" name="dday" value="${dday}" />
+			<input type="hidden" name="mmonth" value="${mmonth}" />
+			<input type="hidden" name="yyear" value="${yyear}" />
+		</ul>
+		<input type="submit" value="Save" />
+	</form>
+
+<a href="@{Application.index()}">Home</a>
+<a href="@{Secure.logout()}">Log out</a>

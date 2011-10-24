@@ -1,0 +1,96 @@
+a {
+	font-style: italic;
+}
+
+A:link {
+	color: blue;
+}
+A:visited {
+	color: blue;
+}
+A:active {
+	color: blue;
+}
+A:hover {
+	text-decoration: underline; color: silver;
+}
+
+li {
+	list-style-type: disc;
+}
+
+body { 
+	background-color:#FFFFFF;
+	margin-left:100px;
+}
+
+* { 
+	color:black;
+}
+
+p,li { 
+	font-size:100%;
+    line-height:100%;
+    font-family:Helvetica,Arial,sans-serif;
+    letter-spacing:0.2em;
+    word-spacing:0.1em; 
+}
+
+table#calendar {
+  float:left;
+  width: 70%;
+  table-layout: fixed;
+  vertical-align: middle;
+  margin-bottom: 30px;
+}
+
+table#calendar a {
+  font-style:normal;
+  display: block;
+  position: relative;
+  line-height: 50px;
+  text-decoration: none;
+}
+
+table#calendar td {
+  text-align: center;
+  background-color: #FFF;
+  height: 50px;
+  border: solid 1px #000;
+}
+
+table#calendar td.title {
+  background-color: #F0F0F0;
+  font-weight: bold;
+}
+
+table#calendar td.selected {
+  background-color: #FFFACD;
+}
+
+table#calendar td.today {
+  background-color: #ADD8E6;
+}
+
+table#calendar a {
+  font-weight: bold;
+}
+
+#prevMonth, #nextMonth {
+  position: absolute;
+}
+
+#prevMonth {
+  left: 20px;
+}
+
+#nextMonth {
+  right: 30%;
+}
+
+form#calendarform {
+  width: 15%;
+  right: 20px;
+  margin-bottom: 30px;
+}
+
