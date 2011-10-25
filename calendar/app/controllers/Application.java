@@ -306,7 +306,7 @@ public class Application extends Controller {
 		
 		for (Calendar observedCal : observedCalendars) {
 			if (shownObservedCalendars.contains(observedCal.getId())) {
-				events.addAll(observedCal.getEvents());
+				events.addAll(observedCal.getEventsOfDay(dday, mmonth, yyear, me));
 			}
 		}
 		

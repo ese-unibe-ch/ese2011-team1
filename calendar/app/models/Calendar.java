@@ -226,6 +226,21 @@ public class Calendar {
 				}
 			}
 		}
+		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
+		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
+		for (Calendar observedCal : observedCals) {
+			if (shownObservedCals.contains(observedCal.getId())) {
+				for (Event e : observedCal.getEvents()) {
+					if(is_owner || e.is_visible){
+						if (e.start.getDate() == comp.getDate()
+								&& e.start.getMonth() == comp.getMonth()
+								&& e.start.getYear() == comp.getYear()) {
+							flag = true;
+						}
+					}
+				}
+			}
+		}
 		return flag;
 	}
 	
