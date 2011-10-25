@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Comparable<Event> {
+	public User owner;
 	public Date start;
 	public Date end;
 	public String name;
@@ -27,8 +28,9 @@ public class Event implements Comparable<Event> {
 	 * @param isRepeated flag, used for repeating Events
 	 * @param intervall determines repetition interval. Possibilities: DAY (1), WEEK(7), MONTH(30), YEAR(265)
 	 */
-	public Event(Date start, Date end, String name, boolean is_visible,
+	public Event(User owner, Date start, Date end, String name, boolean is_visible,
 			boolean is_repeating, int intervall) {
+		this.owner = owner;
 		this.start = start;
 		this.end = end;
 		this.name = name;
@@ -165,7 +167,7 @@ public class Event implements Comparable<Event> {
 				nextRepEndDate = new Date(end.getYear()+1, end.getMonth(), end.getDate(), end.getHours(), end.getMinutes());
 			}
 		}
-		Event newEvent = new Event(nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
+		Event newEvent = new Event(this.owner, nextRepStartDate, nextRepEndDate, this.name, this.is_visible, this.is_repeating, this.intervall);
 		newEvent.setBaseID(this.baseID);
 		return newEvent;
 	}
@@ -199,6 +201,10 @@ public class Event implements Comparable<Event> {
 			}
 		}
 		return repeatingEventOnDay;
+	}
+	
+	public String toString() {
+		return this.name;
 	}
 
 }

@@ -93,20 +93,23 @@ public class Application extends Controller {
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
 
-	public static void showEventsOfDay(long calendarId, String username,
-			String calendarName, int day, int month, int year) {
-		User me = Database.users.get(Security.connected());
-		User user = Database.users.get(username);
-		// Date d = new Date(1,1,1);
-		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventsOfDay(day, month, year, me);
-
-		Calendar calendars = user.getCalendarById(calendarId);
-		LinkedList<Event> events = allVisibleEvents;
-
-		render(me, user, events, calendarName, calendars, calendarId, day,
-				month, year);
-	}
+	/*
+	 * I THINK WE COULD DELETE THIS
+	 */
+//	public static void showEventsOfDay(long calendarId, String username,
+//			String calendarName, int day, int month, int year) {
+//		User me = Database.users.get(Security.connected());
+//		User user = Database.users.get(username);
+//		// Date d = new Date(1,1,1);
+//		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
+//				.getEventsOfDay(day, month, year, me);
+//
+//		Calendar calendars = user.getCalendarById(calendarId);
+//		LinkedList<Event> events = allVisibleEvents;
+//
+//		render(me, user, events, calendarName, calendars, calendarId, day,
+//				month, year);
+//	}
 	
 	public static void showRegistration()
     {
@@ -143,7 +146,7 @@ public class Application extends Controller {
 		if (!name.isEmpty()) {
 			// mache user mit default daten:
 			user = new User(name, "123");
-			event = new Event(now, now, "abc", true, false, 0);
+			event = new Event(user, now, now, "abc", true, false, 0);
 			// user.calendar.
 			user.getdefaultCalendar().addEvent(event);
 
@@ -173,7 +176,7 @@ public class Application extends Controller {
 		}
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
-		Event e = new Event(d_start, d_end, name, is_visible, repeated,
+		Event e = new Event(me, d_start, d_end, name, is_visible, repeated,
 				intervall);
 
 		calendar.addEvent(e);
@@ -301,14 +304,10 @@ public class Application extends Controller {
 		 * 
 		 * IDs von markierten, befreundeten Kalendern sind in shownObservedCalendars gespeichert.
 		 * Die Events dieser Kalender müssen nun noch zu den angezeigten Events hinzugefügt werden.
+		 * => werden in Calendar::hasEventOnDay und Calendar::getEventOnDay hinzugefügt,
+		 * löscht sich anscheinend auch wieder von selbst. Ist aber rechenintensiv.
 		 * 
 		 */
-		
-		for (Calendar observedCal : observedCalendars) {
-			if (shownObservedCalendars.contains(observedCal.getId())) {
-				events.addAll(observedCal.getEventsOfDay(dday, mmonth, yyear, me));
-			}
-		}
 		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 
 				today, events, calendarName, calendars, calendarId, dday, mmonth, 

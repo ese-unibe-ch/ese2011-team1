@@ -186,8 +186,16 @@ public class Calendar {
 
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
-				events.addAll(observedCal.getEvents());
-				repeatingEvents.addAll(observedCal.getRepeatingEvents());
+				for (Event observedEvent : observedCal.getEvents()) {
+					if (observedEvent.isVisible() && !events.contains(observedEvent)) {
+						events.add(observedEvent);
+					}
+				}
+				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
+					if (repeatingObservedEvent.isVisible() && !repeatingEvents.contains(repeatingObservedEvent)) {
+						repeatingEvents.add(repeatingObservedEvent);
+					}
+				}
 			}
 		}
 		
@@ -199,6 +207,7 @@ public class Calendar {
 				if (e.start.getDate() == comp.getDate()
 						&& e.start.getMonth() == comp.getMonth()
 						&& e.start.getYear() == comp.getYear()) {
+					if (!result.contains(e))
 						result.add(e);
 				}
 			}
@@ -216,7 +225,6 @@ public class Calendar {
 			}
 		}
 		
-
 		return result;
 	}
 	
@@ -237,12 +245,21 @@ public class Calendar {
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
 		LinkedList<Event> repeatingEvents = new LinkedList<Event>(this.repeatingEvents);
-		PriorityQueue<Event> events = new PriorityQueue<Event>(this.events);
+		PriorityQueue<Event> events = new PriorityQueue<Event>();
+		events.addAll(this.events);
 
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
-				events.addAll(observedCal.getEvents());
-				repeatingEvents.addAll(observedCal.getRepeatingEvents());
+				for (Event observedEvent : observedCal.getEvents()) {
+					if (observedEvent.isVisible()) {
+						events.add(observedEvent);
+					}
+				}
+				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
+					if (repeatingObservedEvent.isVisible()) {
+						events.add(repeatingObservedEvent);
+					}
+				}
 			}
 		}
 		boolean is_owner = owner == requester;
@@ -352,7 +369,7 @@ public class Calendar {
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),e.start.getMonth(), e.start.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
 					Date nextRepEndDate = new Date(e.end.getYear(), e.end.getMonth(), e.end.getDate() + intervall, e.start.getHours(), e.start.getMinutes());
-					Event nextEvent = new Event(nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
+					Event nextEvent = new Event(this.owner, nextRepStartDate, nextRepEndDate, e.name, e.is_visible, true, intervall);
 					nextEvent.baseID = nextEvent.id;
 					
 					//System.out.println("old: "+e.start + " new: "+nextRepStartDate);
@@ -430,7 +447,7 @@ public class Calendar {
 					// equals all events previous victim
 					for(Date d : previousDates){
 						// ERROR end NOT equal d => fix it later!!!
-						Event ev = new Event(d, d, e.name, e.is_visible, false, intervall);
+						Event ev = new Event(this.owner, d, d, e.name, e.is_visible, false, intervall);
 						this.events.add(ev);
 					}
 					
