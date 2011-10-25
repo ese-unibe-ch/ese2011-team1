@@ -234,7 +234,7 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);	
 		Date cancelDate = calendar.getEventById(eventID).start;
-		calendar.cancelRepeatingEventRepetitionFromDate(cancelDate);
+		calendar.cancelRepeatingEventRepetitionFromDate(calendar.getEventById(eventID));
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 	
@@ -303,6 +303,12 @@ public class Application extends Controller {
 		 * Die Events dieser Kalender müssen nun noch zu den angezeigten Events hinzugefügt werden.
 		 * 
 		 */
+		
+		for (Calendar observedCal : observedCalendars) {
+			if (shownObservedCalendars.contains(observedCal.getId())) {
+				events.addAll(observedCal.getEvents());
+			}
+		}
 		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 
 				today, events, calendarName, calendars, calendarId, dday, mmonth, 
