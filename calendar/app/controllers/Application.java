@@ -229,6 +229,7 @@ public class Application extends Controller {
 	public static void removeEvent(long calendarID, long eventID, String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
+		System.out.println("event ID: " + eventID);
 		calendar.removeEvent(eventID);
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
@@ -305,9 +306,13 @@ public class Application extends Controller {
 		 * IDs von markierten, befreundeten Kalendern sind in shownObservedCalendars gespeichert.
 		 * Die Events dieser Kalender müssen nun noch zu den angezeigten Events hinzugefügt werden.
 		 * => werden in Calendar::hasEventOnDay und Calendar::getEventOnDay hinzugefügt,
-		 * löscht sich anscheinend auch wieder von selbst. Ist aber rechenintensiv.
+		 * Werden hier gelöscht, damit sie nach dem unchecken der anderen Calendars nicht mehr angezeigt werden.
 		 * 
 		 */
+		PriorityQueue<Event> calEvents = calendar.getEvents();
+		for (Calendar c : observedCalendars) {
+			calEvents.removeAll(c.getEvents());
+		}
 		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 
 				today, events, calendarName, calendars, calendarId, dday, mmonth, 

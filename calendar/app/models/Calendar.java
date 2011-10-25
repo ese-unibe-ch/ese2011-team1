@@ -224,7 +224,11 @@ public class Calendar {
 				}
 			}
 		}
-		
+		for (Event e : result) {
+			if (!this.events.contains(e)) {
+				this.events.add(e);
+			}
+		}
 		return result;
 	}
 	
@@ -245,8 +249,7 @@ public class Calendar {
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
 		LinkedList<Event> repeatingEvents = new LinkedList<Event>(this.repeatingEvents);
-		PriorityQueue<Event> events = new PriorityQueue<Event>();
-		events.addAll(this.events);
+		PriorityQueue<Event> events = new PriorityQueue<Event>(this.events);
 
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
@@ -257,7 +260,7 @@ public class Calendar {
 				}
 				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
 					if (repeatingObservedEvent.isVisible()) {
-						events.add(repeatingObservedEvent);
+						repeatingEvents.add(repeatingObservedEvent);
 					}
 				}
 			}
