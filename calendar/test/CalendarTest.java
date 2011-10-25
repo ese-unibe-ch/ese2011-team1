@@ -1,17 +1,16 @@
-import static org.junit.Assert.*;
-
-import models.*;
-
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+
+import models.Calendar;
+import models.Event;
+import models.User;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import play.test.UnitTest;
 
-public class CalendarTest extends UnitTest{
+public class CalendarTest extends UnitTest {
 	private User owner;
 	private Calendar calendar;
 	private Event event;
@@ -21,39 +20,42 @@ public class CalendarTest extends UnitTest{
 	public void setUp() throws Exception {
 		this.owner = new User("hans", "123");
 		this.calendar = new Calendar("Calendar", this.owner);
-		this.event = new Event(new Date(1,1,1), new Date(1,1,2),"anEvent", false, false, 0);
-		this.repeatingEvent = new Event(new Date(1,1,1), new Date(1,1,2),"repeatingEvent", false, true, 7);
+		this.event = new Event(owner, new Date(1, 1, 1), new Date(1, 1, 2),
+				"anEvent", false, false, 0);
+		this.repeatingEvent = new Event(owner, new Date(1, 1, 1), new Date(1,
+				1, 2), "repeatingEvent", false, true, 7);
 	}
-	
+
 	@Test
 	public void testGetName() {
 		assertEquals("Calendar", calendar.getName());
 	}
-	
+
 	@Test
 	public void testGetOwner() {
 		assertEquals(owner, calendar.getOwner());
 	}
-	
+
 	@Test
 	public void testGetId() {
 		long id = calendar.id;
 		assertEquals(id, calendar.getId());
 	}
-	
+
 	@Test
 	public void testGetEventById() {
 		long id = event.getId();
 		calendar.addEvent(event);
 		assertEquals(event, calendar.getEventById(id));
 	}
-	
+
 	@Test
 	public void testIterator1() {
-		Iterator<Event> events = calendar.getEventList(new Date(1,1,1), owner);
+		Iterator<Event> events = calendar
+				.getEventList(new Date(1, 1, 1), owner);
 		assertNotNull(events);
 	}
-	
+
 	@Test
 	public void testAddEvent() {
 		assertTrue(calendar.getEvents().isEmpty());
@@ -62,7 +64,7 @@ public class CalendarTest extends UnitTest{
 		assertTrue(calendar.getEvents().contains(event));
 		assertFalse(calendar.getRepeatingEvents().contains(event));
 	}
-	
+
 	@Test
 	public void testAddRepeatingEvent() {
 		assertTrue(calendar.getEvents().isEmpty());
@@ -72,7 +74,7 @@ public class CalendarTest extends UnitTest{
 		assertTrue(calendar.getEvents().contains(repeatingEvent));
 		assertTrue(calendar.getRepeatingEvents().contains(repeatingEvent));
 	}
-	
+
 	@Test
 	public void testAddToRepeated() {
 		assertTrue(calendar.getEvents().isEmpty());
@@ -81,7 +83,7 @@ public class CalendarTest extends UnitTest{
 		assertTrue(calendar.getEvents().isEmpty());
 		assertTrue(calendar.getRepeatingEvents().contains(repeatingEvent));
 	}
-	
+
 	@Test
 	public void testRemoveEvent() {
 		calendar.addEvent(event);
@@ -90,7 +92,7 @@ public class CalendarTest extends UnitTest{
 		assertTrue(calendar.getEvents().isEmpty());
 		assertFalse(calendar.getEvents().contains(event));
 	}
-	
+
 	@Test
 	public void testRemoveRepeatedEvents() {
 		assertTrue(calendar.getEvents().isEmpty());
