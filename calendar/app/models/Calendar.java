@@ -178,8 +178,23 @@ public class Calendar {
 			comp = dateFormat.parse(dateString);
 		} catch (ParseException e) {
 		}
+		
+		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
+		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
+		LinkedList<Event> repeatingEvents = new LinkedList<Event>(this.repeatingEvents);
+		PriorityQueue<Event> events = new PriorityQueue<Event>(this.events);
+
+		for (Calendar observedCal : observedCals) {
+			if (shownObservedCals.contains(observedCal.getId())) {
+				events.addAll(observedCal.getEvents());
+				repeatingEvents.addAll(observedCal.getRepeatingEvents());
+			}
+		}
+		
+		
+		
 		boolean is_owner = owner == requester;
-		for (Event e : events)
+		for (Event e : events) {
 			if(is_owner || e.is_visible){
 				if (e.start.getDate() == comp.getDate()
 						&& e.start.getMonth() == comp.getMonth()
@@ -187,6 +202,20 @@ public class Calendar {
 						result.add(e);
 				}
 			}
+		}
+		
+		for (Event repeatingEvent: repeatingEvents) {
+			if(is_owner || repeatingEvent.is_visible){
+				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
+				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(events), repeatingEventOnDay)) {
+					if(!repeatingEventOnDay.isDirty){
+						//System.out.println(repeatingEventOnDay.start);
+						if(!compareCalendarEvents(repeatingEventOnDay)) result.add(repeatingEventOnDay);
+					}
+				}
+			}
+		}
+		
 
 		return result;
 	}
@@ -204,11 +233,23 @@ public class Calendar {
 			
 		} catch (ParseException e) {
 		}
+		
+		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
+		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
+		LinkedList<Event> repeatingEvents = new LinkedList<Event>(this.repeatingEvents);
+		PriorityQueue<Event> events = new PriorityQueue<Event>(this.events);
+
+		for (Calendar observedCal : observedCals) {
+			if (shownObservedCals.contains(observedCal.getId())) {
+				events.addAll(observedCal.getEvents());
+				repeatingEvents.addAll(observedCal.getRepeatingEvents());
+			}
+		}
 		boolean is_owner = owner == requester;
-		for (Event repeatingEvent: this.repeatingEvents) {
+		for (Event repeatingEvent: repeatingEvents) {
 			if(is_owner || repeatingEvent.is_visible){
 				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
-				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(this.events), repeatingEventOnDay)) {
+				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(events), repeatingEventOnDay)) {
 					if(!repeatingEventOnDay.isDirty){
 						//System.out.println(repeatingEventOnDay.start);
 						if(!compareCalendarEvents(repeatingEventOnDay)) events.add(repeatingEventOnDay);
@@ -223,21 +264,6 @@ public class Calendar {
 						&& e.start.getMonth() == comp.getMonth()
 						&& e.start.getYear() == comp.getYear()) {
 					flag = true;
-				}
-			}
-		}
-		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
-		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
-		for (Calendar observedCal : observedCals) {
-			if (shownObservedCals.contains(observedCal.getId())) {
-				for (Event e : observedCal.getEvents()) {
-					if(is_owner || e.is_visible){
-						if (e.start.getDate() == comp.getDate()
-								&& e.start.getMonth() == comp.getMonth()
-								&& e.start.getYear() == comp.getYear()) {
-							flag = true;
-						}
-					}
 				}
 			}
 		}
