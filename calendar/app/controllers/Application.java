@@ -51,6 +51,30 @@ public class Application extends Controller {
 		}
 		render(me, user, calendars, s_date);
 	}
+	
+	public static void searchForUser(String userName ,String s_date)
+	{
+		User me = Database.users.get(Security.connected());
+		User user = Database.users.get(userName);
+			
+		if(user == null)
+		{
+			if(userName.length() == 0)
+				flash.error("Please enter Name!");
+			else
+				flash.error("User (" + userName + ") not found!");
+			
+			index();
+		}
+		else
+		{
+			// if a user searches himself (you never know)
+			if(me.getName().equals(user.getName()))
+				showMe(s_date);
+
+			showCalendars(userName, s_date);
+		}
+	}
 
 	public static void showEvents(long calendarId, String username,
 			String calendarName) {
@@ -210,7 +234,7 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);	
 		Date cancelDate = calendar.getEventById(eventID).start;
-		calendar.cancelRepeatingEventRepetitionFromDate(cancelDate);
+		calendar.cancelRepeatingEventRepetitionFromDate(calendar.getEventById(eventID));
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth, yyear, message);
 	}
 	
@@ -279,6 +303,12 @@ public class Application extends Controller {
 		 * Die Events dieser Kalender müssen nun noch zu den angezeigten Events hinzugefügt werden.
 		 * 
 		 */
+		
+		for (Calendar observedCal : observedCalendars) {
+			if (shownObservedCalendars.contains(observedCal.getId())) {
+				events.addAll(observedCal.getEvents());
+			}
+		}
 		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 
 				today, events, calendarName, calendars, calendarId, dday, mmonth, 

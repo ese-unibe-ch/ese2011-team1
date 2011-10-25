@@ -51,4 +51,19 @@
     })
 </script>
 
+#{form @Application.searchForUser()}
+<p>
+	<label><b>Search User:</b></label>
+	<br>
+		<input type = "text" name = "userName" id = "userName"/>
+		<input type = "submit" value = "Search"/>
+	</br>
+</p>
+#{if flash.error}
+	<p style="color:#c00">
+		${flash.error}
+	</p>
+#{/if}
+#{/form}
+
 
