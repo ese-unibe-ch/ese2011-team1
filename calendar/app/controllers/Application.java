@@ -311,7 +311,11 @@ public class Application extends Controller {
 		 */
 		PriorityQueue<Event> calEvents = calendar.getEvents();
 		for (Calendar c : observedCalendars) {
-			calEvents.removeAll(c.getEvents());
+			for (Event e : c.getEvents()) {
+				if (e.owner != user && e.owner != me) {
+					calEvents.remove(e);
+				}
+			}
 		}
 		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next, s_date, 

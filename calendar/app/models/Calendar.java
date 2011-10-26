@@ -218,8 +218,9 @@ public class Calendar {
 				Event repeatingEventOnDay = repeatingEvent.getRepetitionOnDate(comp);
 				if (repeatingEventOnDay != null && !containsSameElement(new LinkedList<Event>(events), repeatingEventOnDay)) {
 					if(!repeatingEventOnDay.isDirty){
-						//System.out.println(repeatingEventOnDay.start);
-						if(!compareCalendarEvents(repeatingEventOnDay)) result.add(repeatingEventOnDay);
+						if(!compareCalendarEvents(repeatingEventOnDay) && !result.contains(repeatingEventOnDay)) {
+							result.add(repeatingEventOnDay);
+						}
 					}
 				}
 			}
