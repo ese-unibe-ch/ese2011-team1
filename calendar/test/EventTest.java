@@ -1,6 +1,7 @@
 import java.util.Date;
 
 import models.Event;
+import models.Event.Visibility;
 import models.User;
 
 import org.junit.Before;
@@ -18,9 +19,9 @@ public class EventTest extends UnitTest {
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234");
 		this.event = new Event(user, new Date(1, 1, 1), new Date(1, 1, 2),
-				"anEvent", false, false, 0);
+				"anEvent", Visibility.PRIVATE, false, 0);
 		this.repeatingEvent = new Event(user, new Date(1, 1, 1), new Date(1, 1,
-				1), "repeating", false, true, 7);
+				1), "repeating", Visibility.PRIVATE, true, 7);
 	}
 
 	@Test
@@ -40,14 +41,14 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testisVisible() {
-		assertFalse(event.isVisible());
+		assertFalse(event.getVisibility() != Visibility.PRIVATE);
 	}
 
 	@Test
 	public void testGetInterVall() {
 		int intervall = 7;
 		Event repeatingEvent = new Event(user, new Date(), new Date(), "test",
-				false, true, intervall);
+				Visibility.PRIVATE, true, intervall);
 		assertEquals(intervall, repeatingEvent.getIntervall());
 	}
 
@@ -69,7 +70,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervallMonth() {
 		repeatingEvent.edit(repeatingEvent.start, repeatingEvent.end,
-				repeatingEvent.name, repeatingEvent.is_visible,
+				repeatingEvent.name, repeatingEvent.visibility,
 				repeatingEvent.is_repeating, 30);
 		assertEquals(repeatingEvent.getIntervall(), 30);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
@@ -85,7 +86,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervallYear() {
 		repeatingEvent.edit(repeatingEvent.start, repeatingEvent.end,
-				repeatingEvent.name, repeatingEvent.is_visible,
+				repeatingEvent.name, repeatingEvent.visibility,
 				repeatingEvent.is_repeating, 265);
 		assertEquals(repeatingEvent.getIntervall(), 265);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();

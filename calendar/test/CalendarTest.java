@@ -3,6 +3,7 @@ import java.util.Iterator;
 
 import models.Calendar;
 import models.Event;
+import models.Event.Visibility;
 import models.User;
 
 import org.junit.Before;
@@ -21,9 +22,9 @@ public class CalendarTest extends UnitTest {
 		this.owner = new User("hans", "123");
 		this.calendar = new Calendar("Calendar", this.owner);
 		this.event = new Event(owner, new Date(1, 1, 1), new Date(1, 1, 2),
-				"anEvent", false, false, 0);
+				"anEvent", Visibility.PRIVATE, false, 0);
 		this.repeatingEvent = new Event(owner, new Date(1, 1, 1), new Date(1,
-				1, 2), "repeatingEvent", false, true, 7);
+				1, 2), "repeatingEvent", Visibility.PRIVATE, true, 7);
 	}
 
 	@Test
