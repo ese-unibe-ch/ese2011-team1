@@ -150,7 +150,7 @@ public class Application extends Controller {
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, String is_repeated,
-			String s_date, int dday, int mmonth, int yyear) {
+			String description, String s_date, int dday, int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
