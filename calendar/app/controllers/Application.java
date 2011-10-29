@@ -170,7 +170,7 @@ public class Application extends Controller {
 		int intervall = Integer.parseInt(is_repeated);
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
 				intervall);
-
+		e.editDescription(description);
 		calendar.addEvent(e);
 		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
@@ -179,7 +179,8 @@ public class Application extends Controller {
 	public static void saveEditedEvent(@Required long eventID,
 			@Required long calendarID, @Required String name,
 			@Required String start, @Required String end,
-			Visibility visibility, String is_repeated, String s_date, int dday,
+			Visibility visibility, String is_repeated, 
+			String description, String s_date, int dday, 
 			int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
@@ -192,6 +193,7 @@ public class Application extends Controller {
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event event = calendar.getEventById(eventID);
+		event.editDescription(description);
 		if (repeated) {
 			calendar.addToRepeated(event);
 		}
