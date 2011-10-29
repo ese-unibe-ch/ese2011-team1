@@ -251,7 +251,29 @@ public class Calendar {
 		}
 		return result;
 	}
-
+	
+	// return a list of events which have the same baseId
+	// if an event is not repeating then this method returns
+	// the same event like getEventById(id). 
+	// We for the events in this.events and this.repeatingEvents
+	public LinkedList<Event> getSameBaseIdEvents(long baseId){
+		LinkedList<Event> result = new LinkedList<Event>();
+		for(Event event : this.events){
+			if(event.baseID==baseId){
+				result.add(event);
+			}
+		}
+		
+		for(Event event : this.repeatingEvents){
+			if(event.baseID==baseId){
+				result.add(event);
+			}
+		}
+		// we should sort this list by its event's start dates
+		// this is a ToDo
+		return result;
+	}
+	
 	// mache hier auch reperatur wengen event adden!!!!
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
 		boolean flag = false;
@@ -397,7 +419,14 @@ public class Calendar {
 		// if our victim is a repeating event
 		if (getEventById(id).is_repeating) {
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			System.out.println("i am repeating");
+			//System.out.println("i am repeating");
+			Event sentinel = getEventById(id);
+			LinkedList<Event> interestingevents = getSameBaseIdEvents(sentinel.baseID);
+			
+			for(Event event : interestingevents){
+				
+			}
+			
 			for (Event e : events) {
 				if (e.getId() == id) {
 
@@ -415,6 +444,7 @@ public class Calendar {
 					// calculate next date after victim event
 					Event baseEvent = getEventById(e.baseID); // korrektes
 																// nächstes date
+					
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),
 							e.start.getMonth(), e.start.getDate() + intervall,
@@ -459,19 +489,16 @@ public class Calendar {
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
 								
+								// get for each event before victim its event description 
 								for(Event eee : dayevents){
 									if(eee.baseID == e.baseID){
-										//System.out.println("date: "+eee.start+" ebeschr: "+eee.description);
 										descriptions.add(eee.description);
 									}
 								}
 								
 								if (hasName(e.name, dayevents)){
 									previousDates.add(current);
-									//System.out.println("date: "+e.start+" ebeschr: "+e.description);
-									
 								}
-									
 							}
 
 							// get next date depending an interval-step-size
@@ -491,6 +518,10 @@ public class Calendar {
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
+								for(Event eee : dayevents)
+									if(eee.baseID == e.baseID)
+										descriptions.add(eee.description);
+									
 								if (hasName(e.name, dayevents))
 									previousDates.add(current);
 							}
@@ -507,6 +538,10 @@ public class Calendar {
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
+								for(Event eee : dayevents)
+									if(eee.baseID == e.baseID)
+										descriptions.add(eee.description);
+								
 								if (hasName(e.name, dayevents))
 									previousDates.add(current);
 							}
@@ -525,7 +560,9 @@ public class Calendar {
 							e1.printStackTrace();
 						}
 					}
-
+					// before we remove the events after victim
+					// preserve all descriptions after victim
+					
 					// remove all repeating events correlated to baseEvent
 					removeRepeatingEvents(baseEvent);
 					int index = 0;
