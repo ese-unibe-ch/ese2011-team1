@@ -3,6 +3,7 @@ package models;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -432,6 +433,7 @@ public class Calendar {
 					// this list contains all dates of repeating events of
 					// baseEvent, till 1 event before victim event
 					LinkedList<Date> previousDates = new LinkedList<Date>();
+					ArrayList<String> descriptions = new ArrayList<String>();
 					if (intervall == 7 || intervall == 1) {
 
 						Date current = baseEvent.start;
@@ -456,8 +458,20 @@ public class Calendar {
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
-								if (hasName(e.name, dayevents))
+								
+								for(Event eee : dayevents){
+									if(eee.baseID == e.baseID){
+										//System.out.println("date: "+eee.start+" ebeschr: "+eee.description);
+										descriptions.add(eee.description);
+									}
+								}
+								
+								if (hasName(e.name, dayevents)){
 									previousDates.add(current);
+									//System.out.println("date: "+e.start+" ebeschr: "+e.description);
+									
+								}
+									
 							}
 
 							// get next date depending an interval-step-size
@@ -514,7 +528,7 @@ public class Calendar {
 
 					// remove all repeating events correlated to baseEvent
 					removeRepeatingEvents(baseEvent);
-
+					int index = 0;
 					// add for each date in the collected date list a event into
 					// this.events
 					// equals all events previous victim
@@ -522,7 +536,9 @@ public class Calendar {
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(this.owner, d, d, e.name,
 								e.visibility, false, intervall);
+						ev.editDescription(descriptions.get(index));
 						this.events.add(ev);
+						index++;
 					}
 
 					// add the event after our victim (1 date interval
