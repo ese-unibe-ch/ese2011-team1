@@ -136,8 +136,12 @@
 			#{list items:events, as:'event'}
 				<p>
 					<li> 
-							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} #{if user==me},  
-							<b>visibility</b>:${event.visibility} #{/if} <br>
+							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} 
+							#{if user==me},  
+								<b>visibility</b>:${event.visibility} 
+							#{/if} <br>
+							<b>Repeating:</b>${event.is_repeating}
+							<b>Description</b>:${event.description} <br>
 							#{if user == me && me==event.owner}
 								<b><a href="@{Application.editEvent(event.getId(), calendarId, me.name, s_date, dday, mmonth, yyear)}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b> <br>

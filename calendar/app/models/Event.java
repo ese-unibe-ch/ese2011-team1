@@ -9,6 +9,7 @@ public class Event implements Comparable<Event> {
 	public Date start;
 	public Date end;
 	public String name;
+	public String description;
 	public Visibility visibility;
 	public long id;
 	public long baseID;
@@ -89,6 +90,10 @@ public class Event implements Comparable<Event> {
 		this.visibility = visibility;
 		this.is_repeating = is_repeated;
 		this.intervall = intervall;
+	}
+	
+	public void editDescription(String text){
+		this.description = text;
 	}
 
 	@Override
