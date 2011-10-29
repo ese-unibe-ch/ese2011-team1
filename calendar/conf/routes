@@ -9,7 +9,7 @@ GET 	/calendars								Application.showCalendars
 GET 	/events									Application.showEvents
 GET 	/addEvent								Application.addEvent
 GET 	/editEvent								Application.editEvent
-GET 	/showTest								Application.showTest
+GET 	/showTest								Application.showCalendar
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

@@ -172,7 +172,7 @@ public class Application extends Controller {
 				intervall);
 		e.editDescription(description);
 		calendar.addEvent(e);
-		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
+		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -208,7 +208,7 @@ public class Application extends Controller {
 		}
 
 		event.edit(d_start, d_end, name, visibility, repeated, intervall);
-		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
+		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -234,7 +234,7 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarID);
 		System.out.println("event ID: " + eventID);
 		calendar.removeEvent(eventID);
-		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
+		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -245,7 +245,7 @@ public class Application extends Controller {
 		Date cancelDate = calendar.getEventById(eventID).start;
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
 				.getEventById(eventID));
-		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
+		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -255,11 +255,11 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventId);
 		calendar.removeRepeatingEvents(event);
-		showTest(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
+		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
 	}
 
-	public static void showTest(long calendarId, String username,
+	public static void showCalendar(long calendarId, String username,
 			String calendarName, String s_date, int dday, int mmonth,
 			int yyear, String message) {
 
@@ -355,7 +355,7 @@ public class Application extends Controller {
 		// find calendar by ID
 		Calendar cal = user.getCalendarById(calendarId);
 		me.addObservedCalendar(cal);
-		showTest(calendarId, username, calendarName, s_date, dday, mmonth,
+		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -368,7 +368,7 @@ public class Application extends Controller {
 		// find calendar by ID
 		Calendar cal = user.getCalendarById(calendarId);
 		me.removeObservedCalendar(cal);
-		showTest(calendarId, username, calendarName, s_date, dday, mmonth,
+		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
 				yyear, message);
 	}
 
@@ -397,7 +397,7 @@ public class Application extends Controller {
 			user.removeShownObservedCalendar(calID);
 		}
 
-		showTest(calendarId, user.name, calendarName, s_date, dday, mmonth,
+		showCalendar(calendarId, user.name, calendarName, s_date, dday, mmonth,
 				yyear, message);
 	}
 }

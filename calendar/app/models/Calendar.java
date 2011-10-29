@@ -424,7 +424,7 @@ public class Calendar {
 			LinkedList<Event> interestingevents = getSameBaseIdEvents(sentinel.baseID);
 			
 			for(Event event : interestingevents){
-				
+				System.out.println("e date"+event.start);
 			}
 			
 			for (Event e : events) {

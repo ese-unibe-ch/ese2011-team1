@@ -4,7 +4,7 @@
 <p>
 	#{list items:calendars, as:'calendar'}
 		<p>
-			<li> <a href="@{Application.showTest(calendar.getId(),me.name ,calendar.name,s_date,0,0,0)})}"> ${calendar.name}</a></li>
+			<li> <a href="@{Application.showCalendar(calendar.getId(),me.name ,calendar.name,s_date,0,0,0)})}"> ${calendar.name}</a></li>
 		</p>
 	#{/list}
 	
