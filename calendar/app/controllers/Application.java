@@ -42,7 +42,7 @@ public class Application extends Controller {
 		render(me, users, calendars, defaultCalendar, s_date);
 	}
 
-	public static void showCalendars(String username, String s_date) {
+	public static void showCalendarList(String username, String s_date) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = null;
@@ -68,7 +68,7 @@ public class Application extends Controller {
 			if (me.getName().equals(user.getName()))
 				showMe(s_date);
 
-			showCalendars(userName, s_date);
+			showCalendarList(userName, s_date);
 		}
 	}
 

@@ -12,7 +12,7 @@
 <h2>Administration</h2>
 <p>
 	
-		<a href="@{Application.showCalendars(me.name, s_date)}"> show my calendars</a>   <br>
+		<a href="@{Application.showCalendarList(me.name, s_date)}"> show my calendars</a>   <br>
 	    <a href="@{Application.showRegistration()}"> Registrate new User</a>   <br>
 	    <a href="@{Secure.login()}"> Log in</a>   <br>
 		<a href="@{Secure.logout()}">Log out</a>  <br>
@@ -31,7 +31,7 @@
     #{list items:users, as:'data'}
         #{ifnot data==me}
 	        <li>
-	            	<a href="@{Application.showCalendars(data.name, s_date)}">${data.name}</a>        
+	            	<a href="@{Application.showCalendarList(data.name, s_date)}">${data.name}</a>        
 	        </li>
         #{/ifnot}
     #{/list}
