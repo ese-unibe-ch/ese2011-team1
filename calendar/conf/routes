@@ -4,8 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
-GET		/me										Application.showMe
-GET 	/calendars								Application.showCalendars
+GET 	/calendars								Application.showCalendarList
 GET 	/events									Application.showEvents
 GET 	/addEvent								Application.addEvent
 GET 	/editEvent								Application.editEvent

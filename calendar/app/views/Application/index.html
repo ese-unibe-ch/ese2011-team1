@@ -32,17 +32,6 @@
 </ul>
 </p>
 
-<!-- remove soon --> 
-<script type="text/javascript" charset="utf-8">
-    $('#newUser').click(function(){
-        $.post('@{newUser()}', {name: prompt('Task title ?')},function(user){
-        	$('ul').prepend(
-        			   '<li>'+user.name+'</li>'		
-        	)	
-        }, 'json')  
-    })
-</script>
-
 #{form @Application.searchForUser()}
 <p>
 	<label><b>Search User:</b></label>

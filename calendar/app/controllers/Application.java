@@ -111,7 +111,7 @@ public class Application extends Controller {
 		render();
 	}
 
-	public static void RegUser(@Required String name, @Required String password) {
+	public static void RegisterUser(@Required String name, @Required String password) {
 		if (Database.userAlreadyRegistrated(name)) {
 			flash.error("Username (" + name + ") already exists!");
 			showRegistration();
@@ -124,26 +124,6 @@ public class Application extends Controller {
 			User user = new User(name, password);
 			Database.addUser(user);
 			index();
-		}
-	}
-
-	public static void newUser(@Required String name) {
-		User user;
-		Event event;
-		Date now = new Date();
-
-		if (!name.isEmpty()) {
-			// mache user mit default daten:
-			user = new User(name, "123");
-			event = new Event(user, now, now, "abc", Visibility.PUBLIC, false,
-					0);
-			// user.calendar.
-			user.getdefaultCalendar().addEvent(event);
-
-			Database.addUser(user);
-			// Data d = new Data(value);
-
-			renderJSON(user);
 		}
 	}
 
@@ -238,7 +218,7 @@ public class Application extends Controller {
 				yyear, message);
 	}
 
-	public static void cancelRepEvent(long calendarID, long eventID,
+	public static void cancelEventRepetition(long calendarID, long eventID,
 			String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
