@@ -1,7 +1,7 @@
 /*For Testing "Creating a new User Test": The test will sucess the first time but will fail the second time you start it.
 You have to restart the Application for succeeding again with ctrl c and run test */
 
-#{selenium 'Test Registrate a new user and trying to register a same user again'}
+#{selenium 'Test Register a new user and trying to register a same user again'}
 	clearSession()
 	open('/')
 	waitForPageToLoad(1000)
@@ -11,7 +11,7 @@ You have to restart the Application for succeeding again with ctrl c and run tes
 	waitForPageToLoad(1000)
 	assertTitle('Home')
 	assertTextPresent('Calendar Team1 - Hello simplay')
-	clickAndWait('link=Registrate new User')
+	clickAndWait('link=Register new User')
 	assertTextPresent('Registration:')
 	assertTextPresent('Name:')
 	assertTextPresent('Password:')
@@ -29,7 +29,7 @@ You have to restart the Application for succeeding again with ctrl c and run tes
 	assertTitle('Home')
 	assertTextPresent('Francis')
 	assertTextPresent('Calendar Team1 - Hello simplay')
-	clickAndWait('link=Registrate new User')
+	clickAndWait('link=Register new User')
 	assertTextPresent('Registration:')
 	assertTextPresent('Name:')
 	assertTextPresent('Password:')

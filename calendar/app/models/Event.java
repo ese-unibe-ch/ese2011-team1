@@ -12,7 +12,7 @@ public class Event implements Comparable<Event> {
 	public String description;
 	public Visibility visibility;
 	public long id;
-	public long baseID;
+	public long baseId;
 	public boolean is_repeating;
 	public int intervall;
 	private static long counter;
@@ -51,7 +51,7 @@ public class Event implements Comparable<Event> {
 		this.id = counter;
 		this.is_repeating = is_repeating;
 		this.intervall = intervall;
-		this.baseID = id;
+		this.baseId = id;
 	}
 
 	/*
@@ -227,16 +227,16 @@ public class Event implements Comparable<Event> {
 		Event newEvent = new Event(this.owner, nextRepStartDate,
 				nextRepEndDate, this.name, this.visibility, this.is_repeating,
 				this.intervall);
-		newEvent.setBaseID(this.baseID);
+		newEvent.setBaseId(this.baseId);
 		return newEvent;
 	}
 
-	public void setBaseID(long ID) {
-		this.baseID = ID;
+	private void setBaseId(long Id) {
+		this.baseId = Id;
 	}
 
-	public long getBaseID() {
-		return this.baseID;
+	public long getBaseId() {
+		return this.baseId;
 	}
 
 	/**
@@ -258,6 +258,7 @@ public class Event implements Comparable<Event> {
 		while (repeatingEvent.getStart().before(compDate)) {
 			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
 			if (repeatingEvent.getStart().getDate() == compDate.getDate()) {
+				System.out.println("new repeatingEvent : " + repeatingEvent.start);
 				repeatingEventOnDay = repeatingEvent;
 			}
 		}

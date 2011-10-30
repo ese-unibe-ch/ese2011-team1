@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,12 +10,12 @@ import play.test.UnitTest;
 import models.*;
 public class UserTest extends UnitTest{
 	private User user;
-	private Calendar calendar;
+	private UserCalendar calendar;
 
 	@Before
 	public void setUp() throws Exception {
-		this.user = new User("hans", "1234");
-		this.calendar = new Calendar("Calendar", user);
+		this.user = new User("hans", "1234", new Date(), "hans3");
+		this.calendar = new UserCalendar("Calendar", user);
 	}
 	
 	@Test

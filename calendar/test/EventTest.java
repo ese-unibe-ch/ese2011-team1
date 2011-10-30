@@ -17,7 +17,7 @@ public class EventTest extends UnitTest {
 	// public Event(Date start, Date end, String name, boolean is_visible){
 	@Before
 	public void setUp() throws Exception {
-		this.user = new User("hans", "1234");
+		this.user = new User("hans", "1234", new Date(), "hans2");
 		this.event = new Event(user, new Date(1, 1, 1), new Date(1, 1, 2),
 				"anEvent", Visibility.PRIVATE, false, 0);
 		this.repeatingEvent = new Event(user, new Date(1, 1, 1), new Date(1, 1,
@@ -56,7 +56,7 @@ public class EventTest extends UnitTest {
 	public void testGetNextRepetitionIntervall7() {
 		assertEquals(repeatingEvent.getIntervall(), 7);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
-		assertEquals(repeatingEvent.getBaseID(), nextRepetition.getBaseID());
+		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
 		assertEquals(
 				repeatingEvent.getStart().getDate()
 						+ repeatingEvent.getIntervall(), nextRepetition
@@ -74,7 +74,7 @@ public class EventTest extends UnitTest {
 				repeatingEvent.is_repeating, 30);
 		assertEquals(repeatingEvent.getIntervall(), 30);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
-		assertEquals(repeatingEvent.getBaseID(), nextRepetition.getBaseID());
+		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
 		assertEquals(repeatingEvent.getStart().getDate(), nextRepetition
 				.getStart().getDate());
 		assertEquals(repeatingEvent.getStart().getMonth() + 1, nextRepetition
@@ -87,10 +87,10 @@ public class EventTest extends UnitTest {
 	public void testGetNextRepetitionIntervallYear() {
 		repeatingEvent.edit(repeatingEvent.start, repeatingEvent.end,
 				repeatingEvent.name, repeatingEvent.visibility,
-				repeatingEvent.is_repeating, 265);
-		assertEquals(repeatingEvent.getIntervall(), 265);
+				repeatingEvent.is_repeating, 365);
+		assertEquals(repeatingEvent.getIntervall(), 365);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
-		assertEquals(repeatingEvent.getBaseID(), nextRepetition.getBaseID());
+		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
 		assertEquals(repeatingEvent.getStart().getDate(), nextRepetition
 				.getStart().getDate());
 		assertEquals(repeatingEvent.getStart().getMonth(), nextRepetition
@@ -101,12 +101,12 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testGetRepetitionOnDate() {
-		long expectedBaseId = repeatingEvent.getBaseID();
+		long expectedBaseId = repeatingEvent.getBaseId();
 		Date expectedStartDate = new Date(repeatingEvent.getStart().getYear(),
 				repeatingEvent.getStart().getMonth(), repeatingEvent.getStart()
 						.getDate() + repeatingEvent.getIntervall());
 		Event repetition = repeatingEvent
 				.getRepetitionOnDate(expectedStartDate);
-		assertEquals(expectedBaseId, repetition.getBaseID());
+		assertEquals(expectedBaseId, repetition.getBaseId());
 	}
 }

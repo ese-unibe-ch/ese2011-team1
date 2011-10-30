@@ -3,9 +3,11 @@ package models;
 import java.util.Date;
 import java.util.LinkedList;
 
+import models.Event.Visibility;
+
 public class User {
 	public String name;
-	public LinkedList<Calendar> calendar;
+	public LinkedList<UserCalendar> calendar;
 	
 	// in this list we store all calendars of other user which we want to display in our calendar
 	public LinkedList<Calendar> observedCalendars;
@@ -29,16 +31,24 @@ public class User {
 		counter++;
 		this.id = counter;
 
-		calendar = new LinkedList<Calendar>();
+		calendar = new LinkedList<UserCalendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
+		observedCalendars.add(BirthdayCalendar.getInstance());
+		
+		initializeBirthday(birthday);
 		
 		// each user x has a default a calender called: x's first calendar
-		calendar.add(new Calendar(name + "'s first calendar", this));
+		calendar.add(new UserCalendar(name + "'s first calendar", this));
 
 		// postconditions
 		assert this.name.equals(name);
 		assert calendar != null;
+	}
+
+	private void initializeBirthday(Date birthday) {
+		BirthdayEvent e = new BirthdayEvent(this, birthday, Visibility.PRIVATE);
+		BirthdayCalendar.addBirthday(e);
 	}
 
 	public void setPassword(String password) {
@@ -71,6 +81,10 @@ public class User {
 	
 	public void setBirthdayPublic(boolean b) {
 		this.isPublicBirthday = b;
+		Event birthday = BirthdayCalendar.getBirthdayOf(this);
+		Visibility visibility = Visibility.PRIVATE;
+		if (b) visibility = Visibility.PUBLIC; 
+		birthday.edit(birthday.start, birthday.end, birthday.name, visibility, birthday.is_repeating, birthday.intervall);
 	}
 	
 	public String getNickname() {
@@ -83,24 +97,24 @@ public class User {
 
 
 	// return all calendars of a user
-	public LinkedList<Calendar> getCalendars() {
+	public LinkedList<UserCalendar> getCalendars() {
 		return this.calendar;
 	}
 
 	// get default calendar back
-	public Calendar getdefaultCalendar() {
+	public UserCalendar getdefaultCalendar() {
 		return this.calendar.getFirst();
 	}
 
 	// get a all calendars of a user - linkedlist
 	// entferne dann noch argument für call
-	public LinkedList<Calendar> getCalendarsByName(User user) {
+	public LinkedList<UserCalendar> getCalendarsByName(User user) {
 		return user.getCalendars();
 	}
 
-	public Calendar getCalendarById(long calID) {
-		Calendar result = null;
-		for (Calendar cal : calendar) {
+	public UserCalendar getCalendarById(long calID) {
+		UserCalendar result = null;
+		for (UserCalendar cal : calendar) {
 			if (cal.getId() == calID)
 				result = cal;
 		}
@@ -111,7 +125,7 @@ public class User {
 	 * add a new owned calendar into our calendar list 
 	 */
 	
-	public void addCalendar(Calendar cal) {
+	public void addCalendar(UserCalendar cal) {
 		calendar.add(cal);
 	}
 	
@@ -119,11 +133,11 @@ public class User {
 	 * add a new Calendar of another user into our oberserved calendar list. 
 	 */
 	
-	public void addObservedCalendar(Calendar cal){
+	public void addObservedCalendar(UserCalendar cal){
 		observedCalendars.add(cal);
 	}
 	
-	public void removeObservedCalendar(Calendar cal){
+	public void removeObservedCalendar(UserCalendar cal){
 		observedCalendars.remove(cal);
 	}
 	

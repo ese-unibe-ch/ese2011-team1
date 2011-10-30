@@ -1,7 +1,7 @@
 import java.util.Date;
 import java.util.Iterator;
 
-import models.Calendar;
+import models.UserCalendar;
 import models.Event;
 import models.Event.Visibility;
 import models.User;
@@ -13,14 +13,14 @@ import play.test.UnitTest;
 
 public class CalendarTest extends UnitTest {
 	private User owner;
-	private Calendar calendar;
+	private UserCalendar calendar;
 	private Event event;
 	private Event repeatingEvent;
 
 	@Before
 	public void setUp() throws Exception {
-		this.owner = new User("hans", "123");
-		this.calendar = new Calendar("Calendar", this.owner);
+		this.owner = new User("hans", "123", new Date(), "hans1");
+		this.calendar = new UserCalendar("Calendar", this.owner);
 		this.event = new Event(owner, new Date(1, 1, 1), new Date(1, 1, 2),
 				"anEvent", Visibility.PRIVATE, false, 0);
 		this.repeatingEvent = new Event(owner, new Date(1, 1, 1), new Date(1,
@@ -101,9 +101,9 @@ public class CalendarTest extends UnitTest {
 		Event repeating1 = repeatingEvent.getNextRepetitionEvent();
 		Event repeating2 = repeating1.getNextRepetitionEvent();
 		Event repeating3 = repeating2.getNextRepetitionEvent();
-		assertEquals(repeatingEvent.getBaseID(), repeating1.getBaseID());
-		assertEquals(repeating1.getBaseID(), repeating2.getBaseID());
-		assertEquals(repeating2.getBaseID(), repeating3.getBaseID());
+		assertEquals(repeatingEvent.getBaseId(), repeating1.getBaseId());
+		assertEquals(repeating1.getBaseId(), repeating2.getBaseId());
+		assertEquals(repeating2.getBaseId(), repeating3.getBaseId());
 		calendar.addEvent(repeatingEvent);
 		calendar.addEvent(repeating1);
 		calendar.addEvent(repeating2);
