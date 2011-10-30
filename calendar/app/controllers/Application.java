@@ -386,14 +386,6 @@ public class Application extends Controller {
 		 * Werden hier gelöscht, damit sie nach dem unchecken der anderen
 		 * Calendars nicht mehr angezeigt werden.
 		 */
-		PriorityQueue<Event> calEvents = calendar.getEvents();
-		for (Calendar c : observedCalendars) {
-			for (Event e : c.getEvents()) {
-				if (e.owner != user && e.owner != me) {
-					calEvents.remove(e);
-				}
-			}
-		}
 
 		render(me, date, cal, bound, bound2, calendar, user, prev, next,
 				s_date, today, events, calendarName, calendars, calendarId,
