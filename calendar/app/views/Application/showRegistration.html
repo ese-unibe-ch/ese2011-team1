@@ -9,16 +9,29 @@
 	</p>
 #{/if}
 
-#{form @Application.RegisterUser()}
+#{form @Application.RegUser()}
 <p>
 	<label for="name"> Name: </label>
 	<input type="text" name="name" id="name" value ="${flash.name}" />
 	<span class ="error" style="color:#c00"> #{error 'name' /}</span>
 </p>
 <p>
+	<label for="nickname"> Nickname: </label>
+	<input type="text" name="nickname" id="nickname" value ="${flash.nickname}" />
+	<span class ="error" style="color:#c00"> #{error 'nickname' /}</span>
+</p>
+<p>
 	<label for="password"> Password: </label>
 	<input type="password" name="password" id="password" value ="${flash.password}"/ >
 	<span class ="error" style="color:#c00"> #{error 'password' /}</span>
+</p>
+<p>
+	<label for="birthday"> Birthday Date: </label>
+	<input type="birthday" name="birthday" id="birthday" value="dd/MM/yyyy"/ >
+	<span class ="error" style="color:#c00"> #{error 'birthday' /}</span>
+	
+	<label for="b_visib"> public: </label>
+	<input type="checkbox" name="is_visible" />
 </p>
 <hr />
 <p>

@@ -18,9 +18,9 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     	}
     }
 
-    public static void addUser(String username, String password) {
+    public static void addUser(String username, String password, Date birthday, String nickname) {
     	if(!users.containsKey(username)) {
-    		users.put(username, new User(username, password));
+    		users.put(username, new User(username, password, birthday, nickname));
     	}
     }
     
@@ -40,6 +40,17 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     	List<User> userList = new ArrayList<User>();
     	userList.addAll(users.values());
     	return userList;
+    }
+    
+    public static User getUserByName(String name)
+    {
+		return users.get(name);
+    }
+    
+    public static void changeUserName(User user)
+    {  	
+    	users.put(user.getName(), user);
+    	//TODO remove old user with old key	
     }
     
     public static boolean userAlreadyRegistrated(String newUserName) {

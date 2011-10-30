@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 public class User {
@@ -10,16 +11,21 @@ public class User {
 	public LinkedList<Calendar> observedCalendars;
 	public LinkedList<Long> shownObservedCalendars;
 	public String password;
+	public Date birthday;
+	public boolean isPublicBirthday;
 	public long id;
+	private String nickname;
 	private static long counter;
 
-	public User(String name, String password) {
+	public User(String name, String password, Date birthday, String nickname) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
 
 		this.name = name;
+		this.nickname = nickname;
 		this.password = password;
+		this.birthday = birthday;
 		counter++;
 		this.id = counter;
 
@@ -42,10 +48,39 @@ public class User {
 	public String getName() {
 		return this.name;
 	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getPassword() {
 		return this.password;
 	}
+	
+	public Date getBirthday() {
+		return this.birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	
+	public boolean isBirthdayPublic() {
+		return this.isPublicBirthday;
+	}
+	
+	public void setBirthdayPublic(boolean b) {
+		this.isPublicBirthday = b;
+	}
+	
+	public String getNickname() {
+		return this.nickname;
+	}
+	
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 
 	// return all calendars of a user
 	public LinkedList<Calendar> getCalendars() {

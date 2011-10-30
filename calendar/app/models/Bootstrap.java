@@ -16,7 +16,7 @@ public class Bootstrap extends Job {
 		Event event;
 		Date now = new Date();
 		// dataset 1
-		simplay = new User("simplay", "123");
+		simplay = new User("simplay", "123", now, "senderos");
 		event = new Event(simplay, now, now, "abc", Visibility.PUBLIC, false, 0);
 		simplay.getdefaultCalendar().addEvent(event);
 
@@ -29,7 +29,7 @@ public class Bootstrap extends Job {
 
 		// dataset 2
 		User user;
-		user = new User("mib", "1337");
+		user = new User("mib", "1337", now, "fox");
 		event = new Event(user, now, now, "mib_ev1", Visibility.PUBLIC, false,
 				0);
 		user.getdefaultCalendar().addEvent(event);
@@ -62,7 +62,7 @@ public class Bootstrap extends Job {
 
 		Database.addUser(user);
 
-		user = new User("simon", "1337");
+		user = new User("simon", "1337", now, "simu");
 		event = new Event(user, now, now, "simonb_ev1", Visibility.PUBLIC,
 				false, 0);
 		user.getdefaultCalendar().addEvent(event);

@@ -24,6 +24,7 @@ import play.mvc.With;
 public class Application extends Controller {
 
 	static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+	static DateFormat birthdayDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	public static String message = null;
 
 	public static void index() {
@@ -89,43 +90,54 @@ public class Application extends Controller {
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
 
-	/*
-	 * I THINK WE COULD DELETE THIS
-	 */
-	// public static void showEventsOfDay(long calendarId, String username,
-	// String calendarName, int day, int month, int year) {
-	// User me = Database.users.get(Security.connected());
-	// User user = Database.users.get(username);
-	// // Date d = new Date(1,1,1);
-	// LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
-	// .getEventsOfDay(day, month, year, me);
-	//
-	// Calendar calendars = user.getCalendarById(calendarId);
-	// LinkedList<Event> events = allVisibleEvents;
-	//
-	// render(me, user, events, calendarName, calendars, calendarId, day,
-	// month, year);
-	// }
-
 	public static void showRegistration() {
 		render();
 	}
+	
+	public static void RegUser(@Required String name, @Required String nickname, @Required String password, @Required String birthday, @Required boolean is_visible)
+    {
+    	if(Database.userAlreadyRegistrated(name))
+    	{
+    		flash.error("Username (" + name + ") already exists!");
+    		params.flash();
+    		validation.keep();
+    		showRegistration();
+    	}
+    	else if(validation.hasErrors())
+    	{
+    		params.flash();
+    		validation.keep();
+    		flash.error("All fields required!");
+    		showRegistration();
+    	}
+    	else
+    	{
+    		try 
+    		{
+    			User user = new User(name, password, birthdayDateFormat.parse(birthday), nickname);
+    			Database.addUser(user);
+    			user.setBirthdayPublic(is_visible);
+    			System.out.println(user.name + "'s Birthday is: " + user.isBirthdayPublic());
+    			
+    			Calendar calendar = user.getCalendars().get(0); //has to be changed -> for testing only
+    			Visibility visibility = Visibility.PRIVATE;
+    			if (is_visible) visibility = Visibility.PUBLIC; 
+    			Event e = new Event(user, birthdayDateFormat.parse(birthday), 
+    					birthdayDateFormat.parse(birthday), "birthday", visibility, true, 365);
 
-	public static void RegisterUser(@Required String name, @Required String password) {
-		if (Database.userAlreadyRegistrated(name)) {
-			flash.error("Username (" + name + ") already exists!");
-			showRegistration();
-		} else if (validation.hasErrors()) {
-			params.flash();
-			validation.keep();
-			flash.error("All fields required!");
-			showRegistration();
-		} else {
-			User user = new User(name, password);
-			Database.addUser(user);
-			index();
-		}
-	}
+    			calendar.addEvent(e);
+    			
+    			index();
+    		} 
+    		catch (Exception e) 
+    		{
+    			params.flash();
+        		validation.keep();
+    			flash.error("Invalid date format");
+    			showRegistration();
+    		}	
+    	}
+    }
 
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
@@ -222,7 +234,6 @@ public class Application extends Controller {
 			String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
-		Date cancelDate = calendar.getEventById(eventID).start;
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
 				.getEventById(eventID));
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
@@ -254,7 +265,6 @@ public class Application extends Controller {
 																// remove later
 		LinkedList<Event> events = allVisibleEvents;
 
-		Date d = null;
 
 		// "today" is used for calculating the current day/year/month and
 		// coloring it blue
