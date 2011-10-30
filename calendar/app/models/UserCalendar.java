@@ -4,10 +4,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import models.Event.Visibility;
 
@@ -69,18 +72,7 @@ public class UserCalendar extends Calendar{
 		boolean flag = false;
 		for (Event comp : this.events) {
 			if (comp.name.equals(ev1.name))
-				if (comp.start.getYear() == ev1.start.getYear()
-						&& comp.start.getMonth() == ev1.start.getMonth()
-						&& comp.start.getDate() == ev1.start.getDate()
-						&& comp.start.getMinutes() == ev1.start.getMinutes()
-						&& comp.start.getSeconds() == ev1.start.getSeconds()// &&
-				// comp.end.getYear() == ev1.end.getYear() &&
-				// comp.end.getMonth() == ev1.end.getMonth() &&
-				// comp.end.getDate() == ev1.end.getDate() &&
-				// comp.end.getMinutes() == ev1.end.getMinutes() &&
-				// comp.end.getSeconds() == ev1.end.getSeconds()
-
-				) {
+				if (comp.getStart().equals(ev1.getStart())) {
 					flag = true;
 					break;
 				}
@@ -88,20 +80,7 @@ public class UserCalendar extends Calendar{
 		if (!flag) {
 			for (Event comp : this.repeatingEvents) {
 				if (comp.name.equals(ev1.name))
-					if (comp.start.getYear() == ev1.start.getYear()
-							&& comp.start.getMonth() == ev1.start.getMonth()
-							&& comp.start.getDate() == ev1.start.getDate()
-							&& comp.start.getMinutes() == ev1.start
-									.getMinutes()
-							&& comp.start.getSeconds() == ev1.start
-									.getSeconds() // &&
-					// comp.end.getYear() == ev1.end.getYear() &&
-					// comp.end.getMonth() == ev1.end.getMonth() &&
-					// comp.end.getDate() == ev1.end.getDate() &&
-					// comp.end.getMinutes() == ev1.end.getMinutes() &&
-					// comp.end.getSeconds() == ev1.end.getSeconds()
-
-					) {
+					if (comp.getStart().equals(ev1.getStart())) {
 						flag = true;
 						break;
 					}
@@ -119,7 +98,7 @@ public class UserCalendar extends Calendar{
 	 * given date.
 	 * 
 	 **/
-	public LinkedList<Event> getDayEvents(Date day, User requester) {
+	public LinkedList<Event> getDayEvents(DateTime day, User requester) {
 		// temporary result linked list
 		LinkedList<Event> events_tmp = new LinkedList<Event>();
 
@@ -146,7 +125,7 @@ public class UserCalendar extends Calendar{
 		return events_tmp;
 	}
 
-	public Iterator<Event> getEventList(Date start, User requester) {
+	public Iterator<Event> getEventList(DateTime start, User requester) {
 		// temporary result linked list
 		LinkedList<Event> events_tmp = new LinkedList<Event>();
 
@@ -159,7 +138,7 @@ public class UserCalendar extends Calendar{
 		// requester is owner
 		if (is_owner) {
 			for (Event e : events)
-				if ((e.getStart().after(start) || e.getStart().equals(start)))
+				if ((e.getStart().isAfter(start) || e.getStart().equals(start)))
 					events_tmp.add(e);
 
 			// requester is not the owner of the calendar ==> do visibility
@@ -167,7 +146,7 @@ public class UserCalendar extends Calendar{
 		} else {
 			for (Event e : events)
 				if (e.getVisibility() != Visibility.PRIVATE
-						&& (e.getStart().after(start) || e.getStart().equals(
+						&& (e.getStart().isAfter(start) || e.getStart().equals(
 								start)))
 					events_tmp.add(e);
 		}
@@ -181,8 +160,9 @@ public class UserCalendar extends Calendar{
 			User requester) {
 		LinkedList<Event> result = new LinkedList<Event>();
 
-		Date comp = null;
+		DateTime comp = null;
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+		final DateTimeFormatter dateFormatter = new DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
 				+ ", 12:00";
@@ -233,9 +213,11 @@ public class UserCalendar extends Calendar{
 		boolean is_owner = owner == requester;
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.getDate() == comp.getDate()
-						&& e.start.getMonth() == comp.getMonth()
-						&& e.start.getYear() == comp.getYear()) {
+//				e.start.getDate() == comp.getDate()
+//						&& e.start.getMonth() == comp.getMonth()
+//						&& e.start.getYear() == comp.getYear()
+				System.out.println("e:localDate: " + e.getStart().toLocalDate() + "comp:localDate: " + comp.toLocalDate());
+				if (e.getStart().toLocalDate().equals(comp.toLocalDate())) {
 					if (!result.contains(e))
 						result.add(e);
 				}
@@ -289,7 +271,7 @@ public class UserCalendar extends Calendar{
 	// mache hier auch reperatur wengen event adden!!!!
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
 		boolean flag = false;
-		Date comp = null;
+		DateTime comp = null;
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
@@ -352,9 +334,7 @@ public class UserCalendar extends Calendar{
 
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.getDate() == comp.getDate()
-						&& e.start.getMonth() == comp.getMonth()
-						&& e.start.getYear() == comp.getYear()) {
+				if (e.getStart().toLocalDate().equals(comp.toLocalDate())) {
 					flag = true;
 				}
 			}
@@ -364,9 +344,9 @@ public class UserCalendar extends Calendar{
 
 	// / fixe hier das adden!!! wenn schon vorhanden, dann nicht nochmals
 	// adden!!!
-	public boolean hasEventOnDay(Date date, User requester) {
+	public boolean hasEventOnDay(DateTime date, User requester) {
 		boolean flag = false;
-		Date comp = date;
+		DateTime comp = date;
 
 		boolean is_owner = owner == requester;
 		for (Event repeatingEvent : this.repeatingEvents) {
@@ -389,9 +369,7 @@ public class UserCalendar extends Calendar{
 
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.getDate() == comp.getDate()
-						&& e.start.getMonth() == comp.getMonth()
-						&& e.start.getYear() == comp.getYear()) {
+				if (e.getStart().toLocalDate().equals(comp.toLocalDate())) {
 					flag = true;
 				}
 			}
@@ -403,10 +381,7 @@ public class UserCalendar extends Calendar{
 			Event repeatingEvent) {
 		boolean contains = false;
 		for (Event e : this.events) {
-			if (e.getBaseId() == repeatingEvent.getBaseId()
-					&& e.start.getDate() == repeatingEvent.start.getDate()
-					&& e.start.getMonth() == repeatingEvent.start.getMonth()
-					&& e.start.getYear() == repeatingEvent.start.getYear()) {
+			if (e.getStart().toLocalDate().equals(repeatingEvent.getStart().toLocalDate())) {
 				contains = true;
 			}
 		}
@@ -469,12 +444,12 @@ public class UserCalendar extends Calendar{
 																// nächstes date
 					
 					int intervall = baseEvent.intervall;
-					Date nextRepStartDate = new Date(e.start.getYear(),
-							e.start.getMonth(), e.start.getDate() + intervall,
-							e.start.getHours(), e.start.getMinutes());
-					Date nextRepEndDate = new Date(e.end.getYear(),
-							e.end.getMonth(), e.end.getDate() + intervall,
-							e.start.getHours(), e.start.getMinutes());
+					DateTime nextRepStartDate = new DateTime(e.start.getYear(),
+							e.start.getMonthOfYear(), e.start.getDayOfMonth() + intervall,
+							e.start.getHourOfDay(), e.start.getMinuteOfHour());
+					DateTime nextRepEndDate = new DateTime(e.end.getYear(),
+							e.end.getMonthOfYear(), e.end.getDayOfMonth() + intervall,
+							e.start.getHourOfDay(), e.start.getMinuteOfHour());
 					Event nextEvent = new Event(this.owner, nextRepStartDate,
 							nextRepEndDate, e.name, e.visibility, true,
 							intervall);
@@ -485,11 +460,11 @@ public class UserCalendar extends Calendar{
 
 					// this list contains all dates of repeating events of
 					// baseEvent, till 1 event before victim event
-					LinkedList<Date> previousDates = new LinkedList<Date>();
+					LinkedList<DateTime> previousDates = new LinkedList<DateTime>();
 					ArrayList<String> descriptions = new ArrayList<String>();
 					if (intervall == 7 || intervall == 1) {
 
-						Date current = baseEvent.start;
+						DateTime current = baseEvent.start;
 
 						// iterate in interval steps iterate from
 						// "baseEvent.start" to "nextRepStartDate"
@@ -525,17 +500,17 @@ public class UserCalendar extends Calendar{
 							}
 
 							// get next date depending an interval-step-size
-							current = new Date(current.getYear(),
-									current.getMonth(), current.getDate()
-											+ intervall, current.getHours(),
-									current.getMinutes());
+							current = new DateTime(current.getYear(),
+									current.getMonthOfYear(), current.getDayOfMonth()
+											+ intervall, current.getHourOfDay(),
+									current.getMinuteOfHour());
 						}
 
 						// remove last element of list, this is the victim we
 						// want to delete
 						previousDates.removeLast();
 					} else if (intervall == 30) {
-						Date current = baseEvent.start;
+						DateTime current = baseEvent.start;
 						while (current.compareTo(nextRepStartDate) == -1) {
 							if (hasEventOnDay(current, owner)) {
 								// fix for wholes in interval previous victim
@@ -550,12 +525,12 @@ public class UserCalendar extends Calendar{
 							}
 
 							// get next date depending an interval-step-size
-							current = new Date(current.getYear(),
-									current.getMonth() + 1, current.getDate(),
-									current.getHours(), current.getMinutes());
+							current = new DateTime(current.getYear(),
+									current.getMonthOfYear() + 1, current.getDayOfMonth(),
+									current.getHourOfDay(), current.getMinuteOfHour());
 						}
 					} else if (intervall == 365) {
-						Date current = baseEvent.start;
+						DateTime current = baseEvent.start;
 						while (current.compareTo(nextRepStartDate) == -1) {
 							if (hasEventOnDay(current, owner)) {
 								// fix for wholes in interval previous victim
@@ -570,9 +545,9 @@ public class UserCalendar extends Calendar{
 							}
 
 							// get next date depending an interval-step-size
-							current = new Date(current.getYear() + 1,
-									current.getMonth(), current.getDate(),
-									current.getHours(), current.getMinutes());
+							current = new DateTime(current.getYear() + 1,
+									current.getMonthOfYear(), current.getDayOfMonth(),
+									current.getHourOfDay(), current.getMinuteOfHour());
 						}
 					} else {
 						// if we are inside this block something went horribly
@@ -592,7 +567,7 @@ public class UserCalendar extends Calendar{
 					// add for each date in the collected date list a event into
 					// this.events
 					// equals all events previous victim
-					for (Date d : previousDates) {
+					for (DateTime d : previousDates) {
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(this.owner, d, d, e.name,
 								e.visibility, false, intervall);
@@ -657,7 +632,7 @@ public class UserCalendar extends Calendar{
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
 		System.out.println("cancel from this event: " + cancelEvent.start);
 		boolean flag = true;
-		Date cursor = cancelEvent.start;
+		DateTime cursor = cancelEvent.start;
 		int intervall = cancelEvent.intervall;
 		Event from = getEventById(cancelEvent.baseId);
 		LinkedList<Event> res = getEventRepeatingFromTo(from, cancelEvent.start);
@@ -680,16 +655,11 @@ public class UserCalendar extends Calendar{
 	 * @param from
 	 * @param to
 	 */
-	public LinkedList<Event> getEventRepeatingFromTo(Event from, Date to) {
+	public LinkedList<Event> getEventRepeatingFromTo(Event from, DateTime to) {
 		Event cursor = from;
 		LinkedList<Event> result = new LinkedList<Event>();
 		while (true) {
-			if (cursor.start.getYear() == to.getYear()
-					&& cursor.start.getMonth() == to.getMonth()
-					&& cursor.start.getDate() == to.getDate()
-					&& cursor.start.getMinutes() == to.getMinutes()
-					&& cursor.start.getSeconds() == to.getSeconds()// &&
-			) {
+			if (cursor.start.toLocalDate() == to.toLocalDate()) {
 				break;
 			}
 
