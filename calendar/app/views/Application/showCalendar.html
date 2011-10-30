@@ -19,7 +19,7 @@
 	</a>
 	
 	</h1>
-	<p> Month: ${cal.getDisplayName(cal.MONTH, cal.LONG, Locale.GERMAN)} ${cal.get(cal.YEAR)} </p>
+	<p> Month: ${activeDate.toString("MMM")} ${activeDate.getYear()} </p>
 </header>
 
 <body>
@@ -41,12 +41,11 @@
 			<td class="title"> Sa </td>	
 			<td class="title"> So </td>	
 		</tr>
-		${cal.set(java.util.Calendar.DAY_OF_MONTH, 1)}
 		%{ 
 			int tmp = 1;
 			int counter = 1;
-			int year = date.getYear()+1900;;
-			int month = date.getMonth()+1;
+			int year = activeDate.getYear();
+			int month = activeDate.getMonth();
 			
 			for(int i = 0; i < 6; i++){
 				

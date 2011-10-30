@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -157,17 +158,17 @@ public class UserCalendar extends Calendar{
 	}
 
 	// return all visible events of a given months => for graphical calendar
-	public LinkedList<Event> getEventsOfDay(int day, int month, int year,
+	public LinkedList<Event> getEventsOfDay(DateTime activeDate,
 			User requester) {
 		LinkedList<Event> result = new LinkedList<Event>();
-		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
+//		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
 
-		DateTime comp = null;
-//		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-		String dateString = Integer.toString(day) + "/"
-				+ Integer.toString(month) + "/" + Integer.toString(year)
-				+ ", 12:00";
-		comp = dateTimeInputFormatter.parseDateTime(dateString);
+//		DateTime comp = null;
+////		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+//		String dateString = Integer.toString(day) + "/"
+//				+ Integer.toString(month) + "/" + Integer.toString(year)
+//				+ ", 12:00";
+//		comp = dateTimeInputFormatter.parseDateTime(dateString);
 
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
@@ -214,8 +215,8 @@ public class UserCalendar extends Calendar{
 //				e.start.getDate() == comp.getDate()
 //						&& e.start.getMonth() == comp.getMonth()
 //						&& e.start.getYear() == comp.getYear()
-				System.out.println("e:localDate: " + e.getStart().toLocalDate() + "comp:localDate: " + comp.toLocalDate());
-				if (e.getStart().toLocalDate().equals(comp.toLocalDate())) {
+				System.out.println("e:localDate: " + e.getStart().toLocalDate() + "comp:localDate: " + activeDate.toLocalDate());
+				if (e.getStart().toLocalDate().equals(activeDate.toLocalDate())) {
 					if (!result.contains(e))
 						result.add(e);
 				}
@@ -226,7 +227,7 @@ public class UserCalendar extends Calendar{
 			if (is_owner
 					|| repeatingEvent.getVisibility() != Visibility.PRIVATE) {
 				Event repeatingEventOnDay = repeatingEvent
-						.getRepetitionOnDate(comp);
+						.getRepetitionOnDate(activeDate);
 				if (repeatingEventOnDay != null
 						&& !containsSameElement(new LinkedList<Event>(events),
 								repeatingEventOnDay)) {
@@ -441,10 +442,10 @@ public class UserCalendar extends Calendar{
 					int intervall = baseEvent.intervall;
 					DateTime nextRepStartDate = new DateTime(e.start.getYear(),
 							e.start.getMonthOfYear(), e.start.getDayOfMonth() + intervall,
-							e.start.getHourOfDay(), e.start.getMinuteOfHour());
+							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					DateTime nextRepEndDate = new DateTime(e.end.getYear(),
 							e.end.getMonthOfYear(), e.end.getDayOfMonth() + intervall,
-							e.start.getHourOfDay(), e.start.getMinuteOfHour());
+							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					Event nextEvent = new Event(this.owner, nextRepStartDate,
 							nextRepEndDate, e.name, e.visibility, true,
 							intervall);
@@ -498,7 +499,7 @@ public class UserCalendar extends Calendar{
 							current = new DateTime(current.getYear(),
 									current.getMonthOfYear(), current.getDayOfMonth()
 											+ intervall, current.getHourOfDay(),
-									current.getMinuteOfHour());
+									current.getMinuteOfHour(), 0, 0);
 						}
 
 						// remove last element of list, this is the victim we
@@ -522,7 +523,7 @@ public class UserCalendar extends Calendar{
 							// get next date depending an interval-step-size
 							current = new DateTime(current.getYear(),
 									current.getMonthOfYear() + 1, current.getDayOfMonth(),
-									current.getHourOfDay(), current.getMinuteOfHour());
+									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
 						}
 					} else if (intervall == 365) {
 						DateTime current = baseEvent.start;
@@ -542,7 +543,7 @@ public class UserCalendar extends Calendar{
 							// get next date depending an interval-step-size
 							current = new DateTime(current.getYear() + 1,
 									current.getMonthOfYear(), current.getDayOfMonth(),
-									current.getHourOfDay(), current.getMinuteOfHour());
+									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
 						}
 					} else {
 						// if we are inside this block something went horribly

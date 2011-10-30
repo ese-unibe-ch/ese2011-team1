@@ -39,30 +39,30 @@ public class Application extends Controller {
 	public static void index() {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
-		String s_date = new DateTime().toString("dd/MM/yyyy, HH:mm");
+		String s_activeDate = new DateTime().toString("dd/MM/yyyy, HH:mm");
 		// todo: remove ourself from list
-		render(users, me, s_date);
+		render(users, me, s_activeDate);
 	}
 
-	public static void showMe(String s_date) {
+	public static void showMe(String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
 		UserCalendar defaultCalendar = me.getdefaultCalendar();
 		LinkedList<UserCalendar> calendars = me.getCalendars();
-		render(me, users, calendars, defaultCalendar, s_date);
+		render(me, users, calendars, defaultCalendar, s_activeDate);
 	}
 
-	public static void showCalendarList(String username, String s_date) {
+	public static void showCalendarList(String username, String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		LinkedList<UserCalendar> calendars = null;
 		if (me != null && user != null) {
 			calendars = user.getCalendars();
 		}
-		render(me, user, calendars, s_date);
+		render(me, user, calendars, s_activeDate);
 	}
 
-	public static void searchForUser(String userName, String s_date) {
+	public static void searchForUser(String userName, String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(userName);
 
@@ -76,9 +76,9 @@ public class Application extends Controller {
 		} else {
 			// if a user searches himself (you never know)
 			if (me.getName().equals(user.getName()))
-				showMe(s_date);
+				showMe(s_activeDate);
 
-			showCalendarList(userName, s_date);
+			showCalendarList(userName, s_activeDate);
 		}
 	}
 
@@ -215,7 +215,7 @@ public class Application extends Controller {
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, String is_repeated,
-			String description, String s_date, int dday, int mmonth, int yyear) {
+			String description, String s_activeDate) {
 
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
@@ -229,7 +229,7 @@ public class Application extends Controller {
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
-			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
+			addEvent(calendarID, name, s_activeDate, message);
 		}
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
@@ -237,16 +237,14 @@ public class Application extends Controller {
 				intervall);
 		e.editDescription(description);
 		calendar.addEvent(e);
-		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
-				yyear, message);
+		showCalendar(calendarID, me.name, s_activeDate, 15, message);
 	}
 
 	public static void saveEditedEvent(@Required long eventID,
 			@Required long calendarID, @Required String name,
 			@Required String start, @Required String end,
 			Visibility visibility, String is_repeated, 
-			String description, String s_date, int dday, 
-			int mmonth, int yyear) {
+			String description, String s_activeDate) {
 
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
@@ -268,33 +266,29 @@ public class Application extends Controller {
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
-			editEvent(eventID, calendarID, name, s_date, dday, mmonth, yyear,
-					message);
+			editEvent(eventID, calendarID, name, s_activeDate, message);
 		}
 
 		event.edit(d_start, d_end, name, visibility, repeated, intervall);
-		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
-				yyear, message);
+		showCalendar(calendarID, me.name, s_activeDate, 15, message);
 	}
 
 	public static void editEvent(long eventID, long calendarID, String name,
-			String s_date, int dday, int mmonth, int yyear, String message) {
+			String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventID);
-		render(me, calendar, event, calendarID, eventID, s_date, dday, mmonth,
-				yyear, message);
+		render(me, calendar, event, calendarID, eventID, s_activeDate, 15, message);
 	}
 
-	public static void addEvent(long calendarID, String name, String s_date,
-			int dday, int mmonth, int yyear, String message) {
+	public static void addEvent(long calendarID, String name, String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
-		render(me, calendar, calendarID, s_date, dday, mmonth, yyear, message);
+		render(me, calendar, calendarID, s_activeDate, message);
 	}
 
 	public static void removeEvent(long calendarID, long eventID,
-			String s_date, int dday, int mmonth, int yyear) {
+			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		System.out.println("removed: event ID: " + eventID);
@@ -302,121 +296,96 @@ public class Application extends Controller {
 			System.out.println("bday id: " + e.id + " baseid: " + e.baseId);
 		}
 		calendar.removeEvent(eventID);
-		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
-				yyear, message);
+		//TODO
+		showCalendar(calendarID, me.name, s_activeDate, 15, message);
 	}
 
 	public static void cancelEventRepetition(long calendarID, long eventID,
-			String s_date, int dday, int mmonth, int yyear) {
+			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
 				.getEventById(eventID));
-		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
-				yyear, message);
+		//TODO
+		showCalendar(calendarID, me.name, s_activeDate, 15, message);
 	}
 
 	public static void removeRepeatingEvents(long calendarID, long eventId,
-			String s_date, int dday, int mmonth, int yyear) {
+			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventId);
 		calendar.removeRepeatingEvents(event);
-		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
-				yyear, message);
+		//TODO
+		showCalendar(calendarID, me.name, s_activeDate,15, message);
 	}
 
 	public static void showCalendar(long calendarId, String username,
-			String calendarName, String s_date, int dday, int mmonth,
-			int yyear, String message) {
+			String s_activeDate, int counter, String message) {
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		UserCalendar calendar = user.getCalendarById(calendarId);
-
-		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventsOfDay(dday, mmonth, yyear, me);
-		UserCalendar calendars = user.getCalendarById(calendarId); // just for
-																// hotfix -->
-																// remove later
-		LinkedList<Event> events = allVisibleEvents;
-
-
-		// "today" is used for calculating the current day/year/month and
-		// coloring it blue
-		java.util.Calendar today = java.util.Calendar.getInstance();
-		java.util.Calendar cal = java.util.Calendar.getInstance();
-
-		DateTime date = null;
+		
+		DateTime activeDate = null;
+		DateTime today = new DateTime();
 
 		try {
-			date = dateTimeInputFormatter.parseDateTime(s_date);
-		} catch (ParseException e) {
+			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		} catch (Exception e) {
+			System.out.println("catch: showTest parse s_activeDate to activeDate");
+			activeDate = today;
 		}
-		cal.setTime(date);
-		cal.set(java.util.Calendar.DAY_OF_MONTH, 1);
-		int bound = (((cal.get(java.util.Calendar.DAY_OF_WEEK) - 2) + 7) % 7);
-		int bound2 = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
-
-		int day = date.getDate() + 1;
-		int month = date.getMonth() + 1;
-		int year = date.getYear() + 1900;
-
-		int dfyear = 0;
-		if (date.getMonth() == 10) {
-			dfyear++;
+		try {
+			activeDate = activeDate.withDayOfMonth(counter);
+		} catch (Exception e) {
+			System.out.println("catch: showTest set counter as DayOfMonth for activeDate.");
+			activeDate = today;
 		}
-		if (date.getMonth() == 11) {
-			dfyear++;
-		}
-
-		String next = Integer.toString(day) + "/"
-				+ Integer.toString((month + 1) % 12) + "/"
-				+ Integer.toString(year + dfyear) + ", 12:00";
-		String prev = Integer.toString(day) + "/"
-				+ Integer.toString((month - 1)) + "/" + Integer.toString(year)
-				+ ", 12:00";
-
+		
+		LinkedList<Event> eventsOfDay = calendar.getEventsOfDay(activeDate, me);
+		
+		int bound = (activeDate.withDayOfMonth(1).getDayOfWeek());
+		int bound2 = activeDate.dayOfMonth().getMaximumValue();
+		DateTime nextMonth = activeDate.plusMonths(1);
+    	DateTime prevMonth = activeDate.minusMonths(1);
+    	
 		boolean faved = me.isCalendarObserved(calendarId);
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
 		LinkedList<Long> shownObservedCalendars = me
 				.getShownObservedCalendars();
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
-
-		render(me, date, cal, bound, bound2, calendar, user, prev, next,
-				s_date, today, events, calendarName, calendars, calendarId,
-				dday, mmonth, yyear, message, faved, observedCalendars,
-				shownObservedCalendars);
+		
+    	render(me, user, calendar, bound, bound2, prevMonth, nextMonth, activeDate, today, eventsOfDay, message, faved, observedCalendars, shownObservedCalendars);
 	}
-
+	
+	
 	/**
 	 * Observe (or "follow") a certain calendar of a user.
 	 */
 	public static void addObserve(String username, long calendarId,
-			String calendarName, String s_date, int dday, int mmonth,
-			int yyear, String message) {
+			String calendarName, String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 
 		// find calendar by ID
 		UserCalendar cal = user.getCalendarById(calendarId);
 		me.addObservedCalendar(cal);
-		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
-				yyear, message);
+		//TODO
+		showCalendar(calendarId, username, s_activeDate, 15, message);
 	}
 
 	public static void removeObserve(String username, long calendarId,
-			String calendarName, String s_date, int dday, int mmonth,
-			int yyear, String message) {
+			String calendarName, String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 
 		// find calendar by ID
 		UserCalendar cal = user.getCalendarById(calendarId);
 		me.removeObservedCalendar(cal);
-		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
-				yyear, message);
+		//TODO
+		showCalendar(calendarId, username, s_activeDate, 15, message);
 	}
 
 	/**
@@ -430,8 +399,7 @@ public class Application extends Controller {
 	 */
 	public static void changeObservedCalendars(@Required String username,
 			@Required long calendarId, @Required String calendarName,
-			@Required String s_date, @Required int dday, @Required int mmonth,
-			@Required int yyear, @Required String message,
+			@Required String s_activeDate, @Required String message,
 			@Required long calID, @Required boolean chk) {
 
 		User user = Database.users.get(username);
@@ -444,7 +412,6 @@ public class Application extends Controller {
 			user.removeShownObservedCalendar(calID);
 		}
 
-		showCalendar(calendarId, user.name, calendarName, s_date, dday, mmonth,
-				yyear, message);
+		showCalendar(calendarId, user.name, s_activeDate, 15, message);
 	}
 }

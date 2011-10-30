@@ -1,6 +1,8 @@
 package models;
 
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.ISODateTimeFormat;
 
 public class BirthdayEvent extends Event {
 	
@@ -31,11 +33,11 @@ public class BirthdayEvent extends Event {
 			if (birthday.getDayOfMonth() == 29 && birthday.getMonthOfYear() == 2) {
 				nextRepStartDate = new DateTime(birthday.getYear() + 4,
 						birthday.getMonthOfYear(), birthday.getDayOfMonth(), birthday.getHourOfDay(),
-						birthday.getMinuteOfHour());
+						birthday.getMinuteOfHour(), 0, 0);
 			} else {
 				nextRepStartDate = new DateTime(birthday.getYear() + 1,
 						birthday.getMonthOfYear(), birthday.getDayOfMonth(), birthday.getHourOfDay(),
-						start.getMinuteOfHour());
+						start.getMinuteOfHour(), 0, 0);
 			}
 		BirthdayEvent newEvent = new BirthdayEvent(owner, nextRepStartDate, visibility);
 		newEvent.setBaseId(this.baseId);
