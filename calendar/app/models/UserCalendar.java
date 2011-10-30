@@ -206,17 +206,23 @@ public class UserCalendar extends Calendar{
 						events.add(observedEvent);
 					}
 				}
+				
 				for (Event repeatingObservedEvent : observedCal
 						.getRepeatingEvents()) {
-					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
-							&& !repeatingEvents.contains(repeatingObservedEvent)) {
-						if (repeatingObservedEvent instanceof BirthdayEvent) {
+					if (repeatingObservedEvent instanceof BirthdayEvent) {
+						if (this.owner == repeatingObservedEvent.owner) {
+							repeatingEvents.add(repeatingObservedEvent);
+						} else {
 							for (Calendar cal : observedCals) {
-								if (cal.owner == repeatingObservedEvent.owner) {
+								if (cal.owner == repeatingObservedEvent.owner && repeatingObservedEvent.isVisible()) {
 									repeatingEvents.add(repeatingObservedEvent);
 								}
 							}
-						} else {
+						}
+						
+					} else {
+						if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
+								&& !repeatingEvents.contains(repeatingObservedEvent)) {
 							repeatingEvents.add(repeatingObservedEvent);
 						}
 					}
@@ -253,6 +259,8 @@ public class UserCalendar extends Calendar{
 				}
 			}
 		}
+		
+		System.out.println("all possible events to display: " + result);
 		return result;
 	}
 	
@@ -307,6 +315,17 @@ public class UserCalendar extends Calendar{
 					}
 				}
 				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
+					if (repeatingObservedEvent instanceof BirthdayEvent) {
+						if (this.owner == repeatingObservedEvent.owner) {
+							repeatingEvents.add(repeatingObservedEvent);
+						} else {
+							for (Calendar cal : observedCals) {
+								if (cal.owner == repeatingObservedEvent.owner && repeatingObservedEvent.isVisible()) {
+									repeatingEvents.add(repeatingObservedEvent);
+								}
+							}
+						}
+					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE) {
 						repeatingEvents.add(repeatingObservedEvent);
 					}

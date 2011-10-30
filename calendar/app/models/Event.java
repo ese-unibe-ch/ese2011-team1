@@ -269,4 +269,8 @@ public class Event implements Comparable<Event> {
 		return this.name;
 	}
 
+	public boolean isVisible() {
+		return this.visibility != Visibility.PRIVATE;
+	}
+
 }
