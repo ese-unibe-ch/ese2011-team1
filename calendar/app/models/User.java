@@ -1,7 +1,8 @@
 package models;
 
-import java.util.Date;
 import java.util.LinkedList;
+
+import org.joda.time.DateTime;
 
 import models.Event.Visibility;
 
@@ -13,13 +14,13 @@ public class User {
 	public LinkedList<Calendar> observedCalendars;
 	public LinkedList<Long> shownObservedCalendars;
 	public String password;
-	public Date birthday;
+	public DateTime birthday;
 	public boolean isPublicBirthday;
 	public long id;
 	private String nickname;
 	private static long counter;
 
-	public User(String name, String password, Date birthday, String nickname) {
+	public User(String name, String password, DateTime birthday, String nickname) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
@@ -46,7 +47,7 @@ public class User {
 		assert calendar != null;
 	}
 
-	private void initializeBirthday(Date birthday) {
+	private void initializeBirthday(DateTime birthday) {
 		BirthdayEvent e = new BirthdayEvent(this, birthday, Visibility.PRIVATE);
 		BirthdayCalendar.addBirthday(e);
 	}
@@ -67,11 +68,11 @@ public class User {
 		return this.password;
 	}
 	
-	public Date getBirthday() {
+	public DateTime getBirthday() {
 		return this.birthday;
 	}
 
-	public void setBirthday(Date birthday) {
+	public void setBirthday(DateTime birthday) {
 		this.birthday = birthday;
 	}
 	

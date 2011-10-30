@@ -1,6 +1,7 @@
 package models;
 
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 import models.Event.Visibility;
 import play.jobs.Job;
@@ -14,7 +15,7 @@ public class Bootstrap extends Job {
 
 		User simplay;
 		Event event;
-		Date now = new Date();
+		DateTime now = new DateTime();
 		// dataset 1
 		simplay = new User("simplay", "123", now, "senderos");
 		event = new Event(simplay, now, now, "abc", Visibility.PUBLIC, false, 0);

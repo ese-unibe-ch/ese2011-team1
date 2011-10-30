@@ -11,6 +11,7 @@ import java.util.PriorityQueue;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import models.Event.Visibility;
 
@@ -159,17 +160,14 @@ public class UserCalendar extends Calendar{
 	public LinkedList<Event> getEventsOfDay(int day, int month, int year,
 			User requester) {
 		LinkedList<Event> result = new LinkedList<Event>();
+		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
 
 		DateTime comp = null;
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-		final DateTimeFormatter dateFormatter = new DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
+//		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
 				+ ", 12:00";
-		try {
-			comp = dateFormat.parse(dateString);
-		} catch (ParseException e) {
-		}
+		comp = dateTimeInputFormatter.parseDateTime(dateString);
 
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
@@ -270,17 +268,15 @@ public class UserCalendar extends Calendar{
 	
 	// mache hier auch reperatur wengen event adden!!!!
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
+		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
+
 		boolean flag = false;
 		DateTime comp = null;
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+//		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 		String dateString = Integer.toString(day) + "/"
 				+ Integer.toString(month) + "/" + Integer.toString(year)
 				+ ", 12:00";
-		try {
-			comp = dateFormat.parse(dateString);
-
-		} catch (ParseException e) {
-		}
+		comp = dateTimeInputFormatter.parseDateTime(dateString);
 
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
@@ -403,7 +399,6 @@ public class UserCalendar extends Calendar{
 	 * @param id
 	 *            id of the event to be removed.
 	 */
-	@SuppressWarnings("deprecation")
 	public void removeEvent(long id) {
 		// we call the event we are going to delete victim event or simply
 		// victim
@@ -631,9 +626,9 @@ public class UserCalendar extends Calendar{
 	 */
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
 		System.out.println("cancel from this event: " + cancelEvent.start);
-		boolean flag = true;
-		DateTime cursor = cancelEvent.start;
-		int intervall = cancelEvent.intervall;
+//		boolean flag = true;
+//		DateTime cursor = cancelEvent.start;
+//		int intervall = cancelEvent.intervall;
 		Event from = getEventById(cancelEvent.baseId);
 		LinkedList<Event> res = getEventRepeatingFromTo(from, cancelEvent.start);
 		res.add(cancelEvent);

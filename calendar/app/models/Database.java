@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import controllers.Secure;
 
 public class Database {
@@ -18,7 +20,7 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     	}
     }
 
-    public static void addUser(String username, String password, Date birthday, String nickname) {
+    public static void addUser(String username, String password, DateTime birthday, String nickname) {
     	if(!users.containsKey(username)) {
     		users.put(username, new User(username, password, birthday, nickname));
     	}

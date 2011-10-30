@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 import models.BirthdayCalendar;
 import models.Calendar;
 import models.UserCalendar;
@@ -25,14 +30,16 @@ import play.mvc.With;
 @With(Secure.class)
 public class Application extends Controller {
 
-	static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-	static DateFormat birthdayDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//	static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+//	static DateFormat birthdayDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat.forPattern("dd/MM/yyyy, HH:mm");
+	final static DateTimeFormatter birthdayFormatter = DateTimeFormat.forPattern("dd/MM/yyyy");
 	public static String message = null;
 
 	public static void index() {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
-		String s_date = dateFormat.format(new Date());
+		String s_date = new DateTime().toString("dd/MM/yyyy, HH:mm");
 		// todo: remove ourself from list
 		render(users, me, s_date);
 	}
@@ -79,9 +86,8 @@ public class Application extends Controller {
 			String calendarName) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		Date d = new Date(1, 1, 1);
-		Iterator allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventList(d, me);
+		DateTime d = new DateTime();
+		Iterator allVisibleEvents = user.getCalendarById(calendarId).getEventList(d, me);
 		UserCalendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = new LinkedList<Event>();
 
@@ -98,6 +104,7 @@ public class Application extends Controller {
 	
 	public static void RegUser(@Required String name, @Required String nickname, @Required String password, @Required String birthday, @Required boolean is_visible)
     {
+
     	if(Database.userAlreadyRegistrated(name))
     	{
     		flash.error("Username (" + name + ") already exists!");
@@ -116,7 +123,7 @@ public class Application extends Controller {
     	{
     		try 
     		{
-    			Date birthdate = birthdayDateFormat.parse(birthday);
+    			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
     			User user = new User(name, password, birthdate, nickname);
     			Database.addUser(user);
     			user.setBirthdayPublic(is_visible);
@@ -135,7 +142,7 @@ public class Application extends Controller {
 	 public static void showProfile(String userName)
 	    {
 	    	User user = Database.getUserByName(userName);
-	    	Date birthday = user.getBirthday();
+	    	DateTime birthday = user.getBirthday();
 	    	String nickname = user.getNickname();
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
@@ -152,7 +159,7 @@ public class Application extends Controller {
 	    	String name = user.getName();
 	    	String nickname = user.getNickname();
 	    	String password = user.getPassword();
-	    	String birthday = birthdayDateFormat.format(user.getBirthday());
+	    	String birthday = user.getBirthday().toString("dd/MM/yyyy");
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
 	    	render(name, nickname, password, birthday, is_visible);
@@ -180,7 +187,7 @@ public class Application extends Controller {
 	    	{
 	    		try 
 	    		{
-	    			Date birthdate = birthdayDateFormat.parse(birthday);
+	    			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
 	    			user.setBirthday(birthdate);
 	    			user.setBirthdayPublic(is_visible);
 	    			user.setName(name);
@@ -214,12 +221,12 @@ public class Application extends Controller {
 		UserCalendar calendar = me.getCalendarById(calendarID);
 
 		// convert dates
-		Date d_start = null;
-		Date d_end = null;
+		DateTime d_start = null;
+		DateTime d_end = null;
 
 		try {
-			d_start = dateFormat.parse(start);
-			d_end = dateFormat.parse(end);
+			d_start = dateTimeInputFormatter.parseDateTime(start);
+			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
@@ -246,8 +253,8 @@ public class Application extends Controller {
 
 		// covert dates
 
-		Date d_start = null;
-		Date d_end = null;
+		DateTime d_start = null;
+		DateTime d_end = null;
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event event = calendar.getEventById(eventID);
@@ -257,8 +264,8 @@ public class Application extends Controller {
 		}
 
 		try {
-			d_start = dateFormat.parse(start);
-			d_end = dateFormat.parse(end);
+			d_start = dateTimeInputFormatter.parseDateTime(start);
+			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			editEvent(eventID, calendarID, name, s_date, dday, mmonth, yyear,
@@ -340,10 +347,10 @@ public class Application extends Controller {
 		java.util.Calendar today = java.util.Calendar.getInstance();
 		java.util.Calendar cal = java.util.Calendar.getInstance();
 
-		Date date = null;
+		DateTime date = null;
 
 		try {
-			date = dateFormat.parse(s_date);
+			date = dateTimeInputFormatter.parseDateTime(s_date);
 		} catch (ParseException e) {
 		}
 		cal.setTime(date);

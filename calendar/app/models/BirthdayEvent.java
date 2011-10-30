@@ -1,17 +1,17 @@
 package models;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class BirthdayEvent extends Event {
 	
 	private User owner;
-	private Date birthday;
+	private DateTime birthday;
 	private Visibility visibility;
 	private long id;
 
 	
 
-	public BirthdayEvent(User owner, Date start, Visibility visibility) {
+	public BirthdayEvent(User owner, DateTime start, Visibility visibility) {
 		super(owner, start, start, "Birthday", visibility, true, 365);
 		this.owner = owner;
 		this.birthday = start;
@@ -25,17 +25,17 @@ public class BirthdayEvent extends Event {
 	
 	public BirthdayEvent getNextRepetitionEvent() {
 		assert intervall == 365;
-		Date nextRepStartDate;
+		DateTime nextRepStartDate;
 
 			// if we have a leap year, remember february is equals 1
-			if (birthday.getDate() == 29 && birthday.getMonth() == 1) {
-				nextRepStartDate = new Date(birthday.getYear() + 4,
-						birthday.getMonth(), birthday.getDate(), birthday.getHours(),
-						birthday.getMinutes());
+			if (birthday.getDayOfMonth() == 29 && birthday.getMonthOfYear() == 2) {
+				nextRepStartDate = new DateTime(birthday.getYear() + 4,
+						birthday.getMonthOfYear(), birthday.getDayOfMonth(), birthday.getHourOfDay(),
+						birthday.getMinuteOfHour());
 			} else {
-				nextRepStartDate = new Date(birthday.getYear() + 1,
-						birthday.getMonth(), birthday.getDate(), birthday.getHours(),
-						start.getMinutes());
+				nextRepStartDate = new DateTime(birthday.getYear() + 1,
+						birthday.getMonthOfYear(), birthday.getDayOfMonth(), birthday.getHourOfDay(),
+						start.getMinuteOfHour());
 			}
 		BirthdayEvent newEvent = new BirthdayEvent(owner, nextRepStartDate, visibility);
 		newEvent.setBaseId(this.baseId);
@@ -43,17 +43,15 @@ public class BirthdayEvent extends Event {
 	}
 	
 	
-	public BirthdayEvent getRepetitionOnDate(Date compDate) {
+	public BirthdayEvent getRepetitionOnDate(DateTime compDate) {
 		BirthdayEvent repeatingEventOnDay = null;
 		BirthdayEvent repeatingEvent = this;
-		if (repeatingEvent.start.getYear() == compDate.getYear()
-				&& repeatingEvent.start.getMonth() == compDate.getMonth()
-				&& repeatingEvent.start.getDate() == compDate.getDate()) {
+		if (repeatingEvent.start.toLocalDate().equals(compDate.toLocalDate())) {
 			return repeatingEvent;
 		}
-		while (repeatingEvent.getStart().before(compDate)) {
+		while (repeatingEvent.getStart().isBefore(compDate)) {
 			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
-			if (repeatingEvent.getStart().getDate() == compDate.getDate()) {
+			if (repeatingEvent.getStart().getDayOfMonth() == compDate.getDayOfMonth()) {
 				System.out.println("new repeatingEvent : " + repeatingEvent.start);
 				repeatingEventOnDay = repeatingEvent;
 			}

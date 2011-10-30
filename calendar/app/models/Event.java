@@ -136,6 +136,7 @@ public class Event implements Comparable<Event> {
 		} break;
 		}
 		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall);
+		nextRepetition.setBaseId(this.baseId);
 		return nextRepetition;
 		
 //		DateTime nextRepStartDate = new DateTime(start.getYear(), start.getMonth(),
