@@ -1,0 +1,44 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>Edit Profile:</h1>
+
+#{if flash.error}
+	<p style="color:#c00">
+		${flash.error}
+	</p>
+#{/if}
+
+#{form @Application.editProfile()}
+<p>
+	<label for="name"> Name: </label>
+	<input type="text" name="name" id="name" value ="${name}" />
+	<span class ="error" style="color:#c00"> #{error 'name' /}</span>
+</p>
+<p>
+	<label for="nickname"> Nickname: </label>
+	<input type="text" name="nickname" id="nickname" value ="${nickname}" />
+	<span class ="error" style="color:#c00"> #{error 'nickname' /}</span>
+</p>
+<p>
+	<label for="password"> Password: </label>
+	<input type="text" name="password" id="password" value ="${password}"/ >
+	<span class ="error" style="color:#c00"> #{error 'password' /}</span>
+</p>
+<p>
+	<label for="birthday"> Birthday Date: </label>
+	<input type="birthday" name="birthday" id="birthday" value="${birthday}"/ >
+	<span class ="error" style="color:#c00"> #{error 'birthday' /}</span>
+	
+	<label for="is_visible"> public: </label>
+	<input type="checkbox" name="is_visible" #{if is_visible} checked #{/if}/>
+</p>
+<hr />
+<p>
+	<input type="submit" value="Submit"/>
+</p>
+
+<p>
+	<a href="@{Application.index()}">Home</a>
+</p>
+#{/form}

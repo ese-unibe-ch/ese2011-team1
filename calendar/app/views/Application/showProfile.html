@@ -1,0 +1,11 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h1>${user.name}'s profile</h1>
+
+	<li><b> name:</b> ${user.name} </li> <br>
+	<li><b> nickname:</b> ${nickname} </li> <br>
+	#{if user.isBirthdayPublic()}<li><b> birthday:</b> ${birthday} (${pub})</li> <br>#{/if}
+
+<a href="@{Application.index()}">Home</a>  
+<a href="@{Secure.logout()}">Log out</a> 

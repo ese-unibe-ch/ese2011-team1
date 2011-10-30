@@ -138,6 +138,74 @@ public class Application extends Controller {
     		}	
     	}
     }
+	
+	 public static void showProfile(String userName)
+	    {
+	    	User user = Database.getUserByName(userName);
+	    	Date birthday = user.getBirthday();
+	    	String nickname = user.getNickname();
+	    	boolean is_visible = user.isBirthdayPublic();
+	    	
+	    	String pub = "public";
+	    	if(!is_visible) pub = "private";
+	    		
+	    	render(user, nickname, birthday, pub);
+	    }
+	    
+	    public static void showEditProfile()
+	    {
+	    	User user = Database.users.get(Security.connected());
+	    	
+	    	String name = user.getName();
+	    	String nickname = user.getNickname();
+	    	String password = user.getPassword();
+	    	String birthday = birthdayDateFormat.format(user.getBirthday());
+	    	boolean is_visible = user.isBirthdayPublic();
+	    	
+	    	render(name, nickname, password, birthday, is_visible);
+	    }
+	    
+	    public static void editProfile(@Required String name, @Required String password, @Required String birthday, @Required String nickname, @Required boolean is_visible)
+	    {
+	    	User user = Database.users.get(Security.connected());
+	    	
+	    	if(!(name.equals(user.getName())) && Database.userAlreadyRegistrated(name))
+	    	{
+	    		flash.error("Username (" + name + ") already exists!");
+	    		params.flash();
+	    		validation.keep();
+	    		showEditProfile();
+	    	}
+	    	else if(validation.hasErrors())
+	    	{
+	    		params.flash();
+	    		validation.keep();
+	    		flash.error("All fields required!");
+	    		showEditProfile();
+	    	}
+	    	else
+	    	{
+	    		try 
+	    		{
+	    			user.setBirthday(birthdayDateFormat.parse(birthday));
+	    			user.setBirthdayPublic(is_visible);
+	    			user.setName(name);
+	    			user.setNickname(nickname);
+	    			user.setPassword(password);
+	    			
+	    			Database.changeUserName(user); //TODO does not work properly jet!
+	    			
+	    			index();
+	    		} 
+	    		catch (Exception e) 
+	    		{
+	    			params.flash();
+	        		validation.keep();
+	    			flash.error("Invalid date format");
+	    			showEditProfile();
+	    		}
+	    	}
+	    }
 
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,

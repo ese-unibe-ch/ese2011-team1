@@ -4,13 +4,19 @@
 <h1>Calendar Team1 - Hello ${me.name}</h1>
 
 <h2>News:</h2>
-	sad user has no news QQ
+<h3><u>Log [week1]:</u></h3>
+<li>fixed calendar view </li>
+<li>added repeating events</li>
+<li>added internal user registration</li>
+<li>improved date format, html- and css files</li>
 <h2>Administration</h2>
 <p>
-		<a href="@{Application.showCalendarList(me.name, s_date)}"> Show my calendars </a><br>
-	    <a href="@{Application.showRegistration()}"> Register new User</a><br>
-	    <a href="@{Secure.login()}"> Log in</a><br>
-		<a href="@{Secure.logout()}">Log out</a><br>
+		<a href="@{Application.showEditProfile()}"> edit my profile </a> <br>
+		<a href="@{Application.showCalendarList(me.name, s_date)}"> show my calendars</a>   <br>
+	    <a href="@{Application.showRegistration()}"> Register new User</a>   <br>
+	    <a href="@{Secure.login()}"> Log in</a>   <br>
+		<a href="@{Secure.logout()}">Log out</a>  <br>
+	
 </p>
 
 #{ifnot users}
@@ -22,10 +28,11 @@
 <p>
 <b>Other Users:</b>
 <ul>
-    #{list items:users, as:'user'}
-        #{ifnot user==me}
+    #{list items:users, as:'data'}
+        #{ifnot data==me}
 	        <li>
-	            	<a href="@{Application.showCalendarList(user.name, s_date)}">${user.name}</a>        
+	            	<a href="@{Application.showCalendarList(data.name, s_date)}">${data.name}</a>
+	            	<a href="@{Application.showProfile(data.name)}"> show Profile </a>        
 	        </li>
         #{/ifnot}
     #{/list}
