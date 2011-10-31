@@ -237,7 +237,7 @@ public class Application extends Controller {
 				intervall);
 		e.editDescription(description);
 		calendar.addEvent(e);
-		showCalendar(calendarID, me.name, s_activeDate, 15, message);
+		showCalendar(calendarID, me.name, s_activeDate, d_start.getDayOfMonth(), message);
 	}
 
 	public static void saveEditedEvent(@Required long eventID,
@@ -270,7 +270,7 @@ public class Application extends Controller {
 		}
 
 		event.edit(d_start, d_end, name, visibility, repeated, intervall);
-		showCalendar(calendarID, me.name, s_activeDate, 15, message);
+		showCalendar(calendarID, me.name, s_activeDate, d_start.getDayOfMonth(), message);
 	}
 
 	public static void editEvent(long eventID, long calendarID, String name,
@@ -278,7 +278,7 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventID);
-		render(me, calendar, event, calendarID, eventID, s_activeDate, 15, message);
+		render(me, calendar, event, calendarID, eventID, s_activeDate, message);
 	}
 
 	public static void addEvent(long calendarID, String name, String s_activeDate, String message) {
@@ -296,8 +296,8 @@ public class Application extends Controller {
 			System.out.println("bday id: " + e.id + " baseid: " + e.baseId);
 		}
 		calendar.removeEvent(eventID);
-		//TODO
-		showCalendar(calendarID, me.name, s_activeDate, 15, message);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarID, me.name, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 
 	public static void cancelEventRepetition(long calendarID, long eventID,
@@ -306,8 +306,8 @@ public class Application extends Controller {
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
 				.getEventById(eventID));
-		//TODO
-		showCalendar(calendarID, me.name, s_activeDate, 15, message);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarID, me.name, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 
 	public static void removeRepeatingEvents(long calendarID, long eventId,
@@ -316,12 +316,15 @@ public class Application extends Controller {
 		UserCalendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventId);
 		calendar.removeRepeatingEvents(event);
-		//TODO
-		showCalendar(calendarID, me.name, s_activeDate, 15, message);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarID, me.name, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 
 	public static void showCalendar(long calendarId, String username, String s_activeDate, int counter, String message) {
 		message = null;
+		
+		System.out.println("activeDate incoming: " + s_activeDate);
+		System.out.println("format required: dd/MM/yyyy, HH:mm");
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
@@ -335,7 +338,7 @@ public class Application extends Controller {
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		} catch (Exception e) {
-			message = "catch: showTest parse s_activeDate to activeDate";
+			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
 			activeDate = today;
 		}
 		try {
@@ -374,8 +377,8 @@ public class Application extends Controller {
 		// find calendar by ID
 		UserCalendar cal = user.getCalendarById(calendarId);
 		me.addObservedCalendar(cal);
-		//TODO
-		showCalendar(calendarId, username, s_activeDate, 0, message);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarId, username, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 
 	public static void removeObserve(String username, long calendarId, String s_activeDate, String message) {
@@ -385,8 +388,8 @@ public class Application extends Controller {
 		// find calendar by ID
 		UserCalendar cal = user.getCalendarById(calendarId);
 		me.removeObservedCalendar(cal);
-		//TODO
-		showCalendar(calendarId, username, s_activeDate, 15, message);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarId, username, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 
 	/**
@@ -412,7 +415,9 @@ public class Application extends Controller {
 		} else {
 			user.removeShownObservedCalendar(calID);
 		}
+		
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 
-		showCalendar(calendarId, user.name, s_activeDate, 0, message);
+		showCalendar(calendarId, user.name, s_activeDate, activeDate.getDayOfMonth(), message);
 	}
 }

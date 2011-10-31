@@ -18,7 +18,6 @@ public class Event implements Comparable<Event> {
 	public boolean is_repeating;
 	public int intervall;
 	private static long counter;
-	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 	public boolean isDirty = false;
 
 	/**
@@ -80,8 +79,8 @@ public class Event implements Comparable<Event> {
 		return this.id;
 	}
 
-	public String getParsedDate(Date d) {
-		return dateFormat.format(d);
+	public String getParsedDate(DateTime d) {
+		return d.toString("dd/MM/yyyy, HH:mm");
 	}
 
 	public void edit(DateTime start, DateTime end, String name, Visibility visibility,

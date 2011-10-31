@@ -11,11 +11,11 @@
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
-				%}<a href="@{Application.removeObserve(user.name, calendar.getId(), activeDate.toString(), message)}">%{
+				%}<a href="@{Application.removeObserve(user.name, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
 				out.println('<img src="/public/images/star_fav.png" border=0>');
 			}
 			else {
-				%}<a href="@{Application.addObserve(user.name, calendar.getId(), activeDate.toString(), message)}">%{
+				%}<a href="@{Application.addObserve(user.name, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
 				out.println('<img src="/public/images/star.png" border=0>');
 			}
 		}
@@ -73,7 +73,7 @@
 							{out.println('<td class="today"> ');}
 						
 					// 2 - selected
-						else if (i*7+j-bound+1 == activeDate.getDayOfMonth()) {
+						else if (counter == activeDate.getDayOfMonth()) {
 							out.println('<td class="selected"> ');
 						}
 						
@@ -84,7 +84,7 @@
 						
 						if(calendar.hasEventOnDay(counter, month, year, me)){
 							%} 
-							<a href="@{Application.showCalendar(calendar.getId(), user.name, activeDate.toString(), counter)})}"> ${counter}</a>
+							<a href="@{Application.showCalendar(calendar.getId(), user.name, activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
 							%{
 						}
 						else {
@@ -136,18 +136,18 @@
 			#{list items:eventsOfDay, as:'event'}
 				<p>
 					<li> 
-							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} 
+							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.getStart().toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.getEnd().toString("dd/MM/yyyy, HH:mm")} 
 							#{if user==me},  
 								<b>visibility</b>:${event.visibility} 
 							#{/if} <br>
 							<b>Repeating:</b>${event.is_repeating}
 							<b>Description</b>:${event.description} <br>
 							#{if user == me && me==event.owner}
-								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.name, activeDate.toString())}"> Edit </a></b> <br>
-								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString())}"> Remove </a></b> <br>
+								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
+								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
 								#{if event.is_repeating}
-									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString())}"> Remove All Repeating </a></b><br>  
-									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString())}">Cancel Repetition from here </a></b>
+									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
+									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
 								#{/if}
 							#{/if}
 					</li>  
@@ -157,7 +157,7 @@
 	
 	<div id="Nav">
 		#{if user==me} 
- 			<a href="@{Application.addEvent(calendar.getId(), me.name, activeDate.toString())}"> New Event</a>  <br>
+ 			<a href="@{Application.addEvent(calendar.getId(), me.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
 		#{/if}
 	</div>
 	
@@ -167,7 +167,7 @@
 
 <input type="hidden" name="username" value="${user.name}" />
 <input type="hidden" name="calendarId" value="${calendar.getId()}" />
-<input type="hidden" name="s_activeDate" value="${activeDate.toString()}" />
+<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" />
 <input type="hidden" name="message" value="${message}" />
 </form>
 
@@ -191,6 +191,6 @@ function changeSelection(boxName) {
 	
 </body>	
 
-<a href="@{Application.showCalendarList(user.name, activeDate.toString())}">Back</a>
+<a href="@{Application.showCalendarList(user.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}">Back</a>
 <a href="@{Application.index()}">Home</a>
 <a href="@{Secure.logout()}">Log out</a>
