@@ -292,20 +292,25 @@ public class Calendar {
 		repeatingEvents.addAll(this.repeatingEvents);
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
+		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
 
-		System.out
-				.println("This lists all Events which are observed, and if they are shown:");
-		for (Calendar cal : observedCals) {
-			System.out.println("observedCal: " + cal);
-			for (Event e : cal.getEvents()) {
-				System.out.print(e.name);
-				if (shownObservedCals.contains(cal.id) && e.isVisible()) {
-					System.out.print(": is shown");
-				}
-				System.out.println();
+
+		if (shownObservedCals.contains(owner.getBirthdayCalendar().id)) {
+			for (Calendar observedCal : observedCals) {
+				otherUsersBirthdays.add(observedCal.owner.getBirthday());
 			}
 		}
-
+		
+		for (Event e : otherUsersBirthdays) {
+			if (e.isVisible()) {
+				for (Calendar observedCal : observedCals) {
+					if (observedCal.getId() == owner.getBirthdayCalendar().getId() && !observedCal.compareCalendarEvents(e)) {
+						observedCal.addEvent(e);
+					}
+				}
+			}
+		}
+		
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
 				for (Event observedEvent : observedCal.getEvents()) {
@@ -364,7 +369,6 @@ public class Calendar {
 
 		for (Event e : result) {
 			if (!this.events.contains(e)) {
-				System.out.println("added to events: " + e + ", " + e.start);
 				this.events.add(e);
 			}
 		}
@@ -448,6 +452,24 @@ public class Calendar {
 		repeatingEvents.addAll(this.repeatingEvents);
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
+		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
+
+
+		if (shownObservedCals.contains(owner.getBirthdayCalendar().id)) {
+			for (Calendar observedCal : observedCals) {
+				otherUsersBirthdays.add(observedCal.owner.getBirthday());
+			}
+		}
+		
+		for (Event e : otherUsersBirthdays) {
+			if (e.isVisible()) {
+				for (Calendar observedCal : observedCals) {
+					if (observedCal.getId() == owner.getBirthdayCalendar().getId()) {
+						observedCal.addEvent(e);
+					}
+				}
+			}
+		}
 
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
@@ -582,7 +604,8 @@ public class Calendar {
 	}
 
 	/**
-	 * Removes an Event from this Calendars <code>events</code> and <code>repeatingEvents</code> if they contain the Event.
+	 * Removes an Event from this Calendars <code>events</code> and
+	 * <code>repeatingEvents</code> if they contain the Event.
 	 * 
 	 * @param id
 	 *            id of the Event to be removed.
@@ -813,6 +836,7 @@ public class Calendar {
 	 * End repetition of a repeating Event from a given date cancelDate remove
 	 * all repeating dates after cancelDate, which are already calculated. Mark
 	 * all such repeating Events up to and including canelDate as NOT repeating.
+	 * 
 	 * @param cancelEvent
 	 */
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
@@ -835,13 +859,16 @@ public class Calendar {
 	}
 
 	/**
-	 * Returns a list of Events containing all Events with the same baseId from a given Event to another Event.
+	 * Returns a list of Events containing all Events with the same baseId from
+	 * a given Event to another Event.
 	 * 
-	 * Starting from an Event <code>from</code> put in from.interval steps till <code>to</code> events
-	 * in the Calendar.
+	 * Starting from an Event <code>from</code> put in from.interval steps till
+	 * <code>to</code> events in the Calendar.
 	 * 
-	 * @param from The Event from whose start date the List starts.
-	 * @param to The last Event in the List.
+	 * @param from
+	 *            The Event from whose start date the List starts.
+	 * @param to
+	 *            The last Event in the List.
 	 */
 	public LinkedList<Event> getEventRepeatingFromTo(Event from, Date to) {
 		Event cursor = from;
@@ -865,6 +892,7 @@ public class Calendar {
 
 	/**
 	 * Get all Events of this Calendar.
+	 * 
 	 * @return this calendars <code>events</code>.
 	 */
 	public PriorityQueue<Event> getEvents() {
@@ -873,6 +901,7 @@ public class Calendar {
 
 	/**
 	 * Get all repeating Events of this Calendar.
+	 * 
 	 * @return this Calendars <code>repeatingEvents</code>.
 	 */
 	public LinkedList<Event> getRepeatingEvents() {
@@ -881,6 +910,7 @@ public class Calendar {
 
 	/**
 	 * String representation of this Calendar.
+	 * 
 	 * @return this Calendars <code>name</code>.
 	 */
 	public String toString() {
