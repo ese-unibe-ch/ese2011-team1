@@ -172,5 +172,9 @@ public class User {
 	public Calendar getBirthdayCalendar() {
 		return this.birthdayCalendar;
 	}
+	
+	public boolean isBirthday(Event e) {
+		return this.birthday.getId() == e.getBaseId();
+	}
 
 }

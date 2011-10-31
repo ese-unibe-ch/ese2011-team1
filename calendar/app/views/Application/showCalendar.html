@@ -142,7 +142,7 @@
 							#{/if} <br>
 							<b>Repeating:</b>${event.is_repeating}
 							<b>Description</b>:${event.description} <br>
-							#{if user == me && me==event.owner}
+							#{if user == me && me==event.owner && !user.isBirthday(event)}
 								<b><a href="@{Application.editEvent(event.getId(), calendarId, me.name, s_date, dday, mmonth, yyear)}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b> <br>
 								#{if event.is_repeating}
