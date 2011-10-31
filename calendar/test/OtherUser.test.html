@@ -22,7 +22,12 @@
 	assertTextPresent('mib's first calendar')
 	clickAndWait('link=mib's first calendar')
 	assertTextPresent('mib's Calendar:')
-	clickAndWait('link=25')
+	clickAndWait('link=
+	%{
+    	Calendar cal = Calendar.getInstance();
+     	out.println(String.valueOf(cal.getTime()).substring(8,10));
+	%}
+	')
 	assertTextNotPresent('Edit')
 	assertTextNotPresent('Remove')
 	
