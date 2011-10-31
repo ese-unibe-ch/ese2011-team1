@@ -364,15 +364,20 @@ public class Application extends Controller {
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
 		
+//		PriorityQueue<Event> allEvents = calendar.getEvents();
+//		for (Event e : ) {
+//			if (e.owner != me || e instanceof BirthdayEvent) {
+//				allEvents.remove(e);
+//			}
+//		}
+			
 		PriorityQueue<Event> allEvents = calendar.getEvents();
-		for (Event e : eventsOfDay) {
+		for (Event e : allEvents) {
 			if (e.owner != me || e instanceof BirthdayEvent) {
 				allEvents.remove(e);
 			}
-			
-			
 		}
-		
+			
     	render(me, user, calendar, bound, bound2, prevMonth, nextMonth, activeDate, today, eventsOfDay, message, faved, observedCalendars, shownObservedCalendars);
 	}
 	
