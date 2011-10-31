@@ -260,7 +260,12 @@ public class UserCalendar extends Calendar{
 			}
 		}
 		
-		System.out.println("all possible events to display: " + result);
+		for (Event e : result) {
+			if (!this.events.contains(e)) {
+				System.out.println("added to events: " + e + ", " + e.start);
+				this.events.add(e);
+			}
+		}
 		return result;
 	}
 	

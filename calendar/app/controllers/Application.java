@@ -376,6 +376,7 @@ public class Application extends Controller {
 				.getShownObservedCalendars();
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
+		
 
 		render(me, date, cal, bound, bound2, calendar, user, prev, next,
 				s_date, today, events, calendarName, calendars, calendarId,
