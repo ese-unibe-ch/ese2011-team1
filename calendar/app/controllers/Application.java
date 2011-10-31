@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import models.BirthdayCalendar;
+import models.BirthdayEvent;
 import models.Calendar;
 import models.UserCalendar;
 import models.Database;
@@ -338,13 +339,13 @@ public class Application extends Controller {
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		} catch (Exception e) {
-			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
+//			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
 			activeDate = today;
 		}
 		try {
 			activeDate = activeDate.withDayOfMonth(counter);
 		} catch (Exception e) {
-			message = "catch: showTest set counter as DayOfMonth for activeDate.";
+//			message = "catch: showTest set counter as DayOfMonth for activeDate.";
 			activeDate.withDayOfMonth(activeDate.getDayOfMonth());
 		}
 		assert (activeDate != null) : "must not be null!";
@@ -362,6 +363,15 @@ public class Application extends Controller {
 				.getShownObservedCalendars();
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
+		
+		PriorityQueue<Event> allEvents = calendar.getEvents();
+		for (Event e : eventsOfDay) {
+			if (e.owner != me || e instanceof BirthdayEvent) {
+				allEvents.remove(e);
+			}
+			
+			
+		}
 		
     	render(me, user, calendar, bound, bound2, prevMonth, nextMonth, activeDate, today, eventsOfDay, message, faved, observedCalendars, shownObservedCalendars);
 	}
