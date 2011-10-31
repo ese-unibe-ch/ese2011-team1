@@ -9,10 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import models.BirthdayCalendar;
-import models.BirthdayEvent;
 import models.Calendar;
-import models.UserCalendar;
+import models.Calendar;
 import models.Database;
 import models.Event;
 import models.Event.Visibility;
@@ -41,15 +39,15 @@ public class Application extends Controller {
 	public static void showMe(String s_date) {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
-		UserCalendar defaultCalendar = me.getdefaultCalendar();
-		LinkedList<UserCalendar> calendars = me.getCalendars();
+		Calendar defaultCalendar = me.getdefaultCalendar();
+		LinkedList<Calendar> calendars = me.getCalendars();
 		render(me, users, calendars, defaultCalendar, s_date);
 	}
 
 	public static void showCalendarList(String username, String s_date) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		LinkedList<UserCalendar> calendars = null;
+		LinkedList<Calendar> calendars = null;
 		if (me != null && user != null) {
 			calendars = user.getCalendars();
 		}
@@ -83,7 +81,7 @@ public class Application extends Controller {
 		Date d = new Date(1, 1, 1);
 		Iterator allVisibleEvents = user.getCalendarById(calendarId)
 				.getEventList(d, me);
-		UserCalendar calendars = user.getCalendarById(calendarId);
+		Calendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = new LinkedList<Event>();
 
 		while (allVisibleEvents.hasNext()) {
@@ -136,7 +134,7 @@ public class Application extends Controller {
 	 public static void showProfile(String userName)
 	    {
 	    	User user = Database.getUserByName(userName);
-	    	Date birthday = user.getBirthday();
+	    	Event birthday = user.getBirthday();
 	    	String nickname = user.getNickname();
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
@@ -153,7 +151,8 @@ public class Application extends Controller {
 	    	String name = user.getName();
 	    	String nickname = user.getNickname();
 	    	String password = user.getPassword();
-	    	String birthday = birthdayDateFormat.format(user.getBirthday());
+	    	String birthday = birthdayDateFormat.format(user.getBirthday().start);
+	    	
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
 	    	render(name, nickname, password, birthday, is_visible);
@@ -182,18 +181,14 @@ public class Application extends Controller {
 	    		try 
 	    		{
 	    			Date birthdate = birthdayDateFormat.parse(birthday);
-	    			user.setBirthday(birthdate);
+	    			user.setBirthdayDate(birthdate);
 	    			user.setBirthdayPublic(is_visible);
 	    			user.setName(name);
 	    			user.setNickname(nickname);
 	    			user.setPassword(password);
 	    			
 	    			Database.changeUserName(user); //TODO does not work properly jet!
-	    			Event birthdayEvent = BirthdayCalendar.getBirthdayOf(user);
-	    			Visibility visibility = Visibility.PRIVATE;
-	    			if (is_visible) visibility = Visibility.PUBLIC;
 	    			
-	    			birthdayEvent.edit(birthdate, birthdate, birthdayEvent.name, visibility, birthdayEvent.is_repeating, birthdayEvent.getIntervall());
 	    			index();
 	    		} 
 	    		catch (Exception e) 
@@ -212,7 +207,7 @@ public class Application extends Controller {
 			String description, String s_date, int dday, int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 
 		// convert dates
 		Date d_start = null;
@@ -243,7 +238,7 @@ public class Application extends Controller {
 			int mmonth, int yyear) {
 
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 
 		// covert dates
 
@@ -274,7 +269,7 @@ public class Application extends Controller {
 	public static void editEvent(long eventID, long calendarID, String name,
 			String s_date, int dday, int mmonth, int yyear, String message) {
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventID);
 		render(me, calendar, event, calendarID, eventID, s_date, dday, mmonth,
 				yyear, message);
@@ -283,18 +278,14 @@ public class Application extends Controller {
 	public static void addEvent(long calendarID, String name, String s_date,
 			int dday, int mmonth, int yyear, String message) {
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 		render(me, calendar, calendarID, s_date, dday, mmonth, yyear, message);
 	}
 
 	public static void removeEvent(long calendarID, long eventID,
 			String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
-		System.out.println("removed: event ID: " + eventID);
-		for (Event e : BirthdayCalendar.getBirthdays()) {
-			System.out.println("bday id: " + e.id + " baseid: " + e.baseId);
-		}
+		Calendar calendar = me.getCalendarById(calendarID);
 		calendar.removeEvent(eventID);
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
@@ -303,7 +294,7 @@ public class Application extends Controller {
 	public static void cancelEventRepetition(long calendarID, long eventID,
 			String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
 				.getEventById(eventID));
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
@@ -313,7 +304,7 @@ public class Application extends Controller {
 	public static void removeRepeatingEvents(long calendarID, long eventId,
 			String s_date, int dday, int mmonth, int yyear) {
 		User me = Database.users.get(Security.connected());
-		UserCalendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventId);
 		calendar.removeRepeatingEvents(event);
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
@@ -326,11 +317,11 @@ public class Application extends Controller {
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		UserCalendar calendar = user.getCalendarById(calendarId);
+		Calendar calendar = user.getCalendarById(calendarId);
 
 		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
 				.getEventsOfDay(dday, mmonth, yyear, me);
-		UserCalendar calendars = user.getCalendarById(calendarId); // just for
+		Calendar calendars = user.getCalendarById(calendarId); // just for
 																// hotfix -->
 																// remove later
 		LinkedList<Event> events = allVisibleEvents;
@@ -366,10 +357,10 @@ public class Application extends Controller {
 
 		String next = Integer.toString(day) + "/"
 				+ Integer.toString((month + 1) % 12) + "/"
-				+ Integer.toString(year + dfyear) + ", 12:00";
+				+ Integer.toString(year + dfyear) + ", 00:00";
 		String prev = Integer.toString(day) + "/"
 				+ Integer.toString((month - 1)) + "/" + Integer.toString(year)
-				+ ", 12:00";
+				+ ", 00:00";
 
 		boolean faved = me.isCalendarObserved(calendarId);
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
@@ -378,14 +369,23 @@ public class Application extends Controller {
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
 		
-		PriorityQueue<Event> allEvents = calendar.getEvents();
+		Calendar birthdayCalendar = me.getBirthdayCalendar();
+		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(calendar.getEvents());
 		for (Event e : allEvents) {
-			if (e.owner != me || e instanceof BirthdayEvent) {
-				allEvents.remove(e);
+			if (e.owner != me || birthdayCalendar.getEvents().contains(e)) {
+				calendar.getEvents().remove(e);
 			}
 		}
 		
-
+//		birthdayCalendar.addEvent(me.getBirthday());
+//		for (Calendar observedCal : me.getObservedCalendars()) {
+//			if (me.getShownObservedCalendars().contains(observedCal.getId())) {
+//				User shownObservedUser = observedCal.getOwner();
+//				Event birthday = shownObservedUser.getBirthday();
+//				birthdayCalendar.addEvent(birthday);
+//			}
+//		}
+		
 		render(me, date, cal, bound, bound2, calendar, user, prev, next,
 				s_date, today, events, calendarName, calendars, calendarId,
 				dday, mmonth, yyear, message, faved, observedCalendars,
@@ -402,7 +402,7 @@ public class Application extends Controller {
 		User user = Database.users.get(username);
 
 		// find calendar by ID
-		UserCalendar cal = user.getCalendarById(calendarId);
+		Calendar cal = user.getCalendarById(calendarId);
 		me.addObservedCalendar(cal);
 		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
 				yyear, message);
@@ -415,7 +415,7 @@ public class Application extends Controller {
 		User user = Database.users.get(username);
 
 		// find calendar by ID
-		UserCalendar cal = user.getCalendarById(calendarId);
+		Calendar cal = user.getCalendarById(calendarId);
 		me.removeObservedCalendar(cal);
 		showCalendar(calendarId, username, calendarName, s_date, dday, mmonth,
 				yyear, message);

@@ -20,10 +20,10 @@ public class Bootstrap extends Job {
 		event = new Event(simplay, now, now, "abc", Visibility.PUBLIC, false, 0);
 		simplay.getdefaultCalendar().addEvent(event);
 
-		UserCalendar cal = new UserCalendar("2nd simplay", simplay);
+		Calendar cal = new Calendar("2nd simplay", simplay);
 		simplay.addCalendar(cal);
 
-		cal = new UserCalendar("3rd simplay", simplay);
+		cal = new Calendar("3rd simplay", simplay);
 		simplay.addCalendar(cal);
 		Database.addUser(simplay);
 
@@ -44,7 +44,7 @@ public class Bootstrap extends Job {
 				0);
 		user.getdefaultCalendar().addEvent(event);
 
-		cal = new UserCalendar("second mib", user);
+		cal = new Calendar("second mib", user);
 
 		event = new Event(user, now, now, "second mib_ev1", Visibility.PRIVATE,
 				false, 0);
@@ -76,7 +76,7 @@ public class Bootstrap extends Job {
 				false, 0);
 		user.getdefaultCalendar().addEvent(event);
 
-		cal = new UserCalendar("second simon", user);
+		cal = new Calendar("second simon", user);
 
 		event = new Event(user, now, now, "second simon_ev1",
 				Visibility.PRIVATE, false, 0);
