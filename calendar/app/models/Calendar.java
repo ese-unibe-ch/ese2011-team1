@@ -375,10 +375,6 @@ public class Calendar {
 		return result;
 	}
 
-	// return a list of events which have the same baseId
-	// if an event is not repeating then this method returns
-	// the same event like getEventById(id).
-	// We for the events in this.events and this.repeatingEvents
 	/**
 	 * Returns a list of Events which have the same baseId as the argument. If
 	 * an Event is not repeating, this method returns the same Event like

@@ -30,11 +30,13 @@ public class User {
 	private static long counter;
 
 	/**
+	 * Create a new User for this calendar application.
 	 * 
-	 * @param name
-	 * @param password
-	 * @param birthday
-	 * @param nickname
+	 * @param name The Users name.
+	 * @param password The Users password.
+	 * @param birthday The Users birthday.
+	 * @param nickname The Users nickname.
+	 * @see {@link User}
 	 */
 	public User(String name, String password, Date birthday, String nickname) {
 		// preconditions
@@ -62,135 +64,211 @@ public class User {
 		assert this.name.equals(name);
 		assert calendar != null;
 	}
+	
+	/**
+	 * Get this Users password.
+	 * @return The <code>password</code> of this User.
+	 */
+	public String getPassword() {
+		return this.password;
+	}
 
+	/**
+	 * Set this Users password
+	 * @param password The password to be set.
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	/**
+	 * Get this Users name.
+	 * @return The <code>name</code> of this User.
+	 */
 	public String getName() {
 		return this.name;
 	}
 	
+	/**
+	 * Set this Users name.
+	 * @param name The name to be set.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public String getPassword() {
-		return this.password;
-	}
 	
+	/**
+	 * Get this Users birthday.
+	 * @return The <code>birthday</code> of this User.
+	 */
 	public Event getBirthday() {
 		return this.birthday;
 	}
 
+	/**
+	 * Set this Users birthday date.
+	 * @param birthdayDate The new date of the Users <code>birthday</code>.
+	 */
 	public void setBirthdayDate(Date birthdayDate) {
 		birthday.edit(birthdayDate, birthdayDate, birthday.name, birthday.visibility, true, 365);
 	}
 	
+	/**
+	 * Returns the visibility status of the Users birthday.
+	 * @return <code>true</code> if this Users birthday is either Public or Busy.
+	 * <code>false</code> otherwise.
+	 * @see {@link Visibility}
+	 */
 	public boolean isBirthdayPublic() {
 		return birthday.isVisible();
 	}
 	
-	public void setBirthdayPublic(boolean b) {
-		Visibility visibility = b ? Visibility.PUBLIC : Visibility.PRIVATE;
+	/**
+	 * Set this Users birthday visible or hidden for other Users.
+	 * @param is_visible If true, the birthday will be set to visible. If false, the birthday will be set to private.
+	 */
+	public void setBirthdayPublic(boolean is_visible) {
+		Visibility visibility = is_visible ? Visibility.PUBLIC : Visibility.PRIVATE;
 		birthday.edit(birthday.start, birthday.end, birthday.name, visibility, true, 365);
 		System.out.println("changed birthday to : " + visibility);
 	}
 	
+	/**
+	 * Get this Users nickname.
+	 * @return The <code>nickname</code> of this User.
+	 */
 	public String getNickname() {
 		return this.nickname;
 	}
 	
+	/**
+	 * Set this Users <code>nickname</code>.
+	 * @param nickname The nickname to be set.
+	 */
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 
 
-	// return all calendars of a user
+	/**
+	 * Return all calendars of a user
+	 * @return A list of all Calendars of this User.
+	 * @see {@link Calendar}
+	 */
 	public LinkedList<Calendar> getCalendars() {
 		return this.calendar;
 	}
 
-	// get default calendar back
+	/**
+	 * Get this Users default calendar.
+	 * @return The first Calendar of this User.
+	 */
 	public Calendar getdefaultCalendar() {
 		return this.calendar.getFirst();
 	}
 
-	// get a all calendars of a user - linkedlist
-	// entferne dann noch argument für call
-	public LinkedList<Calendar> getCalendarsByName(User user) {
-		return user.getCalendars();
-	}
-
-	public Calendar getCalendarById(long calID) {
+	/**
+	 * Get a Calendar from this Users list of Calendars based on its Id.
+	 * 
+	 * Iterate over all Calendars in <code>calendars</code>. If a Calendar has the same id as the argument, it will be returned.
+	 * @param calId The Id to compare this Users Calendars with.
+	 * @return <code>null</code> if no Calendar in <code>calendars</code> has the same id as the argument.
+	 * A Calendar with the same id as the argument otherwise.
+	 */
+	public Calendar getCalendarById(long calId) {
 		Calendar result = null;
 		for (Calendar cal : calendar) {
-			if (cal.getId() == calID)
+			if (cal.getId() == calId)
 				result = cal;
 		}
 		return result;
 	}
 	
-	/*
-	 * add a new owned calendar into our calendar list 
+	/**
+	 * Add a new Calendar to this Users list of Calendars.
+	 * @param cal The Calendar to be added to <code>calendars</code> .
 	 */
-	
 	public void addCalendar(Calendar cal) {
 		calendar.add(cal);
 	}
 	
-	/*
-	 * add a new Calendar of another user into our oberserved calendar list. 
+	/**
+	 * Add a new Calendar of another user to this Users observed calendar list. 
+	 * @param cal The Calendar to be added to <code>observedCalendars</code>.
 	 */
-	
 	public void addObservedCalendar(Calendar cal){
 		observedCalendars.add(cal);
 	}
-	
+	/**
+	 * Remove a Calendar of another user from this Users observed Calendar list. 
+	 * @param cal The Calendar to be removed to <code>observedCalendars</code>.
+	 */
 	public void removeObservedCalendar(Calendar cal){
 		observedCalendars.remove(cal);
 	}
 	
 	/**
 	 * Adds a new ID from a observed calendar to be shown.
+	 * @param calId The id to be added to <code>shownObservedCalendars</code>.
 	 */
-	public void addShownObservedCalendar(long calID){
-		shownObservedCalendars.add(calID);
+	public void addShownObservedCalendar(long calId){
+		shownObservedCalendars.add(calId);
 	}
 	
 	/**
-	 * Adds a new ID for a observed calendar to be shown.
+	 * Remove an Id from <code>shownObservedCalendars</code>.
+	 * @param calId The id to be removed.
 	 */
-	public void removeShownObservedCalendar(long calID){
-		shownObservedCalendars.remove(calID);
+	public void removeShownObservedCalendar(long calId){
+		shownObservedCalendars.remove(calId);
 	}
 	
 	/**
-	 * Returns true, if calendar with given calID is observed, false otherwise.
-	 * 
+	 * Check if a Calendar is observed by this User, based on the Calendars id.
+	 * @param calId The id of the Calendar to test if it is observed.
+	 * @return <code>true</code> if <code>observedCalendars</code> contains a Calendar with the same id as the argument.
+	 * <code>false</code> otherwise.
 	 */
-	public boolean isCalendarObserved(long calID) {
+	public boolean isCalendarObserved(long calId) {
 		for (Calendar cal : observedCalendars) {
-			if (cal.id == calID)
+			if (cal.id == calId)
 				return true;
 		}
 		return false;
 	}
 	
+	/**
+	 * Get all observed Calendars of this User.
+	 * @return list of all observed Calendars of this User.
+	 */
 	public LinkedList<Calendar> getObservedCalendars() {
 		return observedCalendars;
 	}
 	
+	/**
+	 * Get a List containing all id's of those observed Calendars which are currently shown.
+	 * @return list containing all id's of shown observed Calendars.
+	 */
 	public LinkedList<Long> getShownObservedCalendars() {
 		return shownObservedCalendars;
 	}
 
+	/**
+	 * Get the <code>birthdayCalendar</code> of this User.
+	 * @return A Users birthdayCalendar.
+	 */
 	public Calendar getBirthdayCalendar() {
 		return this.birthdayCalendar;
 	}
 	
-	public boolean isBirthday(Event e) {
-		return this.birthday.getId() == e.getBaseId();
+	/**
+	 * Test if a given Event is this Users birthday.
+	 * @param event The event to be compared.
+	 * @return <code>true</code> if the argument is equal to this Users birthday.
+	 * <code>false</code> otherwise.
+	 */
+	public boolean isBirthday(Event event) {
+		return this.birthday.getId() == event.getBaseId();
 	}
 
 }
