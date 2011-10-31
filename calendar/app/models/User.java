@@ -5,6 +5,15 @@ import java.util.LinkedList;
 
 import models.Event.Visibility;
 
+
+/**
+ * The User class represents a User of this Calendar application.
+ * Users may have multiple Calendars, all of which can contain multiple Events.
+ * Users are responsible for maintaining the calendar, which includes adding, editing and removing Events.
+ * 
+ * @see {@link Calendar}
+ *
+ */
 public class User {
 	public String name;
 	public LinkedList<Calendar> calendar;
@@ -20,6 +29,13 @@ public class User {
 	private Calendar birthdayCalendar;
 	private static long counter;
 
+	/**
+	 * 
+	 * @param name
+	 * @param password
+	 * @param birthday
+	 * @param nickname
+	 */
 	public User(String name, String password, Date birthday, String nickname) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";

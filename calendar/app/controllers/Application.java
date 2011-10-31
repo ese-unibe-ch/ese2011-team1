@@ -21,6 +21,7 @@ import play.mvc.With;
 
 //so far: jeder user kann neue user erzeugen mit default password 123
 
+
 @With(Secure.class)
 public class Application extends Controller {
 

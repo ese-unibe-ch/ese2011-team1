@@ -11,7 +11,17 @@ import java.util.PriorityQueue;
 
 import models.Event.Visibility;
 
-public class Calendar{
+/**
+ * The Calendar class represents a Users Calendar.
+ * 
+ * A Calendar is a container for multiple Events. It knows which Event happens
+ * on which Date and lets its user interfere with its Events.
+ * 
+ * @see {@link Event}
+ * @see {@link User}
+ * 
+ */
+public class Calendar {
 	private String name;
 	public User owner;
 	private PriorityQueue<Event> events;
@@ -19,6 +29,15 @@ public class Calendar{
 	private LinkedList<Event> repeatingEvents;
 	private static long counter;
 
+	/**
+	 * Create a new Calendar.
+	 * 
+	 * @param name
+	 *            The name of this Calendar.
+	 * @param owner
+	 *            The owner of this Calendar.
+	 * @see {@link User}
+	 */
 	public Calendar(String name, User owner) {
 		this.name = name;
 		this.owner = owner;
@@ -28,14 +47,29 @@ public class Calendar{
 		this.id = counter;
 	}
 
+	/**
+	 * Get the owner of this calendar.
+	 * 
+	 * @return the owner of this calendar.
+	 */
 	public User getOwner() {
 		return this.owner;
 	}
 
+	/**
+	 * Get the name of this Calendar.
+	 * 
+	 * @return The name of this Calendar.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Get the unique Id of this Calendar.
+	 * 
+	 * @return the id of this Calendar.
+	 */
 	public long getId() {
 		return this.id;
 	}
@@ -45,34 +79,48 @@ public class Calendar{
 	 * event is a repeating event, it will also be added to the repeatingEvents
 	 * list.
 	 * 
-	 * @param e
+	 * @param event
 	 *            event which is added to events, and if repeating, to
 	 *            repeatingEvents.
 	 */
-	public void addEvent(Event e) {
+	public void addEvent(Event event) {
 		// teste ob dieser eventbereits in liste ist
 		// wenn doch, dann adde diesen nicht!
-		System.out.println(!compareCalendarEvents(e));
-		if (!compareCalendarEvents(e)) {
-			events.add(e);
-			if (e.isRepeating()) {
-				repeatingEvents.add(e);
+		System.out.println(!compareCalendarEvents(event));
+		if (!compareCalendarEvents(event)) {
+			events.add(event);
+			if (event.isRepeating()) {
+				repeatingEvents.add(event);
 			}
 		}
 
 	}
 
+	/**
+	 * Test if this Calendar contains an Event with the same name and start date
+	 * as the argument.
+	 * 
+	 * The given argument is compared to all events in this Calendars
+	 * <code>events</code> and <code>repeatingEvents</code>.
+	 * 
+	 * @param event
+	 *            The event to be compared with all Events in
+	 *            <code>events</code> and <code>repeatingEvents</code>.
+	 * @return <code>true</code> if any Event in <code>events</code> and
+	 *         <code>repeatingEvents</code> has the same name and start date as
+	 *         the given argument. <code>false</code> otherwise.
+	 */
 	// test if in this.events or in repeatingEvents is an event with same date
 	// (start,end) and name as ev1
-	private boolean compareCalendarEvents(Event ev1) {
+	private boolean compareCalendarEvents(Event event) {
 		boolean flag = false;
 		for (Event comp : this.events) {
-			if (comp.name.equals(ev1.name))
-				if (comp.start.getYear() == ev1.start.getYear()
-						&& comp.start.getMonth() == ev1.start.getMonth()
-						&& comp.start.getDate() == ev1.start.getDate()
-						&& comp.start.getMinutes() == ev1.start.getMinutes()
-						&& comp.start.getSeconds() == ev1.start.getSeconds()// &&
+			if (comp.name.equals(event.name))
+				if (comp.start.getYear() == event.start.getYear()
+						&& comp.start.getMonth() == event.start.getMonth()
+						&& comp.start.getDate() == event.start.getDate()
+						&& comp.start.getMinutes() == event.start.getMinutes()
+						&& comp.start.getSeconds() == event.start.getSeconds()// &&
 				// comp.end.getYear() == ev1.end.getYear() &&
 				// comp.end.getMonth() == ev1.end.getMonth() &&
 				// comp.end.getDate() == ev1.end.getDate() &&
@@ -86,13 +134,13 @@ public class Calendar{
 		}
 		if (!flag) {
 			for (Event comp : this.repeatingEvents) {
-				if (comp.name.equals(ev1.name))
-					if (comp.start.getYear() == ev1.start.getYear()
-							&& comp.start.getMonth() == ev1.start.getMonth()
-							&& comp.start.getDate() == ev1.start.getDate()
-							&& comp.start.getMinutes() == ev1.start
+				if (comp.name.equals(event.name))
+					if (comp.start.getYear() == event.start.getYear()
+							&& comp.start.getMonth() == event.start.getMonth()
+							&& comp.start.getDate() == event.start.getDate()
+							&& comp.start.getMinutes() == event.start
 									.getMinutes()
-							&& comp.start.getSeconds() == ev1.start
+							&& comp.start.getSeconds() == event.start
 									.getSeconds() // &&
 					// comp.end.getYear() == ev1.end.getYear() &&
 					// comp.end.getMonth() == ev1.end.getMonth() &&
@@ -109,15 +157,27 @@ public class Calendar{
 		return flag;
 	}
 
-	public void addToRepeated(Event e) {
-		this.repeatingEvents.add(e);
+	/**
+	 * Adds a given Event to this Calendars list of repeatingEvents.
+	 * 
+	 * @param event
+	 *            The event to be added to <code>repeatingEvents</code>
+	 */
+	public void addToRepeated(Event event) {
+		this.repeatingEvents.add(event);
 	}
 
 	/**
-	 * obtain a list of events a user is allowed to see in a calendar for a
+	 * Obtain a list of Events a User is allowed to see in a Calendar for a
 	 * given date.
 	 * 
-	 **/
+	 * @param day
+	 *            The date on which the Events must happen in order to be
+	 *            returned.
+	 * @param requester
+	 *            The User which requests the List of Events.
+	 * @return
+	 */
 	public LinkedList<Event> getDayEvents(Date day, User requester) {
 		// temporary result linked list
 		LinkedList<Event> events_tmp = new LinkedList<Event>();
@@ -145,6 +205,20 @@ public class Calendar{
 		return events_tmp;
 	}
 
+	/**
+	 * Get an Iterator over all Events in this Calendar which occur after the
+	 * specified date.
+	 * 
+	 * The returned Iterator contains different Events depending on the
+	 * requesting Users permissions.
+	 * 
+	 * @param start
+	 *            The start date for the Iterator.
+	 * @param requester
+	 *            The User which requests this Iterator.
+	 * @return Iterator over all Events of this Calendar after the specified
+	 *         Date.
+	 */
 	public Iterator<Event> getEventList(Date start, User requester) {
 		// temporary result linked list
 		LinkedList<Event> events_tmp = new LinkedList<Event>();
@@ -175,6 +249,28 @@ public class Calendar{
 		return iter;
 	}
 
+	/**
+	 * Get all visible Events of this calendar for a specified Date.
+	 * 
+	 * Returns a list of Events containing all Events who are visible for the
+	 * requester and whose start date is equal to the date composed of
+	 * <code>day</code>, <code>month</code> and <code>year</code>.
+	 * 
+	 * 
+	 * @param day
+	 *            The day on which an Event must happen in order to be returned.
+	 * @param month
+	 *            The month in which an Event must happen in order to be
+	 *            returned.
+	 * @param year
+	 *            The year in which an Event must happen in order to be
+	 *            returned.
+	 * @param requester
+	 *            The user which requests this List.
+	 * @return List of Events which happen on the Date specified by
+	 *         <code>day</code>, <code>month</code> and <code>year</code>
+	 * @see {@link Event}
+	 */
 	// return all visible events of a given months => for graphical calendar
 	public LinkedList<Event> getEventsOfDay(int day, int month, int year,
 			User requester) {
@@ -196,8 +292,9 @@ public class Calendar{
 		repeatingEvents.addAll(this.repeatingEvents);
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
-		
-		System.out.println("This lists all Events which are observed, and if they are shown:");
+
+		System.out
+				.println("This lists all Events which are observed, and if they are shown:");
 		for (Calendar cal : observedCals) {
 			System.out.println("observedCal: " + cal);
 			for (Event e : cal.getEvents()) {
@@ -208,7 +305,7 @@ public class Calendar{
 				System.out.println();
 			}
 		}
-		
+
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
 				for (Event observedEvent : observedCal.getEvents()) {
@@ -217,15 +314,18 @@ public class Calendar{
 						events.add(observedEvent);
 					}
 				}
-				
-				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
+
+				for (Event repeatingObservedEvent : observedCal
+						.getRepeatingEvents()) {
 					for (Calendar cal : observedCals) {
-						if (cal.owner == repeatingObservedEvent.owner && repeatingObservedEvent.isVisible()) {
+						if (cal.owner == repeatingObservedEvent.owner
+								&& repeatingObservedEvent.isVisible()) {
 							repeatingEvents.add(repeatingObservedEvent);
 						}
 					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
-							&& !repeatingEvents.contains(repeatingObservedEvent)) {
+							&& !repeatingEvents
+									.contains(repeatingObservedEvent)) {
 						repeatingEvents.add(repeatingObservedEvent);
 					}
 				}
@@ -261,7 +361,7 @@ public class Calendar{
 				}
 			}
 		}
-		
+
 		for (Event e : result) {
 			if (!this.events.contains(e)) {
 				System.out.println("added to events: " + e + ", " + e.start);
@@ -270,21 +370,33 @@ public class Calendar{
 		}
 		return result;
 	}
-	
+
 	// return a list of events which have the same baseId
 	// if an event is not repeating then this method returns
-	// the same event like getEventById(id). 
+	// the same event like getEventById(id).
 	// We for the events in this.events and this.repeatingEvents
-	public LinkedList<Event> getSameBaseIdEvents(long baseId){
+	/**
+	 * Returns a list of Events which have the same baseId as the argument. If
+	 * an Event is not repeating, this method returns the same Event like
+	 * {@link Calendar#getEventById}
+	 * 
+	 * @param baseId
+	 *            The Id which is compared to all Events in this Calendars
+	 *            <code>events</code> and <code>repeatingEvents</code>
+	 * @return A List of events containing all Events of this Calendar with the
+	 *         same baseId as the argument.
+	 * 
+	 */
+	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
 		LinkedList<Event> result = new LinkedList<Event>();
-		for(Event event : this.events){
-			if(event.baseId==baseId){
+		for (Event event : this.events) {
+			if (event.baseId == baseId) {
 				result.add(event);
 			}
 		}
-		
-		for(Event event : this.repeatingEvents){
-			if(event.baseId==baseId){
+
+		for (Event event : this.repeatingEvents) {
+			if (event.baseId == baseId) {
 				result.add(event);
 			}
 		}
@@ -292,8 +404,31 @@ public class Calendar{
 		// this is a ToDo
 		return result;
 	}
-	
+
 	// mache hier auch reperatur wengen event adden!!!!
+	/**
+	 * Tests if this Calendar contains an Event which happens on a specified
+	 * date and is visible for the requester.
+	 * 
+	 * Compares a date composed of <code>day</code>, <code>month</code> and
+	 * <code>year</code> with all Events in this calendars <code>events</code>
+	 * and <code>repeatingEvents</code> and all Events of all shown observed
+	 * Calendars. If any of the above mentioned contains a date equal to the
+	 * specified date, it returns true.
+	 * 
+	 * @param day
+	 *            The day compared to all Events of this calendar.
+	 * @param month
+	 *            The month used to compose the comparing date.
+	 * @param year
+	 *            The year used to compose the comparing date.
+	 * @param requester
+	 *            The user that wants to know if any Events happen on this day
+	 *            that are visible for him.
+	 * @return <code>true</code> if any visible Event of this Calendar happens
+	 *         on the same date as the one specified by the arguments.
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
 		boolean flag = false;
 		Date comp = null;
@@ -313,7 +448,7 @@ public class Calendar{
 		repeatingEvents.addAll(this.repeatingEvents);
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
-		
+
 		for (Calendar observedCal : observedCals) {
 			if (shownObservedCals.contains(observedCal.getId())) {
 				for (Event observedEvent : observedCal.getEvents()) {
@@ -321,9 +456,11 @@ public class Calendar{
 						events.add(observedEvent);
 					}
 				}
-				for (Event repeatingObservedEvent : observedCal.getRepeatingEvents()) {
+				for (Event repeatingObservedEvent : observedCal
+						.getRepeatingEvents()) {
 					for (Calendar cal : observedCals) {
-						if (cal.owner == repeatingObservedEvent.owner && repeatingObservedEvent.isVisible()) {
+						if (cal.owner == repeatingObservedEvent.owner
+								&& repeatingObservedEvent.isVisible()) {
 							repeatingEvents.add(repeatingObservedEvent);
 						}
 					}
@@ -333,7 +470,7 @@ public class Calendar{
 				}
 			}
 		}
-		
+
 		boolean is_owner = owner == requester;
 		for (Event repeatingEvent : repeatingEvents) {
 			if (is_owner
@@ -365,6 +502,18 @@ public class Calendar{
 
 	// / fixe hier das adden!!! wenn schon vorhanden, dann nicht nochmals
 	// adden!!!
+
+	/**
+	 * Does the exact same thing as {@link Calendar#hasEventOnDay}
+	 * 
+	 * @param date
+	 *            The date which is compared to this Calendars events.
+	 * @param requester
+	 *            The user which requests to check if an Event happens on the
+	 *            specified date.
+	 * @return <code>true</code> if any Event which is visible to the requester
+	 *         happens on the specified date. <code>false</code> otherwise.
+	 */
 	public boolean hasEventOnDay(Date date, User requester) {
 		boolean flag = false;
 		Date comp = date;
@@ -414,6 +563,16 @@ public class Calendar{
 		return contains;
 	}
 
+	/**
+	 * Iterates through this Calendars <code>events</code> and returns an Event
+	 * with the same id as the argument.
+	 * 
+	 * @param id
+	 *            The id to compare with all Events' id's of this Calendar.
+	 * @return The event with the same id as the argument, if this Calendars
+	 *         <code>events</code> contains such an Event. <code>null</code>
+	 *         otherwise.
+	 */
 	public Event getEventById(long id) {
 		Event result = null;
 		for (Event e : events)
@@ -423,11 +582,10 @@ public class Calendar{
 	}
 
 	/**
-	 * Removes an event from this calendars list of events and from the list of
-	 * repeating events.
+	 * Removes an Event from this Calendars <code>events</code> and <code>repeatingEvents</code> if they contain the Event.
 	 * 
 	 * @param id
-	 *            id of the event to be removed.
+	 *            id of the Event to be removed.
 	 */
 	@SuppressWarnings("deprecation")
 	public void removeEvent(long id) {
@@ -443,14 +601,14 @@ public class Calendar{
 		// if our victim is a repeating event
 		if (getEventById(id).is_repeating) {
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			//System.out.println("i am repeating");
+			// System.out.println("i am repeating");
 			Event sentinel = getEventById(id);
 			LinkedList<Event> interestingevents = getSameBaseIdEvents(sentinel.baseId);
-			
-			for(Event event : interestingevents){
-				System.out.println("e date"+event.start);
+
+			for (Event event : interestingevents) {
+				System.out.println("e date" + event.start);
 			}
-			
+
 			for (Event e : events) {
 				if (e.getId() == id) {
 
@@ -468,7 +626,7 @@ public class Calendar{
 					// calculate next date after victim event
 					Event baseEvent = getEventById(e.baseId); // korrektes
 																// nächstes date
-					
+
 					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),
 							e.start.getMonth(), e.start.getDate() + intervall,
@@ -512,15 +670,16 @@ public class Calendar{
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
-								
-								// get for each event before victim its event description 
-								for(Event eee : dayevents){
-									if(eee.baseId == e.baseId){
+
+								// get for each event before victim its event
+								// description
+								for (Event eee : dayevents) {
+									if (eee.baseId == e.baseId) {
 										descriptions.add(eee.description);
 									}
 								}
-								
-								if (hasName(e.name, dayevents)){
+
+								if (hasName(e.name, dayevents)) {
 									previousDates.add(current);
 								}
 							}
@@ -542,10 +701,10 @@ public class Calendar{
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
-								for(Event eee : dayevents)
-									if(eee.baseId == e.baseId)
+								for (Event eee : dayevents)
+									if (eee.baseId == e.baseId)
 										descriptions.add(eee.description);
-									
+
 								if (hasName(e.name, dayevents))
 									previousDates.add(current);
 							}
@@ -562,10 +721,10 @@ public class Calendar{
 								// fix for wholes in interval previous victim
 								LinkedList<Event> dayevents = getDayEvents(
 										current, owner);
-								for(Event eee : dayevents)
-									if(eee.baseId == e.baseId)
+								for (Event eee : dayevents)
+									if (eee.baseId == e.baseId)
 										descriptions.add(eee.description);
-								
+
 								if (hasName(e.name, dayevents))
 									previousDates.add(current);
 							}
@@ -586,7 +745,7 @@ public class Calendar{
 					}
 					// before we remove the events after victim
 					// preserve all descriptions after victim
-					
+
 					// remove all repeating events correlated to baseEvent
 					removeRepeatingEvents(baseEvent);
 					int index = 0;
@@ -629,14 +788,14 @@ public class Calendar{
 	}
 
 	/**
-	 * Removes all events with the same baseID from this calendars list of
-	 * events and this calendars list of public events. The provided events
-	 * baseID is compared with all events from this calendar, matching events
+	 * Removes all Events with the same baseId from this Calendars list of
+	 * events and this Calendars list of public Events. The provided Events'
+	 * baseId is compared with all Events from this Calendar, matching Events
 	 * will be removed.
 	 * 
 	 * @param event
-	 *            the event to be removed along with all events with the same
-	 *            baseID
+	 *            the Event to be removed along with all Events with the same
+	 *            baseId
 	 * @see {@link Calendar#removeEvent(long id)}
 	 */
 	public void removeRepeatingEvents(Event event) {
@@ -651,9 +810,10 @@ public class Calendar{
 	}
 
 	/**
-	 * End repetition of an repeating event from a given date cancelDate remove
+	 * End repetition of a repeating Event from a given date cancelDate remove
 	 * all repeating dates after cancelDate, which are already calculated. Mark
-	 * all such repeating events till and with canelDate as NOT repeating.
+	 * all such repeating Events up to and including canelDate as NOT repeating.
+	 * @param cancelEvent
 	 */
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
 		System.out.println("cancel from this event: " + cancelEvent.start);
@@ -675,11 +835,13 @@ public class Calendar{
 	}
 
 	/**
-	 * Starting from an Event "from" put in from.interval steps till "to" events
-	 * in the calendar
+	 * Returns a list of Events containing all Events with the same baseId from a given Event to another Event.
 	 * 
-	 * @param from
-	 * @param to
+	 * Starting from an Event <code>from</code> put in from.interval steps till <code>to</code> events
+	 * in the Calendar.
+	 * 
+	 * @param from The Event from whose start date the List starts.
+	 * @param to The last Event in the List.
 	 */
 	public LinkedList<Event> getEventRepeatingFromTo(Event from, Date to) {
 		Event cursor = from;
@@ -701,14 +863,26 @@ public class Calendar{
 		return result;
 	}
 
+	/**
+	 * Get all Events of this Calendar.
+	 * @return this calendars <code>events</code>.
+	 */
 	public PriorityQueue<Event> getEvents() {
 		return this.events;
 	}
 
+	/**
+	 * Get all repeating Events of this Calendar.
+	 * @return this Calendars <code>repeatingEvents</code>.
+	 */
 	public LinkedList<Event> getRepeatingEvents() {
 		return this.repeatingEvents;
 	}
-	
+
+	/**
+	 * String representation of this Calendar.
+	 * @return this Calendars <code>name</code>.
+	 */
 	public String toString() {
 		return this.name;
 	}
