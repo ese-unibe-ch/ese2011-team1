@@ -2,16 +2,20 @@
 #{set title:'Home' /}
 <header>
 	<h1>${user.name}'s Calendar: ${calendar.name} 
+	#{if message}
+		<font style = "font-size: 30px; color: red;">${message}</font>
+	#{/if}
+	<h1>${activeDate.toString("dd/HH/yyyy, HH:mm")}</h1>
 	
 		%{
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
-				%}<a href="@{Application.removeObserve(user.name, calendarId, calendarName, s_date, dday, mmonth, yyear, message)}">%{
+				%}<a href="@{Application.removeObserve(user.name, calendar.getId(), activeDate.toString(), message)}">%{
 				out.println('<img src="/public/images/star_fav.png" border=0>');
 			}
 			else {
-				%}<a href="@{Application.addObserve(user.name, calendarId, calendarName, s_date, dday, mmonth, yyear, message)}">%{
+				%}<a href="@{Application.addObserve(user.name, calendar.getId(), activeDate.toString(), message)}">%{
 				out.println('<img src="/public/images/star.png" border=0>');
 			}
 		}
@@ -19,16 +23,16 @@
 	</a>
 	
 	</h1>
-	<p> Month: ${activeDate.toString("MMM")} ${activeDate.getYear()} </p>
+	<p> Month: ${activeDate.toString("MMM")} ${activeDate.getYear().toString()} </p>
 </header>
 
 <body>
 	<div id="nextMonth">
-		<a href="@{Application.showCalendar(calendar.getId(),user.name ,calendar.getName(),next)}"> next </a>
+		<a href="@{Application.showCalendar(calendar.getId(),user.name, nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> next </a>
 	</div>
 	
 	<div id="prevousMonth">
-		<a href="@{Application.showCalendar(calendar.getId(),user.name ,calendar.getName(),prev)}"> previous </a>
+		<a href="@{Application.showCalendar(calendar.getId(), user.name, prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> previous </a>
 	</div>
 	
 	<table id="calendar">
@@ -45,7 +49,7 @@
 			int tmp = 1;
 			int counter = 1;
 			int year = activeDate.getYear();
-			int month = activeDate.getMonth();
+			int month = activeDate.getMonthOfYear();
 			
 			for(int i = 0; i < 6; i++){
 				
@@ -55,7 +59,7 @@
 					// gebe hier date of month aus
 					// 1. vorzellen(leer), 2. erster bis letzter tag, 3. fill-in
 					
-					if (tmp  <= bound){
+					if (tmp  < bound){
 						out.println('<td class="entry"> - </td>');
 					} 
 					else if(counter <= bound2)
@@ -63,14 +67,13 @@
 					
 					// Layout of day can be seperated into 3 categories:
 					// 1 - today
-						if (i*7+j-bound+1  == today.get(java.util.Calendar.DAY_OF_MONTH) 
-								&& month-1 == today.get(java.util.Calendar.MONTH)
-							 	&& year == today.get(java.util.Calendar.YEAR)) {
-							out.println('<td class="today"> ');
-						}
+						if (counter  == today.getDayOfMonth() 
+								&& month == today.getMonthOfYear()
+							 	&& year == today.getYear()) 
+							{out.println('<td class="today"> ');}
 						
 					// 2 - selected
-						else if (i*7+j-bound+1 == dday) {
+						else if (i*7+j-bound+1 == activeDate.getDayOfMonth()) {
 							out.println('<td class="selected"> ');
 						}
 						
@@ -81,7 +84,7 @@
 						
 						if(calendar.hasEventOnDay(counter, month, year, me)){
 							%} 
-							<a href="@{Application.showCalendar(calendar.getId(), user.name, calendar.name, s_date, counter, month, year)})}"> ${counter}</a>
+							<a href="@{Application.showCalendar(calendar.getId(), user.name, activeDate.toString(), counter)})}"> ${counter}</a>
 							%{
 						}
 						else {
@@ -129,10 +132,8 @@
 	<div style="clear:both"></div>
 
 	<table id="events">
-		#{if yyear!=0}
-			<h2>${user.name}'s events of the ${dday}/${mmonth}/${yyear} </h2>
-			
-			#{list items:events, as:'event'}
+			<h2>${user.name}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
+			#{list items:eventsOfDay, as:'event'}
 				<p>
 					<li> 
 							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.start}  ,<b>to:</b>${event.end} 
@@ -142,22 +143,21 @@
 							<b>Repeating:</b>${event.is_repeating}
 							<b>Description</b>:${event.description} <br>
 							#{if user == me && me==event.owner}
-								<b><a href="@{Application.editEvent(event.getId(), calendarId, me.name, s_date, dday, mmonth, yyear)}"> Edit </a></b> <br>
-								<b><a href="@{Application.removeEvent(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove </a></b> <br>
+								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.name, activeDate.toString())}"> Edit </a></b> <br>
+								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString())}"> Remove </a></b> <br>
 								#{if event.is_repeating}
-									<b><a href="@{Application.removeRepeatingEvents(calendarId, event.getId(), s_date, dday, mmonth, yyear)}"> Remove All Repeating </a></b><br>  
-									<b> <a href="@{Application.cancelEventRepetition(calendarId, event.getId(), s_date, dday, mmonth, yyear)}">Cancel Repetition from here </a></b>
+									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString())}"> Remove All Repeating </a></b><br>  
+									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString())}">Cancel Repetition from here </a></b>
 								#{/if}
 							#{/if}
 					</li>  
 				</p>
 			#{/list}
-		#{/if}
 	</table>
 	
 	<div id="Nav">
 		#{if user==me} 
- 			<a href="@{Application.addEvent(calendar.getId(), me.name, s_date, dday, mmonth, yyear)}"> New Event</a>  <br>
+ 			<a href="@{Application.addEvent(calendar.getId(), me.name, activeDate.toString())}"> New Event</a>  <br>
 		#{/if}
 	</div>
 	
@@ -166,12 +166,8 @@
 <input type="hidden" name="chk" value="" />
 
 <input type="hidden" name="username" value="${user.name}" />
-<input type="hidden" name="calendarId" value="${calendarId}" />
-<input type="hidden" name="calendarName" value="${calendarName}" />
-<input type="hidden" name="s_date" value="${s_date}" />
-<input type="hidden" name="dday" value="${dday}" />
-<input type="hidden" name="mmonth" value="${mmonth}" />
-<input type="hidden" name="yyear" value="${yyear}" />
+<input type="hidden" name="calendarId" value="${calendar.getId()}" />
+<input type="hidden" name="s_activeDate" value="${activeDate.toString()}" />
 <input type="hidden" name="message" value="${message}" />
 </form>
 
@@ -195,6 +191,6 @@ function changeSelection(boxName) {
 	
 </body>	
 
-<a href="@{Application.showCalendarList(user.name, s_date)}">Back</a>
+<a href="@{Application.showCalendarList(user.name, activeDate.toString())}">Back</a>
 <a href="@{Application.index()}">Home</a>
 <a href="@{Secure.logout()}">Log out</a>

@@ -317,15 +317,17 @@ public class Application extends Controller {
 		Event event = calendar.getEventById(eventId);
 		calendar.removeRepeatingEvents(event);
 		//TODO
-		showCalendar(calendarID, me.name, s_activeDate,15, message);
+		showCalendar(calendarID, me.name, s_activeDate, 15, message);
 	}
 
-	public static void showCalendar(long calendarId, String username,
-			String s_activeDate, int counter, String message) {
+	public static void showCalendar(long calendarId, String username, String s_activeDate, int counter, String message) {
+		message = null;
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		UserCalendar calendar = user.getCalendarById(calendarId);
+		System.out.println("calID: " + calendar.id);
+		assert (calendar != null) : "AEHSHAGF>GHS";
 		
 		DateTime activeDate = null;
 		DateTime today = new DateTime();
@@ -333,15 +335,16 @@ public class Application extends Controller {
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		} catch (Exception e) {
-			System.out.println("catch: showTest parse s_activeDate to activeDate");
+			message = "catch: showTest parse s_activeDate to activeDate";
 			activeDate = today;
 		}
 		try {
 			activeDate = activeDate.withDayOfMonth(counter);
 		} catch (Exception e) {
-			System.out.println("catch: showTest set counter as DayOfMonth for activeDate.");
-			activeDate = today;
+			message = "catch: showTest set counter as DayOfMonth for activeDate.";
+			activeDate.withDayOfMonth(activeDate.getDayOfMonth());
 		}
+		assert (activeDate != null) : "must not be null!";
 		
 		LinkedList<Event> eventsOfDay = calendar.getEventsOfDay(activeDate, me);
 		
@@ -364,8 +367,7 @@ public class Application extends Controller {
 	/**
 	 * Observe (or "follow") a certain calendar of a user.
 	 */
-	public static void addObserve(String username, long calendarId,
-			String calendarName, String s_activeDate, String message) {
+	public static void addObserve(String username, long calendarId, String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 
@@ -373,11 +375,10 @@ public class Application extends Controller {
 		UserCalendar cal = user.getCalendarById(calendarId);
 		me.addObservedCalendar(cal);
 		//TODO
-		showCalendar(calendarId, username, s_activeDate, 15, message);
+		showCalendar(calendarId, username, s_activeDate, 0, message);
 	}
 
-	public static void removeObserve(String username, long calendarId,
-			String calendarName, String s_activeDate, String message) {
+	public static void removeObserve(String username, long calendarId, String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 
@@ -398,7 +399,7 @@ public class Application extends Controller {
 	 *            observed calendar
 	 */
 	public static void changeObservedCalendars(@Required String username,
-			@Required long calendarId, @Required String calendarName,
+			@Required long calendarId,
 			@Required String s_activeDate, @Required String message,
 			@Required long calID, @Required boolean chk) {
 
@@ -412,6 +413,6 @@ public class Application extends Controller {
 			user.removeShownObservedCalendar(calID);
 		}
 
-		showCalendar(calendarId, user.name, s_activeDate, 15, message);
+		showCalendar(calendarId, user.name, s_activeDate, 0, message);
 	}
 }

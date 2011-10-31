@@ -2,6 +2,7 @@
 #{set title:'Home' /}
 
 <h1>Calendar Team1 - Hello ${me.name}</h1>
+<h1>${s_activeDate}</h1>
 
 <h2>News:</h2>
 	sad user has no news QQ
@@ -9,7 +10,7 @@
 <h2>Administration</h2>
 <p>
 		<a href="@{Application.showEditProfile()}"> edit my profile </a> <br>
-		<a href="@{Application.showCalendarList(me.name, s_date)}"> show my calendars</a>   <br>
+		<a href="@{Application.showCalendarList(me.name, s_activeDate)}"> show my calendars</a>   <br>
 	    <a href="@{Application.showRegistration()}"> Register new User</a>   <br>
 	    <a href="@{Secure.login()}"> Log in</a>   <br>
 		<a href="@{Secure.logout()}">Log out</a>  <br>
@@ -28,7 +29,7 @@
     #{list items:users, as:'user'}
         #{ifnot user==me}
 	        <li>
-	            	<a href="@{Application.showCalendarList(user.name, s_date)}">${user.name}</a>
+	            	<a href="@{Application.showCalendarList(user.name, s_activeDate)}">${user.name}</a>
 	            	<a href="@{Application.showProfile(user.name)}"> show Profile </a>        
 	        </li>
         #{/ifnot}
@@ -42,7 +43,7 @@
 	<br>
 		<input type = "text" name = "userName" id = "userName"/>
 		<input type = "submit" value = "Search"/>
-		<input type="hidden" name="s_date" value="${s_date}" />
+		<input type="hidden" name="s_activeDate" value="${s_activeDate}" />
 	</br>
 </p>
 #{if flash.error}
