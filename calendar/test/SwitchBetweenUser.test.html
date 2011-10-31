@@ -12,7 +12,7 @@
 	assertTextPresent('Calendar Team1 - Hello mib')
 	clickAndWait('link=show my calendars')
 	waitForPageToLoad(1000)
-	assertTextPresent('mib's Calendars:')
+	assertTextPresent('mib's calendars')
 	assertTextPresent('Home')
 	assertTextPresent('Log out')
 	clickAndWait('link=mib's first calendar')
@@ -24,7 +24,6 @@
 	assertTextPresent('Name:') 
 	assertTextPresent('Start:') 
 	assertTextPresent('End:') 
-	assertTextPresent('Is Public:')
 	type('name', 'Private Event')
 	type('start', '31/10/2011, 12:00')
 	type('end', '31/10/2011, 13:00')
@@ -56,17 +55,12 @@
 	assertTextPresent('Name:') 
 	assertTextPresent('Start:') 
 	assertTextPresent('End:') 
-	assertTextPresent('Is Public:')
 	type('name', 'Public Event')
 	type('start', '31/10/2011, 12:00')
 	type('end', '31/10/2011, 13:00')
-	check(is_visible)
 	clickAndWait('css=input[type=submit]')
 	clickAndWait('link=31')
 	assertTextPresent('Public Event')
 	assertTextNotPresent('Private Event')
-	
-	
-	
 	
 #{/selenium}
