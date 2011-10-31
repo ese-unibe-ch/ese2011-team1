@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import models.BirthdayCalendar;
+import models.BirthdayEvent;
 import models.Calendar;
 import models.UserCalendar;
 import models.Database;
@@ -376,6 +377,13 @@ public class Application extends Controller {
 				.getShownObservedCalendars();
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
+		
+		PriorityQueue<Event> allEvents = calendar.getEvents();
+		for (Event e : allEvents) {
+			if (e.owner != me || e instanceof BirthdayEvent) {
+				allEvents.remove(e);
+			}
+		}
 		
 
 		render(me, date, cal, bound, bound2, calendar, user, prev, next,
