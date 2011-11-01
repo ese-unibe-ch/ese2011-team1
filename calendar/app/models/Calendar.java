@@ -15,17 +15,18 @@ import models.Event.Visibility;
  * The Calendar class represents a container to store and arrange multiple Events.
  * 
  * A Calendar is a container for multiple Events. It knows which Event happens
- * on which Date and lets its user interfere with its Events.
+ * on which Date and lets its user interfere with its Events. Calendars are responsible for maintaining all
+ * Events they contain, which includes editing/removing.
  * 
  * @see {@link Event}
  * @see {@link User}
  * 
  */
 public class Calendar {
-	private String name;
-	public User owner;
-	private PriorityQueue<Event> events;
 	public long id;
+	public User owner;
+	private String name;
+	private PriorityQueue<Event> events;
 	private LinkedList<Event> repeatingEvents;
 	private static long counter;
 
@@ -646,7 +647,7 @@ public class Calendar {
 					Event baseEvent = getEventById(e.baseId); // korrektes
 																// nächstes date
 
-					int intervall = baseEvent.interval;
+					int intervall = baseEvent.intervall;
 					Date nextRepStartDate = new Date(e.start.getYear(),
 							e.start.getMonth(), e.start.getDate() + intervall,
 							e.start.getHours(), e.start.getMinutes());
@@ -839,7 +840,7 @@ public class Calendar {
 		System.out.println("cancel from this event: " + cancelEvent.start);
 		boolean flag = true;
 		Date cursor = cancelEvent.start;
-		int intervall = cancelEvent.interval;
+		int intervall = cancelEvent.intervall;
 		Event from = getEventById(cancelEvent.baseId);
 		LinkedList<Event> res = getEventRepeatingFromTo(from, cancelEvent.start);
 		res.add(cancelEvent);

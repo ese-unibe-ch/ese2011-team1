@@ -10,6 +10,7 @@ import java.util.Date;
  * The Event class provides multiple options to satisfy the needs for modification, repetition and privacy.
  * Events can be stored in a {@link Calendar} to provide a graphical representation or attributed to a {@link User} directly.
  * Events are Comparable by their start date.
+ * The Event class is must know its start/end date and in case of repetition know its repeating status and next repetition.
  * @see {@link java.lang.Comparable}
  */
 public class Event implements Comparable<Event> {
@@ -33,16 +34,16 @@ public class Event implements Comparable<Event> {
 		PRIVATE
 	}
 	
+	public long id;
+	public long baseId;
 	public User owner;
 	public Date start;
 	public Date end;
 	public String name;
 	public String description;
 	public Visibility visibility;
-	public long id;
-	public long baseId;
 	public boolean is_repeating;
-	public int interval;
+	public int intervall;
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 	public boolean isDirty = false;
@@ -59,12 +60,12 @@ public class Event implements Comparable<Event> {
 	 *            flag, determines visibility for other users
 	 * @param isRepeated
 	 *            flag, used for repeating Events
-	 * @param interval
-	 *            determines repetition interval. Possibilities: DAY (1),
+	 * @param intervall
+	 *            determines repetition intervall. Possibilities: DAY (1),
 	 *            WEEK(7), MONTH(30), YEAR(265)
 	 */
 	public Event(User owner, Date start, Date end, String name,
-			Visibility visibility, boolean is_repeating, int interval) {
+			Visibility visibility, boolean is_repeating, int intervall) {
 		this.owner = owner;
 		this.start = start;
 		this.end = end;
@@ -73,7 +74,7 @@ public class Event implements Comparable<Event> {
 		counter++;
 		this.id = counter;
 		this.is_repeating = is_repeating;
-		this.interval = interval;
+		this.intervall = intervall;
 		this.baseId = id;
 	}
 
@@ -142,16 +143,16 @@ public class Event implements Comparable<Event> {
 	 * @param name The name to be set.
 	 * @param visibility The visibility to be set.
 	 * @param is_repeated The repetition status to be set.
-	 * @param interval The repetition interval to be set.
+	 * @param intervall The repetition intervall to be set.
 	 */
 	public void edit(Date start, Date end, String name, Visibility visibility,
-			boolean is_repeated, int interval) {
+			boolean is_repeated, int intervall) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.visibility = visibility;
 		this.is_repeating = is_repeated;
-		this.interval = interval;
+		this.intervall = intervall;
 	}
 	
 	/**
@@ -182,15 +183,15 @@ public class Event implements Comparable<Event> {
 	}
 
 	/**
-	 * Get the interval of this Events repetition.
+	 * Get the intervall of this Events repetition.
 	 * @return 0, if this Event is not repeating.
 	 * 1, if this Event is repeated on a daily basis.
 	 * 7, if this Event is repeated weekly.
 	 * 30, if this Event is repeated every month.
 	 * 365, if this Event is repeated every year.
 	 */
-	public int getInterval() {
-		return this.interval;
+	public int getIntervall() {
+		return this.intervall;
 	}
 
 	
@@ -205,12 +206,12 @@ public class Event implements Comparable<Event> {
 	// repeating events
 	public Event getNextRepetitionEvent() {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(),
-				start.getDate() + interval, start.getHours(),
+				start.getDate() + intervall, start.getHours(),
 				start.getMinutes());
 		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(),
-				end.getDate() + interval, end.getHours(), end.getMinutes());
+				end.getDate() + intervall, end.getHours(), end.getMinutes());
 
-		if (interval == 30) {
+		if (intervall == 30) {
 
 			// get month of start to be corrected: add a extra variable for
 			// end.getMonth()
@@ -300,7 +301,7 @@ public class Event implements Comparable<Event> {
 						end.getDate(), end.getHours(), end.getMinutes());
 			}
 		}
-		if (interval == 365) {
+		if (intervall == 365) {
 			// if we have a leap year, remember february is equals 1
 			if (start.getDate() == 29 && start.getMonth() == 1) {
 				nextRepStartDate = new Date(start.getYear() + 4,
@@ -318,7 +319,7 @@ public class Event implements Comparable<Event> {
 		}
 		Event newEvent = new Event(this.owner, nextRepStartDate,
 				nextRepEndDate, this.name, this.visibility, this.is_repeating,
-				this.interval);
+				this.intervall);
 		newEvent.setBaseId(this.baseId);
 		return newEvent;
 	}

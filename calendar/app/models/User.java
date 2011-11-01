@@ -9,7 +9,7 @@ import models.Event.Visibility;
 /**
  * The User class represents a User of this Calendar application.
  * Users may have multiple Calendars, all of which can contain multiple Events.
- * Users are responsible for maintaining the calendar, which includes adding, editing and removing Events.
+ * Users are responsible for maintaining the calendar.
  * 
  * @see {@link Calendar}
  *
