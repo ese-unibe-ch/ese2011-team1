@@ -4,7 +4,35 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * An Event represents a happening with a defined start date and end date.
+ * 
+ * The Event class provides multiple options to satisfy the needs for modification, repetition and privacy.
+ * Events can be stored in a {@link Calendar} to provide a graphical representation or attributed to a {@link User} directly.
+ * Events are Comparable by their start date.
+ * @see {@link java.lang.Comparable}
+ */
 public class Event implements Comparable<Event> {
+	
+	/**
+	 * Provides three layers of visibility to control the privacy of Events.
+	 *
+	 */
+	public enum Visibility {
+		/**
+		 * All Users are allowed to see this Event.
+		 */
+		PUBLIC,
+		/**
+		 * All Users are allowed to see this Events start and end date, but nothing more.
+		 */
+		BUSY,
+		/**
+		 * Only the User who created this Event is allowed to see it.
+		 */
+		PRIVATE
+	}
+	
 	public User owner;
 	public Date start;
 	public Date end;
@@ -14,7 +42,7 @@ public class Event implements Comparable<Event> {
 	public long id;
 	public long baseId;
 	public boolean is_repeating;
-	public int intervall;
+	public int interval;
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 	public boolean isDirty = false;
@@ -31,17 +59,12 @@ public class Event implements Comparable<Event> {
 	 *            flag, determines visibility for other users
 	 * @param isRepeated
 	 *            flag, used for repeating Events
-	 * @param intervall
+	 * @param interval
 	 *            determines repetition interval. Possibilities: DAY (1),
 	 *            WEEK(7), MONTH(30), YEAR(265)
 	 */
-
-	public enum Visibility {
-		PUBLIC, BUSY, PRIVATE
-	}
-
 	public Event(User owner, Date start, Date end, String name,
-			Visibility visibility, boolean is_repeating, int intervall) {
+			Visibility visibility, boolean is_repeating, int interval) {
 		this.owner = owner;
 		this.start = start;
 		this.end = end;
@@ -50,7 +73,7 @@ public class Event implements Comparable<Event> {
 		counter++;
 		this.id = counter;
 		this.is_repeating = is_repeating;
-		this.intervall = intervall;
+		this.interval = interval;
 		this.baseId = id;
 	}
 
@@ -58,67 +81,136 @@ public class Event implements Comparable<Event> {
 	 * Getters
 	 */
 
+	/**
+	 * Get start date of Event.
+	 * @return The <code>start</code> date of this Event.
+	 */
 	public Date getStart() {
 		return this.start;
 	}
 
+	/**
+	 * Get end date of Event.
+	 * @return The  <code>end</code> date of this Event.
+	 */
 	public Date getEnd() {
 		return this.end;
 	}
 
+	/**
+	 * Get the visibility status of this Event.
+	 * @return The visibility of this Event.
+	 * @see {@link Visibility}
+	 */
 	public Visibility getVisibility() {
 		return this.visibility;
 	}
 
+	/**
+	 * Get the name of this Event.
+	 * @return The <code>name</code> of this Event.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Get the unique id of this Event.
+	 * @return The <code>id</code> of this Event.
+	 */
 	public long getId() {
 		return this.id;
 	}
 
-	public String getParsedDate(Date d) {
-		return dateFormat.format(d);
+	/**
+	 * Get a String representation of this Event.
+	 * 
+	 * Returns a String representation in the form "dd/MM/yyyy, HH:mm".
+	 * @param date The date to be parsed.
+	 * @return String representation of argument.
+	 */
+	public String getParsedDate(Date date) {
+		return dateFormat.format(date);
 	}
 
+	/**
+	 * Edit all attributes of an Event.
+	 * 
+	 * 
+	 * @param start The start date to be set.
+	 * @param end The end date to be set.
+	 * @param name The name to be set.
+	 * @param visibility The visibility to be set.
+	 * @param is_repeated The repetition status to be set.
+	 * @param interval The repetition interval to be set.
+	 */
 	public void edit(Date start, Date end, String name, Visibility visibility,
-			boolean is_repeated, int intervall) {
+			boolean is_repeated, int interval) {
 		this.start = start;
 		this.end = end;
 		this.name = name;
 		this.visibility = visibility;
 		this.is_repeating = is_repeated;
-		this.intervall = intervall;
+		this.interval = interval;
 	}
 	
+	/**
+	 * Edit the description of this Event.
+	 * @param text The new description to be set.
+	 */
 	public void editDescription(String text){
 		this.description = text;
 	}
 
+	/**
+	 * Compare this Events start date with the arguments start date according to the definition of {@link Comparable#compareTo}
+	 * @param event The event to compare this Event with.
+	 * @returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 */
 	@Override
-	public int compareTo(Event e) {
-		return this.getStart().compareTo(e.getStart());
+	public int compareTo(Event event) {
+		return this.getStart().compareTo(event.getStart());
 	}
 
+	/**
+	 * Check if this Event is a repeating Event.
+	 * @return <code>true</code> if this Event is a repeating Event.
+	 * <code>false</code> otherwise.
+	 */
 	public boolean isRepeating() {
 		return this.is_repeating;
 	}
 
-	public int getIntervall() {
-		return this.intervall;
+	/**
+	 * Get the interval of this Events repetition.
+	 * @return 0, if this Event is not repeating.
+	 * 1, if this Event is repeated on a daily basis.
+	 * 7, if this Event is repeated weekly.
+	 * 30, if this Event is repeated every month.
+	 * 365, if this Event is repeated every year.
+	 */
+	public int getInterval() {
+		return this.interval;
 	}
 
+	
+	/**
+	 * Get the next Repetition for this Event, based on its repetition status.
+	 * 
+	 * This method is so ugly i will not even try to understand what's going on.
+	 * Change is coming, looking forward to introduce org.joda.DateTime soon.
+	 * @return An Event with the same baseId as this Event, whose start date is calculated based on this Events repetition status.
+	 */
 	// TODO: fix ugly date instantiation and fix correct calculation for monthly
 	// repeating events
 	public Event getNextRepetitionEvent() {
 		Date nextRepStartDate = new Date(start.getYear(), start.getMonth(),
-				start.getDate() + intervall, start.getHours(),
+				start.getDate() + interval, start.getHours(),
 				start.getMinutes());
 		Date nextRepEndDate = new Date(end.getYear(), end.getMonth(),
-				end.getDate() + intervall, end.getHours(), end.getMinutes());
+				end.getDate() + interval, end.getHours(), end.getMinutes());
 
-		if (intervall == 30) {
+		if (interval == 30) {
 
 			// get month of start to be corrected: add a extra variable for
 			// end.getMonth()
@@ -208,7 +300,7 @@ public class Event implements Comparable<Event> {
 						end.getDate(), end.getHours(), end.getMinutes());
 			}
 		}
-		if (intervall == 365) {
+		if (interval == 365) {
 			// if we have a leap year, remember february is equals 1
 			if (start.getDate() == 29 && start.getMonth() == 1) {
 				nextRepStartDate = new Date(start.getYear() + 4,
@@ -226,15 +318,23 @@ public class Event implements Comparable<Event> {
 		}
 		Event newEvent = new Event(this.owner, nextRepStartDate,
 				nextRepEndDate, this.name, this.visibility, this.is_repeating,
-				this.intervall);
+				this.interval);
 		newEvent.setBaseId(this.baseId);
 		return newEvent;
 	}
 
-	private void setBaseId(long Id) {
-		this.baseId = Id;
+	/**
+	 * Set the baseId
+	 * @param id The baseId to be set.
+	 */
+	private void setBaseId(long id) {
+		this.baseId = id;
 	}
 
+	/**
+	 * Get the baseId of this Event.
+	 * @return The baseId of this Event.
+	 */
 	public long getBaseId() {
 		return this.baseId;
 	}
@@ -265,10 +365,19 @@ public class Event implements Comparable<Event> {
 		return repeatingEventOnDay;
 	}
 
+	/**
+	 * Get a String representation for this Event.
+	 * @return The <code>name</code> of this Event.
+	 */
 	public String toString() {
 		return this.name;
 	}
 
+	/**
+	 * Check if this Event is visible.
+	 * @return <code>true</code> if the visibility status of this Event is either PUBLIC or BUSY.
+	 * <code>false</code> if the visibility status if PRIVATE.
+	 */
 	public boolean isVisible() {
 		return this.visibility != Visibility.PRIVATE;
 	}
