@@ -6,9 +6,25 @@ import models.Event.Visibility;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 
+
+/**
+ * Bootstrap executes defined actions on every start of the play framework.
+ * 
+ * @see {@link Job}
+ * @see {@link Bootstrap#doJob}
+ *
+ */
 @OnApplicationStart
 public class Bootstrap extends Job {
 
+	/**
+	 * Loads several Users along with their default Calendars and some Events.
+	 * 
+	 * Used for testing the Calendar app.
+	 * @see {@link User}
+	 * @see {@link Calendar}
+	 * @see {@link Event}
+	 */
 	public void doJob() {
 		// Event(Date start, Date end, String name, boolean is_visible)
 
