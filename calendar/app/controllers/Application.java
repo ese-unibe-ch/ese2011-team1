@@ -221,6 +221,10 @@ public class Application extends Controller {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
 		}
+		if (d_end.before(d_start)) {
+			message = "INVALID INPUT: START DATE MUST BE BEFORE END DATE!";
+			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
+		}
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
