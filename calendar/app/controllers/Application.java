@@ -14,8 +14,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import models.BirthdayCalendar;
-import models.BirthdayEvent;
 import models.Calendar;
 import models.Calendar;
 import models.Database;
@@ -103,7 +101,8 @@ public class Application extends Controller {
 		render();
 	}
 	
-	public static void RegUser(@Required String name, @Required String nickname, @Required String password, @Required String birthday, @Required boolean is_visible)
+	public static void RegUser(@Required String name, @Required String nickname,
+			@Required String password, @Required String birthday, @Required boolean is_visible)
     {
     	if(Database.userAlreadyRegistrated(name))
     	{
@@ -160,7 +159,7 @@ public class Application extends Controller {
 	    	String nickname = user.getNickname();
 	    	String password = user.getPassword();
 //TODO XXX AERGNAEONFBA
-	    	String birthday = birthdayDateFormat.format(user.getBirthday().start);
+	    	String birthday = user.getBirthday().getStart().toString("dd/MM/yyyy, HH:mm");
 	    	
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
@@ -232,7 +231,7 @@ public class Application extends Controller {
 		if (d_end.isBefore(d_start)) {
 			message = "INVALID INPUT: START DATE MUST BE BEFORE END DATE!";
 //TODO XXX ASTHBSRGHSTHNDSTHNS
-			addEvent(calendarID, name, s_date, dday, mmonth, yyear, message);
+			addEvent(calendarID, name, s_activeDate, message);
 		}
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
@@ -323,60 +322,58 @@ public class Application extends Controller {
 	}
 
 	public static void showCalendar(long calendarId, String username, String s_activeDate, int counter, String message) {
+//		
+//		Calendar calendars = user.getCalendarById(calendarId); // just for
+//																// hotfix -->
+//																// remove later
+//		LinkedList<Event> events = user.getCalendarById(calendarId)
+//				.getEventsOfDay(activeDate.getDayOfMonth(), activeDate.getMonthOfYear(), activeDate.getYear(), me);
+//
+//		// printe aus
+//		//for(Event re : calendar.getRepeatingEvents()){
+//		//	System.out.println("rep ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
+//		//}
+//		//
+//		//for(Event re : calendar.getEvents()){
+//		//	System.out.println("norm ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
+//		//}
+//		
+//		// printe aus end
+//		
+//		// "today" is used for calculating the current day/year/month and
+//		// coloring it blue
+//		java.util.Calendar today = java.util.Calendar.getInstance();
+//		java.util.Calendar cal = java.util.Calendar.getInstance();
+//
+//		Date date = null;
+
 		message = null;
-		
 		System.out.println("activeDate incoming: " + s_activeDate);
 		System.out.println("format required: dd/MM/yyyy, HH:mm");
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		UserCalendar calendar = user.getCalendarById(calendarId);
+		Calendar calendar = user.getCalendarById(calendarId);
 		System.out.println("calID: " + calendar.id);
 		assert (calendar != null) : "AEHSHAGF>GHS";
 		
 		DateTime activeDate = null;
 		DateTime today = new DateTime();
-
-		LinkedList<Event> allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventsOfDay(dday, mmonth, yyear, me);
-		Calendar calendars = user.getCalendarById(calendarId); // just for
-																// hotfix -->
-																// remove later
-		LinkedList<Event> events = allVisibleEvents;
-
-		
-		calendar.filterEventlist();
-		// printe aus
-		//for(Event re : calendar.getRepeatingEvents()){
-		//	System.out.println("rep ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
-		//}
-		//
-		//for(Event re : calendar.getEvents()){
-		//	System.out.println("norm ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
-		//}
-		
-		// printe aus end
-		
-		// "today" is used for calculating the current day/year/month and
-		// coloring it blue
-		java.util.Calendar today = java.util.Calendar.getInstance();
-		java.util.Calendar cal = java.util.Calendar.getInstance();
-
-		Date date = null;
-
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		} catch (Exception e) {
-//			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
+			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
 			activeDate = today;
 		}
 		try {
 			activeDate = activeDate.withDayOfMonth(counter);
 		} catch (Exception e) {
-//			message = "catch: showTest set counter as DayOfMonth for activeDate.";
+			message = "catch: showTest set counter as DayOfMonth for activeDate.";
 			activeDate.withDayOfMonth(activeDate.getDayOfMonth());
 		}
 		assert (activeDate != null) : "must not be null!";
+		
+		calendar.filterEventlist();
 		
 		LinkedList<Event> eventsOfDay = calendar.getEventsOfDay(activeDate, me);
 		
@@ -392,12 +389,6 @@ public class Application extends Controller {
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
 		
-//		PriorityQueue<Event> allEvents = calendar.getEvents();
-//		for (Event e : ) {
-//			if (e.owner != me || e instanceof BirthdayEvent) {
-//				allEvents.remove(e);
-//			}
-//		}
 		Calendar birthdayCalendar = me.getBirthdayCalendar();
 		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(calendar.getEvents());
 		for (Event e : allEvents) {

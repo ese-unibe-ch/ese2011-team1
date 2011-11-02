@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 /**
  * An Event represents a happening with a defined start date and end date.
  * 
@@ -378,10 +379,10 @@ public class Event implements Comparable<Event> {
 	 *         repeatingEventOnDay.getStart().getDate() == compDate.getDate().
 	 * 
 	 */
-	public Event getRepetitionOnDate(DateTime compDate) {
+	public Event getRepetitionOnDate(LocalDate compDate) {
 		Event repeatingEventOnDay = null;
 		Event repeatingEvent = this;
-		while (repeatingEvent.getStart().isBefore(compDate)) {
+		while (repeatingEvent.getStart().toLocalDate().isBefore(compDate)) {
 			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
 			if (repeatingEvent.getStart().getDayOfMonth() == compDate.getDayOfMonth()) {
 				System.out.println("new repeatingEvent : " + repeatingEvent.start);
