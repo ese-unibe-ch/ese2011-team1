@@ -201,7 +201,11 @@ public class Application extends Controller {
 	    		}
 	    	}
 	    }
-
+	    
+	public static void createE(){
+		System.out.println("aufgerufen.");
+	}
+	    
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, String is_repeated,
@@ -226,6 +230,7 @@ public class Application extends Controller {
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
 				intervall);
 		e.editDescription(description);
+		
 		calendar.addEvent(e);
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
@@ -327,7 +332,6 @@ public class Application extends Controller {
 																// remove later
 		LinkedList<Event> events = allVisibleEvents;
 
-
 		// "today" is used for calculating the current day/year/month and
 		// coloring it blue
 		java.util.Calendar today = java.util.Calendar.getInstance();
@@ -367,8 +371,7 @@ public class Application extends Controller {
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
 		LinkedList<Long> shownObservedCalendars = me
 				.getShownObservedCalendars();
-		System.out.println("Markierte beim Neuladen: "
-				+ shownObservedCalendars.size());
+//		System.out.println("Markierte beim Neuladen: " + shownObservedCalendars.size());
 		
 		Calendar birthdayCalendar = me.getBirthdayCalendar();
 		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(calendar.getEvents());

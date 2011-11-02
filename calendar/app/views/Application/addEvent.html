@@ -1,20 +1,385 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
+<body onload="printWeekDays();">
 <h1>${me.name}'s Calendars:</h1>
 	#{if message}
 		<font style = "font-size: 30px; color: red;">${message}</font>
 	#{/if}
-	<p> Date Format: <b> dd/MM/yyyy, HH:mm </b> , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 <br> 
+	<!-- <p> Date Format: <b> dd/MM/yyyy, HH:mm </b> , Eg: 2. January 1965 at noon is then: 02/01/1965, 12:00 <br> -->
 	Adding a new Event </p>
-	${calendarID}
-	<form action="@{Application.createEvent()}" method="GET">
+	<!-- ${calendarID} -->
+	<form name="before" action="" method="post">
 		<ul>
-			<input type="hidden" name="calendarID" value="${calendarID}" />
-			<li>Name:</li><input type="text" name="name" value="" />
-			<li>Start: </li><input type="text" name="start" value="dd/MM/yyyy, HH:mm" />
-			<li>End: </li><input type="text" name="end" value="dd/MM/yyyy, HH:mm" />
-					<!-- <li>Is Public:</li><input type="checkbox" name="is_visible" />  -->
+			<li>Name:</li><input type="text" name="titlename" value="" />
+	</form>
+
+<br>
+<form name="startdate" method="post" action="">
+Startdatum:
+<select name="sday" onChange="OnChange(this.form.sday)">
+	%{
+		for (int i=1; i<=31; i++) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			if (i == dday) choice += ' selected';
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
+
+</select>.
+<select name="smonth" onChange="OnChange(this.form.smonth)">
+	%{
+		String[] months = new String[12];
+		months[0] = 'Jan';
+		months[1] = 'Feb';
+		months[2] = 'Mar';
+		months[3] = 'Apr';
+		months[4] = 'Mai'; 
+		months[5] = 'Jun'; 
+		months[6] = 'Jul'; 
+		months[7] = 'Aug'; 
+		months[8] = 'Sep';
+		months[9] = 'Okt';
+		months[10] = 'Nov'; 
+		months[11] = 'Dez';
+
+		for (int i=1; i<=12; i++) {
+			String choice = "";
+			choice = '<option value="' + i + '"';
+			if (i == mmonth) choice += ' selected';
+			choice += '>' + months[i-1] + '</option>';
+			out.println(choice);
+		}
+	%}
+</select>.
+<select name="syear" onChange="OnChange(this.form.syear)">
+	%{
+		for (int i=2011; i<2020; i++) {
+			String choice = "";
+			choice = '<option value="' + i + '"';
+			if (i == yyear) choice += ' selected';
+			choice += '>' + i + '</option>';
+			out.println(choice);
+		}
+	%}
+</select> - Zeit:
+<select name="shour" onChange="OnChange(this.form.shour)">
+	<option value="00">00</option>
+	<option value="01">01</option>
+	<option value="02">02</option>
+	<option value="03">03</option>
+	<option value="04">04</option>
+	<option value="05">05</option>
+	<option value="06">06</option>
+	<option value="07">07</option>
+	<option value="08">08</option>
+	<option value="09">09</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12" selected>12</option>
+	<option value="13">13</option>
+	<option value="14">14</option>
+	<option value="15">15</option>
+	<option value="16">16</option>
+	<option value="17">17</option>
+	<option value="18">18</option>
+	<option value="19">19</option>
+	<option value="20">20</option>
+	<option value="21">21</option>
+<option value="22">22</option>
+	<option value="23">23</option>
+</select> : 
+<select name="smins" onChange="OnChange(this.form.smins)">
+	<option value="00" selected>00</option>
+	<option value="05">05</option>
+	<option value="10">10</option>
+	<option value="15">15</option>
+	<option value="20">20</option>
+	<option value="25">25</option>
+	<option value="30">30</option>
+	<option value="35">35</option>
+	<option value="40">40</option>
+	<option value="45">45</option>
+	<option value="50">50</option>
+	<option value="55">55</option>
+</select> Uhr <div id="startday" style="display:inline;"></div>
+</form>
+
+<form name="enddate" method="post" action="">
+Enddatum:
+<select name="day" onChange="OnChangeEndDate()">
+	%{
+		for (int i=1; i<=31; i++) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			if (i == dday) choice += ' selected';
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
+
+</select>.
+<select name="month" onChange="OnChangeEndDate()">
+
+	%{
+		for (int i=1; i<=12; i++) {
+			String choice = "";
+			choice = '<option value="' + i + '"';
+			if (i == mmonth) choice += ' selected';
+			choice += '>' + months[i-1] + '</option>';
+			out.println(choice);
+		}
+	%}
+	
+</select>.
+<select name="year" onChange="OnChangeEndDate()">
+	%{
+		for (int i=2011; i<=2020; i++) {
+			String choice = "";
+			choice = '<option value="' + i + '"';
+			if (i == year) choice += ' selected';
+			choice += '>' + i + '</option>';
+			out.println(choice);
+		}
+	%}
+
+</select> - Zeit:
+<select name="hour" onChange="OnChangeEndDate()">
+	<option value="00">00</option>
+	<option value="01">01</option>
+	<option value="02">02</option>
+	<option value="03">03</option>
+	<option value="04">04</option>
+	<option value="05">05</option>
+	<option value="06">06</option>
+	<option value="07">07</option>
+	<option value="08">08</option>
+	<option value="09">09</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+	<option value="13" selected>13</option>
+	<option value="14">14</option>
+	<option value="15">15</option>
+	<option value="16">16</option>
+	<option value="17">17</option>
+	<option value="18">18</option>
+	<option value="19">19</option>
+	<option value="20">20</option>
+	<option value="21">21</option>
+<option value="22">22</option>
+	<option value="23">23</option>
+</select> : 
+<select name="mins" onChange="OnChangeEndDate()">
+	<option value="00" selected>00</option>
+	<option value="05">05</option>
+	<option value="10">10</option>
+	<option value="15">15</option>
+	<option value="20">20</option>
+	<option value="25">25</option>
+	<option value="30">30</option>
+	<option value="35">35</option>
+	<option value="40">40</option>
+	<option value="45">45</option>
+	<option value="50">50</option>
+	<option value="55">55</option>
+</select> Uhr <div id="endday" style="display:inline;"></div>
+</form>
+
+<script type="text/javascript">
+function send() {
+	//format dd/MM/yyyy, HH:mm
+	var yy = document.forms.startdate.syear.selectedIndex+2011;
+	var mm = document.forms.startdate.smonth.selectedIndex+1;
+	var dd = document.forms.startdate.sday.selectedIndex+1;
+	var hh = document.forms.startdate.shour.selectedIndex;
+	var mmi = document.forms.startdate.smins.selectedIndex;
+	
+	var str = dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mmi;
+	//alert(str);
+	
+	document.forms.hiddenform.start.value = str;
+	
+	yy = document.forms.enddate.year.selectedIndex+2011;
+	mm = document.forms.enddate.month.selectedIndex+1;
+	dd = document.forms.enddate.day.selectedIndex+1;
+	hh = document.forms.enddate.hour.selectedIndex;
+	mmi = (document.forms.enddate.mins.selectedIndex)*5;
+	
+	str = dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mmi;
+	
+	document.forms.hiddenform.end.value = str;
+	document.forms.hiddenform.name.value = document.forms.before.titlename.value;
+	//document.forms.hiddenform.visibility.value = document.forms.after.visibility.value;
+	//document.forms.hiddenform.is_repeated.value = document.forms.after.is_repeated.value;
+	//document.forms.hiddenform.description.value = document.forms.after.description.value;
+
+	//alert('Event wird hinzugefügt...');
+	//alert(document.forms.hiddenform.calendarID.value);
+	//alert(document.forms.hiddenform.name.value);
+	//alert(document.forms.hiddenform.start.value);
+	//alert(document.forms.hiddenform.end.value);
+	//document.hiddenform.submit();
+	//return true;
+}
+
+
+function checkdate(m, d, y) {
+    return m > 0 && m < 13 && y > 0 && y < 32768 && d > 0 && d <= (new Date(y, m, 0)).getDate();
+}
+
+function printDate(d) {
+	var weekday = new Array(7);	
+	weekday[0]="Sonntag";
+	weekday[1]="Montag";
+	weekday[2]="Dienstag";
+	weekday[3]="Mittwoch";
+	weekday[4]="Donnerstag";
+	weekday[5]="Freitag";
+	weekday[6]="Samstag";
+	var ret = weekday[d.getDay()];
+	return ret;
+}
+
+function printStartDay() {
+	var d = new Date();
+	var yy = document.forms.startdate.syear.selectedIndex+2011;
+	var mm = document.forms.startdate.smonth.selectedIndex;
+	var dd = document.forms.startdate.sday.selectedIndex+1;
+	//alert("Startday:"+dd+" "+mm+" "+yy);
+	
+	d.setFullYear(yy,mm,dd);
+	document.getElementById("startday").innerHTML = "("+printDate(d)+")";
+	return true;
+}
+
+function sameDate() {	
+	var ya = document.forms.startdate.syear.selectedIndex+2011;
+	var ma = document.forms.startdate.smonth.selectedIndex;
+	var da = document.forms.startdate.sday.selectedIndex+1;
+	
+	var yb = document.forms.enddate.year.selectedIndex+2011;
+	var mb = document.forms.enddate.month.selectedIndex;
+	var db = document.forms.enddate.day.selectedIndex+1;
+	
+	if (ya==yb && ma==mb && da==db) {return true;}
+	else {return false;}
+}
+
+function printEndDay() {
+	var d = new Date();
+	var yy = document.forms.enddate.year.selectedIndex+2011;
+	var mm = document.forms.enddate.month.selectedIndex;
+	var dd = document.forms.enddate.day.selectedIndex+1;
+
+	d.setFullYear(yy,mm,dd);
+	document.getElementById("endday").innerHTML = "("+printDate(d)+")";
+
+	if (sameDate() == true) {
+		document.getElementById("endday").innerHTML = ""; }
+
+	return true;
+}
+
+function printWeekDays() {
+	printStartDay();
+	printEndDay();
+	return true;
+}
+
+// ENDDATE IS CHANGED
+function OnChangeEndDate() {
+	var d = document.forms.enddate.day.selectedIndex+1;
+	var m = document.forms.enddate.month.selectedIndex+1;
+	var y = document.forms.enddate.year.selectedIndex+2011;
+	
+	// check if date is correct
+	if (checkdate(m, d, y) == false) {
+		alert("Please enter a valid date.");
+		var lastday = 0;
+		for (i=1;i<5;i++) {
+			lastday = d-i;
+			if (checkdate(m,lastday,y) == true) break;
+		}
+		//set last day of month
+		document.forms.enddate.day.selectedIndex = lastday-1;
+	}
+		
+	printWeekDays();
+}
+
+// STARTDATE IS CHANGED
+function OnChange(dropdown) {
+	var d = document.forms.startdate.sday.selectedIndex+1;
+	var m = document.forms.startdate.smonth.selectedIndex+1;
+	var y = document.forms.startdate.syear.selectedIndex+2011;
+	
+	// check if date is correct
+	if (checkdate(m, d, y) == false) {
+		alert("Please enter a valid date.");
+		var lastday = 0;
+		for (i=1;i<5;i++) {
+			lastday = d-i;
+			if (checkdate(m,lastday,y) == true) break;
+		}
+		//set last day of month
+		document.forms.startdate.sday.selectedIndex = lastday-1;
+	}
+
+	var myindex  = dropdown.selectedIndex;
+	var SelValue = dropdown.options[myindex].value;
+
+	// reset date
+	document.forms.enddate.day.selectedIndex = document.forms.startdate.sday.selectedIndex;
+	document.forms.enddate.month.selectedIndex = document.forms.startdate.smonth.selectedIndex;
+	document.forms.enddate.year.selectedIndex = document.forms.startdate.syear.selectedIndex;	
+	document.forms.enddate.hour.selectedIndex = document.forms.startdate.shour.selectedIndex+1;	
+	document.forms.enddate.mins.selectedIndex = document.forms.startdate.smins.selectedIndex;
+	
+	// control variable
+	var chk = false;
+	var chk2= false;
+
+	// OVERFLOW: HOUR-FIELD --> change day-field
+	myindex = document.forms.startdate.shour.selectedIndex;
+	if (document.forms.startdate.shour.options[myindex].value == 23) { 
+		document.forms.enddate.hour.selectedIndex = 0;
+		document.forms.enddate.day.selectedIndex = document.forms.enddate.day.selectedIndex + 1;
+		chk = true;
+	}
+	
+	// OVERFLOW: DAY-FIELD	--> change month-field
+	//myindex = document.forms.startdate.sday.selectedIndex; //day should be dynamic
+	d = document.forms.startdate.sday.selectedIndex+1;
+	m = document.forms.startdate.smonth.selectedIndex+1;
+	y = document.forms.startdate.syear.selectedIndex+2011;
+	
+	if (chk && checkdate(m, d+1, y) == false) { 
+		document.forms.enddate.day.selectedIndex = 0;
+		document.forms.enddate.month.selectedIndex = document.forms.enddate.month.selectedIndex + 1;
+		chk2 = true;
+	}
+	
+	// OVERFLOW: MONTH-FIELD --> change year-field
+	myindex = document.forms.startdate.smonth.selectedIndex;
+	if (chk2 && document.forms.startdate.smonth.options[myindex].value == 12) { 
+		document.forms.enddate.month.selectedIndex = 0;
+		document.forms.enddate.year.selectedIndex = document.forms.enddate.year.selectedIndex + 1;
+	}
+	
+	printWeekDays();
+
+	return true;
+}
+</script>
+			
+	<form name="hiddenform" onsubmit="return send()" action="@{Application.createEvent()}">
+	<input type="hidden" name="calendarID" value="${calendarID}" />
+	<input type="hidden" name="name" value="" />
+	<input type="hidden" name="start" value="" />
+	<input type="hidden" name="end" value="" />
 			<br> Visibility:
 			<select name="visibility">
 				<option value="PRIVATE">Private</option>
@@ -31,13 +396,16 @@
 			</select>
 			<br> Event Description:	<br>
 			<textarea rows="6" cols="100" name="description">default text</textarea>
-			<input type="hidden" name="s_date" value="${s_date}" />
-			<input type="hidden" name="dday" value="${dday}" />
-			<input type="hidden" name="mmonth" value="${mmonth}" />
-			<input type="hidden" name="yyear" value="${yyear}" />
 		</ul>
+	<input type="hidden" name="s_date" value="${s_date}" />
+	<input type="hidden" name="dday" value="${dday}" />
+	<input type="hidden" name="mmonth" value="${mmonth}" />
+	<input type="hidden" name="yyear" value="${yyear}" />
+		
 		<input type="submit" value="Save" />
 	</form>
 
 <a href="@{Application.index()}">Home</a>
 <a href="@{Secure.logout()}">Log out</a>
+
+</body>
