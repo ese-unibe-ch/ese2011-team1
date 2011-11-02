@@ -202,10 +202,6 @@ public class Application extends Controller {
 	    	}
 	    }
 	    
-	public static void createE(){
-		System.out.println("aufgerufen.");
-	}
-	    
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, String is_repeated,
@@ -230,7 +226,9 @@ public class Application extends Controller {
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
 				intervall);
 		e.editDescription(description);
-		
+
+		if(repeated) e.wasPreviouslyRepeating = true;
+
 		calendar.addEvent(e);
 		showCalendar(calendarID, me.name, calendar.getName(), s_date, dday, mmonth,
 				yyear, message);
@@ -254,8 +252,12 @@ public class Application extends Controller {
 		int intervall = Integer.parseInt(is_repeated);
 		Event event = calendar.getEventById(eventID);
 		event.editDescription(description);
-		if (repeated) {
+		
+		if (repeated && !event.wasPreviouslyRepeating) {
+			event.wasPreviouslyRepeating = true;
+			System.out.println(event.start + " ev date alrdy in? " +calendar.getRepeatingEvents().contains(event));
 			calendar.addToRepeated(event);
+			
 		}
 
 		try {
@@ -332,6 +334,19 @@ public class Application extends Controller {
 																// remove later
 		LinkedList<Event> events = allVisibleEvents;
 
+		
+		calendar.filterEventlist();
+		// printe aus
+		//for(Event re : calendar.getRepeatingEvents()){
+		//	System.out.println("rep ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
+		//}
+		//
+		//for(Event re : calendar.getEvents()){
+		//	System.out.println("norm ev " + re.name + " id:"+ re.getId()+" base:"+re.baseId+" d:" + re.start);
+		//}
+		
+		// printe aus end
+		
 		// "today" is used for calculating the current day/year/month and
 		// coloring it blue
 		java.util.Calendar today = java.util.Calendar.getInstance();

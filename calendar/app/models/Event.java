@@ -47,6 +47,7 @@ public class Event implements Comparable<Event> {
 	private static long counter;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
 	public boolean isDirty = false;
+	public boolean wasPreviouslyRepeating = false;
 
 	/**
 	 * 
@@ -381,6 +382,18 @@ public class Event implements Comparable<Event> {
 	 */
 	public boolean isVisible() {
 		return this.visibility != Visibility.PRIVATE;
+	}
+	
+	public boolean isBusy(){
+		return this.visibility == Visibility.BUSY;
+	}
+	
+	public boolean isPublic(){
+		return this.visibility == Visibility.PUBLIC;
+	}
+	
+	public boolean isPrivate(){
+		return this.visibility == Visibility.PRIVATE;
 	}
 
 }
