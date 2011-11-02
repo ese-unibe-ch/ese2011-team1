@@ -1,7 +1,7 @@
 import java.util.Date;
 import java.util.Iterator;
 
-import models.UserCalendar;
+import models.Calendar;
 import models.Event;
 import models.Event.Visibility;
 import models.User;
@@ -13,14 +13,14 @@ import play.test.UnitTest;
 
 public class CalendarTest extends UnitTest {
 	private User owner;
-	private UserCalendar calendar;
+	private Calendar calendar;
 	private Event event;
 	private Event repeatingEvent;
 
 	@Before
 	public void setUp() throws Exception {
 		this.owner = new User("hans", "123", new Date(), "hans1");
-		this.calendar = new UserCalendar("Calendar", this.owner);
+		this.calendar = new Calendar("Calendar", this.owner);
 		this.event = new Event(owner, new Date(1, 1, 1), new Date(1, 1, 2),
 				"anEvent", Visibility.PRIVATE, false, 0);
 		this.repeatingEvent = new Event(owner, new Date(1, 1, 1), new Date(1,

@@ -2,8 +2,6 @@
 #{set title:'Home' /}
 
 <h1>${me.name} is watching ${user.name}'s calendars</h1>
-<h1>${s_activeDate}</h1>
-	#{if user.isBirthdayPublic()} ${user.name}'s Birthday: ${user.birthday} #{/if} 
 	#{list items:calendars, as:'calendar'}
 		<p>
 			<li><a href="@{Application.showCalendar(calendar.getId(), user.name, s_activeDate)}"> ${calendar.name}</a></li>

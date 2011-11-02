@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.3">
+  <help_text>// Uncomment the following line to change the fontsize and font:
+//fontsize=14
+// fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Welcome to UMLet!
+//
+// Double-click on elements to add them to the diagram, or to copy them
+// Edit elements by modifying the text in this panel
+// Hold Cmd to select multiple elements
+// Use Cmd+mouse to select via lasso
+//
+// Use +/- or Cmd+mouse wheel to zoom
+// Drag a whole relation at its central square icon
+//
+// Press Cmd+C to copy the whole diagram to the system clipboard (then just paste it to, eg, Word)
+// Edit the files in the "palettes" directory to create your own element palettes
+//
+// Select "Custom Elements &gt; New..." to create new element types
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// This text will be stored with each diagram;  use it for notes.</help_text>
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>462</x>
+      <y>84</y>
+      <w>198</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>User
+--
++name: String
++calendars: LinkedList&lt;Calendar&gt;
++observedCalendars: LinkedList&lt;Calendar&gt;
++shownObservedCalendars: LinkedList&lt;Long&gt;
++password: String
++birthday: Event
++id: long
++nickname: String
++birthdayCalendar: Calendar
+--
++getCalendarById(id: long): Calendar
+--
+Responsibilities
+-- Maintaining own Calendars
+-- Maintaining relationships with other Users</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>630</x>
+      <y>372</y>
+      <w>228</w>
+      <h>222</h>
+    </coordinates>
+    <panel_attributes>Event
+--
++id: long
++baseId: long
++owner: User
++start: Date
++end: Date
++name: String
++description: String
++visibility: Visibility
++is_repeating: boolean
++interval: int
+-dateFormat: DateFormat
++isDirty: boolean
+
+
+--
++edit(start: Date, end: Date, name: String,
+visibility: Visibility, is_repeated: boolean, intervall: int)
++getNextRepetitionEvent(): Event
++getRepetitionOnDate(compDate: Date): Event
+--
+Responsibilities
+-- know start/end date
+-- know its visibility status
+-- hold specific information about Event</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>618</x>
+      <y>222</y>
+      <w>42</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1= 1
+r1=owner
+m2=  1
+r2=birthday</panel_attributes>
+    <additional_attributes>24;18;24;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>168</x>
+      <y>372</y>
+      <w>336</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>Calendar
+--
++id: long
++owner: User
++name: String
+-events: PriorityQueue&lt;Event&gt;
+-repeatingEvents: LinkedList&lt;Event&gt;
+--
++addEvent(event: Event)
++getEventList(start: Date, requester: User)
++getEventsOfDay(dday: int, mmonth: int, yyear: int, requester: User): LinkedList&lt;Event&gt;
++getSameBaseIdEvents(baseId: long)
++hasEventsOfDay(dday: int, mmonth: int, yyear: int, requester: User): boolean
++getEventById(id: long): Event
++removeEvent(id: long)
++removeRepeatingEvents(event: Event)
++cancelRepeatingEventFromDate(cancelEvent: Event)
++getRepeatingEventFromTo(from: Event, to: Date)
+--
+Responsibilities
+-- stores Events
+-- provides functions to maintain Events</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>444</x>
+      <y>222</y>
+      <w>38</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=  1
+r1=owner
+m2=   1..n
+r2= </panel_attributes>
+    <additional_attributes>24;18;24;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>720</x>
+      <y>174</y>
+      <w>156</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+Comparable
+--
++compareTo()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>714</x>
+      <y>198</y>
+      <w>106</w>
+      <h>186</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+&lt;&lt;imlpements&gt;&gt;</panel_attributes>
+    <additional_attributes>84;18;84;102;24;102;24;174</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>96</x>
+      <y>72</y>
+      <w>330</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>Database
+--
++users: HashMap&lt;String, User&gt;
+
+--
+/+addUser(user: User)/
+/+addUser(username: String, password: String, birthday: Date, nickname: String)/
+/+deleteUser(username: String, password: String)/
+/+changePassword(username: String, oldPassword: String, newPassword: String)/
+/+getUserList(): List&lt;User&gt;/
+/+getUserByName(name: String)/
+/+changeUserName(user: User)/
+/+userAlreadyRegistrated(newUserName: String)/
+--
+Responsibilities
+-- Maintain Users in a database structure.
+-- keep track of what Users are reistered.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>408</x>
+      <y>84</y>
+      <w>66</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;</panel_attributes>
+    <additional_attributes>18;18;54;18</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>486</x>
+      <y>402</y>
+      <w>156</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-&gt;&gt;&gt;
+m1=0..n
+r1=events</panel_attributes>
+    <additional_attributes>144;18;18;18</additional_attributes>
+  </element>
+</diagram>

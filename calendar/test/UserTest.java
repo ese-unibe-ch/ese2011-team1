@@ -10,12 +10,12 @@ import play.test.UnitTest;
 import models.*;
 public class UserTest extends UnitTest{
 	private User user;
-	private UserCalendar calendar;
+	private Calendar calendar;
 
 	@Before
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234", new Date(), "hans3");
-		this.calendar = new UserCalendar("Calendar", user);
+		this.calendar = new Calendar("Calendar", user);
 	}
 	
 	@Test

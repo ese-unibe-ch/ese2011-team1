@@ -18,22 +18,24 @@
 			<li>Name:</li><input type="text" name="name" value="${event.name}" />
 			<li>Start:</li><input type="text" name="start" value="${event.getParsedDate(event.start)}" />
 			<li>End:</li><input type="text" name="end" value="${event.getParsedDate(event.end)}" />
-					<!-- <li>Is Public:</li><input type="checkbox" name="is_visible" />  -->
-			<br> Visibility:
-			<select name="visibility">
-				<option selected="${event.getVisibility()}"> Was selected: ${event.getVisibility()}</option>
-				<option value="PRIVATE">PRIVATE</option>
-				<option value="BUSY">BUSY</option>
-				<option value="PUBLIC">PUBLIC</option>
-			</select>
-			<br> Repeatable:
-			<select name="is_repeated">
-				<option value="0">-</option>
-				<option value="1">daily</option>
-				<option value="7">weekly</option>
-				<option value="30">monthly</option>
-				<option value="365">yearly 
-			</select>
+			
+			 <br> Visibility:
+			#{select 'visibility', value: event.getVisibility(), id:'visibility'}
+				#{option 'PRIVATE'}PRIVATE#{/option}
+				#{option 'BUSY'}BUSY#{/option}
+				#{option 'PUBLIC'}PUBLIC#{/option}
+			#{/select}
+	
+			 <br> Repeatable:
+			#{select 'is_repeated', value: event.getIntervall(), id:'is_repeated'}
+				#{option 0}-#{/option}
+				#{option 1}daily#{/option}
+				#{option 7}weekly#{/option}
+				#{option 30}monthly#{/option}
+				#{option 365}yearly#{/option}
+			#{/select}
+			
+			
 			<br> Event Description:	<br>
 			<textarea rows="6" cols="100" name="description">default text</textarea>
 			<input type="hidden" name="s_activeDate" value="${s_activeDate}" />

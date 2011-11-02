@@ -1,11 +1,13 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 <header>
-	<h1>${user.name}'s Calendar: ${calendar.name} 
+	<h1>${user.name}'s Calendar: ${calendar.name}
+<!-- TODO DELETE FROM HERE USED FOR TESTING-->
 	#{if message}
 		<font style = "font-size: 30px; color: red;">${message}</font>
 	#{/if}
 	<h1>${activeDate.toString("dd/HH/yyyy, HH:mm")}</h1>
+<!-- TO HERE -->
 	
 		%{
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
@@ -136,17 +138,26 @@
 			#{list items:eventsOfDay, as:'event'}
 				<p>
 					<li> 
-							#{if me != event.owner}<b>Owner:</b>${event.owner.name}#{/if}<b> Event name:</b>${event.name},  <b>from:</b>${event.getStart().toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.getEnd().toString("dd/MM/yyyy, HH:mm")} 
-							#{if user==me},  
-								<b>visibility</b>:${event.visibility} 
+							#{if me != event.owner} <b>Owner:</b>${event.owner.name} #{/if}
+								
+							#{if user==me}  
+								#{if me==event.owner || event.isPublic()}<b>Event name:</b>${event.name} #{/if},
+								#{if me==event.owner || event.isBusy()} <b>Busy</b> #{/if},  
+								<b>from:</b>${event.start}  ,<b>to:</b>${event.end} 
+								    
+								#{if me==event.owner || event.isPublic()}
+									<b>visibility</b>:${event.visibility} 
+									<b>Repeating:</b>${event.is_repeating}  
+									<b>Description</b>:${event.description} <br>
+								#{/if}
 							#{/if} <br>
 							<b>Repeating:</b>${event.is_repeating}
 							<b>Description</b>:${event.description} <br>
-							#{if user == me && me==event.owner}
+							#{if user == me && me==event.owner && !user.isBirthday(event)}
 								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
 								#{if event.is_repeating}
-									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
+									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getBaseId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
 									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
 								#{/if}
 							#{/if}
