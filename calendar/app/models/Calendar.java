@@ -165,6 +165,7 @@ public class Calendar {
 	 *            The event to be added to <code>repeatingEvents</code>
 	 */
 	public void addToRepeated(Event event) {
+		for(Event e : repeatingEvents) System.out.println("lalala " +e.start);
 		this.repeatingEvents.add(event);
 	}
 
@@ -326,12 +327,13 @@ public class Calendar {
 					for (Calendar cal : observedCals) {
 						if (cal.owner == repeatingObservedEvent.owner
 								&& repeatingObservedEvent.isVisible()) {
+							
 							repeatingEvents.add(repeatingObservedEvent);
 						}
 					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
-							&& !repeatingEvents
-									.contains(repeatingObservedEvent)) {
+							&& !repeatingEvents.contains(repeatingObservedEvent)) {
+						
 						repeatingEvents.add(repeatingObservedEvent);
 					}
 				}
@@ -480,11 +482,15 @@ public class Calendar {
 					for (Calendar cal : observedCals) {
 						if (cal.owner == repeatingObservedEvent.owner
 								&& repeatingObservedEvent.isVisible()) {
-							repeatingEvents.add(repeatingObservedEvent);
+							
+							
+								repeatingEvents.add(repeatingObservedEvent);
 						}
 					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE) {
-						repeatingEvents.add(repeatingObservedEvent);
+						
+						
+							repeatingEvents.add(repeatingObservedEvent);
 					}
 				}
 			}
@@ -784,7 +790,9 @@ public class Calendar {
 					// add the event after our victim (1 date interval
 					// afterwards) into this.events and repeatingEvents
 					// or check for next free slot , ie find this date c
-
+					
+					
+					
 					if (!compareCalendarEvents(nextEvent)) {
 						this.events.add(nextEvent);
 						if (nextEvent.isRepeating()) { // unnötig
@@ -929,6 +937,62 @@ public class Calendar {
 				flag = true;
 
 		return flag;
+	}
+	
+	/**
+	 * helper to filter out duplicated events, 
+	 * which we do have since we have an algorithmic error.
+	 * for each event in events look for duplicated id's
+	 * if there are duplicates, ignore them. take only id, which are unique
+	 * very ugly, remove soon and fix the error properly
+	 */
+	public void filterEventlist(){
+		PriorityQueue<Event> res = new PriorityQueue<Event>();
+		
+		// filter events
+		for(Event event : this.events){
+			if(!hasEventId(event, res)) res.add(event);
+		}
+		this.events = res;
+		
+		// filter repeating events
+		LinkedList<Event> res1 = new LinkedList<Event>();
+		for(Event revent: this.repeatingEvents){
+			if(!hasEventBaseId(revent, res1)) res1.add(revent);
+		}
+		this.repeatingEvents = res1;
+	}
+	
+	/**
+	 * look in the list, if there is an event with id equals e.id
+	 * if yes, yield true, otherwise yield false
+	 * @param e
+	 * @param list
+	 * @return boolean
+	 */
+	private boolean hasEventId(Event e, PriorityQueue<Event> list){
+		for(Event event : list){
+			if(e.id == event.id){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * look in the list, if there is an event with baseId equals e.baseId
+	 * if yes, yield true, otherwise yield false
+	 * @param e
+	 * @param list
+	 * @return boolean
+	 */
+	private boolean hasEventBaseId(Event e, LinkedList<Event> list){
+		for(Event event : list){
+			if(e.baseId == event.baseId){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
