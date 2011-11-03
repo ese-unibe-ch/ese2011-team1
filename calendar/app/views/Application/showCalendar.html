@@ -144,7 +144,7 @@
 								
 								<!-- Why is this me==event.owner?? this displays 'busy' for all owned events! -->
 								#{if me==event.owner || event.isBusy()} <b>Busy</b> #{/if},  
-								<b>from:</b>${event.start}  ,<b>to:</b>${event.end} 
+								<b>from:</b>${event.start.toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.end.toString("dd/MM/yyyy, HH:mm")} 
 								    
 								#{if me==event.owner || event.isPublic()}
 									<b>visibility</b>:${event.visibility} 

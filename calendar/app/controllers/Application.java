@@ -219,7 +219,6 @@ public class Application extends Controller {
 		}
 		if (d_end.isBefore(d_start)) {
 			message = "INVALID INPUT: START DATE MUST BE BEFORE END DATE!";
-			// TODO XXX ASTHBSRGHSTHNDSTHNS
 			addEvent(calendarID, name, s_activeDate, message);
 		}
 		boolean repeated = is_repeated.equals("0") ? false : true;
@@ -228,7 +227,7 @@ public class Application extends Controller {
 				intervall);
 		e.editDescription(description);
 		calendar.addEvent(e);
-		showCalendar(calendarID, me.name, s_activeDate,
+		showCalendar(calendarID, me.name, start,
 				d_start.getDayOfMonth(), message);
 	}
 
@@ -339,14 +338,13 @@ public class Application extends Controller {
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		} catch (Exception e) {
-			message = "catch: showTest parse s_activeDate to activeDate: "
-					+ s_activeDate;
+//			message = "catch: showTest parse s_activeDate to activeDate: " + s_activeDate;
 			activeDate = today;
 		}
 		try {
 			activeDate = activeDate.withDayOfMonth(counter);
 		} catch (Exception e) {
-			message = "catch: showTest set counter as DayOfMonth for activeDate.";
+//			message = "catch: showTest set counter as DayOfMonth for activeDate.";
 			activeDate.withDayOfMonth(activeDate.getDayOfMonth());
 		}
 		assert (activeDate != null) : "must not be null!";
