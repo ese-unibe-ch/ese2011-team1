@@ -122,8 +122,7 @@ public class Calendar {
 		boolean flag = false;
 		for (Event comp : this.events) {
 			if (comp.name.equals(event.name))
-				if (comp.start.getYear() == event.start.getYear()
-						&& comp.start.equals(event.start)) {
+				if (comp.start.equals(event.start)) {
 					flag = true;
 					break;
 				}
@@ -131,8 +130,7 @@ public class Calendar {
 		if (!flag) {
 			for (Event comp : this.repeatingEvents) {
 				if (comp.name.equals(event.name))
-					if (comp.start.getYear() == event.start.getYear()
-							&& comp.start.equals(event.getStart())) {
+					if (comp.start.equals(event.getStart())) {
 						flag = true;
 						break;
 					}
@@ -279,6 +277,7 @@ public class Calendar {
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
 		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
+		System.out.println("assert list contains events: " + events);
 
 
 		if (shownObservedCals.contains(owner.getBirthdayCalendar().id)) {
@@ -317,7 +316,6 @@ public class Calendar {
 					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
 							&& !repeatingEvents.contains(repeatingObservedEvent)) {
-						
 						repeatingEvents.add(repeatingObservedEvent);
 					}
 				}
@@ -327,7 +325,7 @@ public class Calendar {
 		boolean is_owner = owner == requester;
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.toLocalDate() == comp) {
+				if (e.start.toLocalDate().equals(comp)) {
 					if (!result.contains(e))
 						result.add(e);
 				}
@@ -354,9 +352,11 @@ public class Calendar {
 
 		for (Event e : result) {
 			if (!this.events.contains(e)) {
+				System.out.println("added to events: " + e.name + e.start);
 				this.events.add(e);
 			}
 		}
+		System.out.println("all events: " + result);
 		return result;
 	}
 
@@ -544,6 +544,7 @@ public class Calendar {
 
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
+				System.out.println("hasEventOnDay: e VS comp LocalDate" + e.start.toLocalDate() + "..... " + comp);
 				if (e.start.toLocalDate().equals(comp)) {
 					flag = true;
 				}
@@ -557,7 +558,7 @@ public class Calendar {
 		boolean contains = false;
 		for (Event e : this.events) {
 			if (e.getBaseId() == repeatingEvent.getBaseId()
-					&& e.start.toLocalDate() == repeatingEvent.start.toLocalDate()) {
+					&& e.start.toLocalDate().equals(repeatingEvent.start.toLocalDate())) {
 				contains = true;
 			}
 		}
@@ -632,13 +633,13 @@ public class Calendar {
 					Event baseEvent = getEventById(e.baseId); // korrektes
 																// nächstes date
 
-					int intervall = baseEvent.intervall;
+					int intervall = baseEvent.getIntervall();
 					DateTime nextRepStartDate = new DateTime(e.start.getYear(),
-							e.start.getMonthOfYear(), e.start.getDayOfMonth() + intervall,
+							e.start.getMonthOfYear(), e.start.plusDays(intervall).getDayOfMonth(),
 							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					DateTime nextRepEndDate = new DateTime(e.end.getYear(),
-							e.end.getMonthOfYear(), e.end.getDayOfMonth() + intervall,
-							e.start.getHourOfDay(), e.start.getMinuteOfDay(), 0, 0);
+							e.end.getMonthOfYear(), e.end.plusDays(intervall).getDayOfMonth(),
+							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					Event nextEvent = new Event(this.owner, nextRepStartDate,
 							nextRepEndDate, e.name, e.visibility, true,
 							intervall);
@@ -691,8 +692,7 @@ public class Calendar {
 
 							// get next date depending an interval-step-size
 							current = new DateTime(current.getYear(),
-									current.getMonthOfYear(), current.getDayOfMonth()
-											+ intervall, current.getHourOfDay(),
+									current.getMonthOfYear(), current.plusDays(intervall).getDayOfMonth(), current.getHourOfDay(),
 									current.getMinuteOfHour(), 0, 0);
 						}
 
@@ -716,7 +716,7 @@ public class Calendar {
 
 							// get next date depending an interval-step-size
 							current = new DateTime(current.getYear(),
-									current.getMonthOfYear() + 1, current.getDayOfMonth(),
+									current.plusMonths(1).getMonthOfYear(), current.getDayOfMonth(),
 									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
 						}
 					} else if (intervall == 365) {
@@ -735,7 +735,7 @@ public class Calendar {
 							}
 
 							// get next date depending an interval-step-size
-							current = new DateTime(current.getYear() + 1,
+							current = new DateTime(current.plusYears(1).getYear(),
 									current.getMonthOfYear(), current.getDayOfMonth(),
 									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
 						}
@@ -815,6 +815,7 @@ public class Calendar {
 	 * @see {@link Calendar#removeEvent(long id)}
 	 */
 	public void removeRepeatingEvents(Event event) {
+		assert (event != null) : "must not be null!";
 		LinkedList<Event> events = new LinkedList<Event>(this.events);
 		for (Event e : events) {
 			if (e.getBaseId() == event.getBaseId()) {

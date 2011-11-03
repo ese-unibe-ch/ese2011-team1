@@ -22,7 +22,7 @@ Startdatum:
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
-			if (i == dday) choice += ' selected';
+			if (i == activeDate.getDayOfMonth()) choice += ' selected';
 			choice += '>'+i+'</option>';
 			out.println(choice);
 		}
@@ -48,7 +48,7 @@ Startdatum:
 		for (int i=1; i<=12; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == mmonth) choice += ' selected';
+			if (i == activeDate.getMonthOfYear()) choice += ' selected';
 			choice += '>' + months[i-1] + '</option>';
 			out.println(choice);
 		}
@@ -59,7 +59,7 @@ Startdatum:
 		for (int i=2011; i<2020; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == yyear) choice += ' selected';
+			if (i == activeDate.getYear()) choice += ' selected';
 			choice += '>' + i + '</option>';
 			out.println(choice);
 		}
@@ -114,7 +114,7 @@ Enddatum:
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
-			if (i == dday) choice += ' selected';
+			if (i == activeDate.getDayOfMonth()) choice += ' selected';
 			choice += '>'+i+'</option>';
 			out.println(choice);
 		}
@@ -127,7 +127,7 @@ Enddatum:
 		for (int i=1; i<=12; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == mmonth) choice += ' selected';
+			if (i == activeDate.getMonthOfYear()) choice += ' selected';
 			choice += '>' + months[i-1] + '</option>';
 			out.println(choice);
 		}
@@ -139,7 +139,7 @@ Enddatum:
 		for (int i=2011; i<=2020; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == year) choice += ' selected';
+			if (i == activeDate.getYear()) choice += ' selected';
 			choice += '>' + i + '</option>';
 			out.println(choice);
 		}
@@ -395,14 +395,9 @@ function OnChange(dropdown) {
 				<option value="365">yearly 
 			</select>
 			<br> Event Description:	<br>
-			<textarea rows="6" cols="100" name="description">default text</textarea>
-<!-- TODO XXXXSRTHWRSZHNSETZNJSDTZNJDTH -->
-			<input type="hidden" name="s_activeDate" value="${s_activeDate}" />
-		</ul>
-	<input type="hidden" name="s_date" value="${s_date}" />
-	<input type="hidden" name="dday" value="${dday}" />
-	<input type="hidden" name="mmonth" value="${mmonth}" />
-	<input type="hidden" name="yyear" value="${yyear}" />
+			<textarea rows="6" cols="100" name="description"></textarea>
+	<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" />
+
 		
 		<input type="submit" value="Save" />
 	</form>

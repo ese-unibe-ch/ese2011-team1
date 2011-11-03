@@ -399,6 +399,10 @@ public class Event implements Comparable<Event> {
 	public String toString() {
 		return this.name;
 	}
+	
+	public String getDescription() {
+		return this.description;
+	}
 
 	/**
 	 * Check if this Event is visible.
