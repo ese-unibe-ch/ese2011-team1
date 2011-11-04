@@ -100,103 +100,194 @@ public class Application extends Controller {
 
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
-
-	public static void showRegistration() {
-		render();
+	
+	public static void deleteMyAccount()
+	{
+		User loggedUser = Database.users.get(Security.connected());
+		Database.deleteUser(loggedUser.getName(), loggedUser.getPassword());
+		
+		try {Secure.logout();} catch (Throwable e) {e.printStackTrace();}
 	}
 
-	public static void RegUser(@Required String name,
-			@Required String nickname, @Required String password,
-			@Required String birthday, @Required boolean is_visible) {
-		if (Database.userAlreadyRegistrated(name)) {
-			flash.error("Username (" + name + ") already exists!");
-			params.flash();
-			validation.keep();
-			showRegistration();
-		} else if (validation.hasErrors()) {
-			params.flash();
-			validation.keep();
-			flash.error("All fields required!");
-			showRegistration();
-		} else {
-			try {
-				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-				User user = new User(name, password, birthdate, nickname);
-				Database.addUser(user);
-				user.setBirthdayPublic(is_visible);
-				index();
-			} catch (Exception e) {
-				params.flash();
-				validation.keep();
-				flash.error("Invalid date format");
-				showRegistration();
-			}
-		}
-	}
+	//MORELLI
+//	public static void showProfile(String userName) {
+//		User user = Database.getUserByName(userName);
+//		Event birthday = user.getBirthday();
+//		String nickname = user.getNickname();
+//		boolean is_visible = user.isBirthdayPublic();
+//
+//		String pub = "public";
+//		if (!is_visible)
+//			pub = "private";
+//
+//		render(user, nickname, birthday, pub);
+//	}
+	
+	public static void showProfile(String userName)
+    {
+    	User user = Database.getUserByName(userName);
+    	Event birthday = user.getBirthday();
+    	String nickname = user.getNickname();
+    	String emailP = user.getEmailP();
+    	String emailB = user.getEmailB();
+    	String telP = user.getTelP();
+    	String telB = user.getTelB();
+    	String notes = user.getNotes();	
+    	
+    	render(user, nickname, birthday, emailP, emailB, telP, telB, notes);
+    }
+	
+	 public static void showEditProfile()
+	    {
+	    	User user = Database.users.get(Security.connected());
+	    	
+	    	String name = user.getName();
+	    	String oldname = name;
+	    	String nickname = user.getNickname();
+	    	String password = user.getPassword();
+	    	String birthday = user.getBirthday().start.toString("dd/MM/yyyy");
+	    	boolean is_visible = user.isBirthdayPublic();
+	    	
+	    	//NEW
+	    	String emailP = user.getEmailP();
+	    	boolean is_emailP_visible = user.getEmailPVis();
+	    	
+	    	String emailB = user.getEmailB();
+	    	boolean is_emailB_visible = user.getEmailBVis();
+	    	
+	    	String telP = user.getTelP();
+	    	boolean is_telP_visible = user.getTelPVis();
+	    	
+	    	String telB = user.getTelB();
+	    	boolean is_telB_visible = user.getTelBVis();
+	    	
+	    	String notes = user.getNotes();
+	    	boolean is_note_visible = user.getNotesVis();
+	    		
+	    	render(name, oldname, nickname, password, birthday, is_visible,
+	    			emailP, is_emailP_visible, emailB, is_emailB_visible,
+	    			telP, is_telP_visible, telB, is_telB_visible, notes, is_note_visible);
+	    }
 
-	public static void showProfile(String userName) {
-		User user = Database.getUserByName(userName);
-		Event birthday = user.getBirthday();
-		String nickname = user.getNickname();
-		boolean is_visible = user.isBirthdayPublic();
+	 //MORELLI
+//	public static void showEditProfile() {
+//		User user = Database.users.get(Security.connected());
+//
+//		String name = user.getName();
+//		String nickname = user.getNickname();
+//		String password = user.getPassword();
+//		String birthday = user.getBirthday().getStart().toString("dd/MM/yyyy");
+//
+//		boolean is_visible = user.isBirthdayPublic();
+//
+//		render(name, nickname, password, birthday, is_visible);
+//	}
 
-		String pub = "public";
-		if (!is_visible)
-			pub = "private";
-
-		render(user, nickname, birthday, pub);
-	}
-
-	public static void showEditProfile() {
-		User user = Database.users.get(Security.connected());
-
-		String name = user.getName();
-		String nickname = user.getNickname();
-		String password = user.getPassword();
-		String birthday = user.getBirthday().getStart().toString("dd/MM/yyyy");
-
-		boolean is_visible = user.isBirthdayPublic();
-
-		render(name, nickname, password, birthday, is_visible);
-	}
-
-	public static void editProfile(@Required String name,
-			@Required String password, @Required String birthday,
-			@Required String nickname, @Required boolean is_visible) {
-		User user = Database.users.get(Security.connected());
-
-		if (!(name.equals(user.getName()))
-				&& Database.userAlreadyRegistrated(name)) {
-			flash.error("Username (" + name + ") already exists!");
-			params.flash();
-			validation.keep();
-			showEditProfile();
-		} else if (validation.hasErrors()) {
-			params.flash();
-			validation.keep();
-			flash.error("All fields required!");
-			showEditProfile();
-		} else {
-			try {
-				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-				user.setBirthdayDate(birthdate);
-				user.setBirthdayPublic(is_visible);
-				user.setName(name);
-				user.setNickname(nickname);
-				user.setPassword(password);
-
-				Database.changeUserName(user); // TODO does not work properly
-												// jet!
-
-				index();
-			} catch (Exception e) {
-				params.flash();
-				validation.keep();
-				flash.error("Invalid date format");
-				showEditProfile();
-			}
-		}
-	}
+//	public static void editProfile(@Required String name,
+//			@Required String password, @Required String birthday,
+//			@Required String nickname, @Required boolean is_visible) {
+//		User user = Database.users.get(Security.connected());
+//
+//		if (!(name.equals(user.getName()))
+//				&& Database.userAlreadyRegistrated(name)) {
+//			flash.error("Username (" + name + ") already exists!");
+//			params.flash();
+//			validation.keep();
+//			showEditProfile();
+//		} else if (validation.hasErrors()) {
+//			params.flash();
+//			validation.keep();
+//			flash.error("All fields required!");
+//			showEditProfile();
+//		} else {
+//			try {
+//				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
+//				user.setBirthdayDate(birthdate);
+//				user.setBirthdayPublic(is_visible);
+//				user.setName(name);
+//				user.setNickname(nickname);
+//				user.setPassword(password);
+//
+//				Database.changeUserName(user); // TODO does not work properly
+//												// jet!
+//
+//				index();
+//			} catch (Exception e) {
+//				params.flash();
+//				validation.keep();
+//				flash.error("Invalid date format");
+//				showEditProfile();
+//			}
+//		}
+//	}
+	 
+	 public static void editProfile(@Required String name, String oldname, @Required String password, @Required String birthday, @Required String nickname, @Required boolean is_visible,
+	    		String emailP, boolean is_emailP_visible, String emailB, boolean is_emailB_visible,
+ 			String telP, boolean is_telP_visible, String telB, boolean is_telB_visible, String notes, boolean is_note_visible)
+	    {
+	    	System.out.println("old name2" + oldname);
+	    	System.out.println("new name" + name);
+	    	
+	    	User user = Database.users.get(Security.connected());
+	    	
+	    	if(!(name.equals(user.getName())) && Database.userAlreadyRegistrated(name))
+	    	{
+	    		flash.error("Username (" + name + ") already exists!");
+	    		params.flash();
+	    		validation.keep();
+	    		showEditProfile();
+	    	}
+	    	else if(validation.hasErrors())
+	    	{
+	    		params.flash();
+	    		validation.keep();
+	    		flash.error("All (*) fields required!");
+	    		showEditProfile();
+	    	}
+	    	else
+	    	{
+	    		try 
+	    		{	
+//	    			User user = Database.getUserByName(oldname);
+	    			User newUser = user;
+//	    			Database.deleteUser(user.getName(), user.getPassword());
+	    			
+	    			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
+	    			newUser.setBirthdayDate(birthdate);
+	    			newUser.setBirthdayPublic(is_visible);
+	    			newUser.setName(name);
+	    			newUser.setNickname(nickname);
+	    			newUser.setPassword(password);
+	    			newUser.setBirthdayPublic(is_visible);
+	    			newUser.setEmailP(emailP);
+	    			newUser.setEmailPVis(is_emailP_visible);
+	    			newUser.setEmailB(emailB);
+	    			newUser.setEmailBVis(is_emailB_visible);
+	    			newUser.setTelP(telP);
+	    			newUser.setTelPVis(is_telP_visible);
+	    			newUser.setTelB(telB);
+	    			newUser.setTelBVis(is_telB_visible);
+	    			newUser.setNotes(notes);
+	    			newUser.setNotesVis(is_note_visible);
+	    		
+	    			Database.addUser(newUser);
+	    			
+	    			//TODO delete old user
+//	    			Database.changeUserName(user); //TODO does not work properly jet!
+	    			
+	    			index();
+	    		} 
+	    		catch (Exception e) 
+	    		{
+	    			params.flash();
+	        		validation.keep();
+	    			flash.error("Invalid date format");
+	    			showEditProfile();
+	    		}
+	    		
+//	    		Database.deleteUser(user.getName(), user.getPassword());
+	    	}
+	    }
 
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,

@@ -28,6 +28,16 @@ public class User {
 	public long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
+	private String emailP;
+	private boolean emailPVis;
+	private String emailB;
+	private boolean emailBVis;
+	private String telP;
+	private boolean telPVis;
+	private String telB;
+	private boolean telBVis;
+	private String notes;
+	private boolean notesVis;
 	private static long counter;
 
 	/**
@@ -270,6 +280,87 @@ public class User {
 	 */
 	public boolean isBirthday(Event event) {
 		return this.birthday.getId() == event.getBaseId();
+	}
+	
+	public String getEmailP() {
+		return emailP;
+	}
+
+	public boolean getEmailPVis() {
+		return emailPVis;
+	}
+
+	public String getEmailB() {
+		return emailB;
+	}
+
+	public boolean getEmailBVis() {
+		return emailBVis;
+	}
+
+	public String getTelP() {
+		return telP;
+	}
+
+	public boolean getTelPVis() {
+		return telPVis;
+	}
+
+	public String getTelB() {
+		return telB;
+	}
+
+	public boolean getTelBVis() {
+		return telBVis;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public boolean getNotesVis() {
+		return notesVis;
+	}
+
+	public void setEmailP(String emailP) {
+		this.emailP = emailP;
+	}
+
+	public void setEmailPVis(boolean isEmailPVisible) {
+		this.emailPVis = isEmailPVisible;	
+	}
+
+	public void setEmailB(String emailB) {
+		this.emailB = emailB;
+		
+	}
+
+	public void setEmailBVis(boolean isEmailBVisible) {
+		this.emailBVis = isEmailBVisible;
+	}
+
+	public void setTelP(String telP) {
+		this.telP = telP;
+	}
+
+	public void setTelPVis(boolean isTelPVisible) {
+		this.telPVis = isTelPVisible;
+	}
+
+	public void setTelB(String telB) {
+		this.telB = telB;
+	}
+
+	public void setTelBVis(boolean isTelBVisible) {
+		this.telBVis = isTelBVisible;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
+
+	public void setNotesVis(boolean isNoteVisible) {
+		this.notesVis = isNoteVisible;
 	}
 
 }

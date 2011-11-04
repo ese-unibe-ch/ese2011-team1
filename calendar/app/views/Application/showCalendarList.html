@@ -7,5 +7,8 @@
 			<li><a href="@{Application.showCalendar(calendar.getId(), user.name, s_activeDate)}"> ${calendar.name}</a></li>
 		</p>
 	#{/list}
+	<p>
+ 		<a href="@{Application.showProfile(user.name)}"> show ${user.name}'s Profile </a>
+	</p>
 <a href="@{Application.index()}">Home</a>
 <a href="@{Secure.logout()}">Log out</a>

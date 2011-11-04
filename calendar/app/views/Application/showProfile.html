@@ -3,9 +3,21 @@
 
 <h1>${user.name}'s profile</h1>
 
-	<li><b> name:</b> ${user.name} </li> <br>
-	<li><b> nickname:</b> ${nickname} </li> <br>
-	#{if user.isBirthdayPublic()}<li><b> birthday:</b> ${birthday.start} (${pub})</li> <br>#{/if}
+	<li><b> Name:</b> ${user.name} </li> <br>
+	<li><b> Nickname:</b> ${nickname} </li> <br>
+	
+	#{if user.isBirthdayPublic()}<li><b> Birthday:</b> ${birthday.start}</li> <br>#{/if}
+	#{if user.getEmailPVis()}<li><b> E-Mail (P):</b> ${emailP}</li> <br>#{/if}
+	#{if user.getEmailBVis()}<li><b> E-Mail (B):</b> ${emailB}</li> <br>#{/if}
+	
+	#{if user.getTelPVis()}<li><b> Tel (P):</b> ${telP}</li> <br>#{/if}
+	#{if user.getTelBVis()}<li><b> Tel (B):</b> ${telB}</li> <br>#{/if}
+	
+	#{if user.getNotesVis()}
+		<li><b> Notes:</b></li> <br>
+		<textarea rows="6" cols="100" name="notes" value="${notes}" readonly>${notes}</textarea>
+	#{/if}
+	<br>
 
 <a href="@{Application.index()}">Home</a>  
 <a href="@{Secure.logout()}">Log out</a> 
