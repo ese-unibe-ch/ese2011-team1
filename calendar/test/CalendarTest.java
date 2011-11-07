@@ -1,4 +1,3 @@
-import java.util.Date;
 import java.util.Iterator;
 
 import models.Calendar;
@@ -6,6 +5,7 @@ import models.Event;
 import models.Event.Visibility;
 import models.User;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,12 +19,12 @@ public class CalendarTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.owner = new User("hans", "123", new Date(), "hans1");
+		this.owner = new User("hans", "123", new DateTime(), "hans1");
 		this.calendar = new Calendar("Calendar", this.owner);
-		this.event = new Event(owner, new Date(1, 1, 1), new Date(1, 1, 2),
+		this.event = new Event(owner, new DateTime(0), new DateTime(1),
 				"anEvent", Visibility.PRIVATE, false, 0);
-		this.repeatingEvent = new Event(owner, new Date(1, 1, 1), new Date(1,
-				1, 2), "repeatingEvent", Visibility.PRIVATE, true, 7);
+		this.repeatingEvent = new Event(owner, new DateTime(0),
+				new DateTime(1), "repeatingEvent", Visibility.PRIVATE, true, 7);
 	}
 
 	@Test
@@ -52,8 +52,7 @@ public class CalendarTest extends UnitTest {
 
 	@Test
 	public void testIterator1() {
-		Iterator<Event> events = calendar
-				.getEventList(new Date(1, 1, 1), owner);
+		Iterator<Event> events = calendar.getEventList(new DateTime(0), owner);
 		assertNotNull(events);
 	}
 
