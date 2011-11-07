@@ -36,6 +36,7 @@ public class Event implements Comparable<Event> {
 	}
 	
 	public long id;
+	public long calendarID;
 	public long baseId;
 	public User owner;
 	public DateTime start;
@@ -66,7 +67,8 @@ public class Event implements Comparable<Event> {
 	 *            WEEK(7), MONTH(30), YEAR(265)
 	 */
 	public Event(User owner, DateTime start, DateTime end, String name,
-			Visibility visibility, boolean is_repeating, int intervall) {
+			Visibility visibility, boolean is_repeating, int intervall, 
+			long calendarID) {
 		this.owner = owner;
 		this.start = start;
 		this.end = end;
@@ -77,6 +79,7 @@ public class Event implements Comparable<Event> {
 		this.is_repeating = is_repeating;
 		this.intervall = intervall;
 		this.baseId = id;
+		this.calendarID = calendarID;
 	}
 
 	/*
@@ -227,7 +230,7 @@ public class Event implements Comparable<Event> {
 			nextEnd = this.end.plusYears(1);
 		} break;
 		}
-		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall);
+		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall, this.calendarID);
 		nextRepetition.setBaseId(this.baseId);
 		return nextRepetition;
 		

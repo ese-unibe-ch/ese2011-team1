@@ -642,7 +642,7 @@ public class Calendar {
 							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					Event nextEvent = new Event(this.owner, nextRepStartDate,
 							nextRepEndDate, e.name, e.visibility, true,
-							intervall);
+							intervall, baseEvent.calendarID);
 					nextEvent.baseId = nextEvent.id;
 
 					// System.out.println("old: "+e.start +
@@ -760,7 +760,7 @@ public class Calendar {
 					for (DateTime d : previousDates) {
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(this.owner, d, d, e.name,
-								e.visibility, false, intervall);
+								e.visibility, false, intervall, baseEvent.calendarID);
 						ev.editDescription(descriptions.get(index));
 						this.events.add(ev);
 						index++;
