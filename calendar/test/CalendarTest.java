@@ -22,9 +22,11 @@ public class CalendarTest extends UnitTest {
 		this.owner = new User("hans", "123", new DateTime(), "hans1");
 		this.calendar = new Calendar("Calendar", this.owner);
 		this.event = new Event(owner, new DateTime(0), new DateTime(1),
-				"anEvent", Visibility.PRIVATE, false, 0);
+				"anEvent", Visibility.PRIVATE, false, 0, owner
+						.getdefaultCalendar().getId());
 		this.repeatingEvent = new Event(owner, new DateTime(0),
-				new DateTime(1), "repeatingEvent", Visibility.PRIVATE, true, 7);
+				new DateTime(1), "repeatingEvent", Visibility.PRIVATE, true, 7,
+				owner.getdefaultCalendar().getId());
 	}
 
 	@Test
