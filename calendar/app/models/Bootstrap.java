@@ -34,7 +34,7 @@ public class Bootstrap extends Job {
 		DateTime now = new DateTime();
 		// dataset 1
 		simplay = new User("simplay", "123", now, "senderos");
-		event = new Event(simplay, now, now, "abc", Visibility.PUBLIC, false, 0, false);
+		event = new Event(simplay, now, now, "abc", Visibility.PUBLIC, false, 0, simplay.getdefaultCalendar().getId(), false);
 		simplay.getdefaultCalendar().addEvent(event);
 
 		Calendar cal = new Calendar("2nd simplay", simplay);
@@ -48,31 +48,31 @@ public class Bootstrap extends Job {
 		User user;
 		user = new User("mib", "1337", now, "fox");
 		event = new Event(user, now, now, "mib_ev1", Visibility.PUBLIC, false,
-				0, true);
+				0, user.getdefaultCalendar().getId(), true);
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
 		simplay.addShownObservedCalendar(4);
 
 		event = new Event(user, now, now, "mib_ev2", Visibility.PRIVATE, false,
-				0, false);
+				0, user.getdefaultCalendar().getId(), false);
 		user.getdefaultCalendar().addEvent(event);
 
 		event = new Event(user, now, now, "mib_ev3", Visibility.PUBLIC, false,
-				0, false);
+				0, user.getdefaultCalendar().getId(), false);
 		user.getdefaultCalendar().addEvent(event);
 
 		cal = new Calendar("second mib", user);
 
 		event = new Event(user, now, now, "second mib_ev1", Visibility.PRIVATE,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		event = new Event(user, now, now, "second mib_ev2", Visibility.PUBLIC,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		event = new Event(user, now, now, "second mib_ev3", Visibility.PUBLIC,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		user.addCalendar(cal);
@@ -81,30 +81,30 @@ public class Bootstrap extends Job {
 
 		user = new User("simon", "1337", now, "simu");
 		event = new Event(user, now, now, "simonb_ev1", Visibility.PUBLIC,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
 
 		event = new Event(user, now, now, "simon_ev2", Visibility.PRIVATE,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		user.getdefaultCalendar().addEvent(event);
 
 		event = new Event(user, now, now, "simon_ev3", Visibility.PUBLIC,
-				false, 0, false);
+				false, 0, user.getdefaultCalendar().getId(), false);
 		user.getdefaultCalendar().addEvent(event);
 
 		cal = new Calendar("second simon", user);
 
 		event = new Event(user, now, now, "second simon_ev1",
-				Visibility.PRIVATE, false, 0, false);
+				Visibility.PRIVATE, false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		event = new Event(user, now, now, "second simon_ev2",
-				Visibility.PUBLIC, false, 0, false);
+				Visibility.PUBLIC, false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		event = new Event(user, now, now, "second simon_ev3",
-				Visibility.PUBLIC, false, 0, false);
+				Visibility.PUBLIC, false, 0, user.getdefaultCalendar().getId(), false);
 		cal.addEvent(event);
 
 		user.addCalendar(cal);

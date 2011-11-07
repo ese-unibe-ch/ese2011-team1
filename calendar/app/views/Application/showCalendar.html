@@ -110,19 +110,38 @@
 	
 	<form name="calendarform">
 	<!-- observed calendars -->
+	%{
+		int c=0;
+		int space = 360;
+		int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
+	%}
+	
 	#{list items:observedCalendars, as:'cal'}
 		
 		<input type="checkbox" name="${cal.name}" id="${cal.id}" value="${cal.name}" onclick="changeSelection(this)" 
 		%{
 		//if observable calendar is shown, display checkbox as checked
+		boolean statementClosed = false;
 		 if (shownObservedCalendars != null) {
+
 			for (int i=0; i<shownObservedCalendars.size(); i++) {
 				if (shownObservedCalendars.contains(cal.id)) {
 					out.print('checked="true"');
+					
+					//Color observed calendars
+					int col = interval*c;
+		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.name+'<br>');
+		 			c++;
+					statementClosed = true;
+					break;
 				}
 			}
 		 }
-		 out.print('> '+cal.name+'<br>');
+		 
+		 if (!statementClosed) {
+			out.print('> '+cal.name+'<br>');
+		 }
+		 
 		%}
 	#{/list}
 	</form>
@@ -136,8 +155,18 @@
 			<h2>${user.name}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
 			#{list items:eventsOfDay, as:'event'}
 				<p>
-					<li> 
-							#{if me != event.owner} <b>Owner:</b>${event.owner.name} #{/if}
+					<!-- <li> -->
+					
+							#{if me != event.owner} 
+							%{
+							int space = 360;
+							int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
+							System.out.println("interval = "+interval+", calenderID = "+event.calendarID+", found at = "+shownObservedCalendars.indexOf(event.calendarID));
+							col = interval*(shownObservedCalendars.indexOf(event.calendarID)-1);
+							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
+							%}
+							<b>Owner:</b>${event.owner.name} 
+							#{/if}
 								
 							#{if user==me}  
 								#{if me==event.owner || event.isPublic()}<b>Event name:</b>${event.name} #{/if},
@@ -174,7 +203,8 @@
 									<b><a href="@{Application.addUserToEvent(me.name, calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
 								#{/else}  
 							#{/if}
-					</li>  
+					<br>
+					<!-- </li> --> 
 				</p>
 			#{/list}
 	</table>

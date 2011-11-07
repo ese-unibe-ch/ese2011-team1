@@ -54,18 +54,19 @@ public class User {
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
 
-		this.name = name;
-		this.nickname = nickname;
-		this.password = password;
-		this.birthday = new Event(this, birthday, birthday, name + "'s birthday", Visibility.PRIVATE, true, 365, false);
-		counter++;
-		this.id = counter;
-
 		calendar = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
 		birthdayCalendar = new Calendar("Birthdays", this);
 		observedCalendars.add(birthdayCalendar);
+
+		this.name = name;
+		this.nickname = nickname;
+		this.password = password;
+		this.birthday = new Event(this, birthday, birthday, name + "'s birthday", Visibility.PRIVATE, true, 365, this.birthdayCalendar.getId(), false);
+		counter++;
+		this.id = counter;
+
 		birthdayCalendar.addEvent(this.birthday);
 		
 		// each user x has a default a calender called: x's first calendar

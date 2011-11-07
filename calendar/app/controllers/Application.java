@@ -315,7 +315,7 @@ public class Application extends Controller {
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
-				intervall, is_open);
+				intervall, calendarID, is_open);
 		e.editDescription(description);
 		calendar.addEvent(e);
 		showCalendar(calendarID, me.name, start,
