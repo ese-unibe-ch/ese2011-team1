@@ -9,11 +9,14 @@ import org.junit.Test;
 import play.test.UnitTest;
 
 public class EventTest extends UnitTest {
-	private Event event;
+
 	private Event repeatingEvent;
 	private User user;
 	private DateTime today = new DateTime(0);
 	private DateTime tomorrow = new DateTime(1);
+	private Event event;
+	private Event event2AfterEvent;
+	private Event event3BeforeEvent;
 
 	// public Event(Date start, Date end, String name, boolean is_visible){
 	@Before
@@ -21,6 +24,12 @@ public class EventTest extends UnitTest {
 		this.user = new User("hans", "1234", today, "hans2");
 		this.event = new Event(user, today, tomorrow, "anEvent",
 				Visibility.PRIVATE, false, 0);
+		this.event2AfterEvent = new Event(user, new DateTime(3),
+				new DateTime(4), "event2AfterEvent", Visibility.PRIVATE, false,
+				0);
+		this.event3BeforeEvent = new Event(user, new DateTime(-1),
+				new DateTime(0), "event3BeforeEvent", Visibility.PRIVATE,
+				false, 0);
 		this.repeatingEvent = new Event(user, today, tomorrow, "repeating",
 				Visibility.PRIVATE, true, 7);
 	}
@@ -72,6 +81,14 @@ public class EventTest extends UnitTest {
 	public void testEditDescription() {
 		event.editDescription("anEventChanged2");
 		assertEquals("anEventChanged2", event.getDescription());
+	}
+
+	@Test
+	public void testCompareTo() {
+		assertEquals(0, event.getStart().compareTo(event.getStart()));
+		assertEquals(-1,
+				event3BeforeEvent.getStart().compareTo(event.getStart()));
+		assertEquals(1, event2AfterEvent.getStart().compareTo(event.getStart()));
 	}
 
 	@Test
