@@ -110,19 +110,39 @@
 	
 	<form name="calendarform">
 	<!-- observed calendars -->
+	%{
+		int c=0;
+		int space = 360;
+		int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
+	%}
+	
 	#{list items:observedCalendars, as:'cal'}
 		
 		<input type="checkbox" name="${cal.name}" id="${cal.id}" value="${cal.name}" onclick="changeSelection(this)" 
 		%{
 		//if observable calendar is shown, display checkbox as checked
+		boolean statementClosed = false;
 		 if (shownObservedCalendars != null) {
+
+		 	
 			for (int i=0; i<shownObservedCalendars.size(); i++) {
 				if (shownObservedCalendars.contains(cal.id)) {
 					out.print('checked="true"');
+					
+					//Color observed calendars
+					int col = interval*c;
+		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.name+'<br>');
+		 			c++;
+					statementClosed = true;
+					break;
 				}
 			}
 		 }
-		 out.print('> '+cal.name+'<br>');
+		 
+		 if (!statementClosed) {
+			out.print('> '+cal.name+'<br>');
+		 }
+		 
 		%}
 	#{/list}
 	</form>
@@ -136,7 +156,25 @@
 			<h2>${user.name}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
 			#{list items:eventsOfDay, as:'event'}
 				<p>
-					<li> 
+					<!-- <li> -->
+					%{
+					//calculating same color as above
+					
+					c = shownObservedCalendars.indexOf(event.owner.id);
+					/*
+					int i;
+					System.out.println("observedCalendars.size() = "+observedCalendars.size());
+					for (i = 0; i < observedCalendars.size(); i++) {
+						System.out.println("i = "+i);
+						if (observedCalendars.get(i).owner.name  == even.owner.name) {
+							break;
+						}
+					}
+					*/
+					//System.out.println("color = "+color+", c = "+c+", interval = "+interval);
+					//String color = Integer.toHexString(interval*c*255*255);
+					//out.print('><font color="#' + color + '">&bull;</font> ');
+					%} 
 							#{if me != event.owner} <b>Owner:</b>${event.owner.name} #{/if}
 								
 							#{if user==me}  
@@ -162,7 +200,8 @@
 									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
 								#{/if}
 							#{/if}
-					</li>  
+					<br>
+					<!-- </li> --> 
 				</p>
 			#{/list}
 	</table>
