@@ -417,15 +417,12 @@ public class Calendar {
 	public boolean hasEventOnDay(int day, int month, int year, User requester) {
 		boolean flag = false;
 		LocalDate comp = null;
-//		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-//		String dateString = Integer.toString(day) + "/"
-//				+ Integer.toString(month) + "/" + Integer.toString(year)
-//				+ ", 00:00";
 		try {
 			comp = new LocalDate(year, month, day);
 
 		} catch (Exception e) {
 		}
+		
 
 		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
@@ -642,7 +639,7 @@ public class Calendar {
 							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
 					Event nextEvent = new Event(this.owner, nextRepStartDate,
 							nextRepEndDate, e.name, e.visibility, true,
-							intervall);
+							intervall, e.isOpen());
 					nextEvent.baseId = nextEvent.id;
 
 					// System.out.println("old: "+e.start +
@@ -760,7 +757,7 @@ public class Calendar {
 					for (DateTime d : previousDates) {
 						// ERROR end NOT equal d => fix it later!!!
 						Event ev = new Event(this.owner, d, d, e.name,
-								e.visibility, false, intervall);
+								e.visibility, false, intervall, e.isOpen());
 						ev.editDescription(descriptions.get(index));
 						this.events.add(ev);
 						index++;

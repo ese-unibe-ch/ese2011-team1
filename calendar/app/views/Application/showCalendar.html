@@ -152,6 +152,10 @@
 									<b>Description</b>:${event.description} <br>
 								#{/if}
 							#{/if} <br>
+							#{if event.isOpen()}
+									<b>Attending:</b>${event.listAttendingUsers()}
+							#{/if}
+							
 							<b>Repeating:</b>${event.is_repeating}
 							<b>Description</b>:${event.description} <br>
 							#{if user == me && me==event.owner && !user.isBirthday(event)}
@@ -161,6 +165,14 @@
 									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
 									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
 								#{/if}
+							#{/if}
+							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
+								#{if event.userIsAttending(me.name)}
+									You are attending! <b><a href="@{Application.removeUserFromEvent(me.name, calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+								#{/if}
+								#{else}
+									<b><a href="@{Application.addUserToEvent(me.name, calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
+								#{/else}  
 							#{/if}
 					</li>  
 				</p>

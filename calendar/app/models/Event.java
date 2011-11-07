@@ -2,7 +2,10 @@ package models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 /**
@@ -48,6 +51,8 @@ public class Event implements Comparable<Event> {
 	private static long counter;
 	public boolean isDirty = false;
 	public boolean wasPreviouslyRepeating = false;
+	private List<User> attendingUsers;
+	private boolean is_open;
 
 	/**
 	 * 
@@ -66,7 +71,7 @@ public class Event implements Comparable<Event> {
 	 *            WEEK(7), MONTH(30), YEAR(265)
 	 */
 	public Event(User owner, DateTime start, DateTime end, String name,
-			Visibility visibility, boolean is_repeating, int intervall) {
+			Visibility visibility, boolean is_repeating, int intervall, boolean is_open) {
 		this.owner = owner;
 		this.start = start;
 		this.end = end;
@@ -77,6 +82,8 @@ public class Event implements Comparable<Event> {
 		this.is_repeating = is_repeating;
 		this.intervall = intervall;
 		this.baseId = id;
+		this.attendingUsers = new ArrayList<User>();
+		this.is_open = is_open;
 	}
 
 	/*
@@ -227,7 +234,7 @@ public class Event implements Comparable<Event> {
 			nextEnd = this.end.plusYears(1);
 		} break;
 		}
-		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall);
+		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall, this.is_open);
 		nextRepetition.setBaseId(this.baseId);
 		return nextRepetition;
 		
@@ -423,6 +430,42 @@ public class Event implements Comparable<Event> {
 	
 	public boolean isPrivate(){
 		return this.visibility == Visibility.PRIVATE;
+	}
+
+	public void addUserToAttending(User requester) {
+		if (!this.attendingUsers.contains(requester)) {
+		this.attendingUsers.add(requester);
+		}
+	}
+	
+	public void removeUserFromAttending(User requester) {
+		this.attendingUsers.remove(requester);
+	}
+
+	public boolean isOpen() {
+		return this.is_open;
+	}
+	
+	public boolean userIsAttending(String username) {
+		User user = Database.getUserByName(username);
+		for (User attendingUser : attendingUsers) {
+			if (attendingUser.equals(user)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String listAttendingUsers() {
+		StringBuffer sb = new StringBuffer();
+		for (User user : attendingUsers) {
+			sb.append(user.getName());
+			sb.append(", ");
+		}
+		if (sb.length() > 0) {
+		sb.setLength(sb.length()-2);
+		}
+		return sb.toString();
 	}
 
 }

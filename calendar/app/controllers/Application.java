@@ -292,7 +292,7 @@ public class Application extends Controller {
 	public static void createEvent(@Required long calendarID,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, String is_repeated,
-			String description, String s_activeDate) {
+			String description, String s_activeDate, boolean is_open) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
@@ -315,7 +315,7 @@ public class Application extends Controller {
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
 		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
-				intervall);
+				intervall, is_open);
 		e.editDescription(description);
 		calendar.addEvent(e);
 		showCalendar(calendarID, me.name, start,
@@ -456,14 +456,17 @@ public class Application extends Controller {
 		System.out.println("Markierte beim Neuladen: "
 				+ shownObservedCalendars.size());
 
-		Calendar birthdayCalendar = me.getBirthdayCalendar();
-		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(
-				calendar.getEvents());
-		for (Event e : allEvents) {
-			if (e.owner != me || birthdayCalendar.getEvents().contains(e)) {
-				calendar.getEvents().remove(e);
-			}
-		}
+		// Must not delete all other events, otherwise you are not able to get the EventID
+		// for other users Events which are superimposed into your calandar!!!!
+	
+//		Calendar birthdayCalendar = me.getBirthdayCalendar();
+//		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(
+//				calendar.getEvents());
+//		for (Event e : allEvents) {
+//			if (e.owner != me || birthdayCalendar.getEvents().contains(e)) {
+//				calendar.getEvents().remove(e);
+//			}
+//		}
 
 		render(me, user, calendar, bound, bound2, prevMonth, nextMonth,
 				activeDate, today, eventsOfDay, message, faved,
@@ -531,4 +534,41 @@ public class Application extends Controller {
 		showCalendar(calendarId, user.name, s_activeDate,
 				activeDate.getDayOfMonth(), message);
 	}
+	
+	public static void addUserToEvent(String requesterName, long calendarId, long eventId, String s_activeDate) {
+		User me = Database.getUserByName(requesterName);
+		Calendar cal = me.getCalendarById(calendarId);
+		Event event = null;
+		for (Event e : cal.getEvents()) {
+			System.out.println("e: " + e + "  e.getId: " + e.getId() + "    eventId: " + eventId);
+			if (e.getId() == eventId) {
+				System.out.println("WEEEEE: " + e);
+				event = e;
+			}
+		}
+		assert (event != null);
+		System.out.println(event);
+		event.addUserToAttending(me);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
+	}
+	
+	public static void removeUserFromEvent(String requesterName, long calendarId, long eventId, String s_activeDate) {
+		User me = Database.getUserByName(requesterName);
+		Calendar cal = me.getCalendarById(calendarId);
+		Event event = null;
+		for (Event e : cal.getEvents()) {
+			System.out.println("e: " + e + "  e.getId: " + e.getId() + "    eventId: " + eventId);
+			if (e.getId() == eventId) {
+				System.out.println("WEEEEE: " + e);
+				event = e;
+			}
+		}
+		assert (event != null);
+		System.out.println(event);
+		event.removeUserFromAttending(me);
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
+	}
+	
 }

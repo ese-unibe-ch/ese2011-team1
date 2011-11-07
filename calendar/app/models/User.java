@@ -57,7 +57,7 @@ public class User {
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
-		this.birthday = new Event(this, birthday, birthday, name + "'s birthday", Visibility.PRIVATE, true, 365);
+		this.birthday = new Event(this, birthday, birthday, name + "'s birthday", Visibility.PRIVATE, true, 365, false);
 		counter++;
 		this.id = counter;
 
