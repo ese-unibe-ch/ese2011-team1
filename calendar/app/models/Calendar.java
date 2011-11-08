@@ -290,20 +290,15 @@ public class Calendar {
 		for (Event e : otherUsersBirthdays) {
 			if (e.isVisible() && !birthdayCal.compareCalendarEvents(e)) {
 				birthdayCal.addEvent(e);
-				System.out.println("added to owners birthdayCal: " + e);
 			}
 		}
 		
 		for (Calendar observedCal : observedCals) {
-			System.out.println("observedCalendar: " + observedCal);
-			System.out.println("observedCalendar getEvents(): " + observedCal.getEvents());
-			System.out.println("observedCalendar getRepeatingEvents(): " + observedCal.getRepeatingEvents());
 			if (shownObservedCals.contains(observedCal.getId())) {
 				for (Event observedEvent : observedCal.getEvents()) {
 					if (observedEvent.getVisibility() != Visibility.PRIVATE
 							&& !events.contains(observedEvent)) {
 						events.add(observedEvent);
-						System.out.println("added2: " + observedEvent);
 					}
 				}
 
@@ -314,13 +309,11 @@ public class Calendar {
 								&& repeatingObservedEvent.isVisible()) {
 							
 							repeatingEvents.add(repeatingObservedEvent);
-							System.out.println("added3: " + repeatingObservedEvent);
 						}
 					}
 					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
 							&& !repeatingEvents.contains(repeatingObservedEvent)) {
 						repeatingEvents.add(repeatingObservedEvent);
-						System.out.println("added4: " + repeatingObservedEvent);
 					}
 				}
 			}
@@ -332,7 +325,6 @@ public class Calendar {
 				if (e.start.toLocalDate().equals(comp)) {
 					if (!result.contains(e))
 						result.add(e);
-					System.out.println("to result: " + e);
 				}
 			}
 		}
@@ -343,7 +335,6 @@ public class Calendar {
 				Event repeatingEventOnDay = repeatingEvent
 						.getRepetitionOnDate(comp);
 				if (repeatingEventOnDay != null)
-					System.out.println("repeating Event on day: " + repeatingEventOnDay.getStart().toString("dd-MM-yyyy"));
 				if (repeatingEventOnDay != null
 						&& !containsSameElement(new LinkedList<Event>(events),
 								repeatingEventOnDay)) {
@@ -351,7 +342,6 @@ public class Calendar {
 						if (!compareCalendarEvents(repeatingEventOnDay)
 								&& !result.contains(repeatingEventOnDay)) {
 							result.add(repeatingEventOnDay);
-							System.out.println("rep to result: " + repeatingEventOnDay);
 						}
 					}
 				}
@@ -360,11 +350,9 @@ public class Calendar {
 
 		for (Event e : result) {
 			if (!this.events.contains(e) && e.getCalendarId() == this.id) {
-				System.out.println("added to events: " + e.name + e.start);
 				this.events.add(e);
 			}
 		}
-		System.out.println("all events: " + result);
 		return result;
 	}
 
