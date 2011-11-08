@@ -161,7 +161,7 @@
 							%{
 							int space = 360;
 							int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
-							System.out.println("interval = "+interval+", calenderID = "+event.calendarID+", found at = "+shownObservedCalendars.indexOf(event.calendarID));
+							//System.out.println("interval = "+interval+", calenderID = "+event.calendarID+", found at = "+shownObservedCalendars.indexOf(event.calendarID));
 							col = interval*(shownObservedCalendars.indexOf(event.calendarID)-1);
 							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
 							%}

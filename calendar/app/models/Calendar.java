@@ -92,7 +92,6 @@ public class Calendar {
 	public void addEvent(Event event) {
 		// teste ob dieser eventbereits in liste ist
 		// wenn doch, dann adde diesen nicht!
-		System.out.println(!compareCalendarEvents(event));
 		if (!compareCalendarEvents(event)) {
 			events.add(event);
 			if (event.isRepeating()) {
@@ -146,7 +145,6 @@ public class Calendar {
 	 *            The event to be added to <code>repeatingEvents</code>
 	 */
 	public void addToRepeated(Event event) {
-		for(Event e : repeatingEvents) System.out.println("lalala " +e.start);
 		this.repeatingEvents.add(event);
 	}
 
@@ -277,22 +275,21 @@ public class Calendar {
 		PriorityQueue<Event> events = new PriorityQueue<Event>();
 		events.addAll(this.events);
 		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
-		System.out.println("assert list contains events: " + events);
 
-
-		if (shownObservedCals.contains(owner.getBirthdayCalendar().id)) {
+		Calendar birthdayCal = owner.getBirthdayCalendar();
+		birthdayCal.getEvents().clear();
+		birthdayCal.getRepeatingEvents().clear();
+		birthdayCal.addEvent(owner.getBirthday());
+		
+		if (shownObservedCals.contains(birthdayCal.getId())) {
 			for (Calendar observedCal : observedCals) {
 				otherUsersBirthdays.add(observedCal.owner.getBirthday());
 			}
 		}
 		
 		for (Event e : otherUsersBirthdays) {
-			if (e.isVisible()) {
-				for (Calendar observedCal : observedCals) {
-					if (observedCal.getId() == owner.getBirthdayCalendar().getId() && !observedCal.compareCalendarEvents(e)) {
-						observedCal.addEvent(e);
-					}
-				}
+			if (e.isVisible() && !birthdayCal.compareCalendarEvents(e)) {
+				birthdayCal.addEvent(e);
 			}
 		}
 		
@@ -337,6 +334,7 @@ public class Calendar {
 					|| repeatingEvent.getVisibility() != Visibility.PRIVATE) {
 				Event repeatingEventOnDay = repeatingEvent
 						.getRepetitionOnDate(comp);
+				if (repeatingEventOnDay != null)
 				if (repeatingEventOnDay != null
 						&& !containsSameElement(new LinkedList<Event>(events),
 								repeatingEventOnDay)) {
@@ -351,12 +349,10 @@ public class Calendar {
 		}
 
 		for (Event e : result) {
-			if (!this.events.contains(e)) {
-				System.out.println("added to events: " + e.name + e.start);
+			if (!this.events.contains(e) && e.getCalendarId() == this.id) {
 				this.events.add(e);
 			}
 		}
-		System.out.println("all events: " + result);
 		return result;
 	}
 
@@ -529,7 +525,6 @@ public class Calendar {
 						&& !containsSameElement(new LinkedList<Event>(
 								this.events), repeatingEventOnDay)) {
 					if (!repeatingEventOnDay.isDirty) {
-						// System.out.println(repeatingEventOnDay.start);
 						// check neu :::
 						if (!compareCalendarEvents(repeatingEventOnDay))
 							events.add(repeatingEventOnDay);
@@ -540,7 +535,6 @@ public class Calendar {
 
 		for (Event e : events) {
 			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				System.out.println("hasEventOnDay: e VS comp LocalDate" + e.start.toLocalDate() + "..... " + comp);
 				if (e.start.toLocalDate().equals(comp)) {
 					flag = true;
 				}
@@ -599,14 +593,10 @@ public class Calendar {
 		// if our victim is a repeating event
 		if (getEventById(id).is_repeating) {
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			// System.out.println("i am repeating");
 			Event sentinel = getEventById(id);
 			LinkedList<Event> targets = new LinkedList<Event>();
 			LinkedList<Event> interestingevents = getSameBaseIdEvents(sentinel.baseId);
-			System.out.println("victimevent:"+sentinel.start);
 			for (Event event : interestingevents) {
-				System.out.print("e date" + event.start);
-				System.out.println(" " +event.compareTo(sentinel));
 				
 				if(event.compareTo(sentinel)==1)targets.add(event);
 			}
@@ -641,8 +631,6 @@ public class Calendar {
 							intervall, baseEvent.calendarID, e.isOpen());
 					nextEvent.baseId = nextEvent.id;
 
-					// System.out.println("old: "+e.start +
-					// " new: "+nextRepStartDate);
 
 					// this list contains all dates of repeating events of
 					// baseEvent, till 1 event before victim event
@@ -790,7 +778,6 @@ public class Calendar {
 			// else if our victim is not a repeating event
 		} else {
 			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			//System.out.println("im NOT repeating");
 			for (Event e : events)
 				if (e.getId() == id) {
 					this.events.remove(e);
@@ -830,7 +817,6 @@ public class Calendar {
 	 * @param cancelEvent
 	 */
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
-		System.out.println("cancel from this event: " + cancelEvent.start);
 //		boolean flag = true;
 //		DateTime cursor = cancelEvent.start;
 //		int intervall = cancelEvent.intervall;
@@ -841,8 +827,6 @@ public class Calendar {
 			e.is_repeating = false;
 		// output of events
 
-		for (Event e : res)
-			System.out.println(e.start);
 		removeRepeatingEvents(cancelEvent);
 		for (Event e : res)
 			addEvent(e);

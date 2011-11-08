@@ -164,7 +164,6 @@ public class User {
 				: Visibility.PRIVATE;
 		birthday.edit(birthday.start, birthday.end, birthday.name, visibility,
 				true, 365);
-		System.out.println("changed birthday to : " + visibility);
 	}
 
 	/**

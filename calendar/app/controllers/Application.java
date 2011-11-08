@@ -225,8 +225,6 @@ public class Application extends Controller {
 	    		String emailP, boolean is_emailP_visible, String emailB, boolean is_emailB_visible,
  			String telP, boolean is_telP_visible, String telB, boolean is_telB_visible, String notes, boolean is_note_visible)
 	    {
-	    	System.out.println("old name2" + oldname);
-	    	System.out.println("new name" + name);
 	    	
 	    	User user = Database.users.get(Security.connected());
 	    	
@@ -345,8 +343,6 @@ public class Application extends Controller {
 
 		if (repeated && !event.wasPreviouslyRepeating) {
 			event.wasPreviouslyRepeating = true;
-			System.out.println(event.start + " ev date alrdy in? "
-					+ calendar.getRepeatingEvents().contains(event));
 			calendar.addToRepeated(event);
 		}
 
@@ -418,13 +414,10 @@ public class Application extends Controller {
 			String s_activeDate, int counter, String message) {
 
 		message = null;
-		System.out.println("activeDate incoming: " + s_activeDate);
-		System.out.println("format required: dd/MM/yyyy, HH:mm");
 
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
-		System.out.println("calID: " + calendar.id);
 		assert (calendar != null) : "AEHSHAGF>GHS";
 
 		DateTime activeDate = null;
@@ -456,8 +449,6 @@ public class Application extends Controller {
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
 		LinkedList<Long> shownObservedCalendars = me
 				.getShownObservedCalendars();
-		System.out.println("Markierte beim Neuladen: "
-				+ shownObservedCalendars.size());
 
 		Calendar birthdayCalendar = me.getBirthdayCalendar();
 		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(
@@ -519,8 +510,6 @@ public class Application extends Controller {
 			@Required boolean chk) {
 
 		User user = Database.users.get(username);
-		System.out.println("username = " + username + ", calID = " + calID
-				+ ", chk = " + chk);
 
 		if (chk == true) {
 			user.addShownObservedCalendar(calID);
@@ -546,7 +535,6 @@ public class Application extends Controller {
 			}
 		}
 		assert (event != null);
-		System.out.println(event);
 		event.addUserToAttending(me);
 		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
 	}
@@ -562,7 +550,6 @@ public class Application extends Controller {
 			}
 		}
 		assert (event != null);
-		System.out.println(event);
 		event.removeUserFromAttending(me);
 		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
 	}
