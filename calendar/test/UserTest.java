@@ -117,26 +117,25 @@ public class UserTest extends UnitTest {
 				.getLast());
 	}
 
-	@Test
-	public void testAddAndRemoveShownObservedCalendar() {
-		// Add the Id of the calendar to the shownObservedCalendars LinkedList
-		Calendar newShownObservedTestCalendar1 = new Calendar(
-				"newObservedTestCalendar1", this.user);
-		Calendar newShownObservedTestCalendar2 = new Calendar(
-				"newObservedTestCalendar2", this.user);
-		long calendarId1 = newShownObservedTestCalendar1.getId();
-		long calendarId2 = newShownObservedTestCalendar2.getId();
-		user.addShownObservedCalendar(calendarId1);
-		user.addShownObservedCalendar(calendarId2);
-		assertNotNull(user.getShownObservedCalendars().getFirst());
-		assertSame(calendarId1, user.getShownObservedCalendars().getFirst());
-		assertNotNull(user.getShownObservedCalendars().getLast());
-		assertSame(calendarId2, user.getShownObservedCalendars().getLast());
-		// And remove it again
-		user.removeShownObservedCalendar(calendarId1);
-		assertSame(calendarId2, user.getShownObservedCalendars().getLast());
-
-	}
+	/*
+	 * @Test public void testAddAndRemoveShownObservedCalendar() { // Add the Id
+	 * of the calendar to the shownObservedCalendars LinkedList Calendar
+	 * newShownObservedTestCalendar1 = new Calendar( "newObservedTestCalendar1",
+	 * this.user); Calendar newShownObservedTestCalendar2 = new Calendar(
+	 * "newObservedTestCalendar2", this.user); long calendarId1 =
+	 * newShownObservedTestCalendar1.getId(); long calendarId2 =
+	 * newShownObservedTestCalendar2.getId();
+	 * user.addShownObservedCalendar(calendarId1);
+	 * user.addShownObservedCalendar(calendarId2);
+	 * assertNotNull(user.getShownObservedCalendars().getFirst());
+	 * assertSame(calendarId1, user.getShownObservedCalendars().getFirst());
+	 * assertNotNull(user.getShownObservedCalendars().getLast());
+	 * assertSame(calendarId2, user.getShownObservedCalendars().getLast()); //
+	 * And remove it again user.removeShownObservedCalendar(calendarId1);
+	 * assertSame(calendarId2, user.getShownObservedCalendars().getLast());
+	 * 
+	 * }
+	 */
 
 	@Test
 	public void testIsCalendarObserved() {
