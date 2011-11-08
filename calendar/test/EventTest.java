@@ -23,15 +23,15 @@ public class EventTest extends UnitTest {
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234", today, "hans2");
 		this.event = new Event(user, today, tomorrow, "anEvent",
-				Visibility.PRIVATE, false, 0, user.getdefaultCalendar().getId());
+				Visibility.PRIVATE, false, 0, user.getdefaultCalendar().getId(), false);
 		this.event2AfterEvent = new Event(user, new DateTime(3),
 				new DateTime(4), "event2AfterEvent", Visibility.PRIVATE, false,
-				0, user.getdefaultCalendar().getId());
+				0, user.getdefaultCalendar().getId(), false);
 		this.event3BeforeEvent = new Event(user, new DateTime(-1),
 				new DateTime(0), "event3BeforeEvent", Visibility.PRIVATE,
-				false, 0, user.getdefaultCalendar().getId());
+				false, 0, user.getdefaultCalendar().getId(), false);
 		this.repeatingEvent = new Event(user, today, tomorrow, "repeating",
-				Visibility.PRIVATE, true, 7, user.getdefaultCalendar().getId());
+				Visibility.PRIVATE, true, 7, user.getdefaultCalendar().getId(), false);
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class EventTest extends UnitTest {
 		int intervall = 7;
 		Event repeatingEvent = new Event(user, new DateTime(0),
 				new DateTime(0), "test", Visibility.PRIVATE, true, intervall,
-				user.getdefaultCalendar().getId());
+				user.getdefaultCalendar().getId(), false);
 		assertEquals(intervall, repeatingEvent.getIntervall());
 	}
 
