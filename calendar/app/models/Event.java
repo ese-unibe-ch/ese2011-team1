@@ -425,10 +425,7 @@ public class Event implements Comparable<Event> {
 		Event repeatingEvent = this;
 		while (repeatingEvent.getStart().toLocalDate().isBefore(compDate)) {
 			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
-			if (repeatingEvent.getStart().getDayOfMonth() == compDate
-					.getDayOfMonth()) {
-				System.out.println("new repeatingEvent : "
-						+ repeatingEvent.start);
+			if (repeatingEvent.getStart().toLocalDate().equals(compDate)) {
 				repeatingEventOnDay = repeatingEvent;
 			}
 		}
@@ -505,6 +502,10 @@ public class Event implements Comparable<Event> {
 		sb.setLength(sb.length()-2);
 		}
 		return sb.toString();
+	}
+
+	public long getCalendarId() {
+		return this.calendarID;
 	}
 
 }

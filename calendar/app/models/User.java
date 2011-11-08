@@ -142,7 +142,6 @@ public class User {
 	public void setBirthdayPublic(boolean is_visible) {
 		Visibility visibility = is_visible ? Visibility.PUBLIC : Visibility.PRIVATE;
 		birthday.edit(birthday.start, birthday.end, birthday.name, visibility, true, 365);
-		System.out.println("changed birthday to : " + visibility);
 	}
 	
 	/**
