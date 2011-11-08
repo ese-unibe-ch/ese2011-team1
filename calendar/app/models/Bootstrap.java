@@ -49,6 +49,7 @@ public class Bootstrap extends Job {
 		user = new User("mib", "1337", now, "fox");
 		event = new Event(user, now, now, "mib_ev1", Visibility.PUBLIC, false,
 				0, user.getdefaultCalendar().getId(), true);
+		event.addUserToAttending(user);
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
 		simplay.addShownObservedCalendar(4);
