@@ -105,10 +105,9 @@ public class EventTest extends UnitTest {
 		assertEquals(repeatingEvent.getIntervall(), 7);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusDays(7), nextRepetition);
-		assertEquals(repeatingEvent.getStart().dayOfMonth(), nextRepetition
-				.getStart().dayOfMonth());
-		assertEquals(repeatingEvent.getStart().getYear(), nextRepetition
+		assertEquals(repeatingEvent.getStart().plusDays(7), nextRepetition.getStart());
+		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(), nextRepetition.getStart().dayOfMonth());
+		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(), nextRepetition
 				.getStart().getYear());
 	}
 
@@ -120,11 +119,11 @@ public class EventTest extends UnitTest {
 		assertEquals(repeatingEvent.getIntervall(), 30);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().getMillis(),
-				repeatingEvent.getNextRepetitionEvent());
-		assertEquals(repeatingEvent.getStart().getDayOfMonth() + 1,
-				nextRepetition.getStart().getDayOfMonth());
-		assertEquals(repeatingEvent.getStart().getYear(), nextRepetition
+		assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
+				repeatingEvent.getNextRepetitionEvent().getStart().getMillis());
+		assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
+				nextRepetition.getStart().getMillis());
+		assertEquals(repeatingEvent.getStart().plusMonths(1).getYear(), nextRepetition
 				.getStart().getYear());
 	}
 
@@ -136,12 +135,12 @@ public class EventTest extends UnitTest {
 		assertEquals(repeatingEvent.getIntervall(), 365);
 		Event nextRepetition = repeatingEvent.getNextRepetitionEvent();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().getMillis(),
-				repeatingEvent.getNextRepetitionEvent());
+		assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
+				repeatingEvent.getNextRepetitionEvent().getStart().getMillis());
 		assertEquals(repeatingEvent.getStart().getDayOfMonth(), nextRepetition
 				.getStart().getDayOfMonth());
-		assertEquals(repeatingEvent.getStart().getYear() + 1, nextRepetition
-				.getStart().getYear());
+		assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(), nextRepetition
+				.getStart().getMillis());
 	}
 
 	/*
