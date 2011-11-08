@@ -13,20 +13,14 @@ public class UserTest extends UnitTest {
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
 			.forPattern("dd/MM/yyyy");
 	private User user;
-<<<<<<< HEAD
-=======
 	private Calendar calendarTest;
->>>>>>> a2cfb8563acb5c3608559126b6f544c35ed33638
 	private DateTime myBirthday = birthdayFormatter.parseDateTime("24/10/1989");
 
 	@Before
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234", myBirthday, "hansli");
-<<<<<<< HEAD
-=======
 		this.calendarTest = new Calendar("CalendarTest", user);
 		user.addCalendar(calendarTest);
->>>>>>> a2cfb8563acb5c3608559126b6f544c35ed33638
 	}
 
 	@Test

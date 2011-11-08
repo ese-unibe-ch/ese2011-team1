@@ -6,7 +6,7 @@
 	<li><b> Name:</b> ${user.name} </li> <br>
 	<li><b> Nickname:</b> ${nickname} </li> <br>
 	
-	#{if user.isBirthdayPublic()}<li><b> Birthday:</b> ${birthday.start}</li> <br>#{/if}
+	#{if user.isBirthdayPublic()}<li><b> Birthday:</b> ${birthday.start.toString("dd/MM/yyyy")}</li> <br>#{/if}
 	#{if user.getEmailPVis()}<li><b> E-Mail (P):</b> ${emailP}</li> <br>#{/if}
 	#{if user.getEmailBVis()}<li><b> E-Mail (B):</b> ${emailB}</li> <br>#{/if}
 	
