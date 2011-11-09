@@ -1,206 +1,161 @@
 package models;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.util.Queue;
 
 import models.Event.Visibility;
 
-/**
- * The Calendar class represents a container to store and arrange multiple Events.
- * 
- * A Calendar is a container for multiple Events. It knows which Event happens
- * on which Date and lets its user interfere with its Events. Calendars are responsible for maintaining all
- * Events they contain, which includes editing/removing.
- * 
- * @see {@link Event}
- * @see {@link User}
- * 
- */
-public class Calendar {
-	public long id;
-	public User owner;
-	private String name;
-	private PriorityQueue<Event> events;
-	private LinkedList<Event> repeatingEvents;
-	private static long counter;
+import org.hibernate.transform.ToListResultTransformer;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-	/**
-	 * Create a new Calendar.
-	 * 
-	 * @param name
-	 *            The name of this Calendar.
-	 * @param owner
-	 *            The owner of this Calendar.
-	 * @see {@link User}
-	 */
-	public Calendar(String name, User owner) {
+
+/**
+ * Calendar contains a list of heads of events "eventHeads". 
+ * Heads are either of type PointEvent, IntervalEvent or RepeatingEvent.
+ * It means the elements in the head list are the 1st element of a series of events. 
+ * We can add, search for, get, delete events in this calendar by their unique id. 
+ * furthermore we can return a series of events depending on a given date.
+ * Each calendar has a unique id, name, and an owner.
+ * 
+ * @autor team1
+ */
+
+public class Calendar {
+	private String name;
+	private User owner;
+	private PriorityQueue<Event> eventHeads;
+	private static long counter;
+	private long id;
+	
+	public Calendar(String name, User owner){
 		this.name = name;
 		this.owner = owner;
-		events = new PriorityQueue<Event>();
-		repeatingEvents = new LinkedList<Event>();
-		counter++;
 		this.id = counter;
+		counter++;
+		eventHeads = new PriorityQueue<Event>();
 	}
-
-	/**
-	 * Get the owner of this calendar.
-	 * 
-	 * @return the owner of this calendar.
+	
+	/*
+	 * getters 
 	 */
-	public User getOwner() {
-		return this.owner;
-	}
-
-	/**
-	 * Get the name of this Calendar.
-	 * 
-	 * @return The name of this Calendar.
-	 */
-	public String getName() {
+	
+	public String getName(){
 		return this.name;
 	}
-
-	/**
-	 * Get the unique Id of this Calendar.
-	 * 
-	 * @return the id of this Calendar.
-	 */
-	public long getId() {
+	
+	public User getOwner(){
+		return this.owner;
+	}
+	
+//	@SuppressWarnings("unchecked")
+//	public Queue<Event> getOwnersObersvedEventQueue(){
+//		return owner.getObservedEvents();
+//	}
+	
+//	@SuppressWarnings("unchecked")
+//	public Queue<Event> getOwnersFriendsBirthdaysQueue(){
+//		return owner.getFriendsBirthdays();
+//	}
+	
+	public long getId(){
 		return this.id;
 	}
-
-	/**
-	 * Adds a given event to this calendars list of events. If the provided
-	 * event is a repeating event, it will also be added to the repeatingEvents
-	 * list.
-	 * 
-	 * @param event
-	 *            event which is added to events, and if repeating, to
-	 *            repeatingEvents.
-	 */
-	public void addEvent(Event event) {
-		// teste ob dieser eventbereits in liste ist
-		// wenn doch, dann adde diesen nicht!
-		if (!compareCalendarEvents(event)) {
-			events.add(event);
-			if (event.isRepeating()) {
-				repeatingEvents.add(event);
+	
+	public PriorityQueue<Event> getEventHeads(){
+		return this.eventHeads;
+	}
+	
+	// mache vor call dieser methode immer check, hasEvent(long id)
+	// und mache call dieser methode nur, wenn hasEvent yields true;
+	public Event getEventById(long id){
+		for(Event event : this.eventHeads){
+			Event cursor = event;
+			
+			do{
+				if(cursor.getId() == id) return cursor;
+				cursor = event.getNextReference();
+			}while(event.hasNext());
+		}
+		return null;
+	}
+	
+	// getEventById would be able to do this but this method is more efficient if we are just looking for an head.
+	public Event getHeadById(long id){
+		for(Event event : this.eventHeads)
+			if(event.getId() == id) return event;
+		
+		return null;
+	}
+	
+	// get all events with same baseId, i.e. all events from a given head
+	// look in head list for given id
+	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
+		LinkedList<Event> result = new LinkedList<Event>();
+		Event head = this.getHeadById(baseId);
+		
+		Event cursor = head;
+		while(cursor.hasNext()){
+			result.add(cursor);
+			cursor = cursor.getNextReference();
+		}
+		
+		return result;
+	}
+	
+	public LinkedList<Event> getEventsOfDate(int day, int month, int year, User requester) {
+		LocalDate compareDate = new LocalDate(year, month, day);
+		LinkedList<Event> result = new LinkedList<Event>();
+		// 1. go here through heads
+		for(Event head : this.eventHeads){
+			if(head.getStart().toLocalDate().equals(compareDate)) // adde hier check
+				if(head.getVisibility() != Visibility.PRIVATE 
+						|| owner == requester) result.add(head);
+			
+			Event cursor = head;
+			while(cursor.hasNext()){
+				if(cursor.getStart().toLocalDate().equals(compareDate))
+					if(cursor.getVisibility() != Visibility.PRIVATE 
+							|| owner == requester) result.add(cursor);
+				cursor = cursor.getNextReference();
 			}
 		}
-
+		// TODO go through other lists as observed and so on...
+		return result;
 	}
-
-	/**
-	 * Test if this Calendar contains an Event with the same name and start date
-	 * as the argument.
-	 * 
-	 * The given argument is compared to all events in this Calendars
-	 * <code>events</code> and <code>repeatingEvents</code>.
-	 * 
-	 * @param event
-	 *            The event to be compared with all Events in
-	 *            <code>events</code> and <code>repeatingEvents</code>.
-	 * @return <code>true</code> if any Event in <code>events</code> and
-	 *         <code>repeatingEvents</code> has the same name and start date as
-	 *         the given argument. <code>false</code> otherwise.
-	 */
-	// test if in this.events or in repeatingEvents is an event with same date
-	// (start,end) and name as ev1
-	private boolean compareCalendarEvents(Event event) {
-		boolean flag = false;
-		for (Event comp : this.events) {
-			if (comp.name.equals(event.name))
-				if (comp.start.equals(event.start)) {
-					flag = true;
-					break;
-				}
-		}
-		if (!flag) {
-			for (Event comp : this.repeatingEvents) {
-				if (comp.name.equals(event.name))
-					if (comp.start.equals(event.getStart())) {
-						flag = true;
-						break;
-					}
+	
+	// return a list which contains all dates depending on input date
+	// where we only compare its year, month and day for equality
+	// TODO use a priority queue instead of a linked list.
+	public LinkedList<Event> getEventsOfDate(DateTime day, User requester){
+		LinkedList<Event> result = new LinkedList<Event>();
+		// 1. go here through heads
+		for(Event head : this.eventHeads){
+			if(head.getStart().equals(day)) // adde hier check
+				if(head.getVisibility() != Visibility.PRIVATE 
+						|| owner == requester) result.add(head);
+			
+			Event cursor = head;
+			while(cursor.hasNext()){
+				if(cursor.getStart().equals(day))
+					if(cursor.getVisibility() != Visibility.PRIVATE 
+							|| owner == requester) result.add(cursor);
+				cursor = cursor.getNextReference();
 			}
 		}
-		return flag;
+		// TODO go through other lists as observed and so on...
+		return result;
 	}
-
-	/**
-	 * Adds a given Event to this Calendars list of repeatingEvents.
-	 * 
-	 * @param event
-	 *            The event to be added to <code>repeatingEvents</code>
-	 */
-	public void addToRepeated(Event event) {
-		this.repeatingEvents.add(event);
-	}
-
-	/**
-	 * Obtain a list of Events a User is allowed to see in a Calendar for a
-	 * given date.
-	 * 
-	 * @param day
-	 *            The date on which the Events must happen in order to be
-	 *            returned.
-	 * @param requester
-	 *            The User which requests the List of Events.
-	 * @return
-	 */
-	public LinkedList<Event> getDayEvents(LocalDate day, User requester) {
-		// temporary result linked list
-		LinkedList<Event> events_tmp = new LinkedList<Event>();
-
-		// test if requester references to same object as owner. if true, we
-		// have the same user,
-		// therefore, the requester gets full access to its calendar data (since
-		// he is the owner of it)
-		boolean is_owner = owner == requester;
-
-		// requester is owner
-		if (is_owner) {
-			for (Event e : events)
-				if (e.getStart().toLocalDate().equals(day))
-					events_tmp.add(e);
-
-			// requester is not the owner of the calendar ==> do visibility
-			// check.
-		} else {
-			for (Event e : events)
-				if (e.getVisibility() != Visibility.PRIVATE
-						&& e.getStart().toLocalDate().equals(day))
-					events_tmp.add(e);
-		}
-		return events_tmp;
-	}
-
-	/**
-	 * Get an Iterator over all Events in this Calendar which occur after the
-	 * specified date.
-	 * 
-	 * The returned Iterator contains different Events depending on the
-	 * requesting Users permissions.
-	 * 
-	 * @param start
-	 *            The start date for the Iterator.
-	 * @param requester
-	 *            The User which requests this Iterator.
-	 * @return Iterator over all Events of this Calendar after the specified
-	 *         Date.
-	 */
+	
+	// TODO fix this method. uses DateTime
 	public Iterator<Event> getEventList(DateTime start, User requester) {
+	
+		/*
+		 
+		 
 		// temporary result linked list
 		LinkedList<Event> events_tmp = new LinkedList<Event>();
 
@@ -228,735 +183,242 @@ public class Calendar {
 		// Iterator itr = al.iterator();
 		Iterator<Event> iter = events_tmp.iterator();
 		return iter;
-	}
-
-	/**
-	 * Get all visible Events of this calendar for a specified Date.
-	 * 
-	 * Returns a list of Events containing all Events who are visible for the
-	 * requester and whose start date is equal to the date composed of
-	 * <code>day</code>, <code>month</code> and <code>year</code>.
-	 * 
-	 * 
-	 * @param day
-	 *            The day on which an Event must happen in order to be returned.
-	 * @param month
-	 *            The month in which an Event must happen in order to be
-	 *            returned.
-	 * @param year
-	 *            The year in which an Event must happen in order to be
-	 *            returned.
-	 * @param requester
-	 *            The user which requests this List.
-	 * @return List of Events which happen on the Date specified by
-	 *         <code>day</code>, <code>month</code> and <code>year</code>
-	 * @see {@link Event}
-	 */
-	// return all visible events of a given months => for graphical calendar
-	public LinkedList<Event> getEventsOfDay(DateTime activeDate,
-			User requester) {
-		LinkedList<Event> result = new LinkedList<Event>();
-
-		LocalDate comp = null;
-//		DateTimeFormatter dayFormatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-//		String dateString = Integer.toString(day) + "/"
-//				+ Integer.toString(month) + "/" + Integer.toString(year)
-//				+ ", 00:00";
-		try {
-			comp = activeDate.toLocalDate();
-		} catch (Exception e) {
-			System.out.println("getEventsOfDay: Parse args to LocalDate");
-		}
-
-		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
-		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
-		LinkedList<Event> repeatingEvents = new LinkedList<Event>();
-		repeatingEvents.addAll(this.repeatingEvents);
-		PriorityQueue<Event> events = new PriorityQueue<Event>();
-		events.addAll(this.events);
-		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
-
-		Calendar birthdayCal = owner.getBirthdayCalendar();
-		birthdayCal.getEvents().clear();
-		birthdayCal.getRepeatingEvents().clear();
-		birthdayCal.addEvent(owner.getBirthday());
 		
-		if (shownObservedCals.contains(birthdayCal.getId())) {
-			for (Calendar observedCal : observedCals) {
-				otherUsersBirthdays.add(observedCal.owner.getBirthday());
-			}
-		}
+		*/
+		return null;
+	}
+	
+	// call this method, whenever we change the month in the calendar GUI
+	// or added a new event an declared him as an IntervalEvent or RepeatingEvent
+	// or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
+	// TODO change date stuff to DateTime
+	// TODO check about corner cases, if there exists any.
+	public void generateNextEvents(Event head, DateTime baseDate){
+		//DateTime currentDate = head.getStart();
+		DateTime currentDate = baseDate;
+		DateTime nextDate = currentDate.plusMonths(1);
 		
-		for (Event e : otherUsersBirthdays) {
-			if (e.isVisible() && !birthdayCal.compareCalendarEvents(e)) {
-				birthdayCal.addEvent(e);
-			}
-		}
+		//Date nextDate = new Date(currentDate.getYear(),
+		//		currentDate.getMonth()+1, currentDate.getDate(),
+		//		currentDate.getHours(), currentDate.getMinutes());
 		
-		for (Calendar observedCal : observedCals) {
-			if (shownObservedCals.contains(observedCal.getId())) {
-				for (Event observedEvent : observedCal.getEvents()) {
-					if (observedEvent.getVisibility() != Visibility.PRIVATE
-							&& !events.contains(observedEvent)) {
-						events.add(observedEvent);
-					}
-				}
-
-				for (Event repeatingObservedEvent : observedCal
-						.getRepeatingEvents()) {
-					for (Calendar cal : observedCals) {
-						if (cal.owner == repeatingObservedEvent.owner
-								&& repeatingObservedEvent.isVisible()) {
-							
-							repeatingEvents.add(repeatingObservedEvent);
-						}
-					}
-					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE
-							&& !repeatingEvents.contains(repeatingObservedEvent)) {
-						repeatingEvents.add(repeatingObservedEvent);
-					}
-				}
-			}
-		}
-
-		boolean is_owner = owner == requester;
-		for (Event e : events) {
-			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.toLocalDate().equals(comp)) {
-					if (!result.contains(e))
-						result.add(e);
-				}
-			}
-		}
-
-		for (Event repeatingEvent : repeatingEvents) {
-			if (is_owner
-					|| repeatingEvent.getVisibility() != Visibility.PRIVATE) {
-				Event repeatingEventOnDay = repeatingEvent
-						.getRepetitionOnDate(comp);
-				if (repeatingEventOnDay != null)
-				if (repeatingEventOnDay != null
-						&& !containsSameElement(new LinkedList<Event>(events),
-								repeatingEventOnDay)) {
-					if (!repeatingEventOnDay.isDirty) {
-						if (!compareCalendarEvents(repeatingEventOnDay)
-								&& !result.contains(repeatingEventOnDay)) {
-							result.add(repeatingEventOnDay);
-						}
-					}
-				}
-			}
-		}
-
-		for (Event e : result) {
-			if (!this.events.contains(e) && e.getCalendarId() == this.id) {
-				this.events.add(e);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Returns a list of Events which have the same baseId as the argument. If
-	 * an Event is not repeating, this method returns the same Event like
-	 * {@link Calendar#getEventById}
-	 * 
-	 * @param baseId
-	 *            The Id which is compared to all Events in this Calendars
-	 *            <code>events</code> and <code>repeatingEvents</code>
-	 * @return A List of events containing all Events of this Calendar with the
-	 *         same baseId as the argument.
-	 * 
-	 */
-	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
-		LinkedList<Event> result = new LinkedList<Event>();
-		for (Event event : this.events) {
-			if (event.baseId == baseId) {
-				result.add(event);
-			}
-		}
-
-		for (Event event : this.repeatingEvents) {
-			if (event.baseId == baseId) {
-				result.add(event);
-			}
-		}
-		// we should sort this list by its event's start dates
-		// this is a ToDo
-		return result;
-	}
-
-	// mache hier auch reperatur wengen event adden!!!!
-	/**
-	 * Tests if this Calendar contains an Event which happens on a specified
-	 * date and is visible for the requester.
-	 * 
-	 * Compares a date composed of <code>day</code>, <code>month</code> and
-	 * <code>year</code> with all Events in this calendars <code>events</code>
-	 * and <code>repeatingEvents</code> and all Events of all shown observed
-	 * Calendars. If any of the above mentioned contains a date equal to the
-	 * specified date, it returns true.
-	 * 
-	 * @param day
-	 *            The day compared to all Events of this calendar.
-	 * @param month
-	 *            The month used to compose the comparing date.
-	 * @param year
-	 *            The year used to compose the comparing date.
-	 * @param requester
-	 *            The user that wants to know if any Events happen on this day
-	 *            that are visible for him.
-	 * @return <code>true</code> if any visible Event of this Calendar happens
-	 *         on the same date as the one specified by the arguments.
-	 *         <code>false</code> otherwise.
-	 */
-	public boolean hasEventOnDay(int day, int month, int year, User requester) {
-		boolean flag = false;
-		LocalDate comp = null;
-		try {
-			comp = new LocalDate(year, month, day);
-
-		} catch (Exception e) {
-		}
-
-		LinkedList<Calendar> observedCals = owner.getObservedCalendars();
-		LinkedList<Long> shownObservedCals = owner.getShownObservedCalendars();
-		LinkedList<Event> repeatingEvents = new LinkedList<Event>();
-		repeatingEvents.addAll(this.repeatingEvents);
-		PriorityQueue<Event> events = new PriorityQueue<Event>();
-		events.addAll(this.events);
-		LinkedList<Event> otherUsersBirthdays = new LinkedList<Event>();
-
-
-		if (shownObservedCals.contains(owner.getBirthdayCalendar().id)) {
-			for (Calendar observedCal : observedCals) {
-				otherUsersBirthdays.add(observedCal.owner.getBirthday());
-			}
-		}
+		head.generateNextEvents(nextDate);
 		
-		for (Event e : otherUsersBirthdays) {
-			if (e.isVisible()) {
-				for (Calendar observedCal : observedCals) {
-					if (observedCal.getId() == owner.getBirthdayCalendar().getId()) {
-						observedCal.addEvent(e);
-					}
-				}
+		// for debugging purposes: see if this event has correct next and previous reference
+			Event event = head;
+			String ee = null;
+			while(event.hasNext()){
+				if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
+				System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
+						+ " prevR:" + ee);
+				event = event.getNextReference();
 			}
-		}
-
-		for (Calendar observedCal : observedCals) {
-			if (shownObservedCals.contains(observedCal.getId())) {
-				for (Event observedEvent : observedCal.getEvents()) {
-					if (observedEvent.getVisibility() != Visibility.PRIVATE) {
-						events.add(observedEvent);
-					}
-				}
-				for (Event repeatingObservedEvent : observedCal
-						.getRepeatingEvents()) {
-					for (Calendar cal : observedCals) {
-						if (cal.owner == repeatingObservedEvent.owner
-								&& repeatingObservedEvent.isVisible()) {
-							
-							
-								repeatingEvents.add(repeatingObservedEvent);
-						}
-					}
-					if (repeatingObservedEvent.getVisibility() != Visibility.PRIVATE) {
-						
-						
-							repeatingEvents.add(repeatingObservedEvent);
-					}
-				}
-			}
-		}
-
-		boolean is_owner = owner == requester;
-		for (Event repeatingEvent : repeatingEvents) {
-			if (is_owner
-					|| repeatingEvent.getVisibility() != Visibility.PRIVATE) {
-				Event repeatingEventOnDay = repeatingEvent
-						.getRepetitionOnDate(comp);
-				if (repeatingEventOnDay != null
-						&& !containsSameElement(new LinkedList<Event>(events),
-								repeatingEventOnDay)) {
-					if (!repeatingEventOnDay.isDirty) {
-						if (!compareCalendarEvents(repeatingEventOnDay))
-							events.add(repeatingEventOnDay);
-					}
-				}
-			}
-		}
-
-		for (Event e : events) {
-			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.toLocalDate().equals(comp)) {
-					flag = true;
-				}
-			}
-		}
-		return flag;
+			ee = null;
+			if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
+			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
+					+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
+		// end debugging
 	}
-
-	// / fixe hier das adden!!! wenn schon vorhanden, dann nicht nochmals
-	// adden!!!
-
-	/**
-	 * Does the exact same thing as {@link Calendar#hasEventOnDay}
-	 * 
-	 * @param date
-	 *            The date which is compared to this Calendars events.
-	 * @param requester
-	 *            The user which requests to check if an Event happens on the
-	 *            specified date.
-	 * @return <code>true</code> if any Event which is visible to the requester
-	 *         happens on the specified date. <code>false</code> otherwise.
+	
+	/*
+	 * setter
 	 */
-	public boolean hasEventOnDay(LocalDate date, User requester) {
-		boolean flag = false;
-		LocalDate comp = date;
-
-		boolean is_owner = owner == requester;
-		for (Event repeatingEvent : this.repeatingEvents) {
-			if (is_owner
-					|| repeatingEvent.getVisibility() != Visibility.PRIVATE) {
-				Event repeatingEventOnDay = repeatingEvent
-						.getRepetitionOnDate(comp);
-				if (repeatingEventOnDay != null
-						&& !containsSameElement(new LinkedList<Event>(
-								this.events), repeatingEventOnDay)) {
-					if (!repeatingEventOnDay.isDirty) {
-						// check neu :::
-						if (!compareCalendarEvents(repeatingEventOnDay))
-							events.add(repeatingEventOnDay);
-					}
-				}
-			}
-		}
-
-		for (Event e : events) {
-			if (is_owner || e.getVisibility() != Visibility.PRIVATE) {
-				if (e.start.toLocalDate().equals(comp)) {
-					flag = true;
-				}
-			}
-		}
-		return flag;
+	
+	public void setName(String name){
+		this.name = name;
 	}
-
-	private boolean containsSameElement(LinkedList<Event> events,
-			Event repeatingEvent) {
-		boolean contains = false;
-		for (Event e : this.events) {
-			if (e.getBaseId() == repeatingEvent.getBaseId()
-					&& e.start.toLocalDate().equals(repeatingEvent.start.toLocalDate())) {
-				contains = true;
-			}
-		}
-		return contains;
+	
+	public void setOwner(User owner){
+		this.owner = owner;
 	}
-
-	/**
-	 * Iterates through this Calendars <code>events</code> and returns an Event
-	 * with the same id as the argument.
-	 * 
-	 * @param id
-	 *            The id to compare with all Events' id's of this Calendar.
-	 * @return The event with the same id as the argument, if this Calendars
-	 *         <code>events</code> contains such an Event. <code>null</code>
-	 *         otherwise.
+	
+	
+	/*
+	 * add, delete modify, checks 
 	 */
-	public Event getEventById(long id) {
-		Event result = null;
-		for (Event e : events)
-			if (e.getId() == id)
-				result = e;
-		return result;
+	
+	// adder
+	
+	// add an event into head list eventHeads
+	public void addEvent(Event event){
+		// care about future filters...
+		this.eventHeads.add(event);
 	}
-
-	/**
-	 * Removes an Event from this Calendars <code>events</code> and
-	 * <code>repeatingEvents</code> if they contain the Event.
-	 * 
-	 * @param id
-	 *            id of the Event to be removed.
-	 */
+	
+	// deleter
+	
+	// 1. find event and point with a courser to him
+	// 2. check type of this event, depending on type do different algorithm to delete event
+	// a) PointEvent: just remove it from head list, done.
+	// b) IntervalEvent: 
+	//		case: victim is not in head		
+	//			split interval into two smaller intervals left and right, relatively to victim
+	//			Reset references and put 1st element of 2nd smaller interval into head list
+	//		case: victim is in head
+	//			get next event after head and put it into head list, remove head from head list
+	// c) RepeatingEvent:
 	public void removeEvent(long id) {
-		// we call the event we are going to delete victim event or simply
-		// victim
-		// REM:
-		// funktioniert atm nur für repeating events mit intervall = 1 | 7 oder
-		// für not-repeating events
-		// ERROR end NOT equal d => fix it later!!! fix END
-		// fix: conserve wholes after victim
-		// fix: multiple times add same event
-
-		// if our victim is a repeating event
-		if (getEventById(id).is_repeating) {
-			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			Event sentinel = getEventById(id);
-			LinkedList<Event> targets = new LinkedList<Event>();
-			LinkedList<Event> interestingevents = getSameBaseIdEvents(sentinel.baseId);
-			for (Event event : interestingevents) {
+		Event victim = getEventById(id);
+		
+		// case a)
+		if(victim instanceof PointEvent){
+			this.eventHeads.remove(victim);
+		}
+		
+		// case b)
+		else if(victim instanceof IntervalEvent){
+			// TODO statt casten in neue types, verwende neue konstruktoren!
+			// TODO set new from and to
+			// new interval structure:
+			// [head ,previctim] | victim | [postVictim,victim.getTo()]
+			// create at most two object of type IntervalEvent.
+			
+			Event head = this.getHeadById(victim.getBaseId());
+			Event preVictim = victim.getPreviousReference();
+			Event postVictim = victim.getNextReference();
+			
+			// wenn intervall der form: [head,victim], d.h. 2. elemente
+			if(preVictim == head && postVictim == null){
+				//head = (PointEvent) head;
+				head.setNext(null);
+				head = new PointEvent((IntervalEvent) head);
 				
-				if(event.compareTo(sentinel)==1)targets.add(event);
-			}
-
-			for (Event e : events) {
-				if (e.getId() == id) {
-
-					// calculate next event e' after e, depending on intervall
-					// size
-					// remove all those repeating events by calling
-					// removeRepeatingEvents(Event event)
-					// create new repeating event, which starts at e' and same
-					// intervall value
-					// 1. test, if e is a repeating event respectivly the
-					// correlated event to e.baseID
-					// if yes, then do what desribed abouve, else delete
-					// regulary
-
-					// calculate next date after victim event
-					Event baseEvent = getEventById(e.baseId); // korrektes
-																// nächstes date
-
-					int intervall = baseEvent.getIntervall();
-					DateTime nextRepStartDate = new DateTime(e.start.getYear(),
-							e.start.getMonthOfYear(), e.start.plusDays(intervall).getDayOfMonth(),
-							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
-					DateTime nextRepEndDate = new DateTime(e.end.getYear(),
-							e.end.getMonthOfYear(), e.end.plusDays(intervall).getDayOfMonth(),
-							e.start.getHourOfDay(), e.start.getMinuteOfHour(), 0, 0);
-					Event nextEvent = new Event(this.owner, nextRepStartDate,
-							nextRepEndDate, e.name, e.visibility, true,
-							intervall, baseEvent.calendarID, e.isOpen());
-					nextEvent.baseId = nextEvent.id;
-
-
-					// this list contains all dates of repeating events of
-					// baseEvent, till 1 event before victim event
-					LinkedList<DateTime> previousDates = new LinkedList<DateTime>();
-					ArrayList<String> descriptions = new ArrayList<String>();
-					if (intervall == 7 || intervall == 1) {
-
-						DateTime current = baseEvent.start;
-
-						// iterate in interval steps iterate from
-						// "baseEvent.start" to "nextRepStartDate"
-						// to find dates, which we have to reinsert starting
-						// from baseEven{old}
-						// remark: there could be arbitrary many whole in the
-						// interval previous and afterwards our victim a
-						while (current.compareTo(nextRepStartDate) == -1) {
-							// if this date is in the calendar as an event
-							// then add it to the list of dates we should
-							// recreate events
-							// remark: this is needed since we could have whole
-							// in repeating event series
-							// if we would not do such a check, then we would
-							// have a events with dates
-							// we did not have in the calendar to it's previous
-							// state
-							if (hasEventOnDay(current.toLocalDate(), owner)) {
-								// fix for wholes in interval previous victim
-								LinkedList<Event> dayevents = getDayEvents(
-										current.toLocalDate(), owner);
-
-								// get for each event before victim its event
-								// description
-								for (Event eee : dayevents) {
-									if (eee.baseId == e.baseId) {
-										descriptions.add(eee.description);
-									}
-								}
-
-								if (hasName(e.name, dayevents)) {
-									previousDates.add(current);
-								}
-							}
-
-							// get next date depending an interval-step-size
-							current = new DateTime(current.getYear(),
-									current.getMonthOfYear(), current.plusDays(intervall).getDayOfMonth(), current.getHourOfDay(),
-									current.getMinuteOfHour(), 0, 0);
-						}
-
-						// remove last element of list, this is the victim we
-						// want to delete
-						previousDates.removeLast();
-					} else if (intervall == 30) {
-						DateTime current = baseEvent.start;
-						while (current.compareTo(nextRepStartDate) == -1) {
-							if (hasEventOnDay(current.toLocalDate(), owner)) {
-								// fix for wholes in interval previous victim
-								LinkedList<Event> dayevents = getDayEvents(
-										current.toLocalDate(), owner);
-								for (Event eee : dayevents)
-									if (eee.baseId == e.baseId)
-										descriptions.add(eee.description);
-
-								if (hasName(e.name, dayevents))
-									previousDates.add(current);
-							}
-
-							// get next date depending an interval-step-size
-							current = new DateTime(current.getYear(),
-									current.plusMonths(1).getMonthOfYear(), current.getDayOfMonth(),
-									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
-						}
-					} else if (intervall == 365) {
-						DateTime current = baseEvent.start;
-						while (current.compareTo(nextRepStartDate) == -1) {
-							if (hasEventOnDay(current.toLocalDate(), owner)) {
-								// fix for wholes in interval previous victim
-								LinkedList<Event> dayevents = getDayEvents(
-										current.toLocalDate(), owner);
-								for (Event eee : dayevents)
-									if (eee.baseId == e.baseId)
-										descriptions.add(eee.description);
-
-								if (hasName(e.name, dayevents))
-									previousDates.add(current);
-							}
-
-							// get next date depending an interval-step-size
-							current = new DateTime(current.plusYears(1).getYear(),
-									current.getMonthOfYear(), current.getDayOfMonth(),
-									current.getHourOfDay(), current.getMinuteOfHour(), 0, 0);
-						}
-					} else {
-						// if we are inside this block something went horribly
-						// wrong => doomed
-						try {
-							throw new Exception("huge error - damnit");
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-					}
-					// before we remove the events after victim
-					// preserve all descriptions after victim
-
-					// remove all repeating events correlated to baseEvent
-					removeRepeatingEvents(baseEvent);
-					int index = 0;
-					// add for each date in the collected date list a event into
-					// this.events
-					// equals all events previous victim
-					for (DateTime d : previousDates) {
-						// ERROR end NOT equal d => fix it later!!!
-						Event ev = new Event(this.owner, d, d, e.name,
-								e.visibility, false, intervall, baseEvent.calendarID, e.isOpen());
-						ev.editDescription(descriptions.get(index));
-						this.events.add(ev);
-						index++;
-					}
-
-					// add the event after our victim (1 date interval
-					// afterwards) into this.events and repeatingEvents
-					// or check for next free slot , ie find this date c
-					// targets
-					
-					
-					
-					if (!compareCalendarEvents(nextEvent)) {
-						this.events.add(nextEvent);
-						if (nextEvent.isRepeating()) { // unnötig
-							repeatingEvents.add(nextEvent);
-						}
-					}
-
+			// victim == head
+			}else if(victim == head){
+				postVictim.setPrevious(null);
+				this.eventHeads.remove(victim);
+				this.addEvent(postVictim);
+				Event cursor = postVictim;
+				postVictim.setBaseId(postVictim.getId());
+				while(cursor.hasNext()){
+					cursor = cursor.getNextReference();
+					cursor.setBaseId(postVictim.getId());
 				}
+			// if victim is a leaf, i.e. victim is the last element of the list.
+			}else if(victim.getNextReference() == null){
+				preVictim.setNext(null);
+				victim.setPrevious(null);
 				
-				// add all descriptions behind victim
-				// and again very cryptic names - only i now about their meaning harhar :D
-				for(Event tar : targets){
-					for(Event tevent: this.repeatingEvents){
-						if(tar.start.compareTo(tevent.start)== 0) tevent.description = tar.description;
-					}
+			}else{
+				preVictim.setNext(null);
+				postVictim.setPrevious(null);
+				this.addEvent(postVictim);
+				
+				// set for all postvictims events their new baseId
+				Event cursor = postVictim;
+				postVictim.setBaseId(postVictim.getId());
+				while(cursor.hasNext()){
+					cursor = cursor.getNextReference();
+					cursor.setBaseId(postVictim.getId());
 				}
 			}
-
-			// else if our victim is not a repeating event
-		} else {
-			LinkedList<Event> events = new LinkedList<Event>(this.events);
-			for (Event e : events)
-				if (e.getId() == id) {
-					this.events.remove(e);
-					this.repeatingEvents.remove(e);
-				}
 		}
-	}
-
-	/**
-	 * Removes all Events with the same baseId from this Calendars list of
-	 * events and this Calendars list of public Events. The provided Events'
-	 * baseId is compared with all Events from this Calendar, matching Events
-	 * will be removed.
-	 * 
-	 * @param event
-	 *            the Event to be removed along with all Events with the same
-	 *            baseId
-	 * @see {@link Calendar#removeEvent(long id)}
-	 */
-	public void removeRepeatingEvents(Event event) {
-		assert (event != null) : "must not be null!";
-		LinkedList<Event> events = new LinkedList<Event>(this.events);
-		for (Event e : events) {
-			if (e.getBaseId() == event.getBaseId()) {
-				e.is_repeating = false; // ultra important , otherwise we will
-										// have an infinite recursion!!!
-				removeEvent(e.getId());
-			}
+		
+		// case c)
+		else if(victim instanceof RepeatingEvent){
+			// possible resulting interval structures after deletion
+			// [head, previctim] | victim | [postVictim, +infinite]
+			
 		}
-	}
-
-	/**
-	 * End repetition of a repeating Event from a given date cancelDate remove
-	 * all repeating dates after cancelDate, which are already calculated. Mark
-	 * all such repeating Events up to and including canelDate as NOT repeating.
-	 * 
-	 * @param cancelEvent
-	 */
-	public void cancelRepeatingEventRepetitionFromDate(Event cancelEvent) {
-//		boolean flag = true;
-//		DateTime cursor = cancelEvent.start;
-//		int intervall = cancelEvent.intervall;
-		Event from = getEventById(cancelEvent.baseId);
-		LinkedList<Event> res = getEventRepeatingFromTo(from, cancelEvent.start);
-		res.add(cancelEvent);
-		for (Event e : res)
-			e.is_repeating = false;
-		// output of events
-
-		removeRepeatingEvents(cancelEvent);
-		for (Event e : res)
-			addEvent(e);
-	}
-
-	/**
-	 * Returns a list of Events containing all Events with the same baseId from
-	 * a given Event to another Event.
-	 * 
-	 * Starting from an Event <code>from</code> put in from.interval steps till
-	 * <code>to</code> events in the Calendar.
-	 * 
-	 * @param from
-	 *            The Event from whose start date the List starts.
-	 * @param to
-	 *            The last Event in the List.
-	 */
-	public LinkedList<Event> getEventRepeatingFromTo(Event from, DateTime to) {
-		Event cursor = from;
-		LinkedList<Event> result = new LinkedList<Event>();
-		while (true) {
-			if (cursor.start.equals(to)) {
-				break;
-			}
-
-			result.add(cursor);
-			// get next cursor
-			cursor = cursor.getNextRepetitionEvent();
-		}
-		return result;
-	}
-
-	/**
-	 * Get all Events of this Calendar.
-	 * 
-	 * @return this calendars <code>events</code>.
-	 */
-	public PriorityQueue<Event> getEvents() {
-		return this.events;
-	}
-
-	/**
-	 * Get all repeating Events of this Calendar.
-	 * 
-	 * @return this Calendars <code>repeatingEvents</code>.
-	 */
-	public LinkedList<Event> getRepeatingEvents() {
-		return this.repeatingEvents;
-	}
-
-	/**
-	 * String representation of this Calendar.
-	 * 
-	 * @return this Calendars <code>name</code>.
-	 */
-	public String toString() {
-		return this.name;
-	}
-
-	/**
-	 * helper to test if there are events in a given list which have the same
-	 * name as "name" if yes, then return true, otherwise return false.
-	 * 
-	 * @param name
-	 * @param dayevents
-	 * @return boolean
-	 */
-	private boolean hasName(String name, LinkedList<Event> dayevents) {
-		boolean flag = false;
-		for (Event ev : dayevents)
-			if (ev.name.equals(name))
-				flag = true;
-
-		return flag;
 	}
 	
-	/**
-	 * helper to filter out duplicated events, 
-	 * which we do have since we have an algorithmic error.
-	 * for each event in events look for duplicated id's
-	 * if there are duplicates, ignore them. take only id, which are unique
-	 * very ugly, remove soon and fix the error properly
-	 */
-	public void filterEventlist(){
-		PriorityQueue<Event> res = new PriorityQueue<Event>();
+	
+	// modifier
+	
+	// remove whole series to which an event "member" belongs to
+	public void removeSerieOfRepeatingEvents(Event member){
+		// 1. get corresponding head
+		// 2. remove next reference
+		// 3. remove victimHead from head list
 		
-		// filter events
-		for(Event event : this.events){
-			if(!hasEventId(event, res)) res.add(event);
-		}
-		this.events = res;
-		
-		// filter repeating events
-		LinkedList<Event> res1 = new LinkedList<Event>();
-		for(Event revent: this.repeatingEvents){
-			if(!hasEventBaseId(revent, res1)) res1.add(revent);
-		}
-		this.repeatingEvents = res1;
+		long baseId = member.getBaseId();
+		Event victimHead = getHeadById(baseId);
+		victimHead.setNext(null);
+		this.removeEvent(baseId);
 	}
 	
-	/**
-	 * look in the list, if there is an event with id equals e.id
-	 * if yes, yield true, otherwise yield false
-	 * @param e
-	 * @param list
-	 * @return boolean
-	 */
-	private boolean hasEventId(Event e, PriorityQueue<Event> list){
-		for(Event event : list){
-			if(e.id == event.id){
-				return true;
-			}
+	
+	// TODO check if references are correctly set.
+	// set this event series from RepeatingEvent to IntervalEvent
+	public void cancelRepeatingEventRepetitionFromDate(Event cancelFromThis){
+		// 1. get corresponding head, this is the new lower bound for IntervalEvent
+		// 2. cancelFromThis is the upper bound for this new IntervalEvent
+		// 3. Get next of cancelFromThis and kill back-reference from it to cancelFromThis.
+		// 4. Remove next reference of cancelFromThis.
+		// 5. Transform all Events from head to cancelFromThis into objects of type IntervalEvent
+		
+		long baseId = cancelFromThis.getBaseId();
+		Event victimHead = getHeadById(baseId);
+		Event nextFromCancel = cancelFromThis.getNextReference();
+		cancelFromThis.setNext(null);
+		nextFromCancel.setPrevious(null);
+		// transform,care about references
+		
+		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
+		Event cursor = victimHead;
+		Event item = null;
+		while(cursor.hasNext()){
+			cursor.setPrevious(item);
+			item = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+			cursor.setNext(item);
+			item.setPrevious(cursor);
+			cursor = cursor.getNextReference();
+		}
+		
+		this.removeEvent(baseId);
+		this.addEvent(newHead);
+		
+		
+	}
+	
+	// checker
+	
+	// TODO add method description
+	// TODO add other lists, which we have to check
+	public boolean hasEventOnDate(int day, int month, int year, User requester){
+		
+		LocalDate compareDate = null;
+		try {
+			compareDate = new LocalDate(year, month, day);
+		} catch (Exception e) {}
+		
+		for(Event event : this.eventHeads){
+			Event cursor = event;
+			do{
+				if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0) 
+					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
+				
+				cursor = event.getNextReference();
+			}while(event.hasNext());
 		}
 		return false;
 	}
 	
-	/**
-	 * look in the list, if there is an event with baseId equals e.baseId
-	 * if yes, yield true, otherwise yield false
-	 * @param e
-	 * @param list
-	 * @return boolean
-	 */
-	private boolean hasEventBaseId(Event e, LinkedList<Event> list){
-		for(Event event : list){
-			if(e.baseId == event.baseId){
-				return true;
-			}
+	// TODO add method description
+	// TODO add other lists, which we have to check
+	public boolean hasEventOnDate(DateTime date, User requester){
+		for(Event event : this.eventHeads){
+			Event cursor = event;
+			do{
+				if(cursor.getStart().compareTo(date) == 0) 
+					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
+				
+				cursor = event.getNextReference();
+			}while(event.hasNext());
 		}
 		return false;
 	}
-
+	
+	/*
+	 * private helpers
+	 * this methods we can only call from this class
+	 * they are declared as private (never public or even protected) 
+	 */
+	
+	@SuppressWarnings("unused")
+	private boolean checkHappensOn(Event event, DateTime compareDate){
+		return (event.getStart().equals(compareDate) 
+					|| event.getEnd().equals(compareDate) 
+					|| (event.getStart().isBefore(compareDate) && event.getEnd().isAfter(compareDate)));
+	}
 }

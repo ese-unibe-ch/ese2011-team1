@@ -65,7 +65,7 @@ public class publicApplication extends Controller
     	    	user.setNotesVis(is_note_visible);
     			
     			Database.addUser(user);
-    			user.setBirthdayPublic(is_visible);
+//    			user.setBirthdayPublic(is_visible);
     		
     			try {Secure.login();} catch (Throwable e) {e.printStackTrace();}
     		} 

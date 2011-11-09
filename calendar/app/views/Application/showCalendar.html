@@ -1,7 +1,7 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 <header>
-	<h1>${user.name}'s Calendar: ${calendar.name}
+	<h1>${user.getName()}'s ${calendar.getName()} Calendar
 <!-- TODO DELETE FROM HERE USED FOR TESTING-->
 	#{if message}
 		<font style = "font-size: 30px; color: red;">${message}</font>
@@ -12,11 +12,11 @@
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
-				%}<a href="@{Application.removeObserve(user.name, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
+				%}<a href="@{Application.removeObserve(user.getName(), calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
 				out.println('<img src="/public/images/star_fav.png" border=0>');
 			}
 			else {
-				%}<a href="@{Application.addObserve(user.name, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
+				%}<a href="@{Application.addObserve(user.getName(), calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
 				out.println('<img src="/public/images/star.png" border=0>');
 			}
 		}
@@ -29,11 +29,11 @@
 
 <body>
 	<div id="nextMonth">
-		<a href="@{Application.showCalendar(calendar.getId(),user.name, nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> next </a>
+		<a href="@{Application.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> next </a>
 	</div>
 	
 	<div id="prevousMonth">
-		<a href="@{Application.showCalendar(calendar.getId(), user.name, prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> previous </a>
+		<a href="@{Application.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> previous </a>
 	</div>
 	
 	<table id="calendar">
@@ -83,9 +83,9 @@
 							out.println('<td class="entry"> ');
 						}
 						
-						if(calendar.hasEventOnDay(counter, month, year, me)){
+						if(calendar.hasEventOnDate(counter, month, year, me)){
 							%} 
-							<a href="@{Application.showCalendar(calendar.getId(), user.name, activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
+							<a href="@{Application.showCalendar(calendar.getId(), user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
 							%{
 						}
 						else {
@@ -118,7 +118,7 @@
 	
 	#{list items:observedCalendars, as:'cal'}
 		
-		<input type="checkbox" name="${cal.name}" id="${cal.id}" value="${cal.name}" onclick="changeSelection(this)" 
+		<input type="checkbox" name="${cal.getName()}" id="${cal.id}" value="${cal.getName()}" onclick="changeSelection(this)" 
 		%{
 		//if observable calendar is shown, display checkbox as checked
 		boolean statementClosed = false;
@@ -130,7 +130,7 @@
 					
 					//Color observed calendars
 					int col = interval*c;
-		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.name+'<br>');
+		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
 		 			c++;
 					statementClosed = true;
 					break;
@@ -139,7 +139,7 @@
 		 }
 		 
 		 if (!statementClosed) {
-			out.print('> '+cal.name+'<br>');
+			out.print('> '+cal.getName()+'<br>');
 		 }
 		 
 		%}
@@ -152,55 +152,53 @@
 	<div style="clear:both"></div>
 
 	<table id="events">
-			<h2>${user.name}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
-			#{list items:eventsOfDay, as:'event'}
+			<h2>${user.getName()}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
+			#{list items:eventsOfDate, as:'event'}
 				<p>
 					<!-- <li> -->
 					
-							#{if me != event.owner} 
+							#{if me != event.getOwner()} 
 							%{
 							int space = 360;
 							int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
-							//System.out.println("interval = "+interval+", calenderID = "+event.calendarID+", found at = "+shownObservedCalendars.indexOf(event.calendarID));
-							col = interval*(shownObservedCalendars.indexOf(event.calendarID)-1);
+							//System.out.println("interval = "+interval+", calenderID = "+event.getCalendarId()+", found at = "+shownObservedCalendars.indexOf(event.getCalendarId()));
+							col = interval*(shownObservedCalendars.indexOf(event.getCalendarId())-1);
 							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
 							%}
-							<b>Owner:</b>${event.owner.name} 
+							<b>Owner:</b>${event.getOwner().getName()} 
 							#{/if}
 								
 							#{if user==me}  
-								#{if me==event.owner || event.isPublic()}<b>Event name:</b>${event.name} #{/if},
+								#{if me==event.getOwner() || event.isPublic()}<b>Event name:</b>${event.getName()} #{/if},
 								
-								<!-- Why is this me==event.owner?? this displays 'busy' for all owned events! -->
-								#{if me==event.owner || event.isBusy()} <b>Busy</b> #{/if},  
-								<b>from:</b>${event.start.toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.end.toString("dd/MM/yyyy, HH:mm")} 
+								<!-- Why is this me==event.getOwner()?? this displays 'busy' for all owned events! -->
+								#{if me==event.getOwner() || event.isBusy()} <b>Busy</b> #{/if},  
+								<b>from:</b>${event.getStart().toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.getEnd().toString("dd/MM/yyyy, HH:mm")} 
 								    
-								#{if me==event.owner || event.isPublic()}
-									<b>visibility</b>:${event.visibility} 
-									<b>Repeating:</b>${event.is_repeating}  
-									<b>Description</b>:${event.description} <br>
+								#{if me==event.getOwner() || event.isPublic()}
+									<b>visibility</b>:${event.getVisibility()} 
+									<b>Repeating:</b>${event.isRepeating()}  
+									<b>Description</b>:${event.getDescription()} <br>
 								#{/if}
 							#{/if} <br>
-							#{if event.isOpen()}
-									<b>Attending:</b>${event.listAttendingUsers()}
-							#{/if}
 							
-							<b>Repeating:</b>${event.is_repeating}
-							<b>Description</b>:${event.description} <br>
-							#{if user == me && me==event.owner && !user.isBirthday(event)}
-								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
+							
+							<b>Repeating:</b>${event.isRepeating()}
+							<b>Description</b>:${event.getDescription()} <br>
+							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
+								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
-								#{if event.is_repeating}
+								#{if event.isRepeating()}
 									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
 									<b> <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
 								#{/if}
 							#{/if}
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
-								#{if event.userIsAttending(me.name)}
-									You are attending! <b><a href="@{Application.removeUserFromEvent(me.name, calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+								#{if event.userIsAttending(me.getName())}
+									You are attending! <b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
 								#{/if}
 								#{else}
-									<b><a href="@{Application.addUserToEvent(me.name, calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
+									<b><a href="@{Application.addUserToEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
 								#{/else}  
 							#{/if}
 					<br>
@@ -211,7 +209,7 @@
 	
 	<div id="Nav">
 		#{if user==me} 
- 			<a href="@{Application.addEvent(calendar.getId(), me.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+ 			<a href="@{Application.addEvent(calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
 		#{/if}
 	</div>
 	
@@ -219,7 +217,7 @@
 <input type="hidden" name="calID" value="" />
 <input type="hidden" name="chk" value="" />
 
-<input type="hidden" name="username" value="${user.name}" />
+<input type="hidden" name="username" value="${user.getName()}" />
 <input type="hidden" name="calendarId" value="${calendar.getId()}" />
 <input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" />
 <input type="hidden" name="message" value="${message}" />
@@ -245,6 +243,6 @@ function changeSelection(boxName) {
 	
 </body>	
 
-<a href="@{Application.showCalendarList(user.name, activeDate.toString('dd/MM/yyyy, HH:mm'))}">Back</a>
+<a href="@{Application.showCalendarList(user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Back</a>
 <a href="@{Application.index()}">Home</a>
 <a href="@{Secure.logout()}">Log out</a>

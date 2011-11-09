@@ -67,9 +67,11 @@ public class User {
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
-		this.birthday = new Event(this, birthday, birthday, name
-				+ "'s birthday", Visibility.PRIVATE, true, 365,
-				this.birthdayCalendar.getId(), false);
+//		this.birthday = new Event(this, birthday, birthday, name
+//				+ "'s birthday", Visibility.PRIVATE, true, 365,
+//				this.birthdayCalendar.getId(), false);
+		this.birthday = new PointEvent("birthday", birthday, birthday, Visibility.PRIVATE, birthdayCalendar);
+		
 		counter++;
 		this.id = counter;
 
@@ -136,10 +138,10 @@ public class User {
 	 * @param birthdayDate
 	 *            The new date of the Users <code>birthday</code>.
 	 */
-	public void setBirthdayDate(DateTime birthdayDate) {
-		birthday.edit(birthdayDate, birthdayDate, birthday.name,
-				birthday.visibility, true, 365);
-	}
+//	public void setBirthdayDate(DateTime birthdayDate) {
+//		birthday.edit(birthdayDate, birthdayDate, birthday.getName(),
+//				birthday.getVisibility(), true, 365);
+//	}
 
 	/**
 	 * Returns the visibility status of the Users birthday.
@@ -159,12 +161,12 @@ public class User {
 	 *            If true, the birthday will be set to visible. If false, the
 	 *            birthday will be set to private.
 	 */
-	public void setBirthdayPublic(boolean is_visible) {
-		Visibility visibility = is_visible ? Visibility.PUBLIC
-				: Visibility.PRIVATE;
-		birthday.edit(birthday.start, birthday.end, birthday.name, visibility,
-				true, 365);
-	}
+//	public void setBirthdayPublic(boolean is_visible) {
+//		Visibility visibility = is_visible ? Visibility.PUBLIC
+//				: Visibility.PRIVATE;
+//		birthday.edit(birthday.start, birthday.end, birthday.name, visibility,
+//				true, 365);
+//	}
 
 	/**
 	 * Get this Users nickname.
@@ -286,7 +288,7 @@ public class User {
 	 */
 	public boolean isCalendarObserved(long calId) {
 		for (Calendar cal : observedCalendars) {
-			if (cal.id == calId)
+			if (cal.getId() == calId)
 				return true;
 		}
 		return false;

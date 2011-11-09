@@ -1,28 +1,30 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+
+// TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
+// TODO improve some performance issues.
+// TODO add birthday stuff and observed stuff - shouldn't be that hard 
+//		but think about a global date structure for all the "to be rendered" stuff..
 
 /**
- * An Event represents a happening with a defined start date and end date.
- * 
- * The Event class provides multiple options to satisfy the needs for
- * modification, repetition and privacy. Events can be stored in a
- * {@link Calendar} to provide a graphical representation or attributed to a
- * {@link User} directly. Events are Comparable by their start date. The Event
- * class is must know its start/end date and in case of repetition know its
- * repeating status and next repetition.
- * 
- * @see {@link java.lang.Comparable}
+ * Event is an abstract class which provides some base methods and fields for concrete event classes.
+ * we can identify an event as a double linked data structure with a reference to its next and to its previous event.
+ * An event is either one of a series of events (types: IntervalEvent, RepeatingEvent)
+ * or a lone point (type: PointEvent) event. an event can be a head or a successor of a head.
+ * a head is similar to an root - i.e. the 1st element of a series of events. 
+ * if an event is of type PointEvent, then this event has no next and previous references
+ * each event has an unique id and a baseId. the baseId indicates the id of its head. 
+ * An event has a name, an end date, an start date, and a visibility
+ * Remark: We assume: if an event.next == null, then event is a leaf 
+ * and if event.previous == null, then event is a root so care about references.
+ * @author team1
+ *
  */
-public class Event implements Comparable<Event> {
-
+public abstract class Event implements Comparable<Event>{
+	
 	/**
 	 * Provides three layers of visibility to control the privacy of Events.
-	 * 
 	 */
 	public enum Visibility {
 		/**
@@ -30,8 +32,7 @@ public class Event implements Comparable<Event> {
 		 */
 		PUBLIC,
 		/**
-		 * All Users are allowed to see this Events start and end date, but
-		 * nothing more.
+		 * All Users are allowed to see this Events start and end date, but nothing more.
 		 */
 		BUSY,
 		/**
@@ -39,24 +40,19 @@ public class Event implements Comparable<Event> {
 		 */
 		PRIVATE
 	}
-
-	public long id;
-	public long calendarID;
-	public long baseId;
-	public User owner;
-	public DateTime start;
-	public DateTime end;
-	public String name;
-	public String description;
-	public Visibility visibility;
-	public boolean is_repeating;
-	public int intervall;
+	
+	private Calendar calendar;
+	protected Event next;
+	protected Event previous;
+	private DateTime start;
+	private DateTime end;
+	private String name;
+	private String description;
 	private static long counter;
-	public boolean isDirty = false;
-	public boolean wasPreviouslyRepeating = false;
-	private List<User> attendingUsers;
-	private boolean is_open;
-
+	private long id;
+	private long baseId;
+	private Visibility visibility;
+	
 	/**
 	 * 
 	 * @param start
@@ -70,442 +66,219 @@ public class Event implements Comparable<Event> {
 	 * @param isRepeated
 	 *            flag, used for repeating Events
 	 * @param intervall
-	 *            determines repetition intervall. Possibilities: DAY (1),
-	 *            WEEK(7), MONTH(30), YEAR(265)
+	 *            determines repetition interval. Possibilities: DAY (1),
+	 *            WEEK(7), MONTH(30), YEAR(365)
 	 */
-	public Event(User owner, DateTime start, DateTime end, String name,
-			Visibility visibility, boolean is_repeating, int intervall, 
-			long calendarID, boolean is_open) {
-		this.owner = owner;
+	public Event(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar) {
+		this.name = name;
 		this.start = start;
 		this.end = end;
-		this.name = name;
 		this.visibility = visibility;
-		counter++;
+		this.calendar = calendar;
 		this.id = counter;
-		this.is_repeating = is_repeating;
-		this.intervall = intervall;
-		this.baseId = id;
-		this.calendarID = calendarID;
-		this.attendingUsers = new ArrayList<User>();
-		this.is_open = is_open;
+		counter++;	
 	}
-
+	
 	/*
-	 * Getters
+	 * getters
 	 */
-
+	
+	/**
+	 * Get the name of this Event.
+	 * @return The <code>name</code> of this Event.
+	 */
+	public String getName(){
+		return this.name;
+	}
+	
+	public String getDescription(){
+		return this.description;
+	}
+	
 	/**
 	 * Get start date of Event.
-	 * 
 	 * @return The <code>start</code> date of this Event.
 	 */
-	public DateTime getStart() {
+	public DateTime getStart(){
 		return this.start;
 	}
-
+	
 	/**
 	 * Get end date of Event.
-	 * 
-	 * @return The <code>end</code> date of this Event.
+	 * @return The  <code>end</code> date of this Event.
 	 */
-	public DateTime getEnd() {
+	public DateTime getEnd(){
 		return this.end;
 	}
-
+	
+	/**
+	 * Get the unique id of this Event.
+	 * @return The <code>id</code> of this Event.
+	 */
+	public long getId(){
+		return this.id;
+	}
+	
+	/**
+	 * Get the baseId of this Event.
+	 * @return The baseId of this Event.
+	 */
+	public long getBaseId(){
+		return this.baseId;
+	}
+	
+	public long getCalendarId() {
+		return this.calendar.getId();
+	}
 	/**
 	 * Get the visibility status of this Event.
-	 * 
 	 * @return The visibility of this Event.
-	 * @see {@link Visibility}
+	 * @see�{@link Visibility}
 	 */
 	public Visibility getVisibility() {
 		return this.visibility;
 	}
-
-	/**
-	 * Get the name of this Event.
-	 * 
-	 * @return The <code>name</code> of this Event.
-	 */
-	public String getName() {
-		return this.name;
+	
+	public User getOwner() {
+		return this.calendar.getOwner();
 	}
-
-	/**
-	 * Get the unique id of this Event.
-	 * 
-	 * @return The <code>id</code> of this Event.
-	 */
-	public long getId() {
-		return this.id;
+	
+	// returns the reference to its next event, iff exists, otherwise null;
+	// if null is returned it means of of these things:
+	// event is a leaf, i.e. either we have an RepeatingEvent and for those, we only generate 
+	// as many successors as we need (till current month)
+	// or we have an IntervalEvent which holds the same expect, there is a bound.
+	// event is a PointEvent in head list. those types of events don't have any successors 
+	public Event getNextReference(){
+		return this.next;
 	}
-
+	
+	// returns the reference to its previous event, iff exists, otherwise null;
+	// if null is returned, it means, that this event is an head event, since heads have no root
+	public Event getPreviousReference(){
+		return this.previous;
+	}
+	
 	/**
 	 * Get a String representation of a given date.
 	 * 
 	 * Returns a String representation in the form "dd/MM/yyyy, HH:mm".
-	 * 
-	 * @param date
-	 *            The date to be parsed.
+	 * @param date The date to be parsed.
 	 * @return String representation of argument.
 	 */
-	public String getParsedDate(DateTime d) {
-		return d.toString("dd/MM/yyyy, HH:mm");
+	public String getParsedDate(DateTime date) {
+		return date.toString("dd/MM/yyyy, HH:mm");
 	}
-
-	/**
-	 * Edit all attributes of an Event.
-	 * 
-	 * 
-	 * @param start
-	 *            The start date to be set.
-	 * @param end
-	 *            The end date to be set.
-	 * @param name
-	 *            The name to be set.
-	 * @param visibility
-	 *            The visibility to be set.
-	 * @param is_repeated
-	 *            The repetition status to be set.
-	 * @param intervall
-	 *            The repetition intervall to be set.
+	
+	public String getParsedStartDate(){
+		return this.getStart().toString("dd/MM/yyyy, HH:mm");
+	}
+	
+	public String getParsedEndDate(){
+		return this.getEnd().toString("dd/MM/yyyy, HH:mm");
+	}
+	
+	public Calendar getCalendar(){
+		return this.calendar;
+	}
+	
+	// depending on what kind of event we are
+	// generate next events for a head if allowed.
+	// summary: 
+	// PointEvent: has no next event
+	// IntervalEvent: if this event has already a pointer to an "nextEvent" then call getNextEvent on our nextEvent
+	public abstract void generateNextEvents(DateTime currentDate);
+	
+	/*
+	 * setters 
 	 */
-	public void edit(DateTime start, DateTime end, String name,
-			Visibility visibility, boolean is_repeated, int intervall) {
+	
+	public abstract void setNext(Event event);
+	public abstract void setPrevious(Event event);
+	
+	public void setStart(DateTime start){
 		this.start = start;
+	}
+	
+	public void setEnd(DateTime end){
 		this.end = end;
-		this.name = name;
-		this.visibility = visibility;
-		this.is_repeating = is_repeated;
-		this.intervall = intervall;
 	}
-
-	/**
-	 * Edit the description of this Event.
-	 * 
-	 * @param text
-	 *            The new description to be set.
-	 */
-	public void editDescription(String text) {
-		this.description = text;
-	}
-
-	/**
-	 * Compare this Events start date with the arguments start date according to
-	 * the definition of {@link Comparable#compareTo}
-	 * 
-	 * @param event
-	 *            The event to compare this Event with.
-	 * @returns a negative integer, zero, or a positive integer as this object
-	 *          is less than, equal to, or greater than the specified object.
-	 */
-	@Override
-	public int compareTo(Event event) {
-		return this.getStart().compareTo(event.getStart());
-	}
-
-	/**
-	 * Check if this Event is a repeating Event.
-	 * 
-	 * @return <code>true</code> if this Event is a repeating Event.
-	 *         <code>false</code> otherwise.
-	 */
-	public boolean isRepeating() {
-		return this.is_repeating;
-	}
-
-	/**
-	 * Get the intervall of this Events repetition.
-	 * 
-	 * @return 0, if this Event is not repeating. 1, if this Event is repeated
-	 *         on a daily basis. 7, if this Event is repeated weekly. 30, if
-	 *         this Event is repeated every month. 365, if this Event is
-	 *         repeated every year.
-	 */
-	public int getIntervall() {
-		return this.intervall;
-	}
-
-	/**
-	 * Get the next Repetition for this Event, based on its repetition status.
-	 * 
-	 * This method is so ugly i will not even try to understand what's going on.
-	 * Change is coming, looking forward to introduce org.joda.DateTime soon.
-	 * 
-	 * @return An Event with the same baseId as this Event, whose start date is
-	 *         calculated based on this Events repetition status.
-	 */
-	// TODO: fix ugly date instantiation and fix correct calculation for monthly
-	// repeating events
-	public Event getNextRepetitionEvent() {
-
-		DateTime nextStart = null;
-		DateTime nextEnd = null;
-		switch (intervall) {
-		case 1: {
-			nextStart = this.start.plusDays(1);
-			nextEnd = this.end.plusDays(1);
-		}
-			break;
-		case 7: {
-			nextStart = this.start.plusDays(7);
-			nextEnd = this.end.plusDays(7);
-		}
-			break;
-		case 30: {
-			nextStart = this.start.plusMonths(1);
-			nextEnd = this.end.plusMonths(1);
-		}
-			break;
-		case 365: {
-			nextStart = this.start.plusYears(1);
-			nextEnd = this.end.plusYears(1);
-		}
-		}
-
-		Event nextRepetition = new Event(this.owner, nextStart, nextEnd, this.name, this.visibility, this.is_repeating, this.intervall, this.calendarID, this.is_open);
-		nextRepetition.setBaseId(this.baseId);
-		return nextRepetition;
-		
-		// DateTime nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth(),
-		// start.getDate() + intervall, start.getHours(),
-		// start.getMinutes());
-		// DateTime nextRepEndDate = new DateTime(end.getYear(), end.getMonth(),
-		// end.getDate() + intervall, end.getHours(), end.getMinutes());
-		//
-		// if (intervall == 30) {
-		//
-		// // get month of start to be corrected: add a extra variable for
-		// // end.getMonth()
-		// int k = start.getMonth() + 1;
-		// int delta = 0;
-		// int yearType = (start.getYear() + 1900) % 4;
-		// // leap year: yearType = 0;
-		// // normal year: yearType = 1|2|3;
-		// int month = start.getMonth() + 1;
-		//
-		// // if it is jan, mar, mai, jun, jul, okt or dez ==> 31er months
-		// if (month == 1 || month == 3 || month == 5 || month == 7
-		// || month == 8 || month == 10 || month == 12) {
-		//
-		// // if we have a event on a 31th of month, then feb, apr, aug,
-		// // sep, nov wont have an event,
-		// // since they have no 31th. Therefore +2
-		// if (start.getDate() == 31) {
-		//
-		// // if we have december or june
-		// if (k == 7 || k == 12)
-		// delta = -1;
-		//
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 2 + delta, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(), end.getMonth() + 2
-		// + delta, end.getDate(), end.getHours(),
-		// end.getMinutes());
-		//
-		// // if we have an event on the 29th of a month
-		// } else if (start.getDate() == 29) {
-		//
-		// // if current month is january and a leap-year
-		// if (k == 1 && yearType != 0) {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 2 + delta, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(), end.getMonth()
-		// + 2 + delta, end.getDate(), end.getHours(),
-		// end.getMinutes());
-		// // if we have mar, mai, jun, jul, okt or dez
-		// } else {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 1, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(),
-		// end.getMonth() + 1, end.getDate(),
-		// end.getHours(), end.getMinutes());
-		// }
-		// // all other days as event in the months: jan, mar, mai,
-		// // jun, jul, okt or dez
-		// } else {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 1, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(),
-		// end.getMonth() + 1, end.getDate(), end.getHours(),
-		// end.getMinutes());
-		// }
-		//
-		// // if it is feb ==> 28er or 29er month
-		// } else if (month == 2) {
-		// // if we have a leap year
-		// if (yearType == 0) {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 1, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(),
-		// end.getMonth() + 1, end.getDate(), end.getHours(),
-		// end.getMinutes());
-		// } else {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 1, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(),
-		// end.getMonth() + 1, end.getDate(), end.getHours(),
-		// end.getMinutes());
-		// }
-		//
-		// // if it is apr, aug, sep or nov => 30er months
-		// } else {
-		// nextRepStartDate = new DateTime(start.getYear(),
-		// start.getMonth() + 1, start.getDate(),
-		// start.getHours(), start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear(), end.getMonth() + 1,
-		// end.getDate(), end.getHours(), end.getMinutes());
-		// }
-		// }
-		// if (intervall == 365) {
-		// // if we have a leap year, remember february is equals 1
-		// if (start.getDate() == 29 && start.getMonth() == 1) {
-		// nextRepStartDate = new DateTime(start.getYear() + 4,
-		// start.getMonth(), start.getDate(), start.getHours(),
-		// start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear() + 4, end.getMonth(),
-		// end.getDate(), end.getHours(), end.getMinutes());
-		// } else {
-		// nextRepStartDate = new DateTime(start.getYear() + 1,
-		// start.getMonth(), start.getDate(), start.getHours(),
-		// start.getMinutes());
-		// nextRepEndDate = new DateTime(end.getYear() + 1, end.getMonth(),
-		// end.getDate(), end.getHours(), end.getMinutes());
-		// }
-		// }
-		// Event newEvent = new Event(this.owner, nextRepStartDate,
-		// nextRepEndDate, this.name, this.visibility, this.is_repeating,
-		// this.intervall);
-		// newEvent.setBaseId(this.baseId);
-		// return newEvent;
-	}
-
+	
 	/**
 	 * Set the baseId
-	 * 
-	 * @param id
-	 *            The baseId to be set.
+	 * @param id The baseId to be set.
 	 */
-	private void setBaseId(long id) {
-		this.baseId = id;
+	public void setBaseId(long baseId){
+		this.baseId = baseId;
 	}
-
+	
+	public void setVisiblility(Visibility visibility){
+		this.visibility = visibility;
+	}
+	
 	/**
-	 * Get the baseId of this Event.
-	 * 
-	 * @return The baseId of this Event.
+	 * Edit the description of this Event.
+	 * @param text The new description to be set.
 	 */
-	public long getBaseId() {
-		return this.baseId;
+	public void editDescription(String text){
+		this.description = text;
 	}
-
-	/**
-	 * This method compares a provided Date with the repetitions of this Event
-	 * until the provided Date is smaller than the start date of the calculated
-	 * repetition. If one of the repetitions has the same date as the provided
-	 * date, this repetition will be returned.
-	 * 
-	 * @param compDate
-	 *            the date which is compared to the calculated repetitions.
-	 * @return null if no repetition of any Event occurs on the specified Date.
-	 *         Event repeatingEventOnDay if
-	 *         repeatingEventOnDay.getStart().getDate() == compDate.getDate().
-	 * 
+	
+	public void forceSetId(long id){
+		this.id = id;
+	}
+	
+	/*
+	 * checks
 	 */
-	public Event getRepetitionOnDate(LocalDate compDate) {
-		Event repeatingEventOnDay = null;
-		Event repeatingEvent = this;
-		while (repeatingEvent.getStart().toLocalDate().isBefore(compDate)) {
-			repeatingEvent = repeatingEvent.getNextRepetitionEvent();
-			if (repeatingEvent.getStart().toLocalDate().equals(compDate)) {
-				repeatingEventOnDay = repeatingEvent;
-			}
-		}
-		return repeatingEventOnDay;
+	
+	public boolean hasNext(){
+		return this.next != null;
 	}
-
-	/**
-	 * Get a String representation for this Event.
-	 * 
-	 * @return The <code>name</code> of this Event.
-	 */
-	public String toString() {
-		return this.name;
+	
+	public boolean hasPrevious(){
+		return this.previous != null;
 	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
+	
 	/**
 	 * Check if this Event is visible.
-	 * 
-	 * @return <code>true</code> if the visibility status of this Event is
-	 *         either PUBLIC or BUSY. <code>false</code> if the visibility
-	 *         status if PRIVATE.
+	 * @return <code>true</code> if the visibility status of this Event is either PUBLIC or BUSY.
+	 * <code>false</code> if the visibility status if PRIVATE.
 	 */
 	public boolean isVisible() {
 		return this.visibility != Visibility.PRIVATE;
 	}
-
-	public boolean isBusy() {
+	
+	public boolean isBusy(){
 		return this.visibility == Visibility.BUSY;
 	}
-
-	public boolean isPublic() {
+	
+	public boolean isPublic(){
 		return this.visibility == Visibility.PUBLIC;
 	}
-
-	public boolean isPrivate() {
+	
+	public boolean isPrivate(){
 		return this.visibility == Visibility.PRIVATE;
 	}
-
-	public void addUserToAttending(User requester) {
-		if (!this.attendingUsers.contains(requester)) {
-		this.attendingUsers.add(requester);
-		}
-	}
 	
-	public void removeUserFromAttending(User requester) {
-		this.attendingUsers.remove(requester);
-	}
-
+	//TODO: ATTENTION!
 	public boolean isOpen() {
-		return this.is_open;
+		return true;
 	}
 	
-	public boolean userIsAttending(String username) {
-		User user = Database.getUserByName(username);
-		for (User attendingUser : attendingUsers) {
-			if (attendingUser.equals(user)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean userIsAttending(String name) {
+		return true;
 	}
 	
-	public String listAttendingUsers() {
-		StringBuffer sb = new StringBuffer();
-		for (User user : attendingUsers) {
-			sb.append(user.getName());
-			sb.append(", ");
-		}
-		if (sb.length() > 0) {
-		sb.setLength(sb.length()-2);
-		}
-		return sb.toString();
+	public boolean isRepeating() {
+		return (this instanceof RepeatingEvent); 
 	}
-
-	public long getCalendarId() {
-		return this.calendarID;
+	
+	/*
+	 * helpers
+	 */
+	public String toString() {
+		return this.name;
 	}
 
 }

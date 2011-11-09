@@ -19,6 +19,8 @@ import models.Calendar;
 import models.Database;
 import models.Event;
 import models.Event.Visibility;
+import models.PointEvent;
+import models.RepeatingEvent;
 import models.User;
 import play.data.validation.Required;
 import play.mvc.Controller;
@@ -109,19 +111,6 @@ public class Application extends Controller {
 		try {Secure.logout();} catch (Throwable e) {e.printStackTrace();}
 	}
 
-	//MORELLI
-//	public static void showProfile(String userName) {
-//		User user = Database.getUserByName(userName);
-//		Event birthday = user.getBirthday();
-//		String nickname = user.getNickname();
-//		boolean is_visible = user.isBirthdayPublic();
-//
-//		String pub = "public";
-//		if (!is_visible)
-//			pub = "private";
-//
-//		render(user, nickname, birthday, pub);
-//	}
 	
 	public static void showProfile(String userName)
     {
@@ -145,7 +134,7 @@ public class Application extends Controller {
 	    	String oldname = name;
 	    	String nickname = user.getNickname();
 	    	String password = user.getPassword();
-	    	String birthday = user.getBirthday().start.toString("dd/MM/yyyy");
+	    	String birthday = null; //user.getBirthday().start.toString("dd/MM/yyyy");
 	    	boolean is_visible = user.isBirthdayPublic();
 	    	
 	    	//NEW
@@ -169,57 +158,6 @@ public class Application extends Controller {
 	    			telP, is_telP_visible, telB, is_telB_visible, notes, is_note_visible);
 	    }
 
-	 //MORELLI
-//	public static void showEditProfile() {
-//		User user = Database.users.get(Security.connected());
-//
-//		String name = user.getName();
-//		String nickname = user.getNickname();
-//		String password = user.getPassword();
-//		String birthday = user.getBirthday().getStart().toString("dd/MM/yyyy");
-//
-//		boolean is_visible = user.isBirthdayPublic();
-//
-//		render(name, nickname, password, birthday, is_visible);
-//	}
-
-//	public static void editProfile(@Required String name,
-//			@Required String password, @Required String birthday,
-//			@Required String nickname, @Required boolean is_visible) {
-//		User user = Database.users.get(Security.connected());
-//
-//		if (!(name.equals(user.getName()))
-//				&& Database.userAlreadyRegistrated(name)) {
-//			flash.error("Username (" + name + ") already exists!");
-//			params.flash();
-//			validation.keep();
-//			showEditProfile();
-//		} else if (validation.hasErrors()) {
-//			params.flash();
-//			validation.keep();
-//			flash.error("All fields required!");
-//			showEditProfile();
-//		} else {
-//			try {
-//				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-//				user.setBirthdayDate(birthdate);
-//				user.setBirthdayPublic(is_visible);
-//				user.setName(name);
-//				user.setNickname(nickname);
-//				user.setPassword(password);
-//
-//				Database.changeUserName(user); // TODO does not work properly
-//												// jet!
-//
-//				index();
-//			} catch (Exception e) {
-//				params.flash();
-//				validation.keep();
-//				flash.error("Invalid date format");
-//				showEditProfile();
-//			}
-//		}
-//	}
 	 
 	 public static void editProfile(@Required String name, String oldname, @Required String password, @Required String birthday, @Required String nickname, @Required boolean is_visible,
 	    		String emailP, boolean is_emailP_visible, String emailB, boolean is_emailB_visible,
@@ -250,13 +188,13 @@ public class Application extends Controller {
 	    			User newUser = user;
 //	    			Database.deleteUser(user.getName(), user.getPassword());
 	    			
-	    			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-	    			newUser.setBirthdayDate(birthdate);
-	    			newUser.setBirthdayPublic(is_visible);
+//	    			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
+//	    			newUser.setBirthdayDate(birthdate);
+//	    			newUser.setBirthdayPublic(is_visible);
 	    			newUser.setName(name);
 	    			newUser.setNickname(nickname);
 	    			newUser.setPassword(password);
-	    			newUser.setBirthdayPublic(is_visible);
+//	    			newUser.setBirthdayPublic(is_visible);
 	    			newUser.setEmailP(emailP);
 	    			newUser.setEmailPVis(is_emailP_visible);
 	    			newUser.setEmailB(emailB);
@@ -310,62 +248,72 @@ public class Application extends Controller {
 			message = "INVALID INPUT: START DATE MUST BE BEFORE END DATE!";
 			addEvent(calendarID, name, s_activeDate, message);
 		}
+		
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int intervall = Integer.parseInt(is_repeated);
-		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
-				intervall, calendarID, is_open);
-		e.editDescription(description);
-		if (e.isOpen()) {
-			e.addUserToAttending(me);
+		
+		Event e = null;
+		if (!repeated) {
+			e = new PointEvent(name, d_start, d_end, visibility, calendar);
+		} else {
+			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar, intervall);
+			e.generateNextEvents(e.getStart());
 		}
+		
+		//Event e = new Event(me, d_start, d_end, name, visibility, repeated,
+		//		intervall, calendarID, is_open);
+		e.editDescription(description);
+//		if (e.isOpen()) {
+//			e.addUserToAttending(me);
+//		}
 		calendar.addEvent(e);
 		showCalendar(calendarID, me.name, start,
 				d_start.getDayOfMonth(), message);
 	}
 
-	public static void saveEditedEvent(@Required long eventID,
-			@Required long calendarID, @Required String name,
-			@Required String start, @Required String end,
-			Visibility visibility, String is_repeated, String description,
-			String s_activeDate) {
+//	public static void saveEditedEvent(@Required long eventID,
+//			@Required long calendarID, @Required String name,
+//			@Required String start, @Required String end,
+//			Visibility visibility, String is_repeated, String description,
+//			String s_activeDate) {
+//
+//		User me = Database.users.get(Security.connected());
+//		Calendar calendar = me.getCalendarById(calendarID);
+//
+//		// covert dates
+//
+//		DateTime d_start = null;
+//		DateTime d_end = null;
+//		boolean repeated = is_repeated.equals("0") ? false : true;
+//		int intervall = Integer.parseInt(is_repeated);
+//		Event event = calendar.getEventById(eventID);
+//		event.editDescription(description);
+//
+//		if (repeated && !event.wasPreviouslyRepeating) {
+//			event.wasPreviouslyRepeating = true;
+//			calendar.addToRepeated(event);
+//		}
+//
+//		try {
+//			d_start = dateTimeInputFormatter.parseDateTime(start);
+//			d_end = dateTimeInputFormatter.parseDateTime(end);
+//		} catch (Exception e) {
+//			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+//			editEvent(eventID, calendarID, name, s_activeDate, message);
+//		}
+//
+//		event.edit(d_start, d_end, name, visibility, repeated, intervall);
+//		showCalendar(calendarID, me.name, s_activeDate,
+//				d_start.getDayOfMonth(), message);
+//	}
 
-		User me = Database.users.get(Security.connected());
-		Calendar calendar = me.getCalendarById(calendarID);
-
-		// covert dates
-
-		DateTime d_start = null;
-		DateTime d_end = null;
-		boolean repeated = is_repeated.equals("0") ? false : true;
-		int intervall = Integer.parseInt(is_repeated);
-		Event event = calendar.getEventById(eventID);
-		event.editDescription(description);
-
-		if (repeated && !event.wasPreviouslyRepeating) {
-			event.wasPreviouslyRepeating = true;
-			calendar.addToRepeated(event);
-		}
-
-		try {
-			d_start = dateTimeInputFormatter.parseDateTime(start);
-			d_end = dateTimeInputFormatter.parseDateTime(end);
-		} catch (Exception e) {
-			message = "INVALID INPUT: PLEASE TRY AGAIN!";
-			editEvent(eventID, calendarID, name, s_activeDate, message);
-		}
-
-		event.edit(d_start, d_end, name, visibility, repeated, intervall);
-		showCalendar(calendarID, me.name, s_activeDate,
-				d_start.getDayOfMonth(), message);
-	}
-
-	public static void editEvent(long eventID, long calendarID, String name,
-			String s_activeDate, String message) {
-		User me = Database.users.get(Security.connected());
-		Calendar calendar = me.getCalendarById(calendarID);
-		Event event = calendar.getEventById(eventID);
-		render(me, calendar, event, calendarID, eventID, s_activeDate, message);
-	}
+//	public static void editEvent(long eventID, long calendarID, String name,
+//			String s_activeDate, String message) {
+//		User me = Database.users.get(Security.connected());
+//		Calendar calendar = me.getCalendarById(calendarID);
+//		Event event = calendar.getEventById(eventID);
+//		render(me, calendar, event, calendarID, eventID, s_activeDate, message);
+//	}
 
 	public static void addEvent(long calendarID, String name,
 			String s_activeDate, String message) {
@@ -403,7 +351,7 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventId);
-		calendar.removeRepeatingEvents(event);
+		calendar.removeSerieOfRepeatingEvents(event);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		showCalendar(calendarID, me.name, s_activeDate,
@@ -436,9 +384,8 @@ public class Application extends Controller {
 		}
 		assert (activeDate != null) : "must not be null!";
 
-		calendar.filterEventlist();
-
-		LinkedList<Event> eventsOfDay = calendar.getEventsOfDay(activeDate, me);
+		LinkedList<Event> eventsOfDate = calendar.getEventsOfDate(activeDate.getDayOfMonth(), activeDate.getMonthOfYear(), activeDate.getYear(), me);
+		System.out.println("all events: " + eventsOfDate);
 
 		int bound = (activeDate.withDayOfMonth(1).getDayOfWeek());
 		int bound2 = activeDate.dayOfMonth().getMaximumValue();
@@ -450,17 +397,17 @@ public class Application extends Controller {
 		LinkedList<Long> shownObservedCalendars = me
 				.getShownObservedCalendars();
 
-		Calendar birthdayCalendar = me.getBirthdayCalendar();
-		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(
-				calendar.getEvents());
-		for (Event e : allEvents) {
-			if (e.owner != me || birthdayCalendar.getEvents().contains(e)) {
-				calendar.getEvents().remove(e);
-			}
-		}
+//		Calendar birthdayCalendar = me.getBirthdayCalendar();
+//		PriorityQueue<Event> allEvents = new PriorityQueue<Event>(
+//				calendar.getEvents());
+//		for (Event e : allEvents) {
+//			if (e.owner != me || birthdayCalendar.getEvents().contains(e)) {
+//				calendar.getEvents().remove(e);
+//			}
+//		}
 
 		render(me, user, calendar, bound, bound2, prevMonth, nextMonth,
-				activeDate, today, eventsOfDay, message, faved,
+				activeDate, today, eventsOfDate, message, faved,
 				observedCalendars, shownObservedCalendars);
 	}
 
@@ -525,32 +472,32 @@ public class Application extends Controller {
 	}
 	
 	public static void addUserToEvent(String requesterName, long calendarId, long eventId, String s_activeDate) {
-		User me = Database.getUserByName(requesterName);
-		Calendar cal = me.getCalendarById(calendarId);
+//		User me = Database.getUserByName(requesterName);
+//		Calendar cal = me.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
-		Event event = null;
-		for (Event e : cal.getEventsOfDay(activeDate, me)) {
-			if (e.getId() == eventId) {
-				event = e;
-			}
-		}
-		assert (event != null);
-		event.addUserToAttending(me);
+//		Event event = null;
+//		for (Event e : cal.getEventsOfDate(activeDate, me)) {
+//			if (e.getId() == eventId) {
+//				event = e;
+//			}
+//		}
+//		assert (event != null);
+////		event.addUserToAttending(me);
 		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
 	}
 	
 	public static void removeUserFromEvent(String requesterName, long calendarId, long eventId, String s_activeDate) {
-		User me = Database.getUserByName(requesterName);
-		Calendar cal = me.getCalendarById(calendarId);
+//		User me = Database.getUserByName(requesterName);
+//		Calendar cal = me.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
-		Event event = null;
-		for (Event e : cal.getEventsOfDay(activeDate, me)) {
-			if (e.getId() == eventId) {
-				event = e;
-			}
-		}
-		assert (event != null);
-		event.removeUserFromAttending(me);
+//		Event event = null;
+////		for (Event e : cal.getEventsOfDay(activeDate, me)) {
+////			if (e.getId() == eventId) {
+////				event = e;
+////			}
+////		}
+//		assert (event != null);
+////		event.removeUserFromAttending(me);
 		showCalendar(calendarId, requesterName, s_activeDate, activeDate.getDayOfMonth(), null);
 	}
 	
