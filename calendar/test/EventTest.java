@@ -31,6 +31,7 @@ public class EventTest extends UnitTest {
 		this.event2AfterEvent = new PointEvent("event2AfterEvent", new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar); 
 		this.event3BeforeEvent = new PointEvent("event3BeforeEvent", new DateTime(-1), new DateTime(0), Visibility.PRIVATE, calendar); 
 		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today, tomorrow, Visibility.PRIVATE, calendar, 7);
+		this.repeatingEvent.generateNextEvents(repeatingEvent.getStart().plusMonths(1));
 	}
 
 	@Test
@@ -102,7 +103,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervall7() {
 		assertEquals(repeatingEvent.getInterval(), 7);
-		System.out.println("repeating: " + repeatingEvent);
+		System.out.println("repeating: " + repeatingEvent.getName());
 		Event nextRepetition = repeatingEvent.getNextReference();
 		System.out.println("next: " + repeatingEvent.getNextReference() + "    sgbnsg");
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());

@@ -15,6 +15,7 @@ public class RepeatingEvent extends Event{
 
 	@Override
 	public void setNext(Event event) {
+		System.out.println("next set: " + event);
 		this.next = event;
 	}
 	
