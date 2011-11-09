@@ -224,6 +224,10 @@ public abstract class Event implements Comparable<Event>{
 		this.description = text;
 	}
 	
+	/**
+	 * Use this method only for special constructors
+	 * @param id
+	 */
 	public void forceSetId(long id){
 		this.id = id;
 	}
@@ -277,6 +281,7 @@ public abstract class Event implements Comparable<Event>{
 	/*
 	 * helpers
 	 */
+	
 	public String toString() {
 		return this.name;
 	}
