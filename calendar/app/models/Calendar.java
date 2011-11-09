@@ -288,8 +288,11 @@ public class Calendar {
 		// case c)
 		else if(victim instanceof RepeatingEvent){
 			// possible resulting interval structures after deletion
-			// [head, previctim] | victim | [postVictim, +infinite]
-			
+			// there are 3 cases which we have to consider:
+			// (a) victim equals current head => next of head gets new head
+			// (b) victim equals next after head => head gets a PointEvent, victim.next a new head 
+			// (c) [head, previctim] | victim | [postVictim, +infinite]
+			// care about setting new baseId correctly.
 		}
 	}
 	
