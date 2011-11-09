@@ -31,7 +31,7 @@ public class EventTest extends UnitTest {
 		this.event2AfterEvent = new PointEvent("event2AfterEvent", new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar); 
 		this.event3BeforeEvent = new PointEvent("event3BeforeEvent", new DateTime(-1), new DateTime(0), Visibility.PRIVATE, calendar); 
 		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today, tomorrow, Visibility.PRIVATE, calendar, 7);
-		this.repeatingEvent.generateNextEvents(repeatingEvent.getStart().plusMonths(1));
+		this.repeatingEvent.init();
 	}
 
 	@Test
@@ -103,9 +103,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervall7() {
 		assertEquals(repeatingEvent.getInterval(), 7);
-		System.out.println("repeating: " + repeatingEvent.getName());
 		Event nextRepetition = repeatingEvent.getNextReference();
-		System.out.println("next: " + repeatingEvent.getNextReference() + "    sgbnsg");
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
 		assertEquals(repeatingEvent.getStart().plusDays(7), nextRepetition.getStart());
 		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(), nextRepetition.getStart().dayOfMonth());
@@ -116,6 +114,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervallMonth() {
 		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), 30);
+		repeatingEvent.init();
 		assertEquals(repeatingEvent.getInterval(), 30);
 		Event nextRepetition = repeatingEvent.getNextReference();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
@@ -130,6 +129,7 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetNextRepetitionIntervallYear() {
 		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), 365);
+		repeatingEvent.init();
 		assertEquals(repeatingEvent.getInterval(), 365);
 		Event nextRepetition = repeatingEvent.getNextReference();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());

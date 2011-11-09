@@ -143,7 +143,7 @@ public abstract class Event implements Comparable<Event>{
 		return this.calendar.getOwner();
 	}
 	
-	// returns the reference to its next event, iff exists, otherwise null;
+	// returns the reference to its next event, if exists, otherwise null;
 	// if null is returned it means of of these things:
 	// event is a leaf, i.e. either we have an RepeatingEvent and for those, we only generate 
 	// as many successors as we need (till current month)
@@ -154,7 +154,7 @@ public abstract class Event implements Comparable<Event>{
 		return this.next;
 	}
 	
-	// returns the reference to its previous event, iff exists, otherwise null;
+	// returns the reference to its previous event, if exists, otherwise null;
 	// if null is returned, it means, that this event is an head event, since heads have no root
 	public Event getPreviousReference(){
 		return this.previous;

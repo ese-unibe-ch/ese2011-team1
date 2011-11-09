@@ -21,7 +21,7 @@ public class CalendarTest extends UnitTest {
 	private Calendar calendarOfOwner;
 	// private Calendar calendarOfFrancis;
 	private Event event;
-	private Event repeatingEvent;
+	private RepeatingEvent repeatingEvent;
 	private Event eventToday;
 	private Event eventToday2;
 
@@ -36,6 +36,7 @@ public class CalendarTest extends UnitTest {
 		this.calendarOfOwner = new Calendar("Calendar", this.owner);
 		this.event = new PointEvent("anEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner);
 		this.repeatingEvent = new RepeatingEvent("repeatingEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner, 7);
+		this.repeatingEvent.init();
 	}
 
 	@Test
@@ -86,11 +87,12 @@ public class CalendarTest extends UnitTest {
 		System.out.println(DayEventsFrancis);
 	}
 
-	@Test
-	public void testIterator1() {
-		Iterator<Event> events = calendarOfOwner.getEventList(new DateTime(0), owner);
-		assertNotNull(events);
-	}
+	// ITERATOR IS NO LONGER NEEDED AND MUST NOT BE TESTED!
+//	@Test
+//	public void testIterator1() {
+//		Iterator<Event> events = calendarOfOwner.getEventList(new DateTime(0), owner);
+//		assertNotNull(events);
+//	}
 
 	@Test
 	public void testAddRepeatingEvent() {
@@ -122,7 +124,10 @@ public class CalendarTest extends UnitTest {
 		calendarOfOwner.addEvent(repeating1);
 		calendarOfOwner.addEvent(repeating2);
 		calendarOfOwner.addEvent(repeating3);
-		assertTrue(calendarOfOwner.getEventHeads().isEmpty());
+		assertFalse(calendarOfOwner.getEventHeads().isEmpty());
+		assertTrue(calendarOfOwner.getEventHeads().contains(repeating1));
+		assertTrue(calendarOfOwner.getEventHeads().contains(repeating2));
+		assertTrue(calendarOfOwner.getEventHeads().contains(repeating3));
 	}
 
 }

@@ -21,7 +21,6 @@ public class RepeatingEvent extends Event{
 
 	@Override
 	public void setNext(Event event) {
-		System.out.println("next set: " + event);
 		this.next = event;
 	}
 	
@@ -71,7 +70,7 @@ public class RepeatingEvent extends Event{
 		Event cursor = base;
 		this.current = cursor;
 		// as long as whole month is calculated
-		while(cursor.getStart().compareTo(limiter) == -1 && !hasBoundReached){
+		while(cursor.getStart().isBefore(limiter) && !hasBoundReached){
 			
 			// if there is no next event, then create a new one.
 			if(!cursor.hasNext()){
@@ -176,6 +175,10 @@ public class RepeatingEvent extends Event{
 		this.setName(name);
 		this.setVisiblility(visibility);
 		this.setInterval(interval);
+	}
+
+	public void init() {
+		generateNextEvents(this.getStart().plusMonths(1));
 	}
 	
 }
