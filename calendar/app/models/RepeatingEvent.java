@@ -23,6 +23,10 @@ public class RepeatingEvent extends Event{
 		this.previous = event;
 	}
 	
+	public void setInterval(int interval){
+		this.interval = interval;
+	}
+	
 	/**
 	 * Get the interval of this Events repetition.
 	 * @return 
@@ -155,6 +159,16 @@ public class RepeatingEvent extends Event{
 	@Override
 	public int compareTo(Event event) {
 		return this.getStart().compareTo(event.getStart());
+	}
+
+	
+	public void edit(String name, DateTime start, DateTime end,
+			Visibility visibility, int interval) {
+		this.setStart(start);
+		this.setEnd(end);
+		this.setName(name);
+		this.setVisiblility(visibility);
+		this.setInterval(interval);
 	}
 	
 }

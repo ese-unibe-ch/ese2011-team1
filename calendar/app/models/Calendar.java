@@ -323,7 +323,15 @@ public class Calendar {
 	}
 	
 	
-	// modifier
+	/*
+	 *  modifier
+	 */
+	
+	// call here the corresponding event.edit methods
+	// care about type changes if we change from a PointEvent to an RepeatingEvent.
+	public void editEvent(Event event){
+		
+	}
 	
 	// remove whole series to which an event "member" belongs to
 	public void removeSerieOfRepeatingEvents(Event member){

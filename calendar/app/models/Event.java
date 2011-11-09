@@ -212,6 +212,10 @@ public abstract class Event implements Comparable<Event>{
 		this.baseId = baseId;
 	}
 	
+	public void setName(String name){
+		this.name = name;
+	}
+	
 	public void setVisiblility(Visibility visibility){
 		this.visibility = visibility;
 	}
@@ -222,6 +226,13 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	public void editDescription(String text){
 		this.description = text;
+	}
+	
+	public void edit(String name, DateTime start, DateTime end, Visibility visibility){
+		this.setStart(start);
+		this.setEnd(end);
+		this.setName(name);
+		this.setVisiblility(visibility);	
 	}
 	
 	/**

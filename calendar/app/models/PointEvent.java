@@ -51,5 +51,6 @@ public class PointEvent extends Event{
 	
 	public void say(){
 		System.out.println("hi i am a point event");
-	}	
+	}
+
 }
