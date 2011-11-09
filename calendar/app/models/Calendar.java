@@ -329,8 +329,33 @@ public class Calendar {
 	
 	// call here the corresponding event.edit methods
 	// care about type changes if we change from a PointEvent to an RepeatingEvent.
-	public void editEvent(Event event){
-		
+	// at the moment we only can change an PointEvent to an RepeatingEvent
+	// or keep a PointEvent a PointEvent, keep a RepeatingEvent...
+	// TODO care about other cases!
+	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
+			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo){
+		if(newInterval == 0){
+			// make a point event, suppose we are a pointevent
+			// other possibilities: changing from an intervalEvent or even an RepeatingEvent are somehow silly
+			// TODO talk with others about this assumption...
+			
+			event.edit(name, newStart, newEnd, newVisibility);	
+		// at the moment we only can change an PointEvent to an RepeatingEvent
+		}else{
+			// as well here. we cannot cast from an IntervalEvent or even an 
+			// RepeatingEvent to each other or a PointEvent.
+			// care about ordering of this if statements due the inheritance hierarchy
+			
+			// TODO atm buggy, apply this edit function to head and all his referenced events!
+			
+			if(event instanceof IntervalEvent){
+				((IntervalEvent)event).edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo);
+			}else if( event instanceof RepeatingEvent){
+				((RepeatingEvent)event).edit(newName, newStart, newEnd, newVisibility, newInterval);
+			}else{
+				System.out.println("ERROR CASE in editEvent() in class Calendar");
+			}
+		}
 	}
 	
 	// remove whole series to which an event "member" belongs to
