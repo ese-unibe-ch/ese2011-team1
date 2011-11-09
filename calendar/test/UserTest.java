@@ -52,22 +52,22 @@ public class UserTest extends UnitTest {
 
 	}
 
-	@Test
-	public void testSetBirthdayDate() {
-		user.setBirthdayDate(birthdayFormatter.parseDateTime("25/10/1989"));
-		assertEquals(user.birthday, user.getBirthday());
-
-	}
-
-	@Test
-	public void testSetBirthdayPublic() {
-		assertTrue(user.getBirthday().isPrivate());
-		user.setBirthdayPublic(true);
-		assertTrue(user.getBirthday().isPublic());
-		user.setBirthdayPublic(false);
-		assertTrue(user.getBirthday().isPrivate());
-
-	}
+	// BIRTHDAY STUFF NOT IMPLEMENTED IN NEW VERSION!
+//	@Test
+//	public void testSetBirthdayDate() {
+//		user.setBirthdayDate(birthdayFormatter.parseDateTime("25/10/1989"));
+//		assertEquals(user.birthday, user.getBirthday());
+//	}
+//
+//	@Test
+//	public void testSetBirthdayPublic() {
+//		assertTrue(user.getBirthday().isPrivate());
+//		user.setBirthdayPublic(true);
+//		assertTrue(user.getBirthday().isPublic());
+//		user.setBirthdayPublic(false);
+//		assertTrue(user.getBirthday().isPrivate());
+//
+//	}
 
 	@Test
 	public void testGetBrithdayVisibility() {

@@ -150,6 +150,7 @@ public abstract class Event implements Comparable<Event>{
 	// or we have an IntervalEvent which holds the same expect, there is a bound.
 	// event is a PointEvent in head list. those types of events don't have any successors 
 	public Event getNextReference(){
+		assert (this.next != null);
 		return this.next;
 	}
 	
