@@ -111,13 +111,15 @@ public class Calendar {
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
 		for(Event head : this.eventHeads){
-			if(head.getStart().toLocalDate().equals(compareDate)) // adde hier check
+			//if(head.getStart().toLocalDate().equals(compareDate)) // adde hier check
+			if(checkHappensOn(head.getStart().toLocalDate(), head.getEnd().toLocalDate(), compareDate))	
 				if(head.getVisibility() != Visibility.PRIVATE 
 						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
-				if(cursor.getStart().toLocalDate().equals(compareDate))
+				//if(cursor.getStart().toLocalDate().equals(compareDate))
+				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate))	
 					if(cursor.getVisibility() != Visibility.PRIVATE 
 							|| owner == requester) result.add(cursor);
 				cursor = cursor.getNextReference();
@@ -134,13 +136,15 @@ public class Calendar {
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
 		for(Event head : this.eventHeads){
-			if(head.getStart().equals(day)) // adde hier check
+			//if(head.getStart().equals(day)) // adde hier check
+			if(checkHappensOn(head, day))
 				if(head.getVisibility() != Visibility.PRIVATE 
 						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
-				if(cursor.getStart().equals(day))
+				//if(cursor.getStart().equals(day))
+				if(checkHappensOn(cursor, day))
 					if(cursor.getVisibility() != Visibility.PRIVATE 
 							|| owner == requester) result.add(cursor);
 				cursor = cursor.getNextReference();
@@ -152,39 +156,6 @@ public class Calendar {
 	
 	// TODO fix this method. uses DateTime
 	public Iterator<Event> getEventList(DateTime start, User requester) {
-	
-		/*
-		 
-		 
-		// temporary result linked list
-		LinkedList<Event> events_tmp = new LinkedList<Event>();
-
-		// test if requester references to same object as owner. if true, we
-		// have the same user,
-		// therefore, the requester gets full access to its calendar data (since
-		// he is the owner of it)
-		boolean is_owner = owner == requester;
-
-		// requester is owner
-		if (is_owner) {
-			for (Event e : events)
-				if ((e.getStart().isAfter(start) || e.getStart().equals(start)))
-					events_tmp.add(e);
-
-			// requester is not the owner of the calendar ==> do visibility
-			// check.
-		} else {
-			for (Event e : events)
-				if (e.getVisibility() != Visibility.PRIVATE
-						&& (e.getStart().isAfter(start) || e.getStart().equals(
-								start)))
-					events_tmp.add(e);
-		}
-		// Iterator itr = al.iterator();
-		Iterator<Event> iter = events_tmp.iterator();
-		return iter;
-		
-		*/
 		return null;
 	}
 	
@@ -333,13 +304,25 @@ public class Calendar {
 	// or keep a PointEvent a PointEvent, keep a RepeatingEvent...
 	// TODO care about other cases!
 	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
-			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo){
-		if(newInterval == 0){
-			// make a point event, suppose we are a pointevent
-			// other possibilities: changing from an intervalEvent or even an RepeatingEvent are somehow silly
-			// TODO talk with others about this assumption...
+			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo, String newDescription){
+		
+		// make a point event, suppose we are a pointevent
+		// other possibilities: changing from an intervalEvent or even an RepeatingEvent are somehow silly
+		// TODO talk with others about this assumption...
+		
+		if(event instanceof PointEvent){
 			
-			event.edit(name, newStart, newEnd, newVisibility);	
+			if(newInterval == 0){
+				event.edit(name, newStart, newEnd, newVisibility);	
+				event.editDescription(newDescription);
+			}else{
+				Event newEvent = new RepeatingEvent((PointEvent)event, newInterval);
+				newEvent.setStart(newStart);
+				newEvent.setEnd(newEnd);
+				newEvent.editDescription(newDescription);
+				newEvent.generateNextEvents(newStart);
+			}
+			
 		// at the moment we only can change an PointEvent to an RepeatingEvent
 		}else{
 			// as well here. we cannot cast from an IntervalEvent or even an 
@@ -349,12 +332,23 @@ public class Calendar {
 			// TODO atm buggy, apply this edit function to head and all his referenced events!
 			
 			if(event instanceof IntervalEvent){
-				((IntervalEvent)event).edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo);
+				Event cursor = this.getHeadById(event.getBaseId());	
+				do{
+					((IntervalEvent)cursor).edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo);
+					cursor = cursor.getNextReference();
+				}while(cursor.hasNext());
+				
 			}else if( event instanceof RepeatingEvent){
-				((RepeatingEvent)event).edit(newName, newStart, newEnd, newVisibility, newInterval);
+				Event cursor = this.getHeadById(event.getBaseId());
+				do{
+					((RepeatingEvent)cursor).edit(newName, newStart, newEnd, newVisibility, newInterval);
+					cursor = cursor.getNextReference();
+				}while(cursor.hasNext());
+				
 			}else{
 				System.out.println("ERROR CASE in editEvent() in class Calendar");
 			}
+			event.editDescription(newDescription);
 		}
 	}
 	
@@ -418,7 +412,8 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-				if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0) 
+				//if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0)
+				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
 				cursor = event.getNextReference();
@@ -433,7 +428,8 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-				if(cursor.getStart().compareTo(date) == 0) 
+				//if(cursor.getStart().compareTo(date) == 0) 
+				if(checkHappensOn(cursor, date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
 				cursor = event.getNextReference();
@@ -448,10 +444,15 @@ public class Calendar {
 	 * they are declared as private (never public or even protected) 
 	 */
 	
-	@SuppressWarnings("unused")
 	private boolean checkHappensOn(Event event, DateTime compareDate){
 		return (event.getStart().equals(compareDate) 
 					|| event.getEnd().equals(compareDate) 
 					|| (event.getStart().isBefore(compareDate) && event.getEnd().isAfter(compareDate)));
+	}
+	
+	private boolean checkHappensOn(LocalDate timeStart, LocalDate timeEnd, LocalDate compareDate){
+		return (timeStart.equals(compareDate) 
+					|| timeEnd.equals(compareDate) 
+					|| (timeStart.isBefore(compareDate) && timeEnd.isAfter(compareDate)));
 	}
 }

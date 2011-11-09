@@ -12,6 +12,12 @@ public class RepeatingEvent extends Event{
 		super(name, start, end, visibility, calendar);
 		this.interval = interval;
 	}
+	
+	public RepeatingEvent(PointEvent event, int interval) {
+		super(event.getName(), event.getStart(), event.getEnd(), event.getVisibility(), event.getCalendar());
+		this.interval = interval;
+		this.forceSetId(event.getId());
+	}
 
 	@Override
 	public void setNext(Event event) {
