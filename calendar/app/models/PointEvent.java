@@ -49,7 +49,5 @@ public class PointEvent extends Event{
 		return this.getStart().compareTo(event.getStart());
 	}
 	
-	public void say(){
-		System.out.println("hi i am a point event");
-	}	
+
 }

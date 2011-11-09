@@ -1,4 +1,6 @@
 package models;
+import models.Event.Visibility;
+
 import org.joda.time.DateTime;
 
 public class IntervalEvent extends RepeatingEvent{
@@ -36,6 +38,17 @@ public class IntervalEvent extends RepeatingEvent{
 	
 	public void setTo(DateTime to){
 		this.upperBound = to;
+	}
+	
+	public void edit(String name, DateTime start, DateTime end,
+			Visibility visibility, int interval, DateTime from, DateTime to) {
+		this.setStart(start);
+		this.setEnd(end);
+		this.setName(name);
+		this.setVisiblility(visibility);
+		this.setInterval(interval);
+		this.setFrom(from);
+		this.setTo(to);
 	}
 
 	@Override

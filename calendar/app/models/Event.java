@@ -213,6 +213,10 @@ public abstract class Event implements Comparable<Event>{
 		this.baseId = baseId;
 	}
 	
+	public void setName(String name){
+		this.name = name;
+	}
+	
 	public void setVisiblility(Visibility visibility){
 		this.visibility = visibility;
 	}
@@ -225,6 +229,17 @@ public abstract class Event implements Comparable<Event>{
 		this.description = text;
 	}
 	
+	public void edit(String name, DateTime start, DateTime end, Visibility visibility){
+		this.setStart(start);
+		this.setEnd(end);
+		this.setName(name);
+		this.setVisiblility(visibility);	
+	}
+	
+	/**
+	 * Use this method only for special constructors
+	 * @param id
+	 */
 	public void forceSetId(long id){
 		this.id = id;
 	}
@@ -278,6 +293,7 @@ public abstract class Event implements Comparable<Event>{
 	/*
 	 * helpers
 	 */
+	
 	public String toString() {
 		return this.name;
 	}
