@@ -27,7 +27,7 @@
 			#{/select}
 	
 			 <br> Repeatable:
-			#{select 'is_repeated', value: event.getIntervall(), id:'is_repeated'}
+			#{select 'is_repeated',  value: event.getPreviousIntervalValue()  , id:'is_repeated'}
 				#{option 0}-#{/option}
 				#{option 1}daily#{/option}
 				#{option 7}weekly#{/option}

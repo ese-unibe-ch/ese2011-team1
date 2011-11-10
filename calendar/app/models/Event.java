@@ -328,5 +328,10 @@ public abstract class Event implements Comparable<Event>{
 	public void removeUserFromAttending(User user) {
 		this.attendingUsers.remove(user);
 	}
+	
+	public int getPreviousIntervalValue(){
+		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval();
+		return 0;
+	}
 
 }

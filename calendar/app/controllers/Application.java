@@ -19,6 +19,7 @@ import models.Calendar;
 import models.Database;
 import models.Event;
 import models.Event.Visibility;
+import models.IntervalEvent;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -274,7 +275,7 @@ public class Application extends Controller {
 			String s_activeDate) {
 
 		User me = Database.users.get(Security.connected());
-		// Calendar calendar = me.getCalendarById(calendarID);
+		Calendar calendar = me.getCalendarById(calendarID);
 		//
 		// // covert dates
 		DateTime d_start = null;
@@ -287,10 +288,10 @@ public class Application extends Controller {
 			editEvent(eventID, calendarID, name, s_activeDate, message);
 		}
 
-		// boolean repeated = is_repeated.equals("0") ? false : true;
-		// int intervall = Integer.parseInt(is_repeated);
-		// Event event = calendar.getEventById(eventID);
-		// event.editDescription(description);
+		 boolean repeated = is_repeated.equals("0") ? false : true;
+		 int interval = Integer.parseInt(is_repeated);
+		 Event event = calendar.getEventById(eventID);
+		 event.editDescription(description);
 		//
 		// if (repeated && !event.wasPreviouslyRepeating) {
 		// event.wasPreviouslyRepeating = true;
@@ -298,7 +299,19 @@ public class Application extends Controller {
 		// }
 		//
 		//
-		// event.edit(d_start, d_end, name, visibility, repeated, intervall);
+	//	event.edit(d_start, d_end, name, visibility, repeated, interval);
+
+		
+		if(!repeated){
+			((PointEvent) event).edit(name, d_start, d_end, visibility);
+		}else{
+			if(event instanceof IntervalEvent){
+				((IntervalEvent) event).edit(name, d_start, d_end, visibility, interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent) event).getTo());
+			}else{
+				((RepeatingEvent) event).edit(name, d_start, d_end, visibility, interval);
+			}
+		}
+		
 		showCalendar(calendarID, me.getName(), s_activeDate,
 				d_start.getDayOfMonth(), message);
 	}
