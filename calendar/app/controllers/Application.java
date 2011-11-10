@@ -305,9 +305,13 @@ public class Application extends Controller {
 		if(!repeated){
 			((PointEvent) event).edit(name, d_start, d_end, visibility);
 		}else{
+			// TODO here wo do have bugs...
 			if(event instanceof IntervalEvent){
 				((IntervalEvent) event).edit(name, d_start, d_end, visibility, interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent) event).getTo());
 			}else{
+				// TODO diser cast ist scheisse, denn buggy!!!
+				// models.PointEvent cannot be cast to models.RepeatingEvent 
+				// mache richtig, wenn wach... gleiches oben im instanceof IntervalEvent..
 				((RepeatingEvent) event).edit(name, d_start, d_end, visibility, interval);
 			}
 		}
@@ -317,7 +321,7 @@ public class Application extends Controller {
 	}
 
 	public static void editEvent(long eventID, long calendarID, String name,
-			String s_activeDate, String message) {
+		String s_activeDate, String message) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 		Event event = calendar.getEventById(eventID);
@@ -339,9 +343,9 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarID);
 		calendar.removeEvent(eventID);
 		DateTime activeDate = dateTimeInputFormatter
-				.parseDateTime(s_activeDate);
+			.parseDateTime(s_activeDate);
 		showCalendar(calendarID, me.name, s_activeDate,
-				activeDate.getDayOfMonth(), message);
+			activeDate.getDayOfMonth(), message);
 	}
 
 	public static void cancelEventRepetition(long calendarID, long eventID,
@@ -349,11 +353,11 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarID);
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
-				.getEventById(eventID));
+			.getEventById(eventID));
 		DateTime activeDate = dateTimeInputFormatter
-				.parseDateTime(s_activeDate);
+			.parseDateTime(s_activeDate);
 		showCalendar(calendarID, me.name, s_activeDate,
-				activeDate.getDayOfMonth(), message);
+			activeDate.getDayOfMonth(), message);
 	}
 
 	public static void removeRepeatingEvents(long calendarID, long eventId,

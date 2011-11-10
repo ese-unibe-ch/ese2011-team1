@@ -329,6 +329,7 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
+	// too ugly for this new design - how can we drop this without trashing our view?
 	public int getPreviousIntervalValue(){
 		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval();
 		return 0;
