@@ -65,6 +65,11 @@ public class Calendar {
 		return this.id;
 	}
 	
+	public Event getLeafOfEventSeries(Event event){
+		if(event.getBaseId() == event.getId()) return event.getLeaf();
+		else return getHeadById(event.getBaseId()).getLeaf();
+	}
+	
 	public PriorityQueue<Event> getEventHeads(){
 		return this.eventHeads;
 	}

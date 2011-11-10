@@ -48,6 +48,10 @@ public abstract class Event implements Comparable<Event>{
 	private List<User> attendingUsers;
 	protected Event next;
 	protected Event previous;
+	
+	// last element of a series of linked events - remember only an event in the head list 
+	// has a reference to a leaf which is not null (due performance issues) 
+	private Event leaf = null; 
 	private DateTime start;
 	private DateTime end;
 	private String name;
@@ -166,6 +170,10 @@ public abstract class Event implements Comparable<Event>{
 		return this.previous;
 	}
 	
+	public Event getLeaf(){
+		return this.leaf;
+	}
+	
 	/**
 	 * Get a String representation of a given date.
 	 * 
@@ -214,6 +222,10 @@ public abstract class Event implements Comparable<Event>{
 	
 	public abstract void setNext(Event event);
 	public abstract void setPrevious(Event event);
+	
+	public void setLeaf(Event newLeaf){
+		if(this.baseId == this.id) this.leaf = newLeaf;
+	}
 	
 	public void setStart(DateTime start){
 		this.start = start;
