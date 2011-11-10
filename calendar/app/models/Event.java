@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
@@ -42,6 +45,7 @@ public abstract class Event implements Comparable<Event>{
 	}
 	
 	private Calendar calendar;
+	private List<User> attendingUsers;
 	protected Event next;
 	protected Event previous;
 	private DateTime start;
@@ -52,6 +56,7 @@ public abstract class Event implements Comparable<Event>{
 	private long id;
 	private long baseId;
 	private Visibility visibility;
+	private boolean isOpen;
 	
 	/**
 	 * 
@@ -75,6 +80,7 @@ public abstract class Event implements Comparable<Event>{
 		this.end = end;
 		this.visibility = visibility;
 		this.calendar = calendar;
+		this.attendingUsers = new ArrayList<User>();
 		this.id = counter;
 		counter++;	
 	}
@@ -183,6 +189,18 @@ public abstract class Event implements Comparable<Event>{
 		return this.calendar;
 	}
 	
+	public String getAttendingUsers() {
+		StringBuffer sb = new StringBuffer();
+		for (User user : this.attendingUsers) {
+			sb.append(user.getName());
+			sb.append(", ");
+		}
+		if (sb.length() > 0) {
+			sb.setLength(sb.length()-2);
+		}
+		return sb.toString();
+	}
+	
 	// depending on what kind of event we are
 	// generate next events for a head if allowed.
 	// summary: 
@@ -221,6 +239,10 @@ public abstract class Event implements Comparable<Event>{
 		this.visibility = visibility;
 	}
 	
+	public void setOpen() {
+		this.isOpen = true;
+	}
+	
 	/**
 	 * Edit the description of this Event.
 	 * @param text The new description to be set.
@@ -237,7 +259,7 @@ public abstract class Event implements Comparable<Event>{
 	}
 	
 	/**
-	 * Use this method only for special constructors
+	 * WARNING! Use this method only for special constructors
 	 * @param id
 	 */
 	public void forceSetId(long id){
@@ -277,17 +299,17 @@ public abstract class Event implements Comparable<Event>{
 		return this.visibility == Visibility.PRIVATE;
 	}
 	
-	//TODO: ATTENTION!
-	public boolean isOpen() {
-		return true;
-	}
-	
 	public boolean userIsAttending(String name) {
-		return true;
+		User user = Database.getUserByName(name);
+		return this.attendingUsers.contains(user);
 	}
 	
 	public boolean isRepeating() {
 		return (this instanceof RepeatingEvent); 
+	}
+	
+	public boolean isOpen() {
+		return this.isOpen;
 	}
 	
 	/*
@@ -296,6 +318,15 @@ public abstract class Event implements Comparable<Event>{
 	
 	public String toString() {
 		return this.name;
+	}
+
+	public void addUserToAttending(User user) {
+		this.attendingUsers.add(user);
+		
+	}
+
+	public void removeUserFromAttending(User user) {
+		this.attendingUsers.remove(user);
 	}
 
 }

@@ -151,6 +151,17 @@ public class Calendar {
 			}
 		}
 		// TODO go through other lists as observed and so on...
+		// EDIT SIMU: We need to split this into 'get ALL events on this Date, including observed calendars'
+		//							and 'get only this calendars Events on this date', so we can do sth like this:
+		//		getEventsOnDate(...) {
+		//				result.addAll(getThisCalendarsEventsOnThisDate())
+		//				for each Calendar in ObservedCalendars: 
+		//					result.addAll( etThisCalendarsEventsOnThisDate())
+		//		}
+		//			Otherwise we must do it in Application (and thats bad) because of infinite loops 
+		//			if the observed calendars contain this calendar in their observed calendars!!!!
+		//			(and there is no possibility to add yourself to other people's open events.
+		//		Gonna do this tomorrow!
 		return result;
 	}
 	
@@ -438,6 +449,14 @@ public class Calendar {
 				cursor = event.getNextReference();
 			}while(event.hasNext());
 		}
+		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
+		LinkedList<Long> shownObservedCalendars = owner.getShownObservedCalendars();
+		for (Calendar observedCalendar : observedCalendars) {
+			if (shownObservedCalendars.contains(observedCalendar.getId())) {
+				return observedCalendar.hasEventOnDate(date, requester);
+			}
+		}
+		
 		return false;
 	}
 	

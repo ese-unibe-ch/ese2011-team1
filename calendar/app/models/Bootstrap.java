@@ -35,23 +35,27 @@ public class Bootstrap extends Job {
 		// dataset 1
 		simplay = new User("simplay", "123", now, "senderos");
 		Calendar cal = simplay.getdefaultCalendar();
-		simplay.addCalendar(cal);
 		event = new PointEvent("abc", now, now, Visibility.PUBLIC, cal);
+		cal.addEvent(event);
 
 		cal = new Calendar("2nd simplay", simplay);
-
+		simplay.addCalendar(cal);
+		
 		cal = new Calendar("3rd simplay", simplay);
 		simplay.addCalendar(cal);
+		
 		Database.addUser(simplay);
 
 		// dataset 2
 		User user;
 		user = new User("mib", "1337", now, "fox");
+		cal = new Calendar("Work", user);
 		event = new PointEvent("mib_ev1", now, now, Visibility.PUBLIC, cal);
-//		event.addUserToAttending(user);
+		event.setOpen();
+		event.addUserToAttending(user);
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
-		simplay.addShownObservedCalendar(4);
+		simplay.addShownObservedCalendar(cal.getId());
 
 		event = new PointEvent("mib_ev2", now, now, Visibility.PUBLIC, cal);
 		user.getdefaultCalendar().addEvent(event);
@@ -75,6 +79,7 @@ public class Bootstrap extends Job {
 		Database.addUser(user);
 
 		user = new User("simon", "1337", now, "simu");
+		cal = new Calendar("Simon Work", user);
 		event = new PointEvent("simonb_ev1", now, now, Visibility.PUBLIC, cal);
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
