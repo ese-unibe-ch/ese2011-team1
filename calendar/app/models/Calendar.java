@@ -65,6 +65,10 @@ public class Calendar {
 		return this.id;
 	}
 	
+	// get the last element of a series of repeating events or 
+	// if we have a point event, get back the event itself.
+	// only heads have a none null reference to leaf. care about this fact. 
+	// this is due performance issues.
 	public Event getLeafOfEventSeries(Event event){
 		if(event.getBaseId() == event.getId()) return event.getLeaf();
 		else return getHeadById(event.getBaseId()).getLeaf();
@@ -180,6 +184,8 @@ public class Calendar {
 	// or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
 	// TODO change date stuff to DateTime
 	// TODO check about corner cases, if there exists any.
+	// TODO utilize getLeaf() for calculation improvement 
+	//      => generate new events, starting from leaf
 	public void generateNextEvents(Event head, DateTime baseDate){
 		//DateTime currentDate = head.getStart();
 		DateTime currentDate = baseDate;
