@@ -408,7 +408,7 @@ public class Application extends Controller {
 		LinkedList<Event> eventsOfDate = calendar.getEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
-
+		System.out.println(eventsOfDate);
 		// get bounds for calendar construction
 		int bound = activeDate.withDayOfMonth(1).getDayOfWeek();
 		int bound2 = activeDate.dayOfMonth().getMaximumValue();

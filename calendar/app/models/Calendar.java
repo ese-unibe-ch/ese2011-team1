@@ -123,22 +123,23 @@ public class Calendar {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
+		System.out.println("headlist in getEventsOfDate " + eventHeads);
 		for(Event head : this.eventHeads){
-			//if(head.getStart().toLocalDate().equals(compareDate)) // adde hier check
 			if(checkHappensOn(head.getStart().toLocalDate(), head.getEnd().toLocalDate(), compareDate))	
 				if(head.getVisibility() != Visibility.PRIVATE 
 						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
-				//if(cursor.getStart().toLocalDate().equals(compareDate))
+				cursor = cursor.getNextReference();
 				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate))	
 					if(cursor.getVisibility() != Visibility.PRIVATE 
 							|| owner == requester) result.add(cursor);
-				cursor = cursor.getNextReference();
 			}
 		}
 		// TODO go through other lists as observed and so on...
+		System.out.println("getEventsOfDate " + result);
+		
 		return result;
 	}
 	
@@ -149,18 +150,16 @@ public class Calendar {
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
 		for(Event head : this.eventHeads){
-			//if(head.getStart().equals(day)) // adde hier check
 			if(checkHappensOn(head, day))
 				if(head.getVisibility() != Visibility.PRIVATE 
 						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
-				//if(cursor.getStart().equals(day))
+				cursor = cursor.getNextReference();
 				if(checkHappensOn(cursor, day))
 					if(cursor.getVisibility() != Visibility.PRIVATE 
 							|| owner == requester) result.add(cursor);
-				cursor = cursor.getNextReference();
 			}
 		}
 		// TODO go through other lists as observed and so on...
@@ -451,11 +450,8 @@ public class Calendar {
 		
 		for(Event event : this.eventHeads){
 			Event cursor = event;
-			//int counter = 0;
-			//TODO Schleife bereinigen
 			do{
-				if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0)
-				//if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
+				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				cursor = cursor.getNextReference();
 				if(cursor == null) break;
@@ -470,7 +466,6 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-				//if(cursor.getStart().compareTo(date) == 0) 
 				if(checkHappensOn(cursor, date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
