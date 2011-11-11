@@ -3,12 +3,18 @@
 # ~~~~
 
 # Home page
+# public static void showCalendar(long calendarId, String username,
+#			String calendarName, String s_date, int dday, int mmonth,
+#			int yyear, String message) {
+#String username, String s_date
+
 GET     /                                       Application.index
-GET 	/calendars								Application.showCalendarList
+GET 	/calendars/{username}/		Application.showCalendarList
 GET 	/events									Application.showEvents
 GET 	/addEvent								Application.addEvent
 GET 	/editEvent								Application.editEvent
-GET 	/showTest								Application.showCalendar
+GET 	/showCalendar							Application.showCalendar
+GET		/Registration							Application.showregistration
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
