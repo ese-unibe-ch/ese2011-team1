@@ -121,7 +121,7 @@
 	%{
 		int c=0;
 		int space = 360;
-		int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
+		int interval = (int)(space/(Math.max(observedCalendars.size(),1)));
 	%}
 	
 	#{list items:observedCalendars, as:'cal'}
@@ -135,7 +135,8 @@
 			for (int i=0; i<shownObservedCalendars.size(); i++) {
 				if (shownObservedCalendars.contains(cal.id)) {
 					out.print('checked="true"');
-					
+				}
+				if (observedCalendars.contains(cal)) {
 					//Color observed calendars
 					int col = interval*c;
 		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
@@ -166,16 +167,32 @@
 				<p>
 					<!-- <li> -->
 							<!-- Color for observed Events -->
-							#{if me != event.getOwner()} 
+							
 							%{
 							int space = 360;
-							int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
-							//System.out.println("EVENT: interval = "+interval+", calenderID = "+event.getCalendarId()+", found at = "+shownObservedCalendars.indexOf(event.getCalendarId()));
-							//System.out.println("cal.getId(): " + cal.getId() + " || event.getCalendarId() " + event.getCalendarId());
-							System.out.println("Event: " + event + " calendar: " + event.getCalendar());
-							col = interval*(shownObservedCalendars.indexOf(event.getCalendarId()));
+							int interval = (int)(space/(Math.max(observedCalendars.size(),1)));
+							
+							// TODO finde Kalender in observedCalendars
+							int idx = 0;
+							
+							//System.out.println("Event: " + event + " calendar: " + event.getCalendar()+", color index = "+idx+", interval = "+interval);
+							
+							System.out.println("ID des Event-Kalenders:"+event.getCalendarId());
+							
+							for (int i=0; i < observedCalendars.size(); i++) {
+								System.out.println("Prüfe calendarID "+observedCalendars.get(i).getId()+" an Stelle i = "+i);
+								if (observedCalendars.get(i).getId()+1 == event.getCalendarId()) {
+									System.out.println("gefunden an Stelle i = "+i);
+									idx = i;
+									break;
+								}
+							}
+							
+							col = interval*idx;
 							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
 							%}
+							
+							#{if me != event.getOwner()} 
 							<b>Owner:</b>${event.getOwner().getName()} 
 							#{/if}
 								
@@ -209,7 +226,7 @@
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
 							<b>Attending: </b> ${event.getAttendingUsers()}<br>
 								#{if event.userIsAttending(me.getName())}
-									You are attending! <b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+									You are attending/showCalendar?username=simplay&calendarId=1&s_activeDate=11%2F11%2F2011%2C+19%3A32! <b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
 								#{/if}
 								#{else}
 									<b><a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
@@ -244,11 +261,11 @@ function changeSelection(boxName) {
 	
 	if (boxName.checked == true) {
 		document.hiddenform.chk.value = "true";
-		alert("Added to view.");
+		/* alert("Added to view."); */
 	}
 	else {
 		document.hiddenform.chk.value = "false";
-		alert("Removed from view.");
+		/* alert("Removed from view."); */
 	}
 
 	document.hiddenform.submit();
