@@ -197,6 +197,9 @@ public class Calendar {
 		
 		head.generateNextEvents(nextDate);
 		
+		// TODO later: set here new leaf for the head!
+		// i think this would be the most efficient way to do that here.
+		
 		// for debugging purposes: see if this event has correct next and previous reference
 			Event event = head;
 			String ee = null;
