@@ -312,7 +312,12 @@ public class Application extends Controller {
 				// TODO diser cast ist scheisse, denn buggy!!!
 				// models.PointEvent cannot be cast to models.RepeatingEvent 
 				// mache richtig, wenn wach... gleiches oben im instanceof IntervalEvent..
-				((RepeatingEvent) event).edit(name, d_start, d_end, visibility, interval);
+				//((RepeatingEvent) event).edit(name, d_start, d_end, visibility, interval);
+				calendar.removeEvent(event.getBaseId());
+				RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event, interval);
+				calendar.addEvent(newEvent);
+				calendar.generateNextEvents(newEvent, newEvent.getStart());
+				System.out.println("Bis hier Okay! :)");
 			}
 		}
 		
@@ -419,7 +424,9 @@ public class Application extends Controller {
 						activeDate.getYear(), me));
 			}
 		}
-
+		
+		calendar.generateNextEvents(activeDate);
+		
 		render(me, user, calendar, bound, bound2, prevMonth, nextMonth,
 				activeDate, today, eventsOfDate, message, faved,
 				observedCalendars, shownObservedCalendars);

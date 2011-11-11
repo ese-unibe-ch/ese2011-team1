@@ -65,6 +65,10 @@ public class Calendar {
 		return this.id;
 	}
 	
+	public PriorityQueue<Event> getHeadList(){
+		return this.eventHeads;
+	}
+	
 	// get the last element of a series of repeating events or 
 	// if we have a point event, get back the event itself.
 	// only heads have a none null reference to leaf. care about this fact. 
@@ -214,6 +218,14 @@ public class Calendar {
 			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
 					+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
 		// end debugging
+	}
+	
+	public void generateNextEvents(DateTime baseDate){
+		for(Event event : this.eventHeads){
+			DateTime currentDate = baseDate;
+			DateTime nextDate = currentDate.plusMonths(1);
+			event.generateNextEvents(nextDate);
+		}
 	}
 	
 	/*
@@ -439,13 +451,15 @@ public class Calendar {
 		
 		for(Event event : this.eventHeads){
 			Event cursor = event;
+			//int counter = 0;
+			//TODO Schleife bereinigen
 			do{
-				//if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0)
-				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
+				if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0)
+				//if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
-				
-				cursor = event.getNextReference();
-			}while(event.hasNext());
+				cursor = cursor.getNextReference();
+				if(cursor == null) break;
+			}while(cursor != null || cursor.hasNext());
 		}
 		return false;
 	}
@@ -460,8 +474,8 @@ public class Calendar {
 				if(checkHappensOn(cursor, date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
-				cursor = event.getNextReference();
-			}while(event.hasNext());
+				cursor = cursor.getNextReference();
+			}while(cursor.hasNext());
 		}
 		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
 		LinkedList<Long> shownObservedCalendars = owner.getShownObservedCalendars();

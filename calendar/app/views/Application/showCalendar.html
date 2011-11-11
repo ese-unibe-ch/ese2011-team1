@@ -8,7 +8,6 @@
 	#{/if}
 <!-- TO HERE -->
 	
-		%{
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
@@ -47,6 +46,8 @@
 			<td class="title"> So </td>	
 		</tr>
 		%{ 
+		//System.out.println("Tage berechnen.");
+		
 			int tmp = 1;
 			int counter = 1;
 			int year = activeDate.getYear();
@@ -82,11 +83,13 @@
 						else {
 							out.println('<td class="entry"> ');
 						}
-						
+						//System.out.println("vor calendar.hasEventOnDate ");
 						if(calendar.hasEventOnDate(counter, month, year, me)){
+						//System.out.println("im calendar.hasEventOnDate ");
 							%} 
 							<a href="@{Application.showCalendar(calendar.getId(), user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
 							%{
+						//System.out.println("nach calendar.hasEventOnDate ");
 						}
 						else {
 							out.println(counter+'</td>');	
@@ -100,6 +103,7 @@
 				}
 				out.println('</tr>');
 			}
+			//System.out.println("Tage berechnen okay.");
 		%} 
 	
 	</table>
@@ -207,7 +211,7 @@
 				</p>
 			#{/list}
 	</table>
-	
+
 	<div id="Nav">
 		#{if user==me} 
  			<a href="@{Application.addEvent(calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
