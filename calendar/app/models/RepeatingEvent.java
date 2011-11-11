@@ -1,6 +1,8 @@
 package models;
 import org.joda.time.DateTime;
 
+import android.database.Cursor;
+
 public class RepeatingEvent extends Event{
 	private int interval;
 	protected Event current = null;
@@ -190,12 +192,12 @@ public class RepeatingEvent extends Event{
 	// care about setting new baseId correctly.
 	@Override
 	public void remove() {
-		System.out.println("id "+this.getId()+ " baseid " + this.getBaseId());  
-		
+		System.out.println("this is our base id of victim: "+  this.getBaseId());  
+		System.out.println(this.getBaseId());
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
-		
+		System.out.println("head startdate" + head.getParsedStartDate());
 		// case (a) -- seems to work after some testing
 		if(this == head){
 			Event postHead = this.getNextReference();
@@ -220,27 +222,21 @@ public class RepeatingEvent extends Event{
 			this.setPrevious(null);
 			this.setNext(null);
 			head.setNext(null);
+	
 			Event newPointEvent = new PointEvent((RepeatingEvent)head);
+
 			this.getCalendar().removeHeadFromHeadList(head);
-			this.getCalendar().addEvent(newPointEvent);
+			this.getCalendar().addEvent(newPointEvent);	
 			this.getCalendar().addEvent(postPostHead);
-			
+
 			postPostHead.setBaseId(postPostHead.getId());
-			postPostHead.generateNextEvents(postPostHead.getStart().plusMonths(1));
 			Event cursor = postPostHead; 
+			
 			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
 				cursor.setBaseId(postPostHead.getId());
-				cursor = getNextReference();
-				if(cursor == null) break;
 			}
-			
-			cursor = postPostHead; 
-			while(cursor.hasNext()){
-				System.out.println("baseid " + cursor.getBaseId() + " start " + cursor.getParsedStartDate());
-				cursor = getNextReference();
-				if(cursor == null) break;
-			}
-			
+			postPostHead.generateNextEvents(postPostHead.getNextReference().getStart());
 			
 		// case (c)
 		}else{
