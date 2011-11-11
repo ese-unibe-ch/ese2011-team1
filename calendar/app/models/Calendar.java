@@ -254,6 +254,7 @@ public class Calendar {
 	// c) RepeatingEvent:
 	public void removeEvent(long id) {
 		Event victim = getEventById(id);
+		System.out.println("this date we want to remove: " + victim.getParsedStartDate());
 		victim.remove();
 	}
 	
