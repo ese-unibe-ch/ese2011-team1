@@ -189,6 +189,8 @@
 							
 							<b>Repeating:</b>${event.isRepeating()}
 							<b>Description</b>:${event.getDescription()} <br>
+							<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
+								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
 								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>

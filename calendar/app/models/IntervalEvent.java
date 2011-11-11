@@ -55,4 +55,94 @@ public class IntervalEvent extends RepeatingEvent{
 	public int compareTo(Event event) {
 		return this.getStart().compareTo(event.getStart());
 	}
+	
+	@SuppressWarnings("null")
+	@Override
+	public void remove() {
+		Event head = this.getCalendar().getHeadById(this.getBaseId());
+		Event preVictim = this.getPreviousReference();
+		Event postVictim = this.getNextReference();
+		
+		// interval structure: [head,victim], i.e. there are two elements
+		if(preVictim == head && postVictim == null){
+			postVictim.setPrevious(null);
+
+			this.getCalendar().getHeadList().remove(this);
+			this.getCalendar().addEvent(postVictim);			
+			
+			Event cursor = postVictim;
+			postVictim.setBaseId(postVictim.getId());
+			
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+			}
+			
+		// if we want to delete the head
+		}else if(this == head){
+		
+		// if victim is the leaf, i.e. victim is the last element of the list.
+		}else if(postVictim == null){
+			preVictim.setNext(null);
+			this.setPrevious(null);
+			
+		// [head ,previctim] | victim | [postVictim,victim.getTo()]
+		}else{
+			preVictim.setNext(null);
+			postVictim.setPrevious(null);
+			this.getCalendar().addEvent(postVictim);
+			
+			// set for all postvictims events their new baseId
+			Event cursor = postVictim;
+			postVictim.setBaseId(postVictim.getId());
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+			}
+		}
+			
+		
+		/*
+		 * // wenn intervall der form: [head,victim], d.h. 2. elemente
+			if(preVictim == head && postVictim == null){
+				//head = (PointEvent) head;
+				head.setNext(null);
+				head = new PointEvent((IntervalEvent) head);
+				
+			// victim == head
+			}else if(victim == head){
+				postVictim.setPrevious(null);
+				this.eventHeads.remove(victim);
+				this.addEvent(postVictim);
+				Event cursor = postVictim;
+				postVictim.setBaseId(postVictim.getId());
+				while(cursor.hasNext()){
+					cursor = cursor.getNextReference();
+					cursor.setBaseId(postVictim.getId());
+				}
+			// if victim is a leaf, i.e. victim is the last element of the list.
+			}else if(victim.getNextReference() == null){
+				preVictim.setNext(null);
+				victim.setPrevious(null);
+				
+			}else{
+				preVictim.setNext(null);
+				postVictim.setPrevious(null);
+				this.addEvent(postVictim);
+				
+				// set for all postvictims events their new baseId
+				Event cursor = postVictim;
+				postVictim.setBaseId(postVictim.getId());
+				while(cursor.hasNext()){
+					cursor = cursor.getNextReference();
+					cursor.setBaseId(postVictim.getId());
+				}
+			}
+		 */
+		
+		
+		
+		
+		
+	}
 }
