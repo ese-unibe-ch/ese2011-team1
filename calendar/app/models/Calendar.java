@@ -475,6 +475,7 @@ public class Calendar {
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
 				cursor = cursor.getNextReference();
+				if(cursor == null) break;
 			}while(cursor.hasNext());
 		}
 		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();

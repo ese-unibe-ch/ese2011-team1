@@ -309,15 +309,19 @@ public class Application extends Controller {
 			if(event instanceof IntervalEvent){
 				((IntervalEvent) event).edit(name, d_start, d_end, visibility, interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent) event).getTo());
 			}else{
-				// TODO diser cast ist scheisse, denn buggy!!!
-				// models.PointEvent cannot be cast to models.RepeatingEvent 
-				// mache richtig, wenn wach... gleiches oben im instanceof IntervalEvent..
-				//((RepeatingEvent) event).edit(name, d_start, d_end, visibility, interval);
+				// TODO irgendwas ist in showCalendar.html nicht iO, denn für den 1. Tag zeigt es nach edit den event doppelt an in liste. 
+				// event ist nicht mehrfach gespeichert, habe das verifiziert - siehe print statements below
+				// auch möglich, dass der bug in der methode showCalendar in der klasse application ist und die liste mit den daten,
+				// welche dargestellt werden sollen, falsch berechnet wir...
 				calendar.removeEvent(event.getBaseId());
+				System.out.println("should be null " + calendar.getEventById(event.getBaseId()));
+				System.out.println(calendar.getHeadList());
 				RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event, interval);
 				calendar.addEvent(newEvent);
+				System.out.println(calendar.getHeadList());
+				newEvent.editDescription(description);
 				calendar.generateNextEvents(newEvent, newEvent.getStart());
-				System.out.println("Bis hier Okay! :)");
+				System.out.println("head "+ newEvent.getParsedStartDate()+ " next "+ newEvent.getNextReference().getParsedStartDate());
 			}
 		}
 		
