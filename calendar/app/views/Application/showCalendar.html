@@ -83,17 +83,21 @@
 						else {
 							out.println('<td class="entry"> ');
 						}
+						hasEvent = calendar.hasEventOnDateIncludingObserved(counter, month, year, me)
 						//System.out.println("vor calendar.hasEventOnDate ");
-						if(calendar.hasEventOnDateIncludingObserved(counter, month, year, me)){
+						if(hasEvent){
 						//System.out.println("im calendar.hasEventOnDate ");
+						out.println('<b>');
+						}
 							%} 
 							<a href="@{Application.showCalendar(calendar.getId(), user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
 							%{
+							if (hasEvent) {
+								out.println('</b>');
+							}
 						//System.out.println("nach calendar.hasEventOnDate ");
-						}
-						else {
-							out.println(counter+'</td>');	
-						}
+						
+						
 						counter++;
 					}
 					else {
@@ -135,7 +139,7 @@
 					//Color observed calendars
 					int col = interval*c;
 		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
-		 			System.out.println("OBSERVED: interval = "+interval+", found at = "+shownObservedCalendars.indexOf(cal.getId()));
+		 			//System.out.println("OBSERVED: interval = "+interval+", found at = "+shownObservedCalendars.indexOf(cal.getId()));
 		 			c++;
 					statementClosed = true;
 					break;

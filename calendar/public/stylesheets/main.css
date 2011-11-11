@@ -46,11 +46,12 @@ table#calendar {
 }
 
 table#calendar a {
-  font-style:normal;
-  display: block;
-  position: relative;
-  line-height: 40px;
-  text-decoration: none;
+	font-style: normal;
+	color: inherit;
+  	display: block;
+  	position: relative;
+  	line-height: 40px;
+  	text-decoration: none;
 }
 
 table#calendar td {
@@ -65,16 +66,22 @@ table#calendar td.title {
   font-weight: bold;
 }
 
+table#calendar td.entry {
+	background-color: "#FFF";
+	color: lime;
+	font-style: normal;
+}
+
 table#calendar td.selected {
-  background-color: #FFFACD;
+  background-color: fuchsia;
+  font-style: normal;
+  color: orange;
 }
 
 table#calendar td.today {
-  background-color: #ADD8E6;
-}
-
-table#calendar a {
-  font-weight: bold;
+  background-color: #000000;
+  color: pink;
+  font-style: normal;
 }
 
 #prevMonth, #nextMonth {
