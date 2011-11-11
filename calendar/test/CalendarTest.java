@@ -77,8 +77,8 @@ public class CalendarTest extends UnitTest {
 		calendarOfOwner.addEvent(event);
 		calendarOfOwner.addEvent(eventToday);
 		calendarOfOwner.addEvent(eventToday2);
-		LinkedList<Event> DayEvents = calendarOfOwner.getEventsOfDate(new DateTime(), owner);
-		LinkedList<Event> DayEventsFrancis = calendarOfOwner.getEventsOfDate(new DateTime(), francis);
+		LinkedList<Event> DayEvents = calendarOfOwner.getEventsOfDate(new LocalDate(), owner);
+		LinkedList<Event> DayEventsFrancis = calendarOfOwner.getEventsOfDate(new LocalDate(), francis);
 		assertFalse(DayEvents.isEmpty());
 		assertFalse(DayEventsFrancis.isEmpty());
 		assertEquals("[eventToday, eventToday2]", DayEvents.toString());

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
 // TODO improve some performance issues.
@@ -322,6 +323,13 @@ public abstract class Event implements Comparable<Event>{
 	
 	public boolean isOpen() {
 		return this.isOpen;
+	}
+	
+	public boolean happensOn(LocalDate compareDate) {
+		return (this.getStart().toLocalDate().equals(compareDate) 
+				|| this.getEnd().toLocalDate().equals(compareDate) 
+				|| (this.getStart().toLocalDate().isBefore(compareDate)
+						&& this.getEnd().toLocalDate().isAfter(compareDate)));
 	}
 	
 	/*
