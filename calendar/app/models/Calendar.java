@@ -122,46 +122,58 @@ public class Calendar {
 	public LinkedList<Event> getEventsOfDate(int day, int month, int year, User requester) {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
-		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
-		LinkedList<Long> shownObserved = owner.getShownObservedCalendars();
-		
-		// Add Events of this Calendar to result
-		result.addAll(getEventsOfDate(compareDate, requester));
-		
-		// Add Events of all shown observedCalendars to result
-		for (Calendar observedCalendar : observedCalendars) {
-			if (shownObserved.contains(observedCalendar.getId())) {
-				System.out.println("shown observed Calendar: " + observedCalendar);
-				result.addAll(observedCalendar.getEventsOfDate(compareDate, requester));
+		// 1. go here through heads
+		System.out.println("headlist in getEventsOfDate " + eventHeads);
+		for(Event head : this.eventHeads){
+			if(checkHappensOn(head.getStart().toLocalDate(), head.getEnd().toLocalDate(), compareDate))	
+				if(head.getVisibility() != Visibility.PRIVATE 
+						|| owner == requester) result.add(head);
+			
+			Event cursor = head;
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate))	
+					if(cursor.getVisibility() != Visibility.PRIVATE 
+							|| owner == requester) result.add(cursor);
 			}
 		}
+		// TODO go through other lists as observed and so on...
+		System.out.println("getEventsOfDate " + result);
+		
 		return result;
 	}
 	
 	// return a list which contains all dates depending on input date
 	// where we only compare its year, month and day for equality
 	// TODO use a priority queue instead of a linked list.
-	public LinkedList<Event> getEventsOfDate(LocalDate compareDate, User requester){
+	public LinkedList<Event> getEventsOfDate(DateTime day, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
-		
 		// 1. go here through heads
 		for(Event head : this.eventHeads){
-			if(checkHappensOn(head.getStart().toLocalDate(), head.getEnd().toLocalDate(), compareDate))	
+			if(checkHappensOn(head, day))
 				if(head.getVisibility() != Visibility.PRIVATE 
-						|| owner == requester) {
-					result.add(head);
-				}
+						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
-				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate))	
-					if(cursor.getVisibility() != Visibility.PRIVATE 
-							|| owner == requester) {
-						result.add(cursor);
-					}
 				cursor = cursor.getNextReference();
+				if(checkHappensOn(cursor, day))
+					if(cursor.getVisibility() != Visibility.PRIVATE 
+							|| owner == requester) result.add(cursor);
 			}
 		}
+		// TODO go through other lists as observed and so on...
+		// EDIT SIMU: We need to split this into 'get ALL events on this Date, including observed calendars'
+		//							and 'get only this calendars Events on this date', so we can do sth like this:
+		//		getEventsOnDate(...) {
+		//				result.addAll(getThisCalendarsEventsOnThisDate())
+		//				for each Calendar in ObservedCalendars: 
+		//					result.addAll( etThisCalendarsEventsOnThisDate())
+		//		}
+		//			Otherwise we must do it in Application (and thats bad) because of infinite loops 
+		//			if the observed calendars contain this calendar in their observed calendars!!!!
+		//			(and there is no possibility to add yourself to other people's open events.
+		//		Gonna do this tomorrow!
 		return result;
 	}
 	
@@ -438,11 +450,8 @@ public class Calendar {
 		
 		for(Event event : this.eventHeads){
 			Event cursor = event;
-			//int counter = 0;
-			//TODO Schleife bereinigen
 			do{
-				if(cursor.getStart().toLocalDate().compareTo(compareDate) == 0)
-				//if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
+				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				cursor = cursor.getNextReference();
 				if(cursor == null) break;
@@ -457,11 +466,11 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-				//if(cursor.getStart().compareTo(date) == 0) 
 				if(checkHappensOn(cursor, date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
 				cursor = cursor.getNextReference();
+				if(cursor == null) break;
 			}while(cursor.hasNext());
 		}
 		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
