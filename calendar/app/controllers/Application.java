@@ -415,15 +415,7 @@ public class Application extends Controller {
 		boolean faved = me.isCalendarObserved(calendarId);
 		
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
-		LinkedList<Long> shownObservedCalendars = me
-				.getShownObservedCalendars();
-		for (Calendar observedCalendar : observedCalendars) {
-			if (shownObservedCalendars.contains(observedCalendar.getId())) {
-				eventsOfDate.addAll(observedCalendar.getEventsOfDate(
-						activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
-						activeDate.getYear(), me));
-			}
-		}
+		LinkedList<Long> shownObservedCalendars = me.getShownObservedCalendars();
 		
 		calendar.generateNextEvents(activeDate);
 		
