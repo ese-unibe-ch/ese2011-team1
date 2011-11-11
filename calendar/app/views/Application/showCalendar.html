@@ -37,13 +37,13 @@
 	
 	<table id="calendar">
 		<tr>
-			<td class="title"> Mo </td>
-			<td class="title"> Di </td>
-			<td class="title"> Mi </td>	
-			<td class="title"> Do </td>	
-			<td class="title"> Fr </td>	
-			<td class="title"> Sa </td>	
-			<td class="title"> So </td>	
+			<td class="title"> Mon </td>
+			<td class="title"> Tue </td>
+			<td class="title"> Wed </td>	
+			<td class="title"> Thu </td>	
+			<td class="title"> Fri </td>	
+			<td class="title"> Sat </td>	
+			<td class="title"> Sun </td>	
 		</tr>
 		%{ 
 		//System.out.println("Tage berechnen.");
@@ -135,6 +135,7 @@
 					//Color observed calendars
 					int col = interval*c;
 		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
+		 			System.out.println("OBSERVED: interval = "+interval+", found at = "+shownObservedCalendars.indexOf(cal.getId()));
 		 			c++;
 					statementClosed = true;
 					break;
@@ -165,8 +166,10 @@
 							%{
 							int space = 360;
 							int interval = (int)(space/(Math.max(shownObservedCalendars.size()-1,1)));
-							//System.out.println("interval = "+interval+", calenderID = "+event.getCalendarId()+", found at = "+shownObservedCalendars.indexOf(event.getCalendarId()));
-							col = interval*(shownObservedCalendars.indexOf(event.getCalendarId())-1);
+							//System.out.println("EVENT: interval = "+interval+", calenderID = "+event.getCalendarId()+", found at = "+shownObservedCalendars.indexOf(event.getCalendarId()));
+							//System.out.println("cal.getId(): " + cal.getId() + " || event.getCalendarId() " + event.getCalendarId());
+							System.out.println("Event: " + event + " calendar: " + event.getCalendar());
+							col = interval*(shownObservedCalendars.indexOf(event.getCalendarId()));
 							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
 							%}
 							<b>Owner:</b>${event.getOwner().getName()} 

@@ -414,5 +414,9 @@ public class User {
 	public void setNotesVis(boolean isNoteVisible) {
 		this.notesVis = isNoteVisible;
 	}
+	
+	public String toString() {
+		return this.name;
+	}
 
 }

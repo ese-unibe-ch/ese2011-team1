@@ -49,14 +49,14 @@ table#calendar a {
   font-style:normal;
   display: block;
   position: relative;
-  line-height: 50px;
+  line-height: 40px;
   text-decoration: none;
 }
 
 table#calendar td {
   text-align: center;
   background-color: #FFF;
-  height: 50px;
+  height: 40px;
   border: solid 1px #000;
 }
 
