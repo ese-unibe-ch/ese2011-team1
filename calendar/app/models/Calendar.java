@@ -90,8 +90,8 @@ public class Calendar {
 			
 			do{
 				if(cursor.getId() == id) return cursor;
-				cursor = event.getNextReference();
-			}while(event.hasNext());
+				cursor = cursor.getNextReference();
+			}while(cursor.hasNext());
 		}
 		return null;
 	}
@@ -253,6 +253,7 @@ public class Calendar {
 	//			get next event after head and put it into head list, remove head from head list
 	// c) RepeatingEvent:
 	public void removeEvent(long id) {
+		System.out.println("goog");
 		Event victim = getEventById(id);
 		System.out.println("this date we want to remove: " + victim.getParsedStartDate());
 		victim.remove();
