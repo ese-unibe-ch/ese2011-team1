@@ -252,9 +252,12 @@ public class Calendar {
 		this.eventHeads.add(event);
 	}
 	
-	public void removeEventFromHeadList(Event event){
+	public void removeHeadFromHeadList(Event event){
 		this.eventHeads.remove(event);
 	}
+	
+	
+
 	
 	// deleter
 	

@@ -52,7 +52,7 @@ public class PointEvent extends Event{
 	@Override
 	// a) PointEvent: just remove it from head list, done.
 	public void remove() {
-		this.getCalendar().removeEventFromHeadList(this);
+		this.getCalendar().removeHeadFromHeadList(this);
 	}
 	
 

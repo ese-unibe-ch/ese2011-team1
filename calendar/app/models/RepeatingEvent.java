@@ -196,15 +196,12 @@ public class RepeatingEvent extends Event{
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
 		
-		System.out.println(head.getParsedStartDate() + 
-				" " +this.getParsedStartDate());
-		
 		// case (a) -- seems to work after some testing
 		if(this == head){
 			Event postHead = this.getNextReference();
 			postHead.setPrevious(null);
 			this.setNext(null);
-			this.getCalendar().removeEventFromHeadList(this);
+			this.getCalendar().removeHeadFromHeadList(this);
 			this.getCalendar().addEvent(postHead);
 			
 			// go through posthead tail
@@ -218,7 +215,33 @@ public class RepeatingEvent extends Event{
 			
 		// case (b)
 		}else if(this == head.getNextReference()){
-		
+			Event postPostHead = this.getNextReference();
+			postPostHead.setPrevious(null);
+			this.setPrevious(null);
+			this.setNext(null);
+			head.setNext(null);
+			Event newPointEvent = new PointEvent((RepeatingEvent)head);
+			this.getCalendar().removeHeadFromHeadList(head);
+			this.getCalendar().addEvent(newPointEvent);
+			this.getCalendar().addEvent(postPostHead);
+			
+			postPostHead.setBaseId(postPostHead.getId());
+			postPostHead.generateNextEvents(postPostHead.getStart().plusMonths(1));
+			Event cursor = postPostHead; 
+			while(cursor.hasNext()){
+				cursor.setBaseId(postPostHead.getId());
+				cursor = getNextReference();
+				if(cursor == null) break;
+			}
+			
+			cursor = postPostHead; 
+			while(cursor.hasNext()){
+				System.out.println("baseid " + cursor.getBaseId() + " start " + cursor.getParsedStartDate());
+				cursor = getNextReference();
+				if(cursor == null) break;
+			}
+			
+			
 		// case (c)
 		}else{
 			
