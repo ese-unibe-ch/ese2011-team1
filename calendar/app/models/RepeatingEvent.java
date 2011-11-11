@@ -192,12 +192,11 @@ public class RepeatingEvent extends Event{
 	// care about setting new baseId correctly.
 	@Override
 	public void remove() {
-		System.out.println("this is our base id of victim: "+  this.getBaseId());  
-		System.out.println(this.getBaseId());
+
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
-		System.out.println("head startdate" + head.getParsedStartDate());
+
 		// case (a) -- seems to work after some testing
 		if(this == head){
 			Event postHead = this.getNextReference();
@@ -206,13 +205,12 @@ public class RepeatingEvent extends Event{
 			this.getCalendar().removeHeadFromHeadList(this);
 			this.getCalendar().addEvent(postHead);
 			
-			// go through posthead tail
+			// go through posthead tail	
 			postHead.setBaseId(postHead.getId());
 			Event cursor = postHead; 
 			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
 				cursor.setBaseId(postHead.getBaseId());
-				cursor = getNextReference();
-				if(cursor == null) break;
 			}
 			
 		// case (b)
@@ -240,7 +238,31 @@ public class RepeatingEvent extends Event{
 			
 		// case (c)
 		}else{
+			System.out.println("case c entrered");
+			this.setNext(null);
+			this.setPrevious(null);
+			preVictim.setNext(null);
+			postVictim.setPrevious(null);
+			this.getCalendar().removeHeadFromHeadList(head);
 			
+			/*
+			IntervalEvent newIntervalEvent = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)head);
+			newIntervalEvent.setBaseId(newIntervalEvent.getId());
+			
+			
+			Event cursor = newIntervalEvent; 
+			
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				IntervalEvent newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
+				newIntervalCursor.setPrevious(cursor);
+				cursor.setNext(newIntervalCursor);
+				newIntervalCursor.setBaseId(newIntervalEvent.getId());
+				// set bound too
+			}
+			
+			this.getCalendar().addEvent(newIntervalEvent);
+			*/
 		}
 		
 	}
