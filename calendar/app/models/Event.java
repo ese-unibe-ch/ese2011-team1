@@ -278,6 +278,8 @@ public abstract class Event implements Comparable<Event>{
 		this.id = id;
 	}
 	
+	public abstract void remove();
+	
 	/*
 	 * checks
 	 */

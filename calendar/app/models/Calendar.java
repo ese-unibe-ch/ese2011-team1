@@ -252,6 +252,10 @@ public class Calendar {
 		this.eventHeads.add(event);
 	}
 	
+	public void removeEventFromHeadList(Event event){
+		this.eventHeads.remove(event);
+	}
+	
 	// deleter
 	
 	// 1. find event and point with a courser to him
@@ -266,70 +270,7 @@ public class Calendar {
 	// c) RepeatingEvent:
 	public void removeEvent(long id) {
 		Event victim = getEventById(id);
-		
-		// case a)
-		if(victim instanceof PointEvent){
-			this.eventHeads.remove(victim);
-		}
-		
-		// case b)
-		else if(victim instanceof IntervalEvent){
-			// TODO statt casten in neue types, verwende neue konstruktoren!
-			// TODO set new from and to
-			// new interval structure:
-			// [head ,previctim] | victim | [postVictim,victim.getTo()]
-			// create at most two object of type IntervalEvent.
-			
-			Event head = this.getHeadById(victim.getBaseId());
-			Event preVictim = victim.getPreviousReference();
-			Event postVictim = victim.getNextReference();
-			
-			// wenn intervall der form: [head,victim], d.h. 2. elemente
-			if(preVictim == head && postVictim == null){
-				//head = (PointEvent) head;
-				head.setNext(null);
-				head = new PointEvent((IntervalEvent) head);
-				
-			// victim == head
-			}else if(victim == head){
-				postVictim.setPrevious(null);
-				this.eventHeads.remove(victim);
-				this.addEvent(postVictim);
-				Event cursor = postVictim;
-				postVictim.setBaseId(postVictim.getId());
-				while(cursor.hasNext()){
-					cursor = cursor.getNextReference();
-					cursor.setBaseId(postVictim.getId());
-				}
-			// if victim is a leaf, i.e. victim is the last element of the list.
-			}else if(victim.getNextReference() == null){
-				preVictim.setNext(null);
-				victim.setPrevious(null);
-				
-			}else{
-				preVictim.setNext(null);
-				postVictim.setPrevious(null);
-				this.addEvent(postVictim);
-				
-				// set for all postvictims events their new baseId
-				Event cursor = postVictim;
-				postVictim.setBaseId(postVictim.getId());
-				while(cursor.hasNext()){
-					cursor = cursor.getNextReference();
-					cursor.setBaseId(postVictim.getId());
-				}
-			}
-		}
-		
-		// case c)
-		else if(victim instanceof RepeatingEvent){
-			// possible resulting interval structures after deletion
-			// there are 3 cases which we have to consider:
-			// (a) victim equals current head => next of head gets new head
-			// (b) victim equals next after head => head gets a PointEvent, victim.next a new head 
-			// (c) [head, previctim] | victim | [postVictim, +infinite]
-			// care about setting new baseId correctly.
-		}
+		victim.remove();
 	}
 	
 	
@@ -342,6 +283,7 @@ public class Calendar {
 	// at the moment we only can change an PointEvent to an RepeatingEvent
 	// or keep a PointEvent a PointEvent, keep a RepeatingEvent...
 	// TODO care about other cases!
+	// TODO do this in Eventclasses and just call here event.edit(...)
 	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
 			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo, String newDescription){
 		

@@ -48,6 +48,12 @@ public class PointEvent extends Event{
 	public int compareTo(Event event) {
 		return this.getStart().compareTo(event.getStart());
 	}
+
+	@Override
+	// a) PointEvent: just remove it from head list, done.
+	public void remove() {
+		this.getCalendar().removeEventFromHeadList(this);
+	}
 	
 
 }

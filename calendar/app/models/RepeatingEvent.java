@@ -17,6 +17,7 @@ public class RepeatingEvent extends Event{
 		super(event.getName(), event.getStart(), event.getEnd(), event.getVisibility(), event.getCalendar());
 		this.interval = interval;
 		this.forceSetId(event.getId());
+		this.setBaseId(this.getId());
 	}
 
 	@Override
@@ -179,6 +180,50 @@ public class RepeatingEvent extends Event{
 
 	public void init() {
 		generateNextEvents(this.getStart().plusMonths(1));
+	}
+
+	// possible resulting interval structures after deletion
+	// there are 3 cases which we have to consider:
+	// (a) victim equals current head => next of head gets new head
+	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head 
+	// (c) [head, previctim] | victim | [postVictim, +infinite]
+	// care about setting new baseId correctly.
+	@Override
+	public void remove() {
+		System.out.println("id "+this.getId()+ " baseid " + this.getBaseId());  
+		
+		Event head = this.getCalendar().getHeadById(this.getBaseId());
+		Event preVictim = this.getPreviousReference();
+		Event postVictim = this.getNextReference();
+		
+		System.out.println(head.getParsedStartDate() + 
+				" " +this.getParsedStartDate());
+		
+		// case (a) -- seems to work after some testing
+		if(this == head){
+			Event postHead = this.getNextReference();
+			postHead.setPrevious(null);
+			this.setNext(null);
+			this.getCalendar().removeEventFromHeadList(this);
+			this.getCalendar().addEvent(postHead);
+			
+			// go through posthead tail
+			postHead.setBaseId(postHead.getId());
+			Event cursor = postHead; 
+			while(cursor.hasNext()){
+				cursor.setBaseId(postHead.getBaseId());
+				cursor = getNextReference();
+				if(cursor == null) break;
+			}
+			
+		// case (b)
+		}else if(this == head.getNextReference()){
+		
+		// case (c)
+		}else{
+			
+		}
+		
 	}
 	
 }
