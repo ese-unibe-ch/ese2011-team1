@@ -119,26 +119,19 @@ public class Calendar {
 		return result;
 	}
 	
-	public LinkedList<Event> getEventsOfDate(int day, int month, int year, User requester) {
+	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month, int year, User requester) {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
-		// 1. go here through heads
-		System.out.println("headlist in getEventsOfDate " + eventHeads);
-		for(Event head : this.eventHeads){
-			if(checkHappensOn(head.getStart().toLocalDate(), head.getEnd().toLocalDate(), compareDate))	
-				if(head.getVisibility() != Visibility.PRIVATE 
-						|| owner == requester) result.add(head);
-			
-			Event cursor = head;
-			while(cursor.hasNext()){
-				cursor = cursor.getNextReference();
-				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate))	
-					if(cursor.getVisibility() != Visibility.PRIVATE 
-							|| owner == requester) result.add(cursor);
+		
+		result.addAll(this.getEventsOfDate(compareDate, requester));
+		
+		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
+		LinkedList<Long> shownObservedCalendars = owner.getShownObservedCalendars();
+		for (Calendar observedCalendar : observedCalendars) {
+			if (shownObservedCalendars.contains(observedCalendar.getId())) {
+				result.addAll(observedCalendar.getEventsOfDate(compareDate, requester));
 			}
 		}
-		// TODO go through other lists as observed and so on...
-		System.out.println("getEventsOfDate " + result);
 		
 		return result;
 	}
@@ -146,34 +139,22 @@ public class Calendar {
 	// return a list which contains all dates depending on input date
 	// where we only compare its year, month and day for equality
 	// TODO use a priority queue instead of a linked list.
-	public LinkedList<Event> getEventsOfDate(DateTime day, User requester){
+	public LinkedList<Event> getEventsOfDate(LocalDate date, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
 		for(Event head : this.eventHeads){
-			if(checkHappensOn(head, day))
+			if(head.happensOn(date))
 				if(head.getVisibility() != Visibility.PRIVATE 
 						|| owner == requester) result.add(head);
 			
 			Event cursor = head;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
-				if(checkHappensOn(cursor, day))
+				if(cursor.happensOn(date))
 					if(cursor.getVisibility() != Visibility.PRIVATE 
 							|| owner == requester) result.add(cursor);
 			}
 		}
-		// TODO go through other lists as observed and so on...
-		// EDIT SIMU: We need to split this into 'get ALL events on this Date, including observed calendars'
-		//							and 'get only this calendars Events on this date', so we can do sth like this:
-		//		getEventsOnDate(...) {
-		//				result.addAll(getThisCalendarsEventsOnThisDate())
-		//				for each Calendar in ObservedCalendars: 
-		//					result.addAll( etThisCalendarsEventsOnThisDate())
-		//		}
-		//			Otherwise we must do it in Application (and thats bad) because of infinite loops 
-		//			if the observed calendars contain this calendar in their observed calendars!!!!
-		//			(and there is no possibility to add yourself to other people's open events.
-		//		Gonna do this tomorrow!
 		return result;
 	}
 	
@@ -384,48 +365,60 @@ public class Calendar {
 	
 	// checker
 	
-	// TODO add method description
+	/**
+	 * Test if this Calendar has any Event on a given date that is visible for the specified user.
+	 * 
+	 * This method also considers Events of all shown observed Calendars.
+	 * @param day The day of the date to be checked.
+	 * @param month The month of the date to be checked.
+	 * @param year The year of the date to be checked.
+	 * @param requester The user which requests to see those events.
+	 * @return <code>true</code> if there exists any event in either this or any of the shown observed calendars that happens the date.
+	 * <code>false</code> if no such Event exists.
+	 */
 	// TODO add other lists, which we have to check
-	public boolean hasEventOnDate(int day, int month, int year, User requester){
-		
+	public boolean hasEventOnDateIncludingObserved(int day, int month, int year, User requester){
+		boolean hasEvent = false;
 		LocalDate compareDate = null;
 		try {
 			compareDate = new LocalDate(year, month, day);
 		} catch (Exception e) {}
+		hasEvent = hasEventOnDate(compareDate, requester);
 		
-		for(Event event : this.eventHeads){
-			Event cursor = event;
-			do{
-				if(checkHappensOn(cursor.getStart().toLocalDate(), cursor.getEnd().toLocalDate(), compareDate)) 
-					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
-				cursor = cursor.getNextReference();
-				if(cursor == null) break;
-			}while(cursor != null || cursor.hasNext());
+		// check observedCalendars
+		if (!hasEvent) {
+			LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
+			LinkedList<Long> shownObservedCalendars = owner.getShownObservedCalendars();
+			for (Calendar observedCalendar : observedCalendars) {
+				if (shownObservedCalendars.contains(observedCalendar.getId())) {
+					hasEvent = observedCalendar.hasEventOnDate(compareDate, requester);
+				}
+				if (hasEvent)
+					break;
+			}
 		}
-		return false;
+		return hasEvent;
 	}
 	
-	// TODO add method description
-	// TODO add other lists, which we have to check
-	public boolean hasEventOnDate(DateTime date, User requester){
+	/**
+	 * Tests if this calendar has an Event which happens on the specified date and is visible for the given user.
+	 * 
+	 * @param date The date to be checked against.
+	 * @param requester The user that requests to see an Event on this date.
+	 * @return <code>true</code> if there exists any event in this calendar that happens the date.
+	 * <code>false</code> if no such event exists.
+	 */
+	public boolean hasEventOnDate(LocalDate date, User requester){
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-				if(checkHappensOn(cursor, date))
+				if(cursor.happensOn(date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
 				cursor = cursor.getNextReference();
 				if(cursor == null) break;
 			}while(cursor.hasNext());
 		}
-		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
-		LinkedList<Long> shownObservedCalendars = owner.getShownObservedCalendars();
-		for (Calendar observedCalendar : observedCalendars) {
-			if (shownObservedCalendars.contains(observedCalendar.getId())) {
-				return observedCalendar.hasEventOnDate(date, requester);
-			}
-		}
-		
 		return false;
 	}
 	
@@ -435,15 +428,7 @@ public class Calendar {
 	 * they are declared as private (never public or even protected) 
 	 */
 	
-	private boolean checkHappensOn(Event event, DateTime compareDate){
-		return (event.getStart().equals(compareDate) 
-					|| event.getEnd().equals(compareDate) 
-					|| (event.getStart().isBefore(compareDate) && event.getEnd().isAfter(compareDate)));
-	}
-	
-	private boolean checkHappensOn(LocalDate timeStart, LocalDate timeEnd, LocalDate compareDate){
-		return (timeStart.equals(compareDate) 
-					|| timeEnd.equals(compareDate) 
-					|| (timeStart.isBefore(compareDate) && timeEnd.isAfter(compareDate)));
+	public String toString() {
+		return this.name;
 	}
 }

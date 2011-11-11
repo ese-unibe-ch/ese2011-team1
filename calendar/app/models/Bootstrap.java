@@ -84,8 +84,7 @@ public class Bootstrap extends Job {
 		user.getdefaultCalendar().addEvent(event);
 		simplay.addObservedCalendar(user.getdefaultCalendar());
 
-		event = 
-				new PointEvent("simonb_ev2", now, now, Visibility.PUBLIC, cal);
+		event = new PointEvent("simonb_ev2", now, now, Visibility.PUBLIC, cal);
 		user.getdefaultCalendar().addEvent(event);
 
 		event = 

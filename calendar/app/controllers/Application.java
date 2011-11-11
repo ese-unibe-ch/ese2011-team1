@@ -405,7 +405,7 @@ public class Application extends Controller {
 		}
 		assert (activeDate != null) : "must not be null!";
 
-		LinkedList<Event> eventsOfDate = calendar.getEventsOfDate(
+		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
 		System.out.println(eventsOfDate);
@@ -419,15 +419,7 @@ public class Application extends Controller {
 		boolean faved = me.isCalendarObserved(calendarId);
 		
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
-		LinkedList<Long> shownObservedCalendars = me
-				.getShownObservedCalendars();
-		for (Calendar observedCalendar : observedCalendars) {
-			if (shownObservedCalendars.contains(observedCalendar.getId())) {
-				eventsOfDate.addAll(observedCalendar.getEventsOfDate(
-						activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
-						activeDate.getYear(), me));
-			}
-		}
+		LinkedList<Long> shownObservedCalendars = me.getShownObservedCalendars();
 		
 		calendar.generateNextEvents(activeDate);
 		
@@ -503,7 +495,7 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		for (Event e : cal.getEventsOfDate(activeDate.getDayOfMonth(),
+		for (Event e : cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
 				activeDate.getMonthOfYear(), activeDate.getYear(), me)) {
 			if (e.getId() == eventId) {
 				event = e;
@@ -522,7 +514,7 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		for (Event e : cal.getEventsOfDate(activeDate.getDayOfMonth(),
+		for (Event e : cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
 				activeDate.getMonthOfYear(), activeDate.getYear(), me)) {
 			if (e.getId() == eventId) {
 				event = e;
