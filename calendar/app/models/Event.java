@@ -6,6 +6,8 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import sun.nio.cs.ext.TIS_620;
+
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
 // TODO improve some performance issues.
 // TODO add birthday stuff and observed stuff - shouldn't be that hard 
@@ -210,6 +212,36 @@ public abstract class Event implements Comparable<Event>{
 		return sb.toString();
 	}
 	
+	public String getNameFor(User requester) {
+		String visibleName = null;
+		if (this.isPublic())
+			visibleName = this.getName();
+		if (this.isBusy())
+			visibleName = "Busy";
+		if (this.getOwner().equals(requester))
+			visibleName = this.getName();
+		return  visibleName;
+	}
+	
+	public String getDatesFor(DateTime activeDate, User requester) {
+		return getParsedDate(start) + " - " + getParsedDate(end);
+	}
+	
+	public String getDescriptionFor(User requester) {
+		String visibleDescription = null;
+		if (this.isPublic() || this.getOwner().equals(requester))
+			visibleDescription = this.getDescription();
+		return visibleDescription;
+	}
+	
+	public String getRepetitionFor(User requester) {
+		return null;
+	}
+	
+	public String getVisibilityFor(User requester) {
+		return requester == getOwner() ? this.visibility.toString() : null;
+	}
+	
 	// depending on what kind of event we are
 	// generate next events for a head if allowed.
 	// summary: 
@@ -356,5 +388,5 @@ public abstract class Event implements Comparable<Event>{
 		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval();
 		return 0;
 	}
-
+	
 }

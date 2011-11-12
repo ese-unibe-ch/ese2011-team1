@@ -1,12 +1,10 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title: calendar.getName() /}
+<div id="content">
 <header>
-	<h1>${user.getName()}'s ${calendar.getName()} Calendar
-<!-- TODO DELETE FROM HERE USED FOR TESTING-->
-	#{if message}
-		<font style = "font-size: 30px; color: red;">${message}</font>
-	#{/if}
-<!-- TO HERE -->
+		#{navigation /}
+		
+	<h1><a href="@{Application.index()}">Home</a> - <a href="@{Application.showProfile(user.getName())}">${user.getName()}</a>'s ${calendar.getName()} Calendar
 		%{
 		//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
@@ -23,16 +21,14 @@
 	</a>
 	
 	</h1>
-	<p> Month: ${activeDate.toString("MMM")} ${activeDate.getYear().toString()} </p>
 </header>
 
 <body>
-	<div id="nextMonth">
-		<a href="@{Application.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> next </a>
-	</div>
-	
-	<div id="prevousMonth">
-		<a href="@{Application.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"> previous </a>
+	<div id="calendarNavigation">
+			<span id="previousMonth"><a class="button" href="@{Application.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"><<</a></span>
+			<span id="currentMonth">${activeDate.toString("MMM")} ${activeDate.getYear().toString()}</span>
+			<span id="nextMonth"><a class="button" href="@{Application.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}">>></a></span>
+			<br><br>
 	</div>
 	
 	<table id="calendar">
@@ -161,8 +157,16 @@
 	
 	<div style="clear:both"></div>
 
+	<div id="Nav">
+		#{if user==me} 
+	 		<a class="button" href="@{Application.addEvent(calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+		#{/if}
+	</div>
 	<table id="events">
-			<h2>${user.getName()}'s events of the ${activeDate.toString("dd-MM-yyyy")} </h2>
+			<h2>Events on ${activeDate.toString("dd-MM-yyyy")} </h2>
+			#{if eventsOfDate.isEmpty()}
+				No events to display.
+			#{/if}
 			#{list items:eventsOfDate, as:'event'}
 				<p>
 					<!-- <li> -->
@@ -191,33 +195,18 @@
 							System.out.println();
 							
 							col = interval*idx;
-							out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
+							//out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
+							out.print('<div id="eventInformation" style="border-color: hsl(' + col + ',100%, 50%)">');
 						}
 						%}
-							
-							#{if me != event.getOwner()} 
-							<b>Owner:</b>${event.getOwner().getName()} 
-							#{/if}
-								
-							#{if user==me} 
-								#{if me==event.getOwner() || event.isPublic()}<b>Event name:</b>${event.getName()} #{/if},
-								
-								<!-- Why is this me==event.getOwner()?? this displays 'busy' for all owned events! -->
-								#{if me==event.getOwner() || event.isBusy()} <b>Busy</b> #{/if},  
-								<b>from:</b>${event.getStart().toString("dd/MM/yyyy, HH:mm")}  ,<b>to:</b>${event.getEnd().toString("dd/MM/yyyy, HH:mm")} 
-								    
-								#{if me==event.getOwner() || event.isPublic()}
-									<b>visibility</b>:${event.getVisibility()} 
-									<b>Repeating:</b>${event.isRepeating()}  
-									<b>Description</b>:${event.getDescription()} <br>
-								#{/if}
-							#{/if} <br>
-							
-							
-							<b>Repeating:</b>${event.isRepeating()}
-							<b>Description</b>:${event.getDescription()} <br>
-							<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
-								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
+
+							<span id="eventName">${event.getNameFor(me)}</span> <span id="important">${event.getDatesFor(acitiveDate, me)}</span>
+							<div id="important">${event.getDescriptionFor(me)}</div>
+							<div id="unimportant">
+							Created by: ${event.getOwner()} - 
+							${event.getRepetitionFor(me)} - 
+							${event.getVisibilityFor(me)}
+							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
 								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
@@ -229,23 +218,19 @@
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
 							<b>Attending: </b> ${event.getAttendingUsers()}<br>
 								#{if event.userIsAttending(me.getName())}
-									You are attending/showCalendar?username=simplay&calendarId=1&s_activeDate=11%2F11%2F2011%2C+19%3A32! <b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+									You are attending!<b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
 								#{/if}
 								#{else}
 									<b><a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Attend </a></b><br>
 								#{/else}  
 							#{/if}
+							</div>
 					<br>
 					<!-- </li> --> 
 				</p>
 			#{/list}
 	</table>
 
-	<div id="Nav">
-		#{if user==me} 
- 			<a href="@{Application.addEvent(calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
-		#{/if}
-	</div>
 	
 <form name="hiddenform" action="@{Application.changeObservedCalendars()}">
 <input type="hidden" name="calID" value="" />
@@ -274,9 +259,6 @@ function changeSelection(boxName) {
 	document.hiddenform.submit();
 } 
 </script>
-	
 </body>	
+</div>
 
-<a href="@{Application.showCalendarList(user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Back</a>
-<a href="@{Application.index()}">Home</a>
-<a href="@{Secure.logout()}">Log out</a>
