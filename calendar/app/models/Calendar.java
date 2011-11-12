@@ -415,6 +415,7 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
+			//	System.out.println("happens on is: " + cursor.happensOn(date) + " for:st " + cursor.getParsedStartDate() +" nd "+ cursor.getParsedEndDate() + " d "+ date); 
 				if(cursor.happensOn(date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
@@ -443,5 +444,13 @@ public class Calendar {
 		LinkedList<Event> events = this.getSameBaseIdEvents(baseId);
 		for (Event event : events) 
 			System.out.println(event.getParsedStartDate() + " baseid: " + event.getBaseId() + " id " + event.getId());
+	}
+	
+	public void PrintAllHeadTails(){
+		for(Event event : this.getHeadList()){
+			System.out.println();
+			System.out.println("head: " + event.getParsedStartDate() + " id:"+event.getId() );
+			this.PrintHeadAndHisTail(event);
+		}
 	}
 }

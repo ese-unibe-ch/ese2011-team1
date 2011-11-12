@@ -454,7 +454,13 @@ public class Application extends Controller {
 		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
-		System.out.println(eventsOfDate);
+		//System.out.println(eventsOfDate);
+		
+		System.out.println("Events of current selcected date:");
+		for(Event e : eventsOfDate)
+			System.out.println("date " + e.getParsedStartDate() + " id " + e.getId() + " base " + e.getBaseId());
+		System.out.println("done");
+		
 		// get bounds for calendar construction
 		int bound = activeDate.withDayOfMonth(1).getDayOfWeek();
 		int bound2 = activeDate.dayOfMonth().getMaximumValue();

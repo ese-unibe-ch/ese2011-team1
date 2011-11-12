@@ -265,6 +265,13 @@ public class RepeatingEvent extends Event{
 				newIntervalCursor.setPrevious(prev);
 				prev = newIntervalCursor;
 			}
+			newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)preVictim);
+			newIntervalCursor.setBaseId(newIntervalEvent.getId());
+			prev.setNext(newIntervalCursor);
+			newIntervalCursor.setPrevious(prev);
+			
+			//this.getCalendar().PrintHeadAndHisTail(newIntervalEvent);
+			
 			
 			// set new base id for right interval
 			this.getCalendar().addEvent(postVictim);
@@ -274,6 +281,8 @@ public class RepeatingEvent extends Event{
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
 			}
+			
+			this.getCalendar().PrintAllHeadTails();
 		}
 	}
 	
