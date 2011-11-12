@@ -28,6 +28,7 @@ li {
 }
 
 body {
+	font-family: Helvetica,Helv;
 	background-color: #FFFFFF;
 	margin-left: 100px;
 }
@@ -37,11 +38,11 @@ body {
 }
 */
 p,li {
-	font-size: 100%;
-	line-height: 100%;
-	font-family: Helvetica, Arial, sans-serif;
-	letter-spacing: 0.2em;
-	word-spacing: 0.1em;
+	/*font-size: 100%;*/
+	/*line-height: 35%;*/
+	/* font-family: Helvetica, Arial, sans-serif; */
+	/*letter-spacing: 0.2em;*/
+	/*word-spacing: 0.1em;*/
 }
 
 table#calendar {

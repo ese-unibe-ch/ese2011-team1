@@ -38,12 +38,16 @@ public class Application extends Controller {
 			.forPattern("dd/MM/yyyy");
 	public static String message = null;
 
-	public static void index() {
+	public static void index(String username) {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
 		String s_activeDate = new DateTime().toString("dd/MM/yyyy, HH:mm");
 		// todo: remove ourself from list
-		render(users, me, s_activeDate);
+		
+		User user = Database.users.get(username);
+		LinkedList<Calendar> calendars = me.getCalendars();
+		
+		render(users, me, s_activeDate, calendars, user);
 	}
 
 	public static void showMe(String s_activeDate) {
@@ -74,7 +78,7 @@ public class Application extends Controller {
 			else
 				flash.error("User (" + userName + ") not found!");
 
-			index();
+			index(userName);
 		} else {
 			// if a user searches himself (you never know)
 			if (me.getName().equals(user.getName()))
@@ -208,7 +212,7 @@ public class Application extends Controller {
 				// Database.changeUserName(user); //TODO does not work properly
 				// jet!
 
-				index();
+				index(name);
 			} catch (Exception e) {
 				params.flash();
 				validation.keep();
@@ -576,5 +580,32 @@ public class Application extends Controller {
 		showCalendar(calendarId, requesterName, s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
-
+	
+	/**
+	 * Leads to the form for creating a new calendar.
+	 * 
+	 */
+	public static void newCalendar() {
+		// TODO link to createCalendar
+	}
+	
+	/**
+	 * Creates a new calendar and adds it to the calendars of the given user.
+	 * 
+	 * @param userName the user which wants a new calendar
+	 * @param calenderName the name of the new calendar
+	 */
+	public static void createCalendar(String userName, String calendarName) {
+		// TODO implement creation of a calendar
+	}
+	
+	/**
+	 * Removes a calendar from the list of inherited calendars from the owner.
+	 * 
+	 * @param calendarId the calendar to delete
+	 * @param userName the user who wants to delete
+	 */
+	public static void deleteCalendar(long calendarId, String userName) {
+		// TODO implement deletion of calendar
+	}
 }

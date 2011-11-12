@@ -1,41 +1,28 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
+<p style="color: gray; position: absolute; left: 70%;">Logged in as ${me.getName()} - <a href="@{Secure.logout()}">Log out</a>  </p>
 
-<h1>Calendar Team1 - Hello ${me.name}</h1>
-<h1>${s_activeDate}</h1>
+<h1>Home</h1>
 
-<h2>News:</h2>
-	sad user has no news QQ
+<h2>Your calendars <input type="button" name="newCalendar" value="new calendar" onclick="location.href='@{Application.newCalendar()}'"> </h2>
+#{list items:calendars, as:'calendar'}
+${calendar.getName()} - 
+  <a href="@{Application.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
+  <a href="@{Application.deleteCalendar(calendar.getId(), me.getName())}"> delete </a> <br>
+#{/list}
+
 	
-<h2>Administration</h2>
-<p>
-		<a href="@{Application.showEditProfile()}"> edit my profile </a> <br>
-		<a href="@{Application.showCalendarList(me.name, s_activeDate)}"> show my calendars</a>   <br>
-	    <a href="@{Secure.login()}"> Log in</a>   <br>
-		<a href="@{Secure.logout()}">Log out</a>  <br><br>
-		<a href="@{Application.deleteMyAccount()}">delete Account</a>
-	
-</p>
+<h2>Your account</h2>
+<a href="@{Application.showProfile(me.getName())}"> view profile </a><br>
+<a href="@{Application.showEditProfile()}"> edit profile </a><br>
+<a href="@{Application.deleteMyAccount()}"> delete account</a>
 
-#{ifnot users}
-    <p>
-        no users available
-    </p>
-#{/ifnot}
-
-<p>
-<b>Other Users:</b>
-<ul>
-    #{list items:users, as:'user'}
-        #{ifnot user==me}
-	        <li>
-	            	<a href="@{Application.showCalendarList(user.name, s_activeDate)}">${user.name}</a>
-	            	<a href="@{Application.showProfile(user.name)}"> show Profile </a>        
-	        </li>
-        #{/ifnot}
-    #{/list}
-</ul>
-</p>
+<h2>Followed calendars</h2>
+#{list items:me.getObservedCalendars(), as:'calendar'}
+#{if calendar.getName()!="Birthdays"}
+<a href="@{Application.showCalendar(calendar.getId(), calendar.getOwner(), s_activeDate)}"> ${calendar.getName()} </a><br>
+#{/if}
+#{/list}
 
 #{form @Application.searchForUser()}
 <p>
@@ -43,7 +30,7 @@
 	<br>
 		<input type = "text" name = "userName" id = "userName"/>
 		<input type = "submit" value = "Search"/>
-		<input type="hidden" name="s_activeDate" value="${s_activeDate}" />
+		<input type = "hidden" name = "s_activeDate" value = "${s_activeDate}" />
 	</br>
 </p>
 #{if flash.error}
