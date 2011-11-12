@@ -305,11 +305,12 @@ public class Application extends Controller {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
-
-		 boolean repeated = is_repeated.equals("0") ? false : true;
-		 int interval = Integer.parseInt(is_repeated);
-		 Event event = calendar.getEventById(eventId);
-		 event.editDescription(description);
+	
+		boolean repeated = is_repeated.equals("0") ? false : true;
+		int interval = Integer.parseInt(is_repeated);
+		System.out.println("Event ID ::::: " +eventId); 
+		Event event = calendar.getEventById(eventId);
+		event.editDescription(description);
 		//
 		// if (repeated && !event.wasPreviouslyRepeating) {
 		// event.wasPreviouslyRepeating = true;
@@ -318,7 +319,7 @@ public class Application extends Controller {
 		//
 		//
 	//	event.edit(d_start, d_end, name, visibility, repeated, interval);
-
+		
 		
 		if(!repeated){
 			((PointEvent) event).edit(name, d_start, d_end, visibility);

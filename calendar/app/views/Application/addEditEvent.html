@@ -192,6 +192,7 @@ Enddatum:
 	
 	%{ if (editingEvent) { %}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.saveEditedEvent()}" method="GET">
+	<input type="hidden" name="eventId" value="${eventId}" />
 	%{ } else { %}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.createEvent()}" method="GET">
 	%{ } %}

@@ -91,6 +91,7 @@ public class Calendar {
 			do{
 				if(cursor.getId() == id) return cursor;
 				cursor = cursor.getNextReference();
+				if(cursor == null) break;
 			}while(cursor.hasNext());
 		}
 		return null;
