@@ -1,104 +1,149 @@
-a {
-	font-style: italic;
+A {
+	font-style: normal;
 }
-
 A:link {
 	color: blue;
+	text-decoration: none;
 }
+
 A:visited {
 	color: blue;
 }
+
 A:active {
 	color: blue;
 }
+
 A:hover {
-	text-decoration: underline; color: silver;
+	text-decoration: underline;
+	color: silver;
+}
+
+A.button {
+	border-style: dotted; 
 }
 
 li {
 	list-style-type: disc;
 }
 
-body { 
-	background-color:#FFFFFF;
-	margin-left:100px;
+body {
+	background-color: #FFFFFF;
+	margin-left: 100px;
 }
 
 /* * { 
 	color:black;
 }
 */
-
-p,li { 
-	font-size:100%;
-    line-height:100%;
-    font-family:Helvetica,Arial,sans-serif;
-    letter-spacing:0.2em;
-    word-spacing:0.1em; 
+p,li {
+	font-size: 100%;
+	line-height: 100%;
+	font-family: Helvetica, Arial, sans-serif;
+	letter-spacing: 0.2em;
+	word-spacing: 0.1em;
 }
 
 table#calendar {
-  float:left;
-  width: 70%;
-  table-layout: fixed;
-  vertical-align: middle;
-  margin-bottom: 30px;
+	float: left;
+	width: 70%;
+	table-layout: fixed;
+	vertical-align: middle;
+	margin-bottom: 30px;
 }
 
 table#calendar a {
+	font-size: large;
 	font-style: normal;
 	color: inherit;
-  	display: block;
-  	position: relative;
-  	line-height: 40px;
-  	text-decoration: none;
+	display: block;
+	position: relative;
+	line-height: 40px;
+	text-decoration: none;
 }
 
 table#calendar td {
-  text-align: center;
-  background-color: #FFF;
-  height: 40px;
-  border: solid 1px #000;
+	text-align: center;
+	background-color: #FFF;
+	height: 40px;
+	border: solid 1px #000;
 }
 
 table#calendar td.title {
-  background-color: #F0F0F0;
-  font-weight: bold;
+	background-color: #F0F0F0;
+	font-weight: bold;
 }
 
 table#calendar td.entry {
 	background-color: "#FFF";
-	color: lime;
+	color: black;
 	font-style: normal;
 }
 
 table#calendar td.selected {
-  background-color: fuchsia;
-  font-style: normal;
-  color: orange;
+	background-color: silver;
+	font-style: normal;
+	color: black;
 }
 
 table#calendar td.today {
-  background-color: #000000;
-  color: pink;
-  font-style: normal;
+	background-color: gray;
+	color: black;
+	font-style: normal;
 }
 
-#prevMonth, #nextMonth {
-  position: absolute;
-}
-
-#prevMonth {
-  left: 20px;
+#previousMonth {
+	position: absolute;
+	left: 9%;
 }
 
 #nextMonth {
-  right: 30%;
+	position: absolute;
+	left: 68.5%;
 }
 
 form#calendarform {
-  width: 15%;
-  right: 20px;
-  margin-bottom: 30px;
+	width: 15%;
+	right: 20px;
+	margin-bottom: 30px;
 }
 
+#eventInformation {
+	border: medium;
+	border-style: solid;
+	border-radius: 5px;
+	padding: 5px;
+	max-width: 68.5%;
+}
+
+#eventName {
+	font-weight: bold;
+	font-size: large;
+}
+
+#important {
+	font-weight: normal;
+	font-size: medium;
+}
+
+#unimportant {
+	color: gray;
+	font-weight: normal;
+	font-size: medium;
+}
+
+#currentMonth {
+	position: absolute;
+	left: 35%;
+	font-weight : bold;
+	font-size: large;
+	font-weight: bold;
+}
+
+#calendarNavigation {
+	text-align: center;
+}
+
+#content {
+	font-family: sans-serif;
+}

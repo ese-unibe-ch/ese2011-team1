@@ -293,4 +293,7 @@ public class RepeatingEvent extends Event{
 		
 	}
 	
+	public String getRepetitionFor(User requester) {
+		return requester == getOwner() ? ""+this.interval : new String();
+	}
 }

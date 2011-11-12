@@ -1,0 +1,20 @@
+#position {
+	position: absolute;
+	left: 70%;
+}
+
+a.button {
+	border-style: solid;
+	border-radius: 5px;
+	border-width: thin;
+	background: -webkit-gradient(linear, left top, left bottom, from(#6F6), to(#FA1));
+	text-decoration: none;
+	padding: 4px;
+	border-color: black;
+}
+navigation.a {
+	border-width: 4px 1px, 1px, 4px;
+	text-decoration: none;
+	padding: 4px;
+	border-color: black;
+}
