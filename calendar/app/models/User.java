@@ -280,12 +280,35 @@ public class User {
 	public void removeShownObservedCalendar(long calId) {
 		shownObservedCalendars.remove(calId);
 	}
-
 	
+	/**
+	 * Adds a calendar to the user's list.
+	 * 
+	 * @param name The name of the calendar to be added
+	 * @param owner The owner of the calendar to be added
+	 */
 	public void newCalendar(String name, User owner){
 		Calendar calendar = new Calendar(name, owner);
 		this.calendars.add(calendar);
 	}
+	
+	/**
+	 * Removes a calendar from the user's list.
+	 * 
+	 * @param name The name of the calendar to be added
+	 * @param owner The owner of the calendar to be added
+	 */
+	public void deleteCalendar(long calendarId){
+		System.out.println("CalendarId to be deleted: "+calendarId);
+		for (Calendar cal: calendars) {
+			System.out.println("CalendarId checked: "+cal.getId());
+			if (cal.getId() == calendarId) {
+				this.calendars.remove(cal);
+				break;
+			}
+		}
+	}
+	
 
 	/**
 	 * Check if a Calendar is observed by this User, based on the Calendars id.

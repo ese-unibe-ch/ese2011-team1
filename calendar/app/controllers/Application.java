@@ -614,8 +614,6 @@ public class Application extends Controller {
 	 */
 	public static void createCalendar(@Required String userName, 
 			@Required String calendarName) {
-		// TODO implement creation of a calendar
-		System.out.println(userName+" wants to create "+calendarName);
 		User me = Database.users.get(Security.connected());
 		
 		Calendar cal = new Calendar(calendarName, me);
@@ -630,7 +628,9 @@ public class Application extends Controller {
 	 * @param calendarId the calendar to delete
 	 * @param userName the user who wants to delete
 	 */
-	public static void deleteCalendar(long calendarId, String userName) {
-		// TODO implement deletion of calendar
+	public static void deleteCalendar(long calendarId) {
+		User me = Database.users.get(Security.connected());
+		me.deleteCalendar(calendarId);
+		index(me.getName());
 	}
 }

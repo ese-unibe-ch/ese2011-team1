@@ -21,10 +21,25 @@
 #{list items:calendars, as:'calendar'}
 ${calendar.getName()} - 
   <a href="@{Application.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
-  <a href="@{Application.deleteCalendar(calendar.getId(), me.getName())}"> delete </a> <br>
+  <a id="deleteButton" href="javascript: send(${calendar.getId()})"> delete </a> <br>
 #{/list}
 
+<script type="text/javascript">
+function send(calendarId) {
+	document.deleteCal.calendarId.value = calendarId;
 	
+	var answer = confirm ("Are you REALLY sure? This can NOT be undone!")
+	if (answer)
+		document.forms.deleteCal.submit();
+	else
+		alert ("Okay, don't worry, nothing happened.")
+}
+</script>
+
+<form name="deleteCal" action="@{Application.deleteCalendar()}" method="GET">
+	<input type="hidden" name="calendarId" value="" />
+</form>
+
 <h2>Your account</h2>
 <a href="@{Application.showProfile(me.getName())}"> view profile </a><br>
 <a href="@{Application.showEditProfile()}"> edit profile </a><br>
@@ -58,6 +73,13 @@ $(document).ready(function() {
      $('#myButton').click(function(e) {
           e.preventDefault();
 	  $('#myModal').reveal();
+     });
+});
+
+$(document).ready(function() {
+     $('#deleteButton').click(function(e) {
+          e.preventDefault();
+	  $('#deleteModal').reveal();
      });
 });
 </script>
