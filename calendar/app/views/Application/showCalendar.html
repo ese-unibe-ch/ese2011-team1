@@ -196,7 +196,13 @@
 							
 							col = interval*idx;
 							//out.print('<font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font>');
-							out.print('<div id="eventInformation" style="border-color: hsl(' + col + ',100%, 50%)">');
+							
+							// No border if event is from current user
+							// System.out.println("Event-Desc: "+event.getName());
+							if (me == event.getOwner() && event.getName() != "birthday") 
+								out.print('<div id="eventInformation" style="border-color: hsl(0, 100%, 100%)">');
+							else 
+								out.print('<div id="eventInformation" style="border-color: hsl(' + col + ',100%, 50%)">');
 						}
 						%}
 
