@@ -29,20 +29,9 @@ li {
 
 body {
 	font-family: Helvetica,Helv;
+	/* font-family: sans-serif; */
 	background-color: #FFFFFF;
 	margin-left: 100px;
-}
-
-/* * { 
-	color:black;
-}
-*/
-p,li {
-	/*font-size: 100%;*/
-	/*line-height: 35%;*/
-	/* font-family: Helvetica, Arial, sans-serif; */
-	/*letter-spacing: 0.2em;*/
-	/*word-spacing: 0.1em;*/
 }
 
 table#calendar {
@@ -143,8 +132,4 @@ form#calendarform {
 
 #calendarNavigation {
 	text-align: center;
-}
-
-#content {
-	font-family: sans-serif;
 }

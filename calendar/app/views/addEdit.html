@@ -14,5 +14,6 @@
         
         #{get 'moreScripts' /}
     </head>
-        #{doLayout /}
+    <p style="color: gray; position: absolute; left: 75%;">Logged in as ${me.getName()} - <a href="@{Application.index()}"> Home </a> | <a href="@{Secure.logout()}">Log out</a></p>
+    #{doLayout /}
 </html>

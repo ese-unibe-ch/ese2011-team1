@@ -1,12 +1,12 @@
 #{extends 'main.html' /}
 #{set title: calendar.getName() /}
+
 <div id="content">
 <header>
-		#{navigation /}
-		
+	#{navigation /}
 	<h1><a href="@{Application.index()}">Home</a> - <a href="@{Application.showProfile(user.getName())}">${user.getName()}</a>'s ${calendar.getName()} Calendar
-		%{
-		//Add transparent star (normal calendar) or yellow star (faved calendar)
+		
+	  %{//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
 				%}<a href="@{Application.removeObserve(user.getName(), calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
@@ -42,8 +42,6 @@
 			<td class="title"> Sun </td>	
 		</tr>
 		%{ 
-		//System.out.println("Tage berechnen.");
-		
 			int tmp = 1;
 			int counter = 1;
 			int year = activeDate.getYear();
@@ -80,9 +78,7 @@
 							out.println('<td class="entry"> ');
 						}
 						hasEvent = calendar.hasEventOnDateIncludingObserved(counter, month, year, me)
-						//System.out.println("vor calendar.hasEventOnDate ");
 						if(hasEvent){
-						//System.out.println("im calendar.hasEventOnDate ");
 						out.println('<b>');
 						}
 							%} 
@@ -91,8 +87,6 @@
 							if (hasEvent) {
 								out.println('</b>');
 							}
-						//System.out.println("nach calendar.hasEventOnDate ");
-						
 						
 						counter++;
 					}
@@ -103,7 +97,6 @@
 				}
 				out.println('</tr>');
 			}
-			//System.out.println("Tage berechnen okay.");
 		%} 
 	
 	</table>
@@ -133,10 +126,9 @@
 					out.print('checked="true"');
 				}
 				if (observedCalendars.contains(cal)) {
-					//Color observed calendars
+					// Color observed calendars
 					int col = interval*c;
 		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
-		 			//System.out.println("OBSERVED: interval = "+interval+", found at = "+shownObservedCalendars.indexOf(cal.getId()));
 		 			c++;
 					statementClosed = true;
 					break;
@@ -174,24 +166,22 @@
 						%{
 						if (me == user) {	
 							int space = 360;
-							int interval = (int)(space/(Math.max(observedCalendars.size(),1)));
-							
-							// TODO finde Kalender in observedCalendars
+							int interval = (int)(space/(Math.max(observedCalendars.size(),1)));				
 							int idx = 0;
 							
-							System.out.println("Event: " + event + " calendar: " + event.getCalendar()+", color index = "+idx+", interval = "+interval);
+							// TODO: Debug CalendarId
+							// System.out.println("Event: " + event + " calendar: " + event.getCalendar()+", color index = "+idx+", interval = "+interval);				
+							// System.out.println("Id des Event-Kalenders:"+event.getCalendarId());
+							// System.out.println("Prüfe calendarIds... ");
 							
-							System.out.println("Id des Event-Kalenders:"+event.getCalendarId());
-							System.out.println("Prüfe calendarIds... ");
 							for (int i=0; i < observedCalendars.size(); i++) {
 								System.out.print(observedCalendars.get(i).getId()+" ");
 								if (observedCalendars.get(i).getId() == event.getCalendarId() || observedCalendars.get(i).getId()+1 == event.getCalendarId()) {
-									System.out.println("gefunden an Stelle i = "+i);
+									// System.out.println("gefunden an Stelle i = "+i);
 									idx = i;
 									break;
 								}
 							}
-							System.out.println();
 							
 							col = interval*idx;
 							// No border if event is from current user

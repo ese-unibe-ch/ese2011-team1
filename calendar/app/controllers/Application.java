@@ -117,6 +117,7 @@ public class Application extends Controller {
 	}
 
 	public static void showProfile(String userName) {
+		User me = Database.users.get(Security.connected());
 		User user = Database.getUserByName(userName);
 		Event birthday = user.getBirthday();
 		String nickname = user.getNickname();
@@ -126,36 +127,36 @@ public class Application extends Controller {
 		String telB = user.getTelB();
 		String notes = user.getNotes();
 
-		render(user, nickname, birthday, emailP, emailB, telP, telB, notes);
+		render(me, user, nickname, birthday, emailP, emailB, telP, telB, notes);
 	}
 
 	public static void showEditProfile() {
-		User user = Database.users.get(Security.connected());
+		User me = Database.users.get(Security.connected());
 
-		String name = user.getName();
+		String name = me.getName();
 		String oldname = name;
-		String nickname = user.getNickname();
-		String password = user.getPassword();
+		String nickname = me.getNickname();
+		String password = me.getPassword();
 		String birthday = null; // user.getBirthday().start.toString("dd/MM/yyyy");
-		boolean is_visible = user.isBirthdayPublic();
+		boolean is_visible = me.isBirthdayPublic();
 
 		// NEW
-		String emailP = user.getEmailP();
-		boolean is_emailP_visible = user.getEmailPVis();
+		String emailP = me.getEmailP();
+		boolean is_emailP_visible = me.getEmailPVis();
 
-		String emailB = user.getEmailB();
-		boolean is_emailB_visible = user.getEmailBVis();
+		String emailB = me.getEmailB();
+		boolean is_emailB_visible = me.getEmailBVis();
 
-		String telP = user.getTelP();
-		boolean is_telP_visible = user.getTelPVis();
+		String telP = me.getTelP();
+		boolean is_telP_visible = me.getTelPVis();
 
-		String telB = user.getTelB();
-		boolean is_telB_visible = user.getTelBVis();
+		String telB = me.getTelB();
+		boolean is_telB_visible = me.getTelBVis();
 
-		String notes = user.getNotes();
-		boolean is_note_visible = user.getNotesVis();
+		String notes = me.getNotes();
+		boolean is_note_visible = me.getNotesVis();
 
-		render(name, oldname, nickname, password, birthday, is_visible, emailP,
+		render(me, name, oldname, nickname, password, birthday, is_visible, emailP,
 				is_emailP_visible, emailB, is_emailB_visible, telP,
 				is_telP_visible, telB, is_telB_visible, notes, is_note_visible);
 	}
