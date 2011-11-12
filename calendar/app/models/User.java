@@ -15,17 +15,17 @@ import org.joda.time.DateTime;
  * 
  */
 public class User {
-	public String name;
-	public LinkedList<Calendar> calendar;
+	private String name;
+	private LinkedList<Calendar> calendars;
 
 	// in this list we store all calendars of other user which we want to
 	// display in our calendar
-	public LinkedList<Calendar> observedCalendars;
-	public LinkedList<Long> shownObservedCalendars;
-	public String password;
-	public Event birthday;
+	private LinkedList<Calendar> observedCalendars;
+	private LinkedList<Long> shownObservedCalendars;
+	private String password;
+	private Event birthday;
 	// public boolean isPublicBirthday;
-	public long id;
+	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
 	private String emailP;
@@ -39,7 +39,7 @@ public class User {
 	private String notes;
 	private boolean notesVis;
 	private static long counter;
-
+	
 	/**
 	 * Create a new User for this calendar application.
 	 * 
@@ -58,7 +58,7 @@ public class User {
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
 
-		calendar = new LinkedList<Calendar>();
+		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
 		birthdayCalendar = new Calendar("Birthdays", this);
@@ -78,11 +78,11 @@ public class User {
 		birthdayCalendar.addEvent(this.birthday);
 
 		// each user x has a default a calender called: x's first calendar
-		calendar.add(new Calendar(name + "'s first calendar", this));
+		calendars.add(new Calendar(name + "'s first calendar", this));
 
 		// postconditions
 		assert this.name.equals(name);
-		assert calendar != null;
+		assert calendars != null;
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class User {
 	 * @see {@link Calendar}
 	 */
 	public LinkedList<Calendar> getCalendars() {
-		return this.calendar;
+		return this.calendars;
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class User {
 	 * @return The first Calendar of this User.
 	 */
 	public Calendar getdefaultCalendar() {
-		return this.calendar.getFirst();
+		return this.calendars.getFirst();
 	}
 
 	/**
@@ -220,11 +220,15 @@ public class User {
 	 */
 	public Calendar getCalendarById(long calId) {
 		Calendar result = null;
-		for (Calendar cal : calendar) {
+		for (Calendar cal : calendars) {
 			if (cal.getId() == calId)
 				result = cal;
 		}
 		return result;
+	}
+	
+	public long getId(){
+		return this.id;
 	}
 
 	/**
@@ -234,7 +238,7 @@ public class User {
 	 *            The Calendar to be added to <code>calendars</code> .
 	 */
 	public void addCalendar(Calendar cal) {
-		calendar.add(cal);
+		calendars.add(cal);
 	}
 
 	/**
@@ -275,6 +279,12 @@ public class User {
 	 */
 	public void removeShownObservedCalendar(long calId) {
 		shownObservedCalendars.remove(calId);
+	}
+
+	
+	public void newCalendar(String name, User owner){
+		Calendar calendar = new Calendar(name, owner);
+		this.calendars.add(calendar);
 	}
 
 	/**
