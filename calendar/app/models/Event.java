@@ -2,10 +2,10 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+// TODO wtf is this??
 import sun.nio.cs.ext.TIS_620;
 
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
@@ -146,7 +146,7 @@ public abstract class Event implements Comparable<Event>{
 	/**
 	 * Get the visibility status of this Event.
 	 * @return The visibility of this Event.
-	 * @see�{@link Visibility}
+	 * @see {@link Visibility}
 	 */
 	public Visibility getVisibility() {
 		return this.visibility;
