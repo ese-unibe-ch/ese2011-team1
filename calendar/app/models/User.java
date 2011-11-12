@@ -331,7 +331,7 @@ public class User {
 	 *         birthday. <code>false</code> otherwise.
 	 */
 	public boolean isBirthday(Event event) {
-		return this.birthday.getId() == event.getBaseId();
+		return (this.birthday.getId() == event.getBaseId());
 	}
 
 	public String getEmailP() {

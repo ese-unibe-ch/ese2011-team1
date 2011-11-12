@@ -235,10 +235,9 @@ public class Application extends Controller {
 	 * @param s_activeDate
 	 * @param isOpen
 	 */
-	public static void createEvent(@Required long calendarId,
-			@Required String name, @Required String start,
-			@Required String end, Visibility visibility, String is_repeated,
-			String description, String s_activeDate, boolean isOpen) {
+	public static void createEvent(@Required long calendarId, @Required String name, 
+			@Required String start, @Required String end, Visibility visibility, 
+			String is_repeated, String description, String s_activeDate, boolean isOpen) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);

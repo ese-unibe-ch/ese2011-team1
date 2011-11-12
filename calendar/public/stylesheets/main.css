@@ -58,14 +58,14 @@ table#calendar a {
 	color: inherit;
 	display: block;
 	position: relative;
-	line-height: 40px;
+	line-height: 30px;
 	text-decoration: none;
 }
 
 table#calendar td {
 	text-align: center;
 	background-color: #FFF;
-	height: 40px;
+	height: 35px;
 	border: solid 1px #000;
 }
 
