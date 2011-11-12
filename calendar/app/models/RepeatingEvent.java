@@ -1,4 +1,6 @@
 package models;
+import java.util.LinkedList;
+
 import org.joda.time.DateTime;
 
 import android.database.Cursor;
@@ -243,26 +245,50 @@ public class RepeatingEvent extends Event{
 			this.setPrevious(null);
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
-			this.getCalendar().removeHeadFromHeadList(head);
+			//this.getCalendar().removeHeadFromHeadList(head);
 			
-			/*
+			
 			IntervalEvent newIntervalEvent = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)head);
 			newIntervalEvent.setBaseId(newIntervalEvent.getId());
-			
-			
-			Event cursor = newIntervalEvent; 
-			
+			long id = newIntervalEvent.getId();
+			//this.getCalendar().addEvent(newIntervalEvent);
+			IntervalEvent newIntervalCursor = null;
+			Event cursor = head; 
+			Event prev = newIntervalEvent;
 			while(cursor.hasNext()){
+				//System.out.println("cursor start "+cursor.getParsedStartDate());
 				cursor = cursor.getNextReference();
-				IntervalEvent newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
-				newIntervalCursor.setPrevious(cursor);
-				cursor.setNext(newIntervalCursor);
+				newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
 				newIntervalCursor.setBaseId(newIntervalEvent.getId());
+				prev.setNext(newIntervalCursor);
+				newIntervalCursor.setPrevious(prev);
+				prev = newIntervalCursor;
+				
 				// set bound too
 			}
+			//prev.setNext(newIntervalCursor);
+			Event old = newIntervalCursor;
+			newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
+			newIntervalCursor.setBaseId(newIntervalEvent.getId());
+			old.setNext(newIntervalCursor);
 			
 			this.getCalendar().addEvent(newIntervalEvent);
-			*/
+			LinkedList<Event> events  = this.getCalendar().getSameBaseIdEvents(id);
+			for(Event event : events)
+				System.out.println("events "+event.getParsedStartDate());
+			
+			//this.getCalendar().addEvent(newIntervalEvent);
+			Event cc = newIntervalEvent;
+			while(cc.hasNext()){
+				cc = cc.getNextReference();
+				String nxt = null;
+				if(cc.getNextReference() != null) nxt = cc.getNextReference().getParsedStartDate();
+				//System.out.println("newIntervalCursor "+cc.getParsedStartDate() + " prev: " + cc.getPreviousReference().getParsedStartDate() + " next " + nxt);
+			}
+			String nxt = null;
+			if(cc.getNextReference() != null) nxt = cc.getNextReference().getParsedStartDate();
+			//System.out.println("newIntervalCursor "+cc.getParsedStartDate() + " prev: " + cc.getPreviousReference().getParsedStartDate() + " next " + nxt);
+			
 		}
 		
 	}
