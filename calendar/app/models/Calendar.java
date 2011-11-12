@@ -254,9 +254,9 @@ public class Calendar {
 	//			get next event after head and put it into head list, remove head from head list
 	// c) RepeatingEvent:
 	public void removeEvent(long id) {
-		System.out.println("goog");
+		System.out.println("id " + id);
 		Event victim = getEventById(id);
-		System.out.println("this date we want to remove: " + victim.getParsedStartDate());
+		//System.out.println("this date we want to remove: " + victim.getParsedStartDate());
 		victim.remove();
 	}
 	
@@ -433,5 +433,15 @@ public class Calendar {
 	
 	public String toString() {
 		return this.name + " ["+this.id+"]";
+	}
+	
+	// for debugging:
+	// input a member of a head and it's tail. 
+	//the member itself can be any element of such tail-head structure.
+	public void PrintHeadAndHisTail(Event member){
+		long baseId = member.getBaseId();
+		LinkedList<Event> events = this.getSameBaseIdEvents(baseId);
+		for (Event event : events) 
+			System.out.println(event.getParsedStartDate() + " baseid: " + event.getBaseId() + " id " + event.getId());
 	}
 }

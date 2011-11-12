@@ -80,13 +80,18 @@ public class IntervalEvent extends RepeatingEvent{
 			
 		// if we want to delete the head
 		}else if(this == head){
-		
+		// TODO code this case:
+		// remove head, set head.next as new head
+		// reset baseId and new lowerbound
+			
 		// if victim is the leaf, i.e. victim is the last element of the list.
 		}else if(postVictim == null){
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
 		// [head ,previctim] | victim | [postVictim,victim.getTo()]
+		}else if(preVictim.previous == null && postVictim.getNextReference() == null){
+			System.out.println("special case ");
 		}else{
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
@@ -99,47 +104,11 @@ public class IntervalEvent extends RepeatingEvent{
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
 			}
-		}
-			
-		
-		/*
-		 * // wenn intervall der form: [head,victim], d.h. 2. elemente
-			if(preVictim == head && postVictim == null){
-				//head = (PointEvent) head;
-				head.setNext(null);
-				head = new PointEvent((IntervalEvent) head);
-				
-			// victim == head
-			}else if(victim == head){
-				postVictim.setPrevious(null);
-				this.eventHeads.remove(victim);
-				this.addEvent(postVictim);
-				Event cursor = postVictim;
-				postVictim.setBaseId(postVictim.getId());
-				while(cursor.hasNext()){
-					cursor = cursor.getNextReference();
-					cursor.setBaseId(postVictim.getId());
-				}
-			// if victim is a leaf, i.e. victim is the last element of the list.
-			}else if(victim.getNextReference() == null){
-				preVictim.setNext(null);
-				victim.setPrevious(null);
-				
-			}else{
-				preVictim.setNext(null);
-				postVictim.setPrevious(null);
-				this.addEvent(postVictim);
-				
-				// set for all postvictims events their new baseId
-				Event cursor = postVictim;
-				postVictim.setBaseId(postVictim.getId());
-				while(cursor.hasNext()){
-					cursor = cursor.getNextReference();
-					cursor.setBaseId(postVictim.getId());
-				}
-			}
-		 */
-		
-			
+		}		
+	}
+	
+	@Override
+	public String getType() {
+		return "IntervalEvent";
 	}
 }

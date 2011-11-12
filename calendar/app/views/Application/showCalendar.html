@@ -211,7 +211,8 @@
 							<div id="unimportant">
 							Created by: ${event.getOwner()} - 
 							${event.getRepetitionFor(me)} - 
-							${event.getVisibilityFor(me)}
+							${event.getVisibilityFor(me)} - 
+							${event.getType()}
 							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
 								<b><a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>

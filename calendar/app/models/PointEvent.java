@@ -54,6 +54,11 @@ public class PointEvent extends Event{
 	public void remove() {
 		this.getCalendar().removeHeadFromHeadList(this);
 	}
+
+	@Override
+	public String getType() {
+		return "PointEvent";
+	}
 	
 
 }

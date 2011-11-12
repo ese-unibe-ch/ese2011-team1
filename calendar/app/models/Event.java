@@ -188,6 +188,8 @@ public abstract class Event implements Comparable<Event>{
 		return date.toString("dd/MM/yyyy, HH:mm");
 	}
 	
+	public abstract String getType();
+	
 	public String getParsedStartDate(){
 		return this.getStart().toString("dd/MM/yyyy, HH:mm");
 	}

@@ -192,6 +192,7 @@ public class RepeatingEvent extends Event{
 	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head 
 	// (c) [head, previctim] | victim | [postVictim, +infinite]
 	// care about setting new baseId correctly.
+	// TODO there are some bugs in case c)
 	@Override
 	public void remove() {
 
@@ -278,5 +279,10 @@ public class RepeatingEvent extends Event{
 	
 	public String getRepetitionFor(User requester) {
 		return requester == getOwner() ? ""+this.interval : new String();
+	}
+
+	@Override
+	public String getType() {
+		return "RepeatingEvent";
 	}
 }

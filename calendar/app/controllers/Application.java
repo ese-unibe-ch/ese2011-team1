@@ -308,8 +308,12 @@ public class Application extends Controller {
 	
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int interval = Integer.parseInt(is_repeated);
-		System.out.println("Event ID ::::: " +eventId); 
 		Event event = calendar.getEventById(eventId);
+		System.out.println("event id: " + eventId + " " + event);
+		
+		for(Event head : calendar.getEventHeads()) calendar.PrintHeadAndHisTail(head);
+		
+		
 		event.editDescription(description);
 		//
 		// if (repeated && !event.wasPreviouslyRepeating) {
@@ -333,14 +337,10 @@ public class Application extends Controller {
 				// auch möglich, dass der bug in der methode showCalendar in der klasse application ist und die liste mit den daten,
 				// welche dargestellt werden sollen, falsch berechnet wir...
 				calendar.removeEvent(event.getBaseId());
-				System.out.println("should be null " + calendar.getEventById(event.getBaseId()));
-				System.out.println(calendar.getHeadList());
 				RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event, interval);
 				calendar.addEvent(newEvent);
-				System.out.println(calendar.getHeadList());
 				newEvent.editDescription(description);
 				calendar.generateNextEvents(newEvent, newEvent.getStart());
-				System.out.println("head "+ newEvent.getParsedStartDate()+ " next "+ newEvent.getNextReference().getParsedStartDate());
 			}
 		}
 		
@@ -363,8 +363,6 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarId);
 		boolean editingEvent = false;
 		Event event = null;
-		
-		System.out.println("eventId: "+eventId);
 		
 		if (eventId >= 0) {
 			event = calendar.getEventById(eventId);
