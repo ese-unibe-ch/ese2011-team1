@@ -75,7 +75,7 @@ public class RepeatingEvent extends Event{
 		Event cursor = base;
 		this.current = cursor;
 		// as long as whole month is calculated
-		while(cursor.getStart().isBefore(limiter) && !hasBoundReached){
+		while(cursor.getStart().isBefore(limiter) && !isCurrentInBounds()){
 			
 			// if there is no next event, then create a new one.
 			if(!cursor.hasNext()){
@@ -245,52 +245,35 @@ public class RepeatingEvent extends Event{
 			this.setPrevious(null);
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
-			//this.getCalendar().removeHeadFromHeadList(head);
-			
+			this.getCalendar().removeHeadFromHeadList(head);
 			
 			IntervalEvent newIntervalEvent = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)head);
 			newIntervalEvent.setBaseId(newIntervalEvent.getId());
-			long id = newIntervalEvent.getId();
-			//this.getCalendar().addEvent(newIntervalEvent);
+			
+			this.getCalendar().addEvent(newIntervalEvent);
+			
 			IntervalEvent newIntervalCursor = null;
 			Event cursor = head; 
 			Event prev = newIntervalEvent;
+			// add tail elements to left interval head
 			while(cursor.hasNext()){
-				//System.out.println("cursor start "+cursor.getParsedStartDate());
 				cursor = cursor.getNextReference();
 				newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
 				newIntervalCursor.setBaseId(newIntervalEvent.getId());
 				prev.setNext(newIntervalCursor);
 				newIntervalCursor.setPrevious(prev);
 				prev = newIntervalCursor;
-				
-				// set bound too
 			}
-			//prev.setNext(newIntervalCursor);
-			Event old = newIntervalCursor;
-			newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)cursor);
-			newIntervalCursor.setBaseId(newIntervalEvent.getId());
-			old.setNext(newIntervalCursor);
 			
-			this.getCalendar().addEvent(newIntervalEvent);
-			LinkedList<Event> events  = this.getCalendar().getSameBaseIdEvents(id);
-			for(Event event : events)
-				System.out.println("events "+event.getParsedStartDate());
-			
-			//this.getCalendar().addEvent(newIntervalEvent);
-			Event cc = newIntervalEvent;
-			while(cc.hasNext()){
-				cc = cc.getNextReference();
-				String nxt = null;
-				if(cc.getNextReference() != null) nxt = cc.getNextReference().getParsedStartDate();
-				//System.out.println("newIntervalCursor "+cc.getParsedStartDate() + " prev: " + cc.getPreviousReference().getParsedStartDate() + " next " + nxt);
+			// set new base id for right interval
+			this.getCalendar().addEvent(postVictim);
+			postVictim.setBaseId(postVictim.getId());
+			cursor = postVictim; 
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
 			}
-			String nxt = null;
-			if(cc.getNextReference() != null) nxt = cc.getNextReference().getParsedStartDate();
-			//System.out.println("newIntervalCursor "+cc.getParsedStartDate() + " prev: " + cc.getPreviousReference().getParsedStartDate() + " next " + nxt);
-			
 		}
-		
 	}
 	
 	public String getRepetitionFor(User requester) {
