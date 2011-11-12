@@ -2,9 +2,23 @@
 #{set title:'Home' /}
 <p style="color: gray; position: absolute; left: 70%;">Logged in as ${me.getName()} - <a href="@{Secure.logout()}">Log out</a>  </p>
 
+<div id="myModal" class="reveal-modal">
+     <h1>New calendar</h1>
+     <p>
+     Please enter a name for your new Calendar: 
+     
+     <form name="form" action="@{Application.createCalendar()}" method="GET">
+     <input type="text" name="calendarName" value="">
+     <input type="hidden" name="userName" value="${me.getName()}">
+     <input type="button" value="create" onClick="submit()">
+     </form>
+      </p>
+     <a class="close-reveal-modal">&#215;</a>
+</div>
+
 <h1>Home</h1>
 
-<h2>Your calendars <input type="button" name="newCalendar" value="new calendar" onclick="location.href='@{Application.newCalendar()}'"> </h2>
+<h2>Your calendars <input type="button" value="new calendar" id="myButton" onclick="#myButton"> </h2>
 #{list items:calendars, as:'calendar'}
 ${calendar.getName()} - 
   <a href="@{Application.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
@@ -40,4 +54,11 @@ ${calendar.getName()} -
 #{/if}
 #{/form}
 
-
+<script type="text/javascript">
+$(document).ready(function() {
+     $('#myButton').click(function(e) {
+          e.preventDefault();
+	  $('#myModal').reveal();
+     });
+});
+</script>

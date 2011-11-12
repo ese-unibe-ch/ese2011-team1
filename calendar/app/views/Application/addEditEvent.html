@@ -187,8 +187,6 @@ Enddatum:
 	<option value="55">55</option>
 </select> Uhr <div id="endday" style="display:inline;"></div>
 </form>
-
-<!-- here was the javascript -->
 	
 	%{ if (editingEvent) { %}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.saveEditedEvent()}" method="GET">

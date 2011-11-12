@@ -607,21 +607,21 @@ public class Application extends Controller {
 	}
 	
 	/**
-	 * Leads to the form for creating a new calendar.
-	 * 
-	 */
-	public static void newCalendar() {
-		// TODO link to createCalendar
-	}
-	
-	/**
 	 * Creates a new calendar and adds it to the calendars of the given user.
 	 * 
 	 * @param userName the user which wants a new calendar
 	 * @param calenderName the name of the new calendar
 	 */
-	public static void createCalendar(String userName, String calendarName) {
+	public static void createCalendar(@Required String userName, 
+			@Required String calendarName) {
 		// TODO implement creation of a calendar
+		System.out.println(userName+" wants to create "+calendarName);
+		User me = Database.users.get(Security.connected());
+		
+		Calendar cal = new Calendar(calendarName, me);
+		me.addCalendar(cal);
+		
+		index(userName);
 	}
 	
 	/**
