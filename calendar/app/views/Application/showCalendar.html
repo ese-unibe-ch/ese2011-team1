@@ -159,7 +159,7 @@
 
 	<div id="Nav">
 		#{if user==me} 
-	 		<a class="button" href="@{Application.addEvent(calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+	 		<a class="button" href="@{Application.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
 		#{/if}
 	</div>
 	<table id="events">
@@ -182,7 +182,7 @@
 							
 							System.out.println("Event: " + event + " calendar: " + event.getCalendar()+", color index = "+idx+", interval = "+interval);
 							
-							System.out.println("ID des Event-Kalenders:"+event.getCalendarId());
+							System.out.println("Id des Event-Kalenders:"+event.getCalendarId());
 							System.out.println("Prüfe calendarIds... ");
 							for (int i=0; i < observedCalendars.size(); i++) {
 								System.out.print(observedCalendars.get(i).getId()+" ");
@@ -214,7 +214,7 @@
 							${event.getVisibilityFor(me)}
 							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
-								<b><a href="@{Application.editEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
+								<b><a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Edit </a></b> <br>
 								<b><a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove </a></b> <br>
 								#{if event.isRepeating()}
 									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
@@ -239,7 +239,7 @@
 
 	
 <form name="hiddenform" action="@{Application.changeObservedCalendars()}">
-<input type="hidden" name="calID" value="" />
+<input type="hidden" name="calId" value="" />
 <input type="hidden" name="chk" value="" />
 
 <input type="hidden" name="username" value="${user.getName()}" />
@@ -251,7 +251,7 @@
 <!-- Some Javascript to change observed calendars-->
 <script type="text/javascript">
 function changeSelection(boxName) {
-	document.hiddenform.calID.value = boxName.id;
+	document.hiddenform.calId.value = boxName.id;
 	
 	if (boxName.checked == true) {
 		document.hiddenform.chk.value = "true";
