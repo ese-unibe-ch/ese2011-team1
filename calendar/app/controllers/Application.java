@@ -285,7 +285,7 @@ public class Application extends Controller {
 		System.out.println("Creating and adding "+e+" to calendar: "+calendar);
 		
 		calendar.addEvent(e);
-		showCalendar(calendarId, me.name, start, d_start.getDayOfMonth(),
+		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
 				message);
 	}
 
@@ -402,7 +402,7 @@ public class Application extends Controller {
 		System.out.print("done");
 		DateTime activeDate = dateTimeInputFormatter
 			.parseDateTime(s_activeDate);
-		showCalendar(calendarId, me.name, s_activeDate,
+		showCalendar(calendarId, me.getName(), s_activeDate,
 			activeDate.getDayOfMonth(), message);
 	}
 
@@ -414,7 +414,7 @@ public class Application extends Controller {
 			.getEventById(eventId));
 		DateTime activeDate = dateTimeInputFormatter
 			.parseDateTime(s_activeDate);
-		showCalendar(calendarId, me.name, s_activeDate,
+		showCalendar(calendarId, me.getName(), s_activeDate,
 			activeDate.getDayOfMonth(), message);
 	}
 
@@ -426,7 +426,7 @@ public class Application extends Controller {
 		calendar.removeSerieOfRepeatingEvents(event);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
-		showCalendar(calendarId, me.name, s_activeDate,
+		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), message);
 	}
 
@@ -564,7 +564,7 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 
-		showCalendar(calendarId, user.name, s_activeDate,
+		showCalendar(calendarId, user.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), message);
 	}
 
