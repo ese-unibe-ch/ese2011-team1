@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import enums.Interval;
 import enums.Visibility;
 
 import org.hibernate.transform.ToListResultTransformer;
@@ -266,7 +267,7 @@ public class Calendar {
 	 */
 	
 	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
-			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo, String newDescription){
+			Visibility newVisibility, Interval newInterval, DateTime newFrom, DateTime newTo, String newDescription){
 		
 		event.edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo, newDescription);
 	}

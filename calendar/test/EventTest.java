@@ -1,6 +1,7 @@
 import models.Calendar;
 import models.Event;
-import models.Event.Visibility;
+import enums.Interval;
+import enums.Visibility;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -30,7 +31,7 @@ public class EventTest extends UnitTest {
 		this.event = new PointEvent("anEvent", today, tomorrow, Visibility.PRIVATE, calendar); 
 		this.event2AfterEvent = new PointEvent("event2AfterEvent", new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar); 
 		this.event3BeforeEvent = new PointEvent("event3BeforeEvent", new DateTime(-1), new DateTime(0), Visibility.PRIVATE, calendar); 
-		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today, tomorrow, Visibility.PRIVATE, calendar, 7);
+		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today, tomorrow, Visibility.PRIVATE, calendar, Interval.WEEKLY);
 		this.repeatingEvent.init();
 	}
 
@@ -94,10 +95,10 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testGetInterVall() {
-		int intervall = 7;
+		Interval interval = Interval.WEEKLY;
 		RepeatingEvent repeatingEvent = new RepeatingEvent("test", new DateTime(0),
-				new DateTime(0), Visibility.PRIVATE, calendar, intervall);
-		assertEquals(intervall, repeatingEvent.getInterval());
+				new DateTime(0), Visibility.PRIVATE, calendar, interval);
+		assertEquals(interval, repeatingEvent.getInterval());
 	}
 
 	@Test
@@ -113,7 +114,7 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testGetNextRepetitionIntervallMonth() {
-		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), 30);
+		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), Interval.MONTHLY);
 		repeatingEvent.init();
 		assertEquals(repeatingEvent.getInterval(), 30);
 		Event nextRepetition = repeatingEvent.getNextReference();
@@ -128,7 +129,7 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testGetNextRepetitionIntervallYear() {
-		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), 365);
+		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), Interval.YEARLY);
 		repeatingEvent.init();
 		assertEquals(repeatingEvent.getInterval(), 365);
 		Event nextRepetition = repeatingEvent.getNextReference();

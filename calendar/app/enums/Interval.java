@@ -5,26 +5,37 @@ package enums;
  *
  */
 public enum Interval {
+	
 	/**
 	 * This Event is not repeated.
 	 */
-	NONE,
+	NONE(0),
 	/**
 	 * This Event is repeated every day.
 	 */
-	DAILY,
+	DAILY(1),
 	/**
 	 * This Event is repeated every week.
 	 */
-	WEEKLY,
+	WEEKLY(7),
 	/**
 	 * This Event is repeated every month.
 	 */
-	MONTHLY,
+	MONTHLY(30),
 	/**
 	 * This Event is repeated every year.
 	 */
-	YEARLY
+	YEARLY(365);
+	
+	private int days;
+	
+	private Interval(int days) {
+		this.days = days;
+	}
+	
+	public int getDays() {
+		return this.days;
+	}
 	
 }
 

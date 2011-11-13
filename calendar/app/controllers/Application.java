@@ -243,7 +243,7 @@ public class Application extends Controller {
 	 */
 	public static void createEvent(@Required long calendarId, @Required String name, 
 			@Required String start, @Required String end, Visibility visibility, 
-			String is_repeated, String description, String s_activeDate, boolean isOpen) {
+			Interval interval, String description, String s_activeDate, boolean isOpen) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -264,8 +264,7 @@ public class Application extends Controller {
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 
-		boolean repeated = is_repeated.equals("0") ? false : true;
-		int intervall = Integer.parseInt(is_repeated);
+		boolean repeated = interval != Interval.NONE;
 
 		Event e;
 		if (!repeated) {
@@ -273,7 +272,7 @@ public class Application extends Controller {
 		} 
 		else {
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
-					intervall);
+					interval);
 			e.generateNextEvents(e.getStart());
 		}
 

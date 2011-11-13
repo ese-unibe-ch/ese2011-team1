@@ -3,25 +3,26 @@ import java.util.LinkedList;
 
 import org.joda.time.DateTime;
 
+import enums.Interval;
 import enums.Visibility;
 
 import android.database.Cursor;
 
 public class RepeatingEvent extends Event{
-	private int interval;
+	private Interval interval;
 	protected Event current = null;
 	protected DateTime upperBound = null;
 	protected DateTime lowerBound = null;
 	protected boolean hasBoundReached = isCurrentInBounds();
 	
-	public RepeatingEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar, int interval) {
+	public RepeatingEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar, Interval interval) {
 		super(name, start, end, visibility, calendar);
 		this.setBaseId(this.getId());
 		this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
 	
-	public RepeatingEvent(PointEvent event, int interval) {
+	public RepeatingEvent(PointEvent event, Interval interval) {
 		super(event.getName(), event.getStart(), event.getEnd(), event.getVisibility(), event.getCalendar());
 		this.interval = interval;
 		this.forceSetId(event.getId());
@@ -39,7 +40,7 @@ public class RepeatingEvent extends Event{
 		this.previous = event;
 	}
 	
-	public void setInterval(int interval){
+	public void setInterval(Interval interval){
 		this.interval = interval;
 	}
 	
@@ -51,7 +52,7 @@ public class RepeatingEvent extends Event{
 	 * 30, if this Event is repeated every month.
 	 * 365, if this Event is repeated every year.
 	 */
-	public int getInterval(){
+	public Interval getInterval(){
 		return this.interval;
 	}
 	
@@ -62,21 +63,30 @@ public class RepeatingEvent extends Event{
 	@Override
 	public void generateNextEvents(DateTime limitDate) {
 		this.current = null;
-		int interval = this.getInterval();
+		Interval interval = this.getInterval();
 		
-		if(interval == 7 || interval == 1)
-			generateDaylyOrWeekly(this, limitDate, interval);
-		else if(interval == 30)
-			generateMonthly(this, limitDate, interval);
-		else if(interval == 365)
-			generateYearly(this, limitDate, interval);
-		else
-			System.out.println("this case not handled");
+		switch(interval) {
+		case DAILY: generateDaylyOrWeekly(this, limitDate, interval);
+		break;
+		case MONTHLY: generateMonthly(this, limitDate, interval);
+		break;
+		case YEARLY: generateYearly(this, limitDate, interval);
+		break;
+		}
+		
+//		if(interval == 7 || interval == 1)
+//			generateDaylyOrWeekly(this, limitDate, interval);
+//		else if(interval == 30)
+//			generateMonthly(this, limitDate, interval);
+//		else if(interval == 365)
+//			generateYearly(this, limitDate, interval);
+//		else
+//			System.out.println("this case not handled");
 		this.current = null;
 	}
 	
 	// TODO add some comment
-	protected void generateDaylyOrWeekly(Event base, DateTime limiter, int interval){
+	protected void generateDaylyOrWeekly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
 		// as long as whole month is calculated
@@ -85,8 +95,8 @@ public class RepeatingEvent extends Event{
 			// if there is no next event, then create a new one.
 			if(!cursor.hasNext()){
 					
-				DateTime newStartDate = cursor.getStart().plusDays(getInterval());
-				DateTime newEndDate = cursor.getEnd().plusDays(getInterval());
+				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
+				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
 				
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
@@ -103,7 +113,7 @@ public class RepeatingEvent extends Event{
 	
 	// TODO highly buggy due to corner cases
 	// TODO huge optimization potential: calculate no only events till limiter but about always constant amount.
-	protected void generateMonthly(Event base, DateTime limiter, int interval){
+	protected void generateMonthly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
 		// solange bis monat abgedeckt
@@ -130,7 +140,7 @@ public class RepeatingEvent extends Event{
 	
 	// TODO highly buggy due to corner cases.
 	// TODO huge optimization potential: calculate no only events till limiter but about always constant amount.
-	protected void generateYearly(Event base, DateTime limiter, int interval){
+	protected void generateYearly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
 		// solange bis monat abgedeckt
@@ -179,7 +189,7 @@ public class RepeatingEvent extends Event{
 
 	
 	public void edit(String name, DateTime start, DateTime end,
-			Visibility visibility, int interval) {
+			Visibility visibility, Interval interval) {
 		this.setStart(start);
 		this.setEnd(end);
 		this.setName(name);
@@ -308,7 +318,7 @@ public class RepeatingEvent extends Event{
 
 	@Override
 	public void edit(String name, DateTime start, DateTime end,
-			Visibility visibility, int interval, DateTime from, DateTime to,
+			Visibility visibility, Interval interval, DateTime from, DateTime to,
 			String description) {
 
 		this.setName(name);
