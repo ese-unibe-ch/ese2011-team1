@@ -84,6 +84,10 @@ public abstract class Event implements Comparable<Event>{
 		return this.name;
 	}
 	
+	/**
+	 * Get the description of this event.
+	 * @return The <code>description</code> of this Event.
+	 */
 	public String getDescription(){
 		return this.description;
 	}
@@ -120,13 +124,22 @@ public abstract class Event implements Comparable<Event>{
 		return this.baseId;
 	}
 	
+	/**
+	 * Get the originId of this Event.
+	 * @return The originId of this Event.
+	 */
 	public long getOriginId(){
 		return this.originId;
 	}
 	
+	/**
+	 * Get the id of the corresponding calendar of this Event.
+	 * @return this.calendar.getId().
+	 */
 	public long getCalendarId() {
 		return this.calendar.getId();
 	}
+	
 	/**
 	 * Get the visibility status of this Event.
 	 * @return The visibility of this Event.
@@ -136,27 +149,41 @@ public abstract class Event implements Comparable<Event>{
 		return this.visibility;
 	}
 	
+	/**
+	 * Get the owner of this event.
+	 * @return this.calendar.getOwner()
+	 */
 	public User getOwner() {
 		return this.calendar.getOwner();
 	}
 	
-	// returns the reference to its next event, if exists, otherwise null;
-	// if null is returned it means of of these things:
-	// event is a leaf, i.e. either we have an RepeatingEvent and for those, we only generate 
-	// as many successors as we need (till current month)
-	// or we have an IntervalEvent which holds the same expect, there is a bound.
-	// event is a PointEvent in head list. those types of events don't have any successors 
+	
+	/**
+	 * returns the reference to its next event, if exists, otherwise null;
+	 * if null is returned it means of of these things:
+	 * event is a leaf, i.e. either we have an RepeatingEvent and for those, we only generate 
+	 * as many successors as we need (till current month)
+	 * or we have an IntervalEvent which holds the same expect, there is a bound.
+	 * event is a PointEvent in head list. those types of events don't have any successors 
+	 * @return this.next
+	 */
 	public Event getNextReference(){
-		//assert (this.next != null);
 		return this.next;
 	}
 	
-	// returns the reference to its previous event, if exists, otherwise null;
-	// if null is returned, it means, that this event is an head event, since heads have no root
+	/**
+	 * returns the reference to its previous event, if exists, otherwise null;
+	 * if null is returned, it means, that this event is an head event, since heads have no root
+	 * @return this.previous
+	 */
 	public Event getPreviousReference(){
 		return this.previous;
 	}
 	
+	/**
+	 * returns the last element of a head-tail structure of this event, i.e. the leaf.
+	 * @return this.leaf
+	 */
 	public Event getLeaf(){
 		return this.leaf;
 	}
@@ -172,16 +199,34 @@ public abstract class Event implements Comparable<Event>{
 		return date.toString("dd/MM/yyyy, HH:mm");
 	}
 	
+	/**
+	 * return type of an event as a string. defined in each event class separately.
+	 * @return returns string representation of the type of an event
+	 */
 	public abstract String getType();
 	
+	/**
+	 * get string representation for the start of this event 
+	 * by the format dd/MM/yyyy, HH:mm
+	 * @return formated start date
+	 */
 	public String getParsedStartDate(){
 		return this.getStart().toString("dd/MM/yyyy, HH:mm");
 	}
 	
+	/**
+	 * get string representation for the end of this event 
+	 * by the format dd/MM/yyyy, HH:mm
+	 * @return formated end date
+	 */
 	public String getParsedEndDate(){
 		return this.getEnd().toString("dd/MM/yyyy, HH:mm");
 	}
 	
+	/**
+	 * get the corresponding calendar of this event
+	 * @return this.calendar
+	 */
 	public Calendar getCalendar(){
 		return this.calendar;
 	}
@@ -293,15 +338,6 @@ public abstract class Event implements Comparable<Event>{
 	public void editDescription(String text){
 		this.description = text;
 	}
-	
-	/*
-	public void edit(String name, DateTime start, DateTime end, Visibility visibility){
-		this.setStart(start);
-		this.setEnd(end);
-		this.setName(name);
-		this.setVisiblility(visibility);	
-	}
-	*/
 	
 	/**
 	 * Edit this event.
