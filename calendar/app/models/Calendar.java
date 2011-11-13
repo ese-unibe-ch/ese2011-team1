@@ -349,6 +349,7 @@ public class Calendar {
 		
 		this.getHeadList().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
+		newHead.setBaseId(newHead.getId());
 		this.addEvent(newHead);
 		
 		Event cursor = victimHead;
@@ -359,6 +360,7 @@ public class Calendar {
 			intervalCursor.setPrevious(previous);
 			previous = intervalCursor; // store previous
 			intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+			intervalCursor.setBaseId(newHead.getBaseId());
 			previous.setNext(intervalCursor);
 			intervalCursor.setPrevious(previous);
 			cursor = cursor.getNextReference();
@@ -366,9 +368,11 @@ public class Calendar {
 		
 		previous = intervalCursor;
 		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+		intervalCursor.setBaseId(newHead.getId());
 		previous.setNext(intervalCursor);
 		intervalCursor.setPrevious(previous);
 		Event newEnd = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
+		newEnd.setBaseId(newHead.getId());
 		intervalCursor.setNext(newEnd);
 		newEnd.setPrevious(intervalCursor);
 	}
@@ -437,6 +441,10 @@ public class Calendar {
 	 * private helpers
 	 * this methods we can only call from this class
 	 * they are declared as private (never public or even protected) 
+	 */
+	
+	/*
+	 * public helpers 
 	 */
 	
 	public String toString() {
