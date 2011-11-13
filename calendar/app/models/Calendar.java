@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import models.Event.Visibility;
+import enums.Visibility;
 
 import org.hibernate.transform.ToListResultTransformer;
 import org.joda.time.DateTime;

@@ -1,6 +1,8 @@
 package models;
 import org.joda.time.DateTime;
 
+import enums.Visibility;
+
 public class PointEvent extends Event{
 
 	public PointEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar) {

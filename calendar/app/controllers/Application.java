@@ -18,7 +18,8 @@ import models.Calendar;
 import models.Calendar;
 import models.Database;
 import models.Event;
-import models.Event.Visibility;
+import enums.Interval;
+import enums.Visibility;
 import models.IntervalEvent;
 import models.PointEvent;
 import models.RepeatingEvent;
@@ -293,7 +294,7 @@ public class Application extends Controller {
 	public static void saveEditedEvent(@Required long eventId,
 			@Required long calendarId, @Required String name,
 			@Required String start, @Required String end,
-			Visibility visibility, String is_repeated, String description,
+			Visibility visibility, Interval interval, String description,
 			String s_activeDate) {
 
 		User me = Database.users.get(Security.connected());
@@ -310,10 +311,9 @@ public class Application extends Controller {
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
 		
-		System.out.println("inteval size: " + is_repeated);
+		System.out.println("inteval size: " + interval);
 		
-		boolean repeated = is_repeated.equals("0") ? false : true;
-		int interval = Integer.parseInt(is_repeated);
+		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
 		System.out.println("event id: " + eventId + " " + event);
 		

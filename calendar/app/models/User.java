@@ -2,9 +2,10 @@ package models;
 
 import java.util.LinkedList;
 
-import models.Event.Visibility;
-
 import org.joda.time.DateTime;
+
+import enums.Visibility;
+
 
 /**
  * The User class represents a User of this Calendar application. Users may have

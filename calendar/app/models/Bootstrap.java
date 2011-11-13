@@ -3,7 +3,7 @@ package models;
 
 import org.joda.time.DateTime;
 
-import models.Event.Visibility;
+import enums.Visibility;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 

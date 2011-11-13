@@ -3,6 +3,8 @@ import java.util.LinkedList;
 
 import org.joda.time.DateTime;
 
+import enums.Visibility;
+
 import android.database.Cursor;
 
 public class RepeatingEvent extends Event{

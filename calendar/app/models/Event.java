@@ -5,6 +5,8 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import enums.Visibility;
+
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
 // TODO improve some performance issues.
 // TODO add birthday stuff and observed stuff - shouldn't be that hard 
@@ -25,25 +27,7 @@ import org.joda.time.LocalDate;
  *
  */
 public abstract class Event implements Comparable<Event>{
-	
-	/**
-	 * Provides three layers of visibility to control the privacy of Events.
-	 */
-	public enum Visibility {
-		/**
-		 * All Users are allowed to see this Event.
-		 */
-		PUBLIC,
-		/**
-		 * All Users are allowed to see this Events start and end date, but nothing more.
-		 */
-		BUSY,
-		/**
-		 * Only the User who created this Event is allowed to see it.
-		 */
-		PRIVATE
-	}
-	
+
 	private Calendar calendar;
 	private List<User> attendingUsers;
 	protected Event next;

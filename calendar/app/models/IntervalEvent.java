@@ -1,5 +1,5 @@
 package models;
-import models.Event.Visibility;
+import enums.Visibility;
 
 import org.joda.time.DateTime;
 
