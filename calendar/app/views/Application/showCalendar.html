@@ -203,6 +203,7 @@
 							${event.getVisibilityFor(me)} - 
 							${event.getType()} - 
 							Id ${event.getId()} BaseId ${event.getBaseId()} originId ${event.getOriginId()}
+						 	 ::next #{if event.getNextReference() != null}${event.getNextReference().getParsedStartDate()}  #{/if}
 							
 							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}

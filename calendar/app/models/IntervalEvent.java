@@ -63,6 +63,8 @@ public class IntervalEvent extends RepeatingEvent{
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
+		System.out.println("***************** " + this +" date " +this.getParsedStartDate());
+		System.out.println("***************** " + postVictim +" date " +postVictim.getParsedStartDate());
 		
 		// interval structure: [head,victim], i.e. there are two elements
 		if(preVictim == head && postVictim == null){
@@ -81,12 +83,25 @@ public class IntervalEvent extends RepeatingEvent{
 			
 		// if we want to delete the head
 		}else if(this == head){
-		// TODO code this case:
-		// remove head, set head.next as new head
-		// reset baseId and new lowerbound
+		// TODO set new lower bound atm not problematic.
+			Event postHead = head.getNextReference();
+			this.getCalendar().getHeadList().remove(head);
+			head.setNext(null);
+			postHead.setPrevious(null);
+			this.getCalendar().getHeadList().add(postHead);
+			postHead.setBaseId(postHead.getId());
+			
+			// reset baseIds of tails of postHead
+			Event cursor = postHead;
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postHead.getId());
+			}
 			
 		// if victim is the leaf, i.e. victim is the last element of the list.
 		}else if(postVictim == null){
+			// TODO set new upper bound;
+			System.out.println("this case i am currently reworking, right?!");
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			

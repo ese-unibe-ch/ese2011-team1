@@ -272,9 +272,10 @@ public class RepeatingEvent extends Event{
 			newIntervalCursor.setBaseId(newIntervalEvent.getId());
 			prev.setNext(newIntervalCursor);
 			newIntervalCursor.setPrevious(prev);
-			
+			//newIntervalCursor.setNext(null);
+			//this.getPreviousReference().getParsedStartDate();
 			//this.getCalendar().PrintHeadAndHisTail(newIntervalEvent);
-			
+			//System.out.println(" get the state of the reference " + newIntervalCursor.getNextReference());
 			
 			// set new base id for right interval
 			this.getCalendar().addEvent(postVictim);
