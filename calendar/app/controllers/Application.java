@@ -251,12 +251,18 @@ public class Application extends Controller {
 		// convert dates
 		DateTime d_start = null;
 		DateTime d_end = null;
+		
+		if (name.length() < 1) {
+			message = "INVALID INPUT: PLEASE ENTER A NAME!";
+			addEditEvent(-1, calendarId, name, s_activeDate, message);
+		}
 
 		try {
 			d_start = dateTimeInputFormatter.parseDateTime(start);
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+			
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 		if (d_end.isBefore(d_start)) {
@@ -265,6 +271,7 @@ public class Application extends Controller {
 		}
 
 		boolean repeated = interval != Interval.NONE;
+		System.out.println("interval: " + interval + repeated);
 
 		Event e;
 		if (!repeated) {

@@ -68,20 +68,14 @@ public class RepeatingEvent extends Event{
 		switch(interval) {
 		case DAILY: generateDaylyOrWeekly(this, limitDate, interval);
 		break;
+		case WEEKLY: generateDaylyOrWeekly(this, limitDate, interval);
+		break;
 		case MONTHLY: generateMonthly(this, limitDate, interval);
 		break;
 		case YEARLY: generateYearly(this, limitDate, interval);
 		break;
 		}
 		
-//		if(interval == 7 || interval == 1)
-//			generateDaylyOrWeekly(this, limitDate, interval);
-//		else if(interval == 30)
-//			generateMonthly(this, limitDate, interval);
-//		else if(interval == 365)
-//			generateYearly(this, limitDate, interval);
-//		else
-//			System.out.println("this case not handled");
 		this.current = null;
 	}
 	
