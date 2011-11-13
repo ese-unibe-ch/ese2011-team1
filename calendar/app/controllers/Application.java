@@ -309,7 +309,9 @@ public class Application extends Controller {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
-	
+		
+		System.out.println("inteval size: " + is_repeated);
+		
 		boolean repeated = is_repeated.equals("0") ? false : true;
 		int interval = Integer.parseInt(is_repeated);
 		Event event = calendar.getEventById(eventId);
@@ -319,6 +321,10 @@ public class Application extends Controller {
 		
 		
 		event.editDescription(description);
+		
+		
+		event.edit(name, d_start, d_end, visibility, interval, d_start, d_start, description);
+		
 		//
 		// if (repeated && !event.wasPreviouslyRepeating) {
 		// event.wasPreviouslyRepeating = true;
@@ -328,8 +334,9 @@ public class Application extends Controller {
 		//
 	//	event.edit(d_start, d_end, name, visibility, repeated, interval);
 		
-		
+		/*
 		if(!repeated){
+			
 			((PointEvent) event).edit(name, d_start, d_end, visibility);
 		}else{
 			// TODO here wo do have bugs...
@@ -347,6 +354,10 @@ public class Application extends Controller {
 				calendar.generateNextEvents(newEvent, newEvent.getStart());
 			}
 		}
+		
+		*/
+		
+		
 		
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				d_start.getDayOfMonth(), message);

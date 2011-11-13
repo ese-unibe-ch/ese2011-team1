@@ -294,4 +294,23 @@ public class RepeatingEvent extends Event{
 	public String getType() {
 		return "RepeatingEvent";
 	}
+	
+	
+	// currently design decision: 
+	// there is no way to transform an repeating event to an point event by edit functionality atm.
+	// we can just reset trivial stats (i.e. not possible to set repentance by edit atm...)
+	// same holds for interval events so. GUI does not support bound edit for them.
+
+	@Override
+	public void edit(String name, DateTime start, DateTime end,
+			Visibility visibility, int interval, DateTime from, DateTime to,
+			String description) {
+
+		this.setName(name);
+		this.setStart(start);
+		this.setEnd(end);
+		this.setVisiblility(visibility);
+		this.editDescription(description);
+		
+	}
 }

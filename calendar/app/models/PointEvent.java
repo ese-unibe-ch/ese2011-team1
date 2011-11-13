@@ -60,5 +60,36 @@ public class PointEvent extends Event{
 		return "PointEvent";
 	}
 	
+	// TODO implementation
+	// there are two cases 
+	// point -> point : update stats
+	// point -> repeating : updatete stats + reset to repeating (b)
+	// to decide which case happened, test for flag 
+	// TODO write explicit whats about this flag...
+
+	@Override
+	public void edit(String name, DateTime start, DateTime end,
+			Visibility visibility, int interval, DateTime from, DateTime to,
+			String description) {
+	
+		// if interval not 0, then we have case (b)
+		// here we have create a new object of type RepeatingEvent
+		// remove old head from head list and put new head in list
+		// update base id and create successor events for the new head.
+		if(interval != 0){
+			RepeatingEvent newHead = new RepeatingEvent(name, start, end, visibility, this.getCalendar(), interval);
+			this.getCalendar().addEvent(newHead);
+			this.remove(); // call remove of a PointEvent
+			
+		}else{
+			this.setName(name);
+			this.setStart(start);
+			this.setEnd(end);
+			this.setVisiblility(visibility);
+			this.editDescription(description);
+		}
+		
+	}
+	
 
 }

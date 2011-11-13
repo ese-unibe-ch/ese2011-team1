@@ -295,12 +295,40 @@ public abstract class Event implements Comparable<Event>{
 		this.description = text;
 	}
 	
+	/*
 	public void edit(String name, DateTime start, DateTime end, Visibility visibility){
 		this.setStart(start);
 		this.setEnd(end);
 		this.setName(name);
 		this.setVisiblility(visibility);	
 	}
+	*/
+	
+	/**
+	 * Edit this event.
+	 * 
+	 * @param name
+	 *            new name for event
+	 * @param start
+	 *            new the starting Date
+	 * @param end
+	 *            new the ending Date
+	 * @param visibility
+	 *            flag, determines visibility for other users
+	 * @param interval
+	 *            determines repetition interval. Possibilities: DAY (1),
+	 *            WEEK(7), MONTH(30), YEAR(365)
+	 *   
+	 * @param from
+	 * 			  new lower bound(for IntervalEvent)
+	 * @param to
+	 * 			  new upper bound(for IntervalEvent)
+	 * 
+	 * @param description
+	 * 			 new description,note for event
+	 */
+	public abstract void edit(String name, DateTime start, DateTime end, 
+			Visibility visibility, int interval, DateTime from, DateTime to, String description);
 	
 	/**
 	 * WARNING! Use this method only for special constructors
@@ -310,16 +338,25 @@ public abstract class Event implements Comparable<Event>{
 		this.id = id;
 	}
 	
+	/**
+	 * Removes/deletes this event. 
+	 */
 	public abstract void remove();
 	
 	/*
 	 * checks
 	 */
 	
+	/**
+	 * @return if this event has a next reference
+	 */
 	public boolean hasNext(){
 		return this.next != null;
 	}
 	
+	/**
+	 * @return if this event has a previous reference
+	 */
 	public boolean hasPrevious(){
 		return this.previous != null;
 	}
