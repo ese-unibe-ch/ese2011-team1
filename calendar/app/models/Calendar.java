@@ -323,13 +323,11 @@ public class Calendar {
 	// remove whole series to which an event "member" belongs to
 	public void removeSerieOfRepeatingEvents(Event member){
 		// 1. get corresponding head
-		// 2. remove next reference
-		// 3. remove victimHead from head list
+		// 2. remove victimHead from head list
 		
 		long baseId = member.getBaseId();
 		Event victimHead = getHeadById(baseId);
-		victimHead.setNext(null);
-		this.removeEvent(baseId);
+		this.getHeadList().remove(victimHead);
 	}
 	
 	
