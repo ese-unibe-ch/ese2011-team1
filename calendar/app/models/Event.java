@@ -44,7 +44,7 @@ public abstract class Event implements Comparable<Event>{
 	private static long counter;
 	private long id;
 	private long baseId;
-	private long originId; // for deleting different depending event-series ==> for removeAll()
+	private long originId = -1; // for deleting different depending event-series ==> for removeAll(), default = -1
 	private Visibility visibility;
 	private boolean isOpen;
 	

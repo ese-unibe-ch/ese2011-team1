@@ -32,6 +32,13 @@ public class Calendar {
 	private static long counter;
 	private long id;
 	
+	/**
+	 * Constructor for a calendar. 
+	 * a calendar has a name and an owner.
+	 * this constructor sets a unique id for each new calendar and creates a head list.
+	 * @param name the name for this calendar.
+	 * @param owner the owner for this calendar.
+	 */
 	public Calendar(String name, User owner){
 		this.name = name;
 		this.owner = owner;
@@ -44,47 +51,66 @@ public class Calendar {
 	 * getters 
 	 */
 	
+	/**
+	 * returns the name of this calendar.
+	 * @return this.name
+	 */
 	public String getName(){
 		return this.name;
 	}
 	
+	/**
+	 * returns the owner of this calendar
+	 * @return this.owner
+	 */
 	public User getOwner(){
 		return this.owner;
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	public Queue<Event> getOwnersObersvedEventQueue(){
-//		return owner.getObservedEvents();
-//	}
-	
-//	@SuppressWarnings("unchecked")
-//	public Queue<Event> getOwnersFriendsBirthdaysQueue(){
-//		return owner.getFriendsBirthdays();
-//	}
-	
+	/**
+	 * get the id of this calendar
+	 * @return this.id
+	 */
 	public long getId(){
 		return this.id;
 	}
 	
+	/**
+	 * return head list of this calendar
+	 * @return returns eventHeads
+	 */
 	public PriorityQueue<Event> getHeadList(){
 		return this.eventHeads;
 	}
 	
-	// get the last element of a series of repeating events or 
-	// if we have a point event, get back the event itself.
-	// only heads have a none null reference to leaf. care about this fact. 
-	// this is due performance issues.
+	/**
+	 *  get the last element of a series of repeating events or 
+	 *  if we have a point event, get back the event itself.
+	 *  only heads have a none null reference to leaf. care about this fact.
+	 *  this is due performance issues.
+	 *  @param event event from which we are looking for its tail.
+	 *  @return leaf of head-tail structure
+	 */
+	// TODO currently not used. use this later in generateNextEvents for performance issues.
 	public Event getLeafOfEventSeries(Event event){
 		if(event.getBaseId() == event.getId()) return event.getLeaf();
 		else return getHeadById(event.getBaseId()).getLeaf();
 	}
 	
+	/**
+	 * returns the head list of this calendar, i.e. eventHeads 
+	 * @return a priority queue of all heads of the calendar
+	 */
 	public PriorityQueue<Event> getEventHeads(){
 		return this.eventHeads;
 	}
 	
-	// mache vor call dieser methode immer check, hasEvent(long id)
-	// und mache call dieser methode nur, wenn hasEvent yields true;
+	
+	/**
+	 * get an event of this calendar by a given id
+	 * @param id of the event we are looking for.
+	 * @return returns the event with id equals id of input argument.
+	 */
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
 			Event cursor = event;
@@ -98,7 +124,12 @@ public class Calendar {
 		return null;
 	}
 	
-	// getEventById would be able to do this but this method is more efficient if we are just looking for an head.
+	/**
+	 * get an head from eventHeads by a given id.
+	 * getEventById would be able to do this but this method is more efficient if we are just looking for an head.
+	 * @param id this is the id of the head we are looking for.
+	 * @return returns a head of eventHeads which has the same id as the input argument of this method.
+	 */
 	public Event getHeadById(long id){
 		for(Event event : this.eventHeads)
 			if(event.getId() == id) return event;
@@ -106,8 +137,23 @@ public class Calendar {
 		return null;
 	}
 	
-	// get all events with same baseId, i.e. all events from a given head
-	// look in head list for given id
+	/**
+	 * Get all heads with same given origin id.
+	 * @param originId
+	 * @return returns a linked list which contains all heads which have origin id equals originId
+	 */
+	public LinkedList<Event> getHeadsByOriginId(long originId){
+		LinkedList<Event> result = new LinkedList<Event>();
+		for(Event head : this.getHeadList())
+			if(head.getOriginId() == originId) result.add(head);
+		return result;
+	}
+	
+	/**
+	 * get all events with same baseId, i.e. all events from a given head
+	 * @param originId
+	 * @return returns a linked list which contains all events with same base id
+	 */
 	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
 		LinkedList<Event> result = new LinkedList<Event>();
 		Event head = this.getHeadById(baseId);
@@ -117,10 +163,17 @@ public class Calendar {
 			result.add(cursor);
 			cursor = cursor.getNextReference();
 		}
-		
 		return result;
 	}
 	
+	/**
+	 * get all events which are visible for given requester on given local date, correlated to day, month, year
+	 * @param day
+	 * @param month
+	 * @param year
+	 * @param requester
+	 * @return returns a linked list which contains all for given requester visible events for a given date.
+	 */
 	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month, int year, User requester) {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
@@ -134,12 +187,15 @@ public class Calendar {
 				result.addAll(observedCalendar.getEventsOfDate(compareDate, requester));
 			}
 		}
-		
 		return result;
 	}
 	
-	// return a list which contains all dates depending on input date
-	// where we only compare its year, month and day for equality
+	/**
+	 * get all events which are visible for given requester on given local date, correlated to day, month, year
+	 * @param date
+	 * @param requester
+	 * @return returns a linked list which contains all for given requester visible events for a given date.
+	 */
 	// TODO use a priority queue instead of a linked list.
 	public LinkedList<Event> getEventsOfDate(LocalDate date, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
@@ -160,10 +216,23 @@ public class Calendar {
 		return result;
 	}
 	
-	// TODO fix this method. uses DateTime
+	
+	/**
+	 * Does nothing, don't call this method, it is going to be removed.
+	 */
+	// TODO remove this method - we don't need it
 	public Iterator<Event> getEventList(DateTime start, User requester) {
 		return null;
 	}
+	
+
+	/**
+	 * generates the next couple of events for a given head till a limit date.
+	 * each time we click for the next month in our calendar, we have to generate following events RepeatingEvents.
+	 * the generating process is handled in the event classes itself and depends on the run-time type of an event.
+	 * @param head for this head we are going to generate its following events.
+	 * @param baseDate this DateTime object defines the limiter till which we generate new events for given head.
+	 */
 	
 	// call this method, whenever we change the month in the calendar GUI
 	// or added a new event an declared him as an IntervalEvent or RepeatingEvent
@@ -172,15 +241,11 @@ public class Calendar {
 	// TODO check about corner cases, if there exists any.
 	// TODO utilize getLeaf() for calculation improvement 
 	//      => generate new events, starting from leaf
+	
 	public void generateNextEvents(Event head, DateTime baseDate){
 		//DateTime currentDate = head.getStart();
 		DateTime currentDate = baseDate;
 		DateTime nextDate = currentDate.plusMonths(1);
-		
-		//Date nextDate = new Date(currentDate.getYear(),
-		//		currentDate.getMonth()+1, currentDate.getDate(),
-		//		currentDate.getHours(), currentDate.getMinutes());
-		
 		head.generateNextEvents(nextDate);
 		
 		// TODO later: set here new leaf for the head!
@@ -202,6 +267,10 @@ public class Calendar {
 		// end debugging
 	}
 	
+	/**
+	 * Generate the following events for all events in eventHeads depending on a given base date.
+	 * @param baseDate basis for limit date - we generate up to this date plus one month new events
+	 */
 	public void generateNextEvents(DateTime baseDate){
 		for(Event event : this.eventHeads){
 			DateTime currentDate = baseDate;
@@ -214,10 +283,18 @@ public class Calendar {
 	 * setter
 	 */
 	
+	/**
+	 * Sets name of this calendar.
+	 * @param name string representation calendar name
+	 */
 	public void setName(String name){
 		this.name = name;
 	}
 	
+	/**
+	 * Sets the owner of this calendar.
+	 * @param owner user object
+	 */
 	public void setOwner(User owner){
 		this.owner = owner;
 	}
@@ -227,37 +304,39 @@ public class Calendar {
 	 * add, delete modify, checks 
 	 */
 	
-	// adder
 	
-	// add an event into head list eventHeads
+	/*
+	 * adder
+	 */
+	
+	/**
+	 * adds an new head to eventHeads list.
+	 * @param event a new head
+	 */
 	public void addEvent(Event event){
-		// care about future filters...
 		this.eventHeads.add(event);
 	}
 	
+	/**
+	 * removes an head from the eventHeads list.
+	 * @param event victim head which is going to be removed.
+	 */
 	public void removeHeadFromHeadList(Event event){
 		this.eventHeads.remove(event);
 	}
+	 
+	/*
+	 * deleter
+	 */
 	
-	
-
-	
-	// deleter
-	
-	// 1. find event and point with a courser to him
-	// 2. check type of this event, depending on type do different algorithm to delete event
-	// a) PointEvent: just remove it from head list, done.
-	// b) IntervalEvent: 
-	//		case: victim is not in head		
-	//			split interval into two smaller intervals left and right, relatively to victim
-	//			Reset references and put 1st element of 2nd smaller interval into head list
-	//		case: victim is in head
-	//			get next event after head and put it into head list, remove head from head list
-	// c) RepeatingEvent:
+	/**
+	 * removes an victim event from our calendar by a given event id.
+	 * depending on the run-time type of an event, this method works differently.
+	 * See in each event class for the remove() definition.
+	 * @param id is the id of victim event
+	 */
 	public void removeEvent(long id) {
-		System.out.println("id " + id);
 		Event victim = getEventById(id);
-		//System.out.println("this date we want to remove: " + victim.getParsedStartDate());
 		victim.remove();
 	}
 	
@@ -266,79 +345,31 @@ public class Calendar {
 	 *  modifier
 	 */
 	
+	/**
+	 * edits a given event, i.e. set new state for this event.
+	 * how an event is actually edited is in each event class separately defined.
+	 * depending on the run-time type of an event, some of these arguments are not set.
+	 * @param event is victim event we want to edit.
+	 * @param newName is the new name for the victim event.
+	 * @param newStart is the new start date for the victim event.
+	 * @param newEnd is the new end date for the victim event.
+	 * @param newVisibility is the new visibility state for the victim event.
+	 * @param newInterval is the new interval size for the victim event.
+	 * @param newFrom is the new lower bound for the victim event (only set if event is of type IntervalEvent).
+	 * @param newTo is the new upper bound for the victim event (only set if event is of type IntervalEvent).
+	 * @param newDescription is the new description for the victim event.
+	 */
 	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
 			Visibility newVisibility, Interval newInterval, DateTime newFrom, DateTime newTo, String newDescription){
 		
 		event.edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo, newDescription);
 	}
 	
-	
-	// kill this later
-	/*************************************************************************************************
-	
-	
-	
-	// call here the corresponding event.edit methods
-	// care about type changes if we change from a PointEvent to an RepeatingEvent.
-	// at the moment we only can change an PointEvent to an RepeatingEvent
-	// or keep a PointEvent a PointEvent, keep a RepeatingEvent...
-	// TODO care about other cases!
-	// TODO do this in Eventclasses and just call here event.edit(...)
-	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
-			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo, String newDescription){
-		
-		// make a point event, suppose we are a pointevent
-		// other possibilities: changing from an intervalEvent or even an RepeatingEvent are somehow silly
-		// TODO talk with others about this assumption...
-		
-		if(event instanceof PointEvent){
-			
-			if(newInterval == 0){
-				event.edit(name, newStart, newEnd, newVisibility);	
-				event.editDescription(newDescription);
-			}else{
-				Event newEvent = new RepeatingEvent((PointEvent)event, newInterval);
-				newEvent.setStart(newStart);
-				newEvent.setEnd(newEnd);
-				newEvent.editDescription(newDescription);
-				newEvent.generateNextEvents(newStart);
-			}
-			
-		// at the moment we only can change an PointEvent to an RepeatingEvent
-		}else{
-			// as well here. we cannot cast from an IntervalEvent or even an 
-			// RepeatingEvent to each other or a PointEvent.
-			// care about ordering of this if statements due the inheritance hierarchy
-			
-			// TODO atm buggy, apply this edit function to head and all his referenced events!
-			
-			if(event instanceof IntervalEvent){
-				Event cursor = this.getHeadById(event.getBaseId());	
-				do{
-					((IntervalEvent)cursor).edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo);
-					cursor = cursor.getNextReference();
-				}while(cursor.hasNext());
-				
-			}else if( event instanceof RepeatingEvent){
-				Event cursor = this.getHeadById(event.getBaseId());
-				do{
-					((RepeatingEvent)cursor).edit(newName, newStart, newEnd, newVisibility, newInterval);
-					cursor = cursor.getNextReference();
-				}while(cursor.hasNext());
-				
-			}else{
-				System.out.println("ERROR CASE in editEvent() in class Calendar");
-			}
-			event.editDescription(newDescription);
-		}
-	}
-	
-	
-	
-	
-	****************************************************************************************************/
-	
-	// remove whole series to which an event "member" belongs to
+	/**
+	 * remove whole series to which an event "member" belongs to.
+	 * I.e. remove an head and its tail from this calendar.
+	 * @param member this event is part of a head-tail series.
+	 */
 	public void removeSerieOfRepeatingEvents(Event member){
 		// 1. get corresponding head
 		// 2. remove victimHead from head list
@@ -348,9 +379,11 @@ public class Calendar {
 		this.getHeadList().remove(victimHead);
 	}
 	
-	
-	// TODO check if references are correctly set.
-	// set this event series from RepeatingEvent to IntervalEvent
+	/**
+	 * end repentance of an series of RepeatingEvents from a given event on.
+	 * this method takes all events from [head,cancelFromThis] and transforms them into IntervalEvents.
+	 * @param cancelFromThis from this event on, the repentance gets canceled.
+	 */
 	public void cancelRepeatingEventRepetitionFromDate(Event cancelFromThis){
 		// 1. get corresponding head, this is the new lower bound for IntervalEvent
 		// 2. cancelFromThis is the upper bound for this new IntervalEvent
@@ -372,7 +405,7 @@ public class Calendar {
 		
 		Event cursor = victimHead;
 		Event intervalCursor = newHead;
-		Event previous = null; //prev
+		Event previous = null; //previous
 		
 		while(cursor.hasNext()){
 			intervalCursor.setPrevious(previous);
@@ -444,7 +477,6 @@ public class Calendar {
 		for(Event event : this.eventHeads){
 			Event cursor = event;
 			do{
-			//	System.out.println("happens on is: " + cursor.happensOn(date) + " for:st " + cursor.getParsedStartDate() +" nd "+ cursor.getParsedEndDate() + " d "+ date); 
 				if(cursor.happensOn(date))
 					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
 				
@@ -465,13 +497,19 @@ public class Calendar {
 	 * public helpers 
 	 */
 	
+	/**
+	 * @return returns string representation of this event, i.e. its name and id.
+	 */
 	public String toString() {
 		return this.name + " ["+this.id+"]";
 	}
 	
-	// for debugging:
-	// input a member of a head and it's tail. 
-	//the member itself can be any element of such tail-head structure.
+	/**
+	 * for debugging
+	 * print head and its tail, 
+	 * the member itself can be any element of such tail-head structure.
+	 * @param member a member of a head and it's tail.
+	 */
 	public void PrintHeadAndHisTail(Event member){
 		long baseId = member.getBaseId();
 		LinkedList<Event> events = this.getSameBaseIdEvents(baseId);
@@ -479,6 +517,10 @@ public class Calendar {
 			System.out.println(event.getParsedStartDate() + " baseid: " + event.getBaseId() + " id " + event.getId());
 	}
 	
+	/**
+	 * for debugging
+	 * print for all heads in getHeadList the head and its tail, 
+	 */
 	public void PrintAllHeadTails(){
 		for(Event event : this.getHeadList()){
 			System.out.println();

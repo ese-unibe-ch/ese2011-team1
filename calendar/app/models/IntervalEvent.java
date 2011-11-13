@@ -58,7 +58,8 @@ public class IntervalEvent extends RepeatingEvent{
 		return this.getStart().compareTo(event.getStart());
 	}
 	
-	@SuppressWarnings("null")
+
+	@SuppressWarnings("unused")
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
