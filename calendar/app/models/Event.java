@@ -5,9 +5,6 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-// TODO wtf is this??
-import sun.nio.cs.ext.TIS_620;
-
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
 // TODO improve some performance issues.
 // TODO add birthday stuff and observed stuff - shouldn't be that hard 
