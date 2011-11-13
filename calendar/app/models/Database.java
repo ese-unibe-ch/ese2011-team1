@@ -96,6 +96,23 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     }
     
     /**
+     * Search for all users containing a certain input String and
+     * get back a list containing them.
+     * 
+     * @param name part of a user name
+     * @return usersFound a list with all the users containing the input string
+     */
+    public static List<User> searchForUser(String name) {
+    	List<User> usersFound = new ArrayList<User>();
+    	
+    	for (int i=0; i < users.size(); i++) {
+    		if (users.get(i).getName().contains(name)) usersFound.add(users.get(i));
+    	}
+    	
+    	return usersFound;
+    }
+    
+    /**
      * Change a Users username.
      * @param user The user to have its name changed.
      */
