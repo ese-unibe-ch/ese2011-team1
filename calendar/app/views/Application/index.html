@@ -21,12 +21,13 @@
 #{list items:calendars, as:'calendar'}
 ${calendar.getName()} - 
   <a href="@{Application.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
-  <a id="deleteButton" href="javascript: send(${calendar.getId()}+1)"> delete </a> <br>
+  <a id="deleteButton" href="javascript: send(${calendar.getId()})"> delete </a> <br>
 #{/list}
 
 <script type="text/javascript">
 function send(calendarId) {
-	document.deleteCal.calendarId.value = calendarId-1;
+	calendarId = parseInt(calendarId, 10);
+	document.deleteCal.calendarId.value = calendarId;
 	
 	var answer = confirm ("Are you REALLY sure? This can NOT be undone!")
 	if (answer)
