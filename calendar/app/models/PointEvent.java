@@ -8,6 +8,7 @@ public class PointEvent extends Event{
 	public PointEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar) {
 		super(name, start, end, visibility, calendar);
 		this.setBaseId(this.getId());
+		this.setOriginId(this.getBaseId());
 	}
 	
 	// transform an InvervalEvent into a PointEvent

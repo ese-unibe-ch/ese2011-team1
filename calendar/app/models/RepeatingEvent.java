@@ -16,6 +16,8 @@ public class RepeatingEvent extends Event{
 	
 	public RepeatingEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar, int interval) {
 		super(name, start, end, visibility, calendar);
+		this.setBaseId(this.getId());
+		this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
 	
@@ -24,6 +26,7 @@ public class RepeatingEvent extends Event{
 		this.interval = interval;
 		this.forceSetId(event.getId());
 		this.setBaseId(this.getId());
+		this.setOriginId(this.getBaseId());
 	}
 
 	@Override

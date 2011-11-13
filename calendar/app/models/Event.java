@@ -43,6 +43,7 @@ public abstract class Event implements Comparable<Event>{
 	private static long counter;
 	private long id;
 	private long baseId;
+	private long originId; // for deleting different depending event-series ==> for removeAll()
 	private Visibility visibility;
 	private boolean isOpen;
 	
@@ -119,6 +120,10 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	public long getBaseId(){
 		return this.baseId;
+	}
+	
+	public long getOriginId(){
+		return this.originId;
 	}
 	
 	public long getCalendarId() {
@@ -259,6 +264,18 @@ public abstract class Event implements Comparable<Event>{
 		this.baseId = baseId;
 	}
 	
+	/**
+	 * Set the originId
+	 * @param id for originId which is to be set.
+	 */
+	public void setOriginId(long originId){
+		this.originId = originId;
+	}
+	
+	/**
+	 * Set name of an event
+	 * @param name represented as a string.
+	 */
 	public void setName(String name){
 		this.name = name;
 	}
