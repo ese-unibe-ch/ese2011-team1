@@ -71,6 +71,10 @@ public class Application extends Controller {
 
 	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
+		
+		if (userName.equals(""))
+			render(me, null);
+		
 		List<User> results = Database.searchUser(userName);
 		
 		System.out.println("Resultate: "+results);
