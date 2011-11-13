@@ -1,9 +1,9 @@
 #{extends 'main.html' /}
 #{set title: calendar.getName() /}
+#{navigation /}
 
 <div id="content">
 <header>
-	#{navigation /}
 	<h1><a href="@{Application.index()}">Home</a> - <a href="@{Application.showProfile(user.getName())}">${user.getName()}</a>'s ${calendar.getName()} Calendar
 		
 	  %{//Add transparent star (normal calendar) or yellow star (faved calendar)

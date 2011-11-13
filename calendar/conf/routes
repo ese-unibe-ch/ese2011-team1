@@ -8,11 +8,12 @@
 #			int yyear, String message) {
 #String username, String s_date
 
-GET     /                                       Application.index
-GET 	/calendars/{username}/		Application.showCalendarList
-GET 	/events									Application.showEvents
-GET 	/addEvent								Application.addEvent
-GET 	/editEvent								Application.editEvent
+GET		/										Application.index
+GET 	/calendars/{username}/					Application.showCalendarList
+#GET 	/events									Application.showEvents
+#GET 	/addEvent								Application.addEvent
+#GET 	/editEvent								Application.editEvent
+GET		/addEditEvents							Application.addEditEvent
 GET 	/showCalendar							Application.showCalendar
 GET		/Registration							Application.showregistration
 
@@ -25,4 +26,4 @@ GET     /public/                                staticDir:public
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
 # Import Secure routes
-*      /                module:secure
+*     	/                                       module:secure

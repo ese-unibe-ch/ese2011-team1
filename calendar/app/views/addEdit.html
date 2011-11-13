@@ -14,6 +14,8 @@
         
         #{get 'moreScripts' /}
     </head>
-    <p style="color: gray; position: absolute; left: 75%;">Logged in as ${me.getName()} - <a href="@{Application.index()}"> Home </a> | <a href="@{Secure.logout()}">Log out</a></p>
-    #{doLayout /}
+    #{if me != null}
+	<p style="color: gray; position: absolute; left: 75%;">Logged in as ${me.getName()} - <a href="@{Application.index()}"> Home </a> | <a href="@{Secure.logout()}">Log out</a></p>
+	#{/if}
+   	#{doLayout /}
 </html>
