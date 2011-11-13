@@ -1,14 +1,7 @@
-#{extends 'main.html' /}
-#{set title:'Home' /}
+<h3><a href="@{Application.showProfile(user.name)}"> ${user.name}</a></h3>
 
-<h1>${me.name} is watching ${user.name}'s calendars</h1>
-
-	<p>
- 		<b><a href="@{Application.showProfile(user.name)}"> show ${user.name}'s Profile </a></b>
-	</p>
+#{list items:calendars, as:'calendar'}
+<li><a href="@{Application.showCalendar(calendar.getId(), user.name, s_activeDate)}"> ${calendar.name}</a></li>
+#{/list}
 	
-	#{list items:calendars, as:'calendar'}
-		<p>
-			<li><a href="@{Application.showCalendar(calendar.getId(), user.name, s_activeDate)}"> ${calendar.name}</a></li>
-		</p>
-	#{/list}
+<a class="close-reveal-modal">&#215;</a>

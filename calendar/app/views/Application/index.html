@@ -53,21 +53,48 @@ function send(calendarId) {
 #{/if}
 #{/list}
 
-#{form @Application.searchForUser()}
-<p>
-	<label><b>Search User:</b></label>
-	<br>
-		<input type = "text" name = "userName" id = "userName"/>
-		<input type = "submit" value = "Search"/>
-		<input type = "hidden" name = "s_activeDate" value = "${s_activeDate}" />
-	</br>
-</p>
-#{if flash.error}
-	<p style="color:#c00">
-		${flash.error}
+<script type="text/javascript" charset="utf-8">
+var searchAction = #{jsAction @searchUser(':query') /}
+var editAction = #{jsAction @showCalendarList(':userName') /}
+var saveAction = #{jsAction @showCalendar(':userName') /}
+
+//If you type in the #search field, an ajax request is fired and the response is stored in the results-div
+$(document).ready(function (){
+	$('#search').keyup(function () {
+		$('#results p').load(searchAction({query: this.value}));
+	});		
+});
+
+//If you click on a user, the modal-div is filled with the edit functions
+$('a[modal-user-name]').live('click', function(e) {
+		$('#modal p').load(editAction({userName: $(this).attr('modal-user-name')}));
+});
+
+//If you click on the save button, the user is saved, the modal-div gets filled with the response and the results-div gets filled with the new search results (because one user's name's been changed)
+$(document).ready(function() {
+     $('#save').click(function() {
+     console.log(newName.value);
+     console.log(oldName.value);
+	  $('#modal p').load(saveAction({newName: newName.value, oldName: oldName.value}));
+	  $('#results p').load(searchAction({query: search.value}));
+     });
+});
+
+</script>
+
+<h2> Search for a User</h2>
+
+<input type="text" id="search" name="search">
+
+<div id="results">
+	<p>
 	</p>
-#{/if}
-#{/form}
+</div>
+
+<div id="modal" class="reveal-modal">
+	<p>
+	</p>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function() {

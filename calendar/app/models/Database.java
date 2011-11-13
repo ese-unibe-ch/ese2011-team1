@@ -4,6 +4,7 @@ package models;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -102,15 +103,23 @@ public static HashMap<String, User> users = new HashMap<String, User>();
      * @param name part of a user name
      * @return usersFound a list with all the users containing the input string
      */
-    public static List<User> searchForUser(String name) {
+    public static List<User> searchUser(String query) {
+    	List<User> userList = getUserList();
     	List<User> usersFound = new ArrayList<User>();
+  
+    	//System.out.println("In Datenbank gesucht nach "+query);
     	
-    	for (int i=0; i < users.size(); i++) {
-    		if (users.get(i).getName().contains(name)) usersFound.add(users.get(i));
+    	for (int i=0; i < userList.size(); i++) {
+    		System.out.println("Suche nach "+userList.get(i).getName().toLowerCase());
+    		if (userList.get(i).getName().toLowerCase().contains(query.toLowerCase())) {
+    			usersFound.add(userList.get(i));
+    			//System.out.println("Füge "+userList.get(i).getName()+" in Resultatmenge hinzu.");
+    		}
     	}
     	
     	return usersFound;
     }
+    
     
     /**
      * Change a Users username.

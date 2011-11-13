@@ -69,24 +69,13 @@ public class Application extends Controller {
 		render(me, user, calendars, s_activeDate);
 	}
 
-	public static void searchForUser(String userName, String s_activeDate) {
+	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
-		User user = Database.users.get(userName);
-
-		if (user == null) {
-			if (userName.length() == 0)
-				flash.error("Please enter Name!");
-			else
-				flash.error("User (" + userName + ") not found!");
-
-			index(userName);
-		} else {
-			// if a user searches himself (you never know)
-			if (me.getName().equals(user.getName()))
-				showMe(s_activeDate);
-
-			showCalendarList(userName, s_activeDate);
-		}
+		List<User> results = Database.searchUser(userName);
+		
+		System.out.println("Resultate: "+results);
+		
+		render(me, results);
 	}
 
 	public static void showEvents(long calendarId, String username,
