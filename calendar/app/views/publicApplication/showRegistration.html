@@ -4,82 +4,76 @@
 <h1>Registration:</h1>
 
 #{if flash.error}
-	<p style="color:#c00">
+	<p style="color:#c00;">
 		${flash.error}
 	</p>
 #{/if}
 
 #{form @publicApplication.RegUser()}
 <p>
+	<label for="public" style="position:absolute;left:470px;top:50px;"> public: </label>
+
 	<label for="name"> Name*: </label>
-	<input type="text" name="name" id="name" value ="${flash.name}" />
-	<span class ="error" style="color:#c00"> #{error 'name' /}</span>
+	<input type="text" name="name" id="name" value ="${flash.name}" style="position:absolute;left:300px;" />
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'name' /}</span>
 </p>
 <p>
 	<label for="nickname"> Nickname*: </label>
-	<input type="text" name="nickname" id="nickname" value ="${flash.nickname}" />
-	<span class ="error" style="color:#c00"> #{error 'nickname' /}</span>
+	<input type="text" name="nickname" id="nickname" value ="${flash.nickname}" style="position:absolute;left:300px;"/>
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'nickname' /}</span>
 </p>
 <p>
 	<label for="password"> Password*: </label>
-	<input type="password" name="password" id="password" value ="${flash.password}"/ >
-	<span class ="error" style="color:#c00"> #{error 'password' /}</span>
+	<input type="password" name="password" id="password" value ="${flash.password}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'password' /}</span>
 </p>
 <p>
 	<label for="birthday"> Birthday Date*: </label>
-	<input type="birthday" name="birthday" id="birthday" value="dd/MM/yyyy"/ >
-	<span class ="error" style="color:#c00"> #{error 'birthday' /}</span>
-	
-	<label for="b_visib"> public: </label>
-	<input type="checkbox" name="is_visible" />
+	<input type="birthday" name="birthday" id="birthday" value="dd/MM/yyyy" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:500px;"> #{error 'birthday' /}</span>
+
+	<input type="checkbox" name="is_visible" style = "position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="email"> E-Mail: </label>
 </p>
 <p>
 	<label for="emailP"> privat: </label>
-	<input type="emailP" name="emailP" id="emailP" value="${emailP}"/ >
+	<input type="emailP" name="emailP" id="emailP" value="${emailP}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00"> #{error 'emailP' /}</span>
-	
-	<label for="is_emailP_visible"> public: </label>
-	<input type="checkbox" name="is_emailP_visible"/>
+
+	<input type="checkbox" name="is_emailP_visible" style = "position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="emailB"> business: </label>
-	<input type="emailB" name="emailB" id="emailB" value="${emailB}"/ >
+	<input type="emailB" name="emailB" id="emailB" value="${emailB}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00"> #{error 'emailB' /}</span>
-	
-	<label for="is_emailB_visible"> public: </label>
-	<input type="checkbox" name="is_emailB_visible"/>
+
+	<input type="checkbox" name="is_emailB_visible" style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="tel"> Tel: </label>
 </p>
 <p>
 	<label for="telP"> privat: </label>
-	<input type="telP" name="telP" id="telP" value="${telP}"/ >
+	<input type="telP" name="telP" id="telP" value="${telP}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00"> #{error 'telP' /}</span>
 	
-	<label for="is_telP_visible"> public: </label>
-	<input type="checkbox" name="is_telP_visible"/>
+	<input type="checkbox" name="is_telP_visible" style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="telB"> business: </label>
-	<input type="telB" name="telB" id="telB" value="${telB}"/ >
+	<input type="telB" name="telB" id="telB" value="${telB}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00"> #{error 'telB' /}</span>
-	
-	<label for="is_telB_visible"> public: </label>
-	<input type="checkbox" name="is_telB_visible"/>
+
+	<input type="checkbox" name="is_telB_visible" style="position:absolute;left:470px;"/>
 </p>
 <p>
-	<label for="telB"> Notes: </label>
+	<label for="notes"> Notes: </label>
+	<input type="checkbox" name="is_note_visible" style="position:absolute;left:470px;" #{if is_note_visible} checked #{/if}/>
 </p>
 <p>
 	<textarea rows="6" cols="100" name="notes" value="${notes}">${notes}</textarea>
-</p>
-<p>
-	<label for="is_note_visible"> public: </label>
-	<input type="checkbox" name="is_note_visible" #{if is_note_visible} checked #{/if}/>
 </p>
 
 <hr />

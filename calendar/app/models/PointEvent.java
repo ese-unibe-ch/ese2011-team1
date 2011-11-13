@@ -1,6 +1,9 @@
 package models;
 import org.joda.time.DateTime;
 
+import enums.Interval;
+import enums.Visibility;
+
 public class PointEvent extends Event{
 
 	public PointEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar) {
@@ -70,14 +73,14 @@ public class PointEvent extends Event{
 
 	@Override
 	public void edit(String name, DateTime start, DateTime end,
-			Visibility visibility, int interval, DateTime from, DateTime to,
+			Visibility visibility, Interval interval, DateTime from, DateTime to,
 			String description) {
 	
 		// if interval not 0, then we have case (b)
 		// here we have create a new object of type RepeatingEvent
 		// remove old head from head list and put new head in list
 		// update base id and create successor events for the new head.
-		if(interval != 0){
+		if(interval != Interval.NONE){
 			RepeatingEvent newHead = new RepeatingEvent(name, start, end, visibility, this.getCalendar(), interval);
 			this.getCalendar().addEvent(newHead);
 			this.remove(); // call remove of a PointEvent

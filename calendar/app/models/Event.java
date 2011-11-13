@@ -5,6 +5,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import enums.Interval;
+import enums.Visibility;
+
 // TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
 // TODO improve some performance issues.
 // TODO add birthday stuff and observed stuff - shouldn't be that hard 
@@ -25,25 +28,7 @@ import org.joda.time.LocalDate;
  *
  */
 public abstract class Event implements Comparable<Event>{
-	
-	/**
-	 * Provides three layers of visibility to control the privacy of Events.
-	 */
-	public enum Visibility {
-		/**
-		 * All Users are allowed to see this Event.
-		 */
-		PUBLIC,
-		/**
-		 * All Users are allowed to see this Events start and end date, but nothing more.
-		 */
-		BUSY,
-		/**
-		 * Only the User who created this Event is allowed to see it.
-		 */
-		PRIVATE
-	}
-	
+
 	private Calendar calendar;
 	private List<User> attendingUsers;
 	protected Event next;
@@ -66,18 +51,15 @@ public abstract class Event implements Comparable<Event>{
 	/**
 	 * 
 	 * @param start
-	 *            the starting Date
+	 *            the starting Date.
 	 * @param end
-	 *            the ending Date
+	 *            the ending Date.
 	 * @param name
-	 *            name and description of Event
+	 *            name and description of Event.
 	 * @param visibility
-	 *            flag, determines visibility for other users
-	 * @param isRepeated
-	 *            flag, used for repeating Events
-	 * @param intervall
-	 *            determines repetition interval. Possibilities: DAY (1),
-	 *            WEEK(7), MONTH(30), YEAR(365)
+	 *            flag, determines visibility for other users.
+	 * @param calendar
+	 * 			  calendar the event belongs to.
 	 */
 	public Event(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar) {
 		this.name = name;
@@ -333,8 +315,9 @@ public abstract class Event implements Comparable<Event>{
 	 * @param visibility
 	 *            flag, determines visibility for other users
 	 * @param interval
-	 *            determines repetition interval. Possibilities: DAY (1),
-	 *            WEEK(7), MONTH(30), YEAR(365)
+	 *            determines repetition interval. Possibilities: NONE, DAY,
+	 *            WEEK, MONTH, YEAR
+	 *            @see{@link Interval}
 	 *   
 	 * @param from
 	 * 			  new lower bound(for IntervalEvent)
@@ -345,7 +328,7 @@ public abstract class Event implements Comparable<Event>{
 	 * 			 new description,note for event
 	 */
 	public abstract void edit(String name, DateTime start, DateTime end, 
-			Visibility visibility, int interval, DateTime from, DateTime to, String description);
+			Visibility visibility, Interval interval, DateTime from, DateTime to, String description);
 	
 	/**
 	 * WARNING! Use this method only for special constructors
@@ -438,7 +421,7 @@ public abstract class Event implements Comparable<Event>{
 	
 	// too ugly for this new design - how can we drop this without trashing our view?
 	public int getPreviousIntervalValue(){
-		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval();
+		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval().getDays();
 		return 0;
 	}
 	

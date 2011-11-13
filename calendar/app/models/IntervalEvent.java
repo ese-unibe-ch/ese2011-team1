@@ -1,11 +1,12 @@
 package models;
-import models.Event.Visibility;
+import enums.Interval;
+import enums.Visibility;
 
 import org.joda.time.DateTime;
 
 public class IntervalEvent extends RepeatingEvent{
 
-	public IntervalEvent(String name, DateTime start, DateTime end, DateTime from, DateTime to, Visibility visibility,Calendar calendar, int interval) {
+	public IntervalEvent(String name, DateTime start, DateTime end, DateTime from, DateTime to, Visibility visibility,Calendar calendar, Interval interval) {
 		super(name, start, end, visibility,calendar, interval);
 		this.setOriginId(this.getBaseId());
 		this.lowerBound = from;
@@ -42,7 +43,7 @@ public class IntervalEvent extends RepeatingEvent{
 	}
 	
 	public void edit(String name, DateTime start, DateTime end,
-			Visibility visibility, int interval, DateTime from, DateTime to) {
+			Visibility visibility, Interval interval, DateTime from, DateTime to) {
 		this.setStart(start);
 		this.setEnd(end);
 		this.setName(name);

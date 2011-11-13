@@ -1,6 +1,5 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
-#{navigation /}
 
 <h1>Edit Profile:</h1>
 
@@ -12,84 +11,75 @@
 
 #{form @Application.editProfile()}
 <p>
+	<label for="public" style="position:absolute;left:470px;top:50px;"> public: </label>
+
 	<label for="name"> Name*: </label>
-	<input type="text" name="name" id="name" value ="${name}" />
-	<span class ="error" style="color:#c00"> #{error 'name' /}</span>
+	<input type="text" name="name" id="name" value ="${name}" style="position:absolute;left:300px;" />
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'name' /}</span>
 </p>
-	<input type="hidden" name="oldname" value="${oldname}" />
+	<input type="hidden" name="oldname" value="${oldname}" style="position:absolute;left:300px;"/>
 <p>
 	<label for="nickname"> Nickname*: </label>
-	<input type="text" name="nickname" id="nickname" value ="${nickname}" />
-	<span class ="error" style="color:#c00"> #{error 'nickname' /}</span>
+	<input type="text" name="nickname" id="nickname" value ="${nickname}" style="position:absolute;left:300px;"/>
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'nickname' /}</span>
 </p>
 <p>
 	<label for="password"> Password*: </label>
-	<input type="text" name="password" id="password" value ="${password}"/ >
-	<span class ="error" style="color:#c00"> #{error 'password' /}</span>
+	<input type="text" name="password" id="password" value ="${password}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'password' /}</span>
 </p>
 <p>
 	<label for="birthday"> Birthday Date*: </label>
-	<input type="birthday" name="birthday" id="birthday" value="${birthday}"/ >
-	<span class ="error" style="color:#c00"> #{error 'birthday' /}</span>
-	
-	<label for="is_visible"> public: </label>
-	<input type="checkbox" name="is_visible" #{if is_visible} checked #{/if}/>
+	<input type="birthday" name="birthday" id="birthday" value="${birthday}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:500px;"> #{error 'birthday' /}</span>
+
+	<input type="checkbox" name="is_visible" #{if is_visible} checked #{/if} style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="email"> E-Mail: </label>
 </p>
 <p>
 	<label for="emailP"> privat: </label>
-	<input type="emailP" name="emailP" id="emailP" value="${emailP}"/ >
-	<span class ="error" style="color:#c00"> #{error 'emailP' /}</span>
+	<input type="emailP" name="emailP" id="emailP" value="${emailP}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;"> #{error 'emailP' /}</span>
 	
-	<label for="is_emailP_visible"> public: </label>
-	<input type="checkbox" name="is_emailP_visible" #{if is_emailP_visible} checked #{/if}/>
+	<input type="checkbox" name="is_emailP_visible" style="position:absolute;left:470px" #{if is_emailP_visible} checked #{/if}/>
 </p>
 <p>
 	<label for="emailB"> business: </label>
-	<input type="emailB" name="emailB" id="emailB" value="${emailB}"/ >
-	<span class ="error" style="color:#c00"> #{error 'emailB' /}</span>
-	
-	<label for="is_emailB_visible"> public: </label>
-	<input type="checkbox" name="is_emailB_visible" #{if is_emailB_visible} checked #{/if}/>
+	<input type="emailB" name="emailB" id="emailB" value="${emailB}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;"> #{error 'emailB' /}</span>
+
+	<input type="checkbox" name="is_emailB_visible" #{if is_emailB_visible} checked #{/if} style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="tel"> Tel: </label>
 </p>
 <p>
 	<label for="telP"> privat: </label>
-	<input type="telP" name="telP" id="telP" value="${telP}"/ >
-	<span class ="error" style="color:#c00"> #{error 'telP' /}</span>
-	
-	<label for="is_telP_visible"> public: </label>
-	<input type="checkbox" name="is_telP_visible" #{if is_telP_visible} checked #{/if}/>
+	<input type="telP" name="telP" id="telP" value="${telP}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;"> #{error 'telP' /}</span>
+
+	<input type="checkbox" name="is_telP_visible" #{if is_telP_visible} checked #{/if} style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<label for="telB"> business: </label>
-	<input type="telB" name="telB" id="telB" value="${telB}"/ >
-	<span class ="error" style="color:#c00"> #{error 'telB' /}</span>
-	
-	<label for="is_telB_visible"> public: </label>
-	<input type="checkbox" name="is_telB_visible" #{if is_telB_visible} checked #{/if}/>
+	<input type="telB" name="telB" id="telB" value="${telB}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;"> #{error 'telB' /}</span>
+
+	<input type="checkbox" name="is_telB_visible" #{if is_telB_visible} checked #{/if} style="position:absolute;left:470px;"/>
 </p>
 <p>
-	<label for="telB"> Notes: </label>
+	<label for="notes"> Notes: </label>
+	<input type="checkbox" name="is_note_visible" #{if is_note_visible} checked #{/if} style="position:absolute;left:470px;"/>
 </p>
 <p>
 	<textarea rows="6" cols="100" name="notes" value="${notes}">${notes}</textarea>
 </p>
-<p>
-	<label for="is_note_visible"> public: </label>
-	<input type="checkbox" name="is_note_visible" #{if is_note_visible} checked #{/if}/>
-</p>
-
-
-<hr />
+<hr/>
 <p>
 	<input type="submit" value="Submit"/>
 </p>
-
 <p>
 	<a href="@{Application.index()}">Home</a>
 </p>

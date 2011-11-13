@@ -18,7 +18,8 @@ import models.Calendar;
 import models.Calendar;
 import models.Database;
 import models.Event;
-import models.Event.Visibility;
+import enums.Interval;
+import enums.Visibility;
 import models.IntervalEvent;
 import models.PointEvent;
 import models.RepeatingEvent;
@@ -242,7 +243,7 @@ public class Application extends Controller {
 	 */
 	public static void createEvent(@Required long calendarId, @Required String name, 
 			@Required String start, @Required String end, Visibility visibility, 
-			String is_repeated, String description, String s_activeDate, boolean isOpen) {
+			Interval interval, String description, String s_activeDate, boolean isOpen) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -250,12 +251,18 @@ public class Application extends Controller {
 		// convert dates
 		DateTime d_start = null;
 		DateTime d_end = null;
+		
+		if (name.length() < 1) {
+			message = "INVALID INPUT: PLEASE ENTER A NAME!";
+			addEditEvent(-1, calendarId, name, s_activeDate, message);
+		}
 
 		try {
 			d_start = dateTimeInputFormatter.parseDateTime(start);
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+			
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 		if (d_end.isBefore(d_start)) {
@@ -263,8 +270,8 @@ public class Application extends Controller {
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 
-		boolean repeated = is_repeated.equals("0") ? false : true;
-		int intervall = Integer.parseInt(is_repeated);
+		boolean repeated = interval != Interval.NONE;
+		System.out.println("interval: " + interval + repeated);
 
 		Event e;
 		if (!repeated) {
@@ -272,7 +279,7 @@ public class Application extends Controller {
 		} 
 		else {
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
-					intervall);
+					interval);
 			e.generateNextEvents(e.getStart());
 		}
 
@@ -293,7 +300,7 @@ public class Application extends Controller {
 	public static void saveEditedEvent(@Required long eventId,
 			@Required long calendarId, @Required String name,
 			@Required String start, @Required String end,
-			Visibility visibility, String is_repeated, String description,
+			Visibility visibility, Interval interval, String description,
 			String s_activeDate) {
 
 		User me = Database.users.get(Security.connected());
@@ -310,10 +317,9 @@ public class Application extends Controller {
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
 		
-		System.out.println("inteval size: " + is_repeated);
+		System.out.println("inteval size: " + interval);
 		
-		boolean repeated = is_repeated.equals("0") ? false : true;
-		int interval = Integer.parseInt(is_repeated);
+		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
 		System.out.println("event id: " + eventId + " " + event);
 		

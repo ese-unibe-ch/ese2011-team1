@@ -3,7 +3,8 @@ import java.util.LinkedList;
 
 import models.Calendar;
 import models.Event;
-import models.Event.Visibility;
+import enums.Interval;
+import enums.Visibility;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -35,7 +36,7 @@ public class CalendarTest extends UnitTest {
 		 */
 		this.calendarOfOwner = new Calendar("Calendar", this.owner);
 		this.event = new PointEvent("anEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner);
-		this.repeatingEvent = new RepeatingEvent("repeatingEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner, 7);
+		this.repeatingEvent = new RepeatingEvent("repeatingEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner, Interval.WEEKLY);
 		this.repeatingEvent.init();
 	}
 
