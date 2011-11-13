@@ -217,7 +217,7 @@
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
 							<b>Attending: </b> ${event.getAttendingUsers()}<br>
 								#{if event.userIsAttending(me.getName())}
-									You are attending!<b><a href="@{Application.removeUserFromEvent(me.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+									You are attending!<b><a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
 								#{/if}
 								#{else}
 									<a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
