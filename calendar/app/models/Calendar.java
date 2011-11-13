@@ -265,6 +265,18 @@ public class Calendar {
 	 *  modifier
 	 */
 	
+	public void editEvent(Event event, String newName, DateTime newStart, DateTime newEnd, 
+			Visibility newVisibility, int newInterval, DateTime newFrom, DateTime newTo, String newDescription){
+		
+		event.edit(newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo, newDescription);
+	}
+	
+	
+	// kill this later
+	/*************************************************************************************************
+	
+	
+	
 	// call here the corresponding event.edit methods
 	// care about type changes if we change from a PointEvent to an RepeatingEvent.
 	// at the moment we only can change an PointEvent to an RepeatingEvent
@@ -319,6 +331,11 @@ public class Calendar {
 			event.editDescription(newDescription);
 		}
 	}
+	
+	
+	
+	
+	****************************************************************************************************/
 	
 	// remove whole series to which an event "member" belongs to
 	public void removeSerieOfRepeatingEvents(Event member){

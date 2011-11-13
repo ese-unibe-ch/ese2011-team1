@@ -111,4 +111,5 @@ public class IntervalEvent extends RepeatingEvent{
 	public String getType() {
 		return "IntervalEvent";
 	}
+	
 }

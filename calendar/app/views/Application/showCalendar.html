@@ -202,7 +202,7 @@
 							${event.getRepetitionFor(me)} - 
 							${event.getVisibilityFor(me)} - 
 							${event.getType()} - 
-							Id ${event.getId()} Base ${event.getBaseId()}
+							Id ${event.getId()} BaseId ${event.getBaseId()}
 							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
 								<a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
