@@ -110,7 +110,7 @@ public class Calendar {
 	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
 		LinkedList<Event> result = new LinkedList<Event>();
 		Event head = this.getHeadById(baseId);
-		
+		System.out.println("id " + baseId + " head " + head);
 		Event cursor = head;
 		while(cursor.hasNext()){
 			result.add(cursor);
@@ -343,25 +343,34 @@ public class Calendar {
 		long baseId = cancelFromThis.getBaseId();
 		Event victimHead = getHeadById(baseId);
 		Event nextFromCancel = cancelFromThis.getNextReference();
+		
 		cancelFromThis.setNext(null);
 		nextFromCancel.setPrevious(null);
-		// transform,care about references
 		
+		this.getHeadList().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
+		this.addEvent(newHead);
+		
 		Event cursor = victimHead;
-		Event item = null;
+		Event intervalCursor = newHead;
+		Event previous = null; //prev
+		
 		while(cursor.hasNext()){
-			cursor.setPrevious(item);
-			item = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
-			cursor.setNext(item);
-			item.setPrevious(cursor);
+			intervalCursor.setPrevious(previous);
+			previous = intervalCursor; // store previous
+			intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+			previous.setNext(intervalCursor);
+			intervalCursor.setPrevious(previous);
 			cursor = cursor.getNextReference();
 		}
 		
-		this.removeEvent(baseId);
-		this.addEvent(newHead);
-		
-		
+		previous = intervalCursor;
+		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+		previous.setNext(intervalCursor);
+		intervalCursor.setPrevious(previous);
+		Event newEnd = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
+		intervalCursor.setNext(newEnd);
+		newEnd.setPrevious(intervalCursor);
 	}
 	
 	// checker

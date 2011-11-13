@@ -483,7 +483,7 @@ public class Application extends Controller {
 		
 		// end of filter
 		
-		calendar.PrintAllHeadTails();
+		//calendar.PrintAllHeadTails();
 		
 		System.out.println("Events of current selcected date:");
 		for(Event e : eventsOfDate)
