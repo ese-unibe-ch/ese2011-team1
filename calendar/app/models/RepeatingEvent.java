@@ -317,19 +317,22 @@ public class RepeatingEvent extends Event{
 				cursor.setBaseId(postVictim.getId());
 			}
 			
+			// TODO here has to be a bug!
+			
 			//2. build [head, posthead]
 			Event newIntervalEventHead = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)head);
 			newIntervalEventHead.setOriginId(head.getOriginId());
 			newIntervalEventHead.setBaseId(newIntervalEventHead.getId());
 			this.getCalendar().addEvent(newIntervalEventHead);
-			
+			newIntervalEventHead.setNext(null);
+			/*//there is somewhere a bug!
 			Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
+			System.out.println("****************  new event next head "+newIntervalEvent.getParsedStartDate());
 			newIntervalEvent.setBaseId(newIntervalEventHead.getId());
 			
 			newIntervalEventHead.setNext(newIntervalEvent);
 			newIntervalEvent.setPrevious(newIntervalEventHead);
-		
-			
+			*/
 			
 		// case (c)
 		}else{
