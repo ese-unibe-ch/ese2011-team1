@@ -1,10 +1,7 @@
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import models.Calendar;
 import models.Event;
-import enums.Interval;
-import enums.Visibility;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -15,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import play.test.UnitTest;
+import enums.Interval;
+import enums.Visibility;
 
 public class CalendarTest extends UnitTest {
 	private User owner;
@@ -35,8 +34,11 @@ public class CalendarTest extends UnitTest {
 		 * this.francis);
 		 */
 		this.calendarOfOwner = new Calendar("Calendar", this.owner);
-		this.event = new PointEvent("anEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner);
-		this.repeatingEvent = new RepeatingEvent("repeatingEvent", new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendarOfOwner, Interval.WEEKLY);
+		this.event = new PointEvent("anEvent", new DateTime(0),
+				new DateTime(0), Visibility.PRIVATE, calendarOfOwner);
+		this.repeatingEvent = new RepeatingEvent("repeatingEvent",
+				new DateTime(0), new DateTime(0), Visibility.PRIVATE,
+				calendarOfOwner, Interval.WEEKLY);
 		this.repeatingEvent.init();
 	}
 
@@ -73,13 +75,17 @@ public class CalendarTest extends UnitTest {
 
 	@Test
 	public void testGetDayEvents() {
-		this.eventToday = new PointEvent("eventToday", new DateTime(), new DateTime(), Visibility.PRIVATE, calendarOfOwner);
-		this.eventToday2 = new PointEvent("eventToday2", new DateTime(), new DateTime(), Visibility.PUBLIC, calendarOfOwner);
+		this.eventToday = new PointEvent("eventToday", new DateTime(),
+				new DateTime(), Visibility.PRIVATE, calendarOfOwner);
+		this.eventToday2 = new PointEvent("eventToday2", new DateTime(),
+				new DateTime(), Visibility.PUBLIC, calendarOfOwner);
 		calendarOfOwner.addEvent(event);
 		calendarOfOwner.addEvent(eventToday);
 		calendarOfOwner.addEvent(eventToday2);
-		LinkedList<Event> DayEvents = calendarOfOwner.getEventsOfDate(new LocalDate(), owner);
-		LinkedList<Event> DayEventsFrancis = calendarOfOwner.getEventsOfDate(new LocalDate(), francis);
+		LinkedList<Event> DayEvents = calendarOfOwner.getEventsOfDate(
+				new LocalDate(), owner);
+		LinkedList<Event> DayEventsFrancis = calendarOfOwner.getEventsOfDate(
+				new LocalDate(), francis);
 		assertFalse(DayEvents.isEmpty());
 		assertFalse(DayEventsFrancis.isEmpty());
 		assertEquals("[eventToday, eventToday2]", DayEvents.toString());
@@ -87,13 +93,6 @@ public class CalendarTest extends UnitTest {
 		System.out.println(DayEvents);
 		System.out.println(DayEventsFrancis);
 	}
-
-	// ITERATOR IS NO LONGER NEEDED AND MUST NOT BE TESTED!
-//	@Test
-//	public void testIterator1() {
-//		Iterator<Event> events = calendarOfOwner.getEventList(new DateTime(0), owner);
-//		assertNotNull(events);
-//	}
 
 	@Test
 	public void testAddRepeatingEvent() {

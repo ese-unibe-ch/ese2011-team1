@@ -1,7 +1,5 @@
 import models.Calendar;
 import models.Event;
-import enums.Interval;
-import enums.Visibility;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -11,27 +9,39 @@ import org.junit.Before;
 import org.junit.Test;
 
 import play.test.UnitTest;
+import enums.Interval;
+import enums.Visibility;
 
 public class EventTest extends UnitTest {
 
 	private RepeatingEvent repeatingEvent;
 	private User user;
+	private User francis;
+	private User simon;
 	private DateTime today = new DateTime(0);
 	private DateTime tomorrow = new DateTime(1);
 	private Event event;
 	private Event event2AfterEvent;
 	private Event event3BeforeEvent;
 	private Calendar calendar;
+	private PointEvent attendingEvent;
 
-	// public Event(Date start, Date end, String name, boolean is_visible){
 	@Before
 	public void setUp() throws Exception {
 		this.user = new User("hans", "1234", today, "hans2");
+		this.francis = new User("francis", "1234", today, "fran");
+		this.simon = new User("simon", "1234", today, "sim");
 		this.calendar = new Calendar("testCalendar", user);
-		this.event = new PointEvent("anEvent", today, tomorrow, Visibility.PRIVATE, calendar); 
-		this.event2AfterEvent = new PointEvent("event2AfterEvent", new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar); 
-		this.event3BeforeEvent = new PointEvent("event3BeforeEvent", new DateTime(-1), new DateTime(0), Visibility.PRIVATE, calendar); 
-		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today, tomorrow, Visibility.PRIVATE, calendar, Interval.WEEKLY);
+		this.event = new PointEvent("anEvent", today, tomorrow,
+				Visibility.PRIVATE, calendar);
+		this.attendingEvent = new PointEvent("anAttendingEvent", today,
+				tomorrow, Visibility.PUBLIC, calendar);
+		this.event2AfterEvent = new PointEvent("event2AfterEvent",
+				new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar);
+		this.event3BeforeEvent = new PointEvent("event3BeforeEvent",
+				new DateTime(-1), new DateTime(0), Visibility.PRIVATE, calendar);
+		this.repeatingEvent = new RepeatingEvent("repeatingEvent", today,
+				tomorrow, Visibility.PRIVATE, calendar, Interval.WEEKLY);
 		this.repeatingEvent.init();
 	}
 
@@ -65,19 +75,42 @@ public class EventTest extends UnitTest {
 		assertEquals("01/01/1970, 01:00", event.getParsedDate(today));
 	}
 
-	// EDIT EVENT NOT IMPLEMENTED IN NEW VERSION!
-//	@Test
-//	public void testEditEvent() {
-//		event.edit(new DateTime(2), new DateTime(3), "anEventChanged",
-//				Visibility.BUSY, false, 0);
-//		assertNotNull(event);
-//		assertEquals("anEventChanged", event.getName());
-//		assertEquals(new DateTime(2), event.getStart());
-//		assertEquals(new DateTime(3), event.getEnd());
-//		assertTrue(event.getVisibility() == Visibility.BUSY);
-//		assertEquals(false, event.isRepeating());
-//		assertEquals(0, event.getIntervall());
-//	}
+	@Test
+	public void testGetParsedStartDate() {
+		assertEquals("01/01/1970, 01:00", event.getParsedStartDate());
+	}
+
+	@Test
+	public void testGetParsedEndDate() {
+		assertEquals("01/01/1970, 01:00", event.getParsedEndDate());
+	}
+
+	@Test
+	public void testGetAttendingUsers() {
+		attendingEvent.setOpen();
+		attendingEvent.addUserToAttending(francis);
+		attendingEvent.addUserToAttending(simon);
+		assertEquals("francis, simon", attendingEvent.getAttendingUsers());
+
+	}
+
+	@Test
+	public void testGetNameFor() {
+		Event busyEvent = new PointEvent("anAttendingEvent", today, tomorrow,
+				Visibility.BUSY, calendar);
+		Event publicEvent = new PointEvent("public Event", today, tomorrow,
+				Visibility.PUBLIC, calendar);
+		assertEquals("public Event", publicEvent.getNameFor(francis));
+		assertEquals("public Event", publicEvent.getNameFor(user));
+		assertEquals("Busy", busyEvent.getNameFor(francis));
+		assertEquals("anEvent", event.getNameFor(user));
+
+	}
+
+	@Test
+	public void testGetDatesFor() {
+		System.out.println(event.getDatesFor(today, user));
+	}
 
 	@Test
 	public void testEditDescription() {
@@ -96,59 +129,53 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetInterVall() {
 		Interval interval = Interval.WEEKLY;
-		RepeatingEvent repeatingEvent = new RepeatingEvent("test", new DateTime(0),
-				new DateTime(0), Visibility.PRIVATE, calendar, interval);
+		RepeatingEvent repeatingEvent = new RepeatingEvent("test",
+				new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendar,
+				interval);
 		assertEquals(interval, repeatingEvent.getInterval());
 	}
 
 	@Test
 	public void testGetNextRepetitionIntervall7() {
-		assertEquals(repeatingEvent.getInterval(), 7);
+		assertEquals(Interval.WEEKLY, repeatingEvent.getInterval());
 		Event nextRepetition = repeatingEvent.getNextReference();
 		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusDays(7), nextRepetition.getStart());
-		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(), nextRepetition.getStart().dayOfMonth());
-		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(), nextRepetition
-				.getStart().getYear());
-	}
-
-	@Test
-	public void testGetNextRepetitionIntervallMonth() {
-		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), Interval.MONTHLY);
-		repeatingEvent.init();
-		assertEquals(repeatingEvent.getInterval(), 30);
-		Event nextRepetition = repeatingEvent.getNextReference();
-		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
-				repeatingEvent.getNextReference().getStart().getMillis());
-		assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
-				nextRepetition.getStart().getMillis());
-		assertEquals(repeatingEvent.getStart().plusMonths(1).getYear(), nextRepetition
-				.getStart().getYear());
-	}
-
-	@Test
-	public void testGetNextRepetitionIntervallYear() {
-		repeatingEvent = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(), repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar(), Interval.YEARLY);
-		repeatingEvent.init();
-		assertEquals(repeatingEvent.getInterval(), 365);
-		Event nextRepetition = repeatingEvent.getNextReference();
-		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
-				repeatingEvent.getNextReference().getStart().getMillis());
-		assertEquals(repeatingEvent.getStart().getDayOfMonth(), nextRepetition
-				.getStart().getDayOfMonth());
-		assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(), nextRepetition
-				.getStart().getMillis());
+		assertEquals(repeatingEvent.getStart().plusDays(7),
+				nextRepetition.getStart());
+		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(),
+				nextRepetition.getStart().dayOfMonth());
+		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(),
+				nextRepetition.getStart().getYear());
 	}
 
 	/*
-	 * @Test public void testGetRepetitionOnDate() { long expectedBaseId =
-	 * repeatingEvent.getBaseId(); Date expectedStartDate = new
-	 * Date(repeatingEvent.getStart().getYear(),
-	 * repeatingEvent.getStart().getDayOfMonth(), repeatingEvent .getStart() +
-	 * repeatingEvent.getIntervall()); Event repetition = repeatingEvent
-	 * .getRepetitionOnDate(expectedStartDate); assertEquals(expectedBaseId,
-	 * repetition.getBaseId()); }
+	 * @Test public void testGetNextRepetitionIntervallMonth() { repeatingEvent
+	 * = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(),
+	 * repeatingEvent.getEnd(), repeatingEvent.getVisibility(),
+	 * repeatingEvent.getCalendar(), Interval.MONTHLY); repeatingEvent.init();
+	 * assertEquals(repeatingEvent.getInterval(), 30); Event nextRepetition =
+	 * repeatingEvent.getNextReference();
+	 * assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
+	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
+	 * repeatingEvent.getNextReference().getStart().getMillis());
+	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
+	 * nextRepetition.getStart().getMillis());
+	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getYear(),
+	 * nextRepetition.getStart().getYear()); }
+	 * 
+	 * @Test public void testGetNextRepetitionIntervallYear() { repeatingEvent =
+	 * new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(),
+	 * repeatingEvent.getEnd(), repeatingEvent.getVisibility(),
+	 * repeatingEvent.getCalendar(), Interval.YEARLY); repeatingEvent.init();
+	 * assertEquals(repeatingEvent.getInterval(), 365); Event nextRepetition =
+	 * repeatingEvent.getNextReference();
+	 * assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
+	 * assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
+	 * repeatingEvent.getNextReference().getStart().getMillis());
+	 * assertEquals(repeatingEvent.getStart().getDayOfMonth(), nextRepetition
+	 * .getStart().getDayOfMonth());
+	 * assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
+	 * nextRepetition.getStart().getMillis()); }
 	 */
+
 }
