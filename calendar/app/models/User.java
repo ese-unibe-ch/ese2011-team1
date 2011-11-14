@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import org.joda.time.DateTime;
 
+import enums.Interval;
 import enums.Visibility;
 
 
@@ -24,8 +25,8 @@ public class User {
 	private LinkedList<Calendar> observedCalendars;
 	private LinkedList<Long> shownObservedCalendars;
 	private String password;
-	private Event birthday;
-	// public boolean isPublicBirthday;
+	private RepeatingEvent birthday;
+//	public boolean isPublicBirthday;
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
@@ -48,13 +49,13 @@ public class User {
 	 *            The Users name.
 	 * @param password
 	 *            The Users password.
-	 * @param birthday
+	 * @param birthDate
 	 *            The Users birthday.
 	 * @param nickname
 	 *            The Users nickname.
 	 * @see {@link User}
 	 */
-	public User(String name, String password, DateTime birthday, String nickname) {
+	public User(String name, String password, DateTime birthDate, String nickname) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
@@ -62,27 +63,36 @@ public class User {
 		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
-		birthdayCalendar = new Calendar("Birthdays", this);
-		observedCalendars.add(birthdayCalendar);
 
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
-		DateTime birthdayStart = birthday.withHourOfDay(0).withMinuteOfHour(0);
-		DateTime birthdayEnd = birthday.withHourOfDay(23).withMinuteOfHour(59);
-		this.birthday = new PointEvent("birthday", birthdayStart, birthdayEnd, Visibility.PRIVATE, birthdayCalendar);
-		
 		counter++;
 		this.id = counter;
-
-		birthdayCalendar.addEvent(this.birthday);
-
+		initializeBirthday(birthDate);
+		
 		// each user x has a default a calender called: x's first calendar
 		calendars.add(new Calendar(name + "'s first calendar", this));
 
 		// postconditions
 		assert this.name.equals(name);
 		assert calendars != null;
+	}
+	
+	/**
+	 * Initializes the birthday calendar and event for this user.
+	 * 
+	 * Sets the correct start and end time of the birthday and adds it to the birthdayCalendar 
+	 * @param birthDate The date of this birthday.
+	 */
+	private void initializeBirthday(DateTime birthDate) {
+		this.birthdayCalendar = new Calendar("Birthdays", this);
+		DateTime birthdayStart = birthDate.withHourOfDay(0).withMinuteOfHour(0);
+		DateTime birthdayEnd = birthDate.withHourOfDay(23).withMinuteOfHour(59);
+		this.birthday = new RepeatingEvent("birthday", birthdayStart, birthdayEnd, Visibility.PRIVATE, birthdayCalendar, Interval.YEARLY);
+		this.birthdayCalendar.addEvent(birthday);
+		this.birthday.generateNextEvents(birthDate);
+		observedCalendars.add(birthdayCalendar);
 	}
 
 	/**
@@ -138,10 +148,11 @@ public class User {
 	 * @param birthdayDate
 	 *            The new date of the Users <code>birthday</code>.
 	 */
-//	public void setBirthdayDate(DateTime birthdayDate) {
-//		birthday.edit(birthdayDate, birthdayDate, birthday.getName(),
-//				birthday.getVisibility(), true, 365);
-//	}
+	public void setBirthdayDate(DateTime birthdayDate) {
+		DateTime newBirthdayStart = birthday.getStart().withDate(birthdayDate.getYear(), birthdayDate.getMonthOfYear(), birthdayDate.getDayOfMonth());
+		DateTime newBirthdayEnd = birthday.getEnd().withDate(birthdayDate.getYear(), birthdayDate.getMonthOfYear(), birthdayDate.getDayOfMonth());
+		birthday.edit(birthday.getName(), newBirthdayStart, newBirthdayEnd, birthday.getVisibility(), birthday.getInterval());
+	}
 
 	/**
 	 * Returns the visibility status of the Users birthday.
@@ -161,12 +172,11 @@ public class User {
 	 *            If true, the birthday will be set to visible. If false, the
 	 *            birthday will be set to private.
 	 */
-//	public void setBirthdayPublic(boolean is_visible) {
-//		Visibility visibility = is_visible ? Visibility.PUBLIC
-//				: Visibility.PRIVATE;
-//		birthday.edit(birthday.start, birthday.end, birthday.name, visibility,
-//				true, 365);
-//	}
+	public void setBirthdayPublic(boolean is_visible) {
+		Visibility visibility = is_visible ? Visibility.PUBLIC
+				: Visibility.PRIVATE;
+		birthday.edit(birthday.getName(), birthday.getStart(), birthday.getEnd(), visibility, birthday.getInterval());
+	}
 
 	/**
 	 * Get this Users nickname.

@@ -47,10 +47,10 @@ public class RepeatingEvent extends Event{
 	/**
 	 * Get the interval of this Events repetition.
 	 * @return 
-	 * 1, if this Event is repeated on a daily basis.
-	 * 7, if this Event is repeated weekly.
-	 * 30, if this Event is repeated every month.
-	 * 365, if this Event is repeated every year.
+	 * DAILY, if this Event is repeated on a daily basis.
+	 * WEEKLY, if this Event is repeated weekly.
+	 * MONTHLY, if this Event is repeated every month.
+	 * YEARLY, if this Event is repeated every year.
 	 */
 	public Interval getInterval(){
 		return this.interval;
@@ -118,6 +118,14 @@ public class RepeatingEvent extends Event{
 				
 				DateTime newStartDate = cursor.getStart().plusMonths(1);
 				DateTime newEndDate = cursor.getEnd().plusMonths(1);
+				// corner case for 30th/31th of month problem
+				Event head = getCalendar().getHeadById(this.getBaseId());
+				if (head.getStart().getDayOfMonth() > newStartDate.getDayOfMonth()) {
+					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
+				}
+				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
+					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
+				}
 				
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
@@ -145,6 +153,15 @@ public class RepeatingEvent extends Event{
 				
 				DateTime newStartDate = cursor.getStart().plusYears(1);
 				DateTime newEndDate = cursor.getEnd().plusYears(1);
+				
+				// corner case for 29feb problem
+				Event head = getCalendar().getHeadById(this.getBaseId());
+				if (head.getStart().getDayOfMonth() > newStartDate.getDayOfMonth()) {
+					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
+				}
+				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
+					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
+				}
 				
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
