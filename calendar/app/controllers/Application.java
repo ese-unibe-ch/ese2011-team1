@@ -86,15 +86,15 @@ public class Application extends Controller {
 			String calendarName) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		DateTime d = new DateTime();
-		Iterator allVisibleEvents = user.getCalendarById(calendarId)
-				.getEventList(d, me);
+		//DateTime d = new DateTime();
+		//Iterator allVisibleEvents = user.getCalendarById(calendarId)
+		//		.getEventList(d, me);
 		Calendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = new LinkedList<Event>();
 
-		while (allVisibleEvents.hasNext()) {
-			events.add((Event) allVisibleEvents.next());
-		}
+		//while (allVisibleEvents.hasNext()) {
+		//	events.add((Event) allVisibleEvents.next());
+		//}
 
 		render(me, user, events, calendarName, calendars, calendarId);
 	}

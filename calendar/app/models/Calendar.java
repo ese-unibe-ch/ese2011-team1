@@ -112,6 +112,9 @@ public class Calendar {
 	 * @param id of the event we are looking for.
 	 * @return returns the event with id equals id of input argument.
 	 */
+	
+	// TODO remove if new version is approved to be correct.
+	/*
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
 			Event cursor = event;
@@ -124,6 +127,15 @@ public class Calendar {
 		}
 		return null;
 	}
+	*/
+	
+	public Event getEventById(long id){
+		for(Event event : this.eventHeads){
+			return event.findEventById(id);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * get an head from eventHeads by a given id.
@@ -133,8 +145,9 @@ public class Calendar {
 	 */
 	public Event getHeadById(long id){
 		for(Event event : this.eventHeads)
-			if(event.getId() == id) return event;
-		
+			// TODO remove if new version is approved to be correct.
+			//if(event.getId() == id) return event;
+			if(event.equalId(id))return event;
 		return null;
 	}
 	
@@ -146,7 +159,9 @@ public class Calendar {
 	public LinkedList<Event> getHeadsByOriginId(long originId){
 		LinkedList<Event> result = new LinkedList<Event>();
 		for(Event head : this.getHeadList())
-			if(head.getOriginId() == originId) result.add(head);
+			// TODO remove if new version is approved to be correct.
+			//if(head.getOriginId() == originId) result.add(head);
+			if(head.equalOriginId(originId)) result.add(head);
 		return result;
 	}
 	
@@ -158,7 +173,6 @@ public class Calendar {
 	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
 		LinkedList<Event> result = new LinkedList<Event>();
 		Event head = this.getHeadById(baseId);
-		System.out.println("id " + baseId + " head " + head);
 		Event cursor = head;
 		while(cursor.hasNext()){
 			result.add(cursor);
@@ -166,6 +180,7 @@ public class Calendar {
 		}
 		return result;
 	}
+	
 	
 	/**
 	 * get all events which are visible for given requester on given local date, correlated to day, month, year
@@ -198,6 +213,7 @@ public class Calendar {
 	 * @return returns a linked list which contains all for given requester visible events for a given date.
 	 */
 	// TODO use a priority queue instead of a linked list.
+	// TODO do something about code duplication: maybe have an private method...
 	public LinkedList<Event> getEventsOfDate(LocalDate date, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
@@ -216,16 +232,6 @@ public class Calendar {
 		}
 		return result;
 	}
-	
-	
-	/**
-	 * Does nothing, don't call this method, it is going to be removed.
-	 */
-	// TODO remove this method - we don't need it
-	public Iterator<Event> getEventList(DateTime start, User requester) {
-		return null;
-	}
-	
 
 	/**
 	 * generates the next couple of events for a given head till a limit date.
@@ -252,20 +258,7 @@ public class Calendar {
 		// TODO later: set here new leaf for the head!
 		// i think this would be the most efficient way to do that here.
 		
-		// for debugging purposes: see if this event has correct next and previous reference
-			Event event = head;
-			String ee = null;
-			while(event.hasNext()){
-				if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
-				System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
-						+ " prevR:" + ee);
-				event = event.getNextReference();
-			}
-			ee = null;
-			if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
-			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
-					+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
-		// end debugging
+		newNextEventsPrinter(head);
 	}
 	
 	/**
@@ -537,5 +530,26 @@ public class Calendar {
 			System.out.println("head: " + event.getParsedStartDate() + " id:"+event.getId() );
 			this.PrintHeadAndHisTail(event);
 		}
+	}
+	
+	/**
+	 * print current, next and previous events starting from a head till its tail.
+	 * for debugging purposes: see if this event has correct next and previous reference
+	 * remove this method later, just a private helper.
+	 * @param head head of a series of events
+	 */
+	private void newNextEventsPrinter(Event head){
+		Event event = head;
+		String ee = null;
+		while(event.hasNext()){
+			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
+			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
+					+ " prevR:" + ee);
+			event = event.getNextReference();
+		}
+		ee = null;
+		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
+		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
+				+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
 	}
 }

@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.h2.expression.Comparison;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -231,6 +233,10 @@ public abstract class Event implements Comparable<Event>{
 		return this.calendar;
 	}
 	
+	/**
+	 * get all attending users from the attending user list of this event
+	 * @return returns users which are attending this event.
+	 */
 	public String getAttendingUsers() {
 		StringBuffer sb = new StringBuffer();
 		for (User user : this.attendingUsers) {
@@ -243,6 +249,12 @@ public abstract class Event implements Comparable<Event>{
 		return sb.toString();
 	}
 	
+	/**
+	 * 
+	 * @param requester
+	 * @return
+	 */
+	// TODO write javadocs
 	public String getNameFor(User requester) {
 		String visibleName = null;
 		if (this.isPublic())
@@ -254,6 +266,13 @@ public abstract class Event implements Comparable<Event>{
 		return  visibleName;
 	}
 	
+	/**
+	 * 
+	 * @param activeDate
+	 * @param requester
+	 * @return
+	 */
+	// TODO write javadocs
 	public String getDatesFor(DateTime activeDate, User requester) {
 		StringBuffer sb = new StringBuffer();
 		LocalDate activeLocalDate = activeDate.toLocalDate();
@@ -266,6 +285,11 @@ public abstract class Event implements Comparable<Event>{
 		return sb.toString();
 	}
 	
+	/**
+	 * get the description of this event for a given user, depending on the visibility of this event.
+	 * @param requester user which requests for the description of this event
+	 * @return returns the description of this event if requester is allowed to see it
+	 */
 	public String getDescriptionFor(User requester) {
 		String visibleDescription = null;
 		if (this.isPublic() || this.getOwner().equals(requester))
@@ -273,36 +297,65 @@ public abstract class Event implements Comparable<Event>{
 		return visibleDescription;
 	}
 	
+	// TODO remove this method soon.
 	public String getRepetitionFor(User requester) {
 		return null;
 	}
 	
+	/**
+	 * get the visibility of this event as a string for a given user
+	 * @param requester user for which we are going to check the visibility of this event.
+	 * @return a string representation of the visibility of this event if requester is the owner of this event.
+	 */
 	public String getVisibilityFor(User requester) {
 		return requester == getOwner() ? this.visibility.toString() : null;
 	}
-	
-	// depending on what kind of event we are
-	// generate next events for a head if allowed.
-	// summary: 
-	// PointEvent: has no next event
-	// IntervalEvent: if this event has already a pointer to an "nextEvent" then call getNextEvent on our nextEvent
+
+	/**
+	 * depending on what kind of event we are
+	 * generate next events for a head if allowed.
+	 * PointEvent: has no next event
+	 * IntervalEvent: if this event has already a pointer to an "nextEvent" then call getNextEvent on our nextEvent
+	 * this method is defined in each subclass of event separately.
+	 */
 	public abstract void generateNextEvents(DateTime currentDate);
 	
 	/*
 	 * setters 
 	 */
 	
+	/**
+	 * sets the next event after this event for this event
+	 * @param event new next event for this event
+	 */
 	public abstract void setNext(Event event);
+	
+	/**
+	 * sets the previous event before this event for this event
+	 * @param event new previous event for this event
+	 */
 	public abstract void setPrevious(Event event);
 	
+	/**
+	 * sets the new leaf for this event.
+	 * @param newLeaf new leaf for this event.
+	 */
 	public void setLeaf(Event newLeaf){
 		if(this.baseId == this.id) this.leaf = newLeaf;
 	}
 	
+	/**
+	 * sets an start time for this event.
+	 * @param start start date/time of this event
+	 */
 	public void setStart(DateTime start){
 		this.start = start;
 	}
 	
+	/**
+	 * sets an end time for this event.
+	 * @param end end date/time of this event
+	 */
 	public void setEnd(DateTime end){
 		this.end = end;
 	}
@@ -331,10 +384,17 @@ public abstract class Event implements Comparable<Event>{
 		this.name = name;
 	}
 	
+	/**
+	 * sets the visibility state of this event
+	 * @param visibility visibility state of this event
+	 */
 	public void setVisiblility(Visibility visibility){
 		this.visibility = visibility;
 	}
 	
+	/**
+	 * set this event as open for attending users.
+	 */
 	public void setOpen() {
 		this.isOpen = true;
 	}
@@ -387,6 +447,22 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	public abstract void remove();
 	
+	/**
+	 * find an event in head-tails event structure starting from this event on which has an id equals input argument.
+	 * this method implements a chain pattern for finding events.
+	 * @param id id of event we are looking for
+	 * @return this, if this event has id, equals id, 
+	 * 		   a successor event of this, if successor has id equals id or 
+	 *         null if there is no event in this head-tail event structure which has an id equals id
+	 */
+	public Event findEventById(long id){
+		if(this.getId() == id) return this;
+		else{
+			if(this.hasNext()) return this.getNextReference().findEventById(id);
+			else return null;
+		}
+	}
+	
 	/*
 	 * checks
 	 */
@@ -414,31 +490,65 @@ public abstract class Event implements Comparable<Event>{
 		return this.visibility != Visibility.PRIVATE;
 	}
 	
+	/**
+	 * check if this event is declared as a busy event
+	 * @return returns a boolean: is this event a busy event?
+	 */
 	public boolean isBusy(){
 		return this.visibility == Visibility.BUSY;
 	}
 	
+	/**
+	 * check if this event is declared as a public event
+	 * @return returns a boolean: is this event a public event?
+	 */
 	public boolean isPublic(){
 		return this.visibility == Visibility.PUBLIC;
 	}
 	
+	/**
+	 * check if this event is declared as a private event
+	 * @return returns a boolean: is this event a private event?
+	 */
 	public boolean isPrivate(){
 		return this.visibility == Visibility.PRIVATE;
 	}
 	
+	/**
+	 * checks if the user correlated to the input argument name 
+	 * is in the attending list of this event
+	 * @param name name of user we are looking for.
+	 * @return is a user with name like input argument in the 
+	 *         attending user list of this event? 
+	 */
 	public boolean userIsAttending(String name) {
 		User user = Database.getUserByName(name);
 		return this.attendingUsers.contains(user);
 	}
 	
+	/**
+	 * check if this event has a run-time type of RepeatingEvent
+	 * @return returns a boolean: is this event an RepeatingEvent event?
+	 */
 	public boolean isRepeating() {
 		return (this instanceof RepeatingEvent); 
 	}
 	
+	/**
+	 * check if this event is declared as an open event
+	 * @return returns a boolean: is this event an open event?
+	 */
 	public boolean isOpen() {
 		return this.isOpen;
 	}
 	
+	/**
+	 * this method compares this event by a compare date 
+	 * and checks if start equals compare date, end equals compare date or
+	 * start < compare date and end > compare date
+	 * @param compareDate is the date time object we are going to compare with this event's start and end.
+	 * @return returns the result of above's comparison.
+	 */
 	public boolean happensOn(LocalDate compareDate) {
 		return (this.getStart().toLocalDate().equals(compareDate) 
 				|| this.getEnd().toLocalDate().equals(compareDate) 
@@ -446,24 +556,66 @@ public abstract class Event implements Comparable<Event>{
 						&& this.getEnd().toLocalDate().isAfter(compareDate)));
 	}
 	
+	/**
+	 * has this event an id equals id
+	 * @param id id of an event
+	 * @return returns true of id of this event is equals input argument.
+	 */
+	public boolean equalId(long id){
+		return this.getId() == id;
+	}
+	
+	/**
+	 * has this event an base id equals baseId
+	 * @param baseId base id of an event
+	 * @return returns true of base id of this event is equals input argument.
+	 */
+	public boolean equalBaseId(long baseId){
+		return this.getBaseId() == baseId;
+	}
+	
+	/**
+	 * has this event an origin id equals originId
+	 * @param originId origin id of an event
+	 * @return returns true of origin id of this event is equals input argument.
+	 */
+	public boolean equalOriginId(long originId){
+		return this.getOriginId() == originId;
+	}
+	
 	/*
 	 * helpers
 	 */
 	
+	/**
+	 * this method returns the name of this event as a string.
+	 * @return returns name of this event
+	 */
 	public String toString() {
 		return this.name;
 	}
-
+	
+	/**
+	 * adds an user to the attending user list for this event.
+	 * @param user user which we want to add to attendingUsers list.
+	 */
 	public void addUserToAttending(User user) {
 		this.attendingUsers.add(user);
 		
 	}
-
+	
+	/**
+	 * removes an user from the attending user list for this event.
+	 * @param user user which we want to remove from attendingUsers list.
+	 */
 	public void removeUserFromAttending(User user) {
 		this.attendingUsers.remove(user);
 	}
 	
-	// too ugly for this new design - how can we drop this without trashing our view?
+	/**
+	 * returns the interval length of an event if it has any.
+	 */
+	// TODO too ugly for this new design - how can we drop this without trashing our view?
 	public int getPreviousIntervalValue(){
 		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval().getDays();
 		return 0;
