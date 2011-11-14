@@ -93,6 +93,15 @@ public class RepeatingEvent extends Event{
 				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
 				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
 				
+				// corner case for 29feb problem
+				Event head = getCalendar().getHeadById(this.getBaseId());
+				if (head.getStart().getDayOfMonth() > newStartDate.getDayOfMonth()) {
+					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
+				}
+				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
+					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
+				}
+				
 				nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
 				
@@ -160,15 +169,6 @@ public class RepeatingEvent extends Event{
 					
 				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
 				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
-
-				// corner case for 29feb problem
-				Event head = getCalendar().getHeadById(this.getBaseId());
-				if (head.getStart().getDayOfMonth() > newStartDate.getDayOfMonth()) {
-					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
-				}
-				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
-					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
-				}
 
 				if(this instanceof IntervalEvent){
 					System.out.println("we are creating an intervalEvent");
