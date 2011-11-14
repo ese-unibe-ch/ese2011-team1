@@ -4,7 +4,7 @@ function send() {
 	var mm = document.forms.startdate.smonth.selectedIndex+1;
 	var dd = document.forms.startdate.sday.selectedIndex+1;
 	var hh = document.forms.startdate.shour.selectedIndex;
-	var mmi = document.forms.startdate.smins.selectedIndex;
+	var mmi = (document.forms.startdate.smins.selectedIndex)*5;
 	
 	var str = dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mmi;
 	//alert(str);
@@ -41,13 +41,13 @@ function checkdate(m, d, y) {
 
 function printDate(d) {
 	var weekday = new Array(7);	
-	weekday[0]="Sonntag";
-	weekday[1]="Montag";
-	weekday[2]="Dienstag";
-	weekday[3]="Mittwoch";
-	weekday[4]="Donnerstag";
-	weekday[5]="Freitag";
-	weekday[6]="Samstag";
+	weekday[0]="Sunday";
+	weekday[1]="Monday";
+	weekday[2]="Tuesday";
+	weekday[3]="Wednesday";
+	weekday[4]="Thursday";
+	weekday[5]="Friday";
+	weekday[6]="Saturday";
 	var ret = weekday[d.getDay()];
 	return ret;
 }

@@ -2,10 +2,8 @@
 #{set title:'Home' /}
 #{navigation /}
 
-<body onload="printWeekDays();">
-
-#{if editingEvent} <h1> Editing Event ${event.getName()}</h1>  #{/if}
-#{else} <h1> Add Event to ${calendar.getName()} </h1> #{/else}
+#{if editingEvent} <body onload="printWeekDays();"> <h1> Editing Event ${event.getName()}</h1>  #{/if}
+#{else} <body> <h1> Add Event to ${calendar.getName()} </h1> #{/else}
 
 	#{if message} <font style = "font-size: 30px; color: red;">${message}</font><br> #{/if}
 	<form name="before" action="" method="post">
@@ -14,13 +12,16 @@
 
 <br>
 <form name="startdate" method="post" action="">
-Startdatum:
+Start date:
 <select name="sday" onChange="OnChange(this.form.sday)">
 	%{
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
-			if (i == activeDate.getDayOfMonth()) choice += ' selected';
+			
+			if (editingEvent && i == event.getStart().getDayOfMonth()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getDayOfMonth()) choice += ' selected';
+			
 			choice += '>'+i+'</option>';
 			out.println(choice);
 		}
@@ -41,12 +42,15 @@ Startdatum:
 		months[8] = 'Sep';
 		months[9] = 'Okt';
 		months[10] = 'Nov'; 
-		months[11] = 'Dez';
+		months[11] = 'Dec';
 
 		for (int i=1; i<=12; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == activeDate.getMonthOfYear()) choice += ' selected';
+			
+			if (editingEvent && i == event.getStart().getMonthOfYear()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getMonthOfYear()) choice += ' selected';
+			
 			choice += '>' + months[i-1] + '</option>';
 			out.println(choice);
 		}
@@ -57,141 +61,129 @@ Startdatum:
 		for (int i=2011; i<2020; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == activeDate.getYear()) choice += ' selected';
+			
+			if (editingEvent && i == event.getStart().getYear()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getYear()) choice += ' selected';
+			
 			choice += '>' + i + '</option>';
 			out.println(choice);
 		}
 	%}
-</select> - Zeit:
+</select> - time:
 <select name="shour" onChange="OnChange(this.form.shour)">
-	<option value="00">00</option>
-	<option value="01">01</option>
-	<option value="02">02</option>
-	<option value="03">03</option>
-	<option value="04">04</option>
-	<option value="05">05</option>
-	<option value="06">06</option>
-	<option value="07">07</option>
-	<option value="08">08</option>
-	<option value="09">09</option>
-	<option value="10">10</option>
-	<option value="11">11</option>
-	<option value="12" selected>12</option>
-	<option value="13">13</option>
-	<option value="14">14</option>
-	<option value="15">15</option>
-	<option value="16">16</option>
-	<option value="17">17</option>
-	<option value="18">18</option>
-	<option value="19">19</option>
-	<option value="20">20</option>
-	<option value="21">21</option>
-<option value="22">22</option>
-	<option value="23">23</option>
+	%{
+		for (int i=0; i<=23; i++) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			
+			if (editingEvent && i == event.getStart().getHourOfDay()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getHourOfDay()) choice += ' selected';
+			
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
 </select> : 
 <select name="smins" onChange="OnChange(this.form.smins)">
-	<option value="00" selected>00</option>
-	<option value="05">05</option>
-	<option value="10">10</option>
-	<option value="15">15</option>
-	<option value="20">20</option>
-	<option value="25">25</option>
-	<option value="30">30</option>
-	<option value="35">35</option>
-	<option value="40">40</option>
-	<option value="45">45</option>
-	<option value="50">50</option>
-	<option value="55">55</option>
-</select> Uhr <div id="startday" style="display:inline;"></div>
+	%{
+		for (int i=0; i<=55; i+=5) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			
+			if (editingEvent && i == event.getStart().getMinuteOfHour()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getMinuteOfHour()) choice += ' selected';
+			
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
+</select> o'clock <div id="startday" style="display:inline;"></div>
 </form>
 
 <form name="enddate" method="post" action="">
-Enddatum:
+End date:
 <select name="day" onChange="OnChangeEndDate()">
 	%{
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
-			if (i == activeDate.getDayOfMonth()) choice += ' selected';
+			
+			if (editingEvent && i == event.getEnd().getDayOfMonth()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getDayOfMonth()) choice += ' selected';
+			
 			choice += '>'+i+'</option>';
 			out.println(choice);
 		}
 	%}
-
 </select>.
 <select name="month" onChange="OnChangeEndDate()">
-
 	%{
 		for (int i=1; i<=12; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == activeDate.getMonthOfYear()) choice += ' selected';
+			
+			if (editingEvent && i == event.getEnd().getMonthOfYear()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getMonthOfYear()) choice += ' selected';
+			
 			choice += '>' + months[i-1] + '</option>';
 			out.println(choice);
 		}
 	%}
-	
+
 </select>.
 <select name="year" onChange="OnChangeEndDate()">
 	%{
-		for (int i=2011; i<=2020; i++) {
+		for (int i=2011; i<2020; i++) {
 			String choice = "";
 			choice = '<option value="' + i + '"';
-			if (i == activeDate.getYear()) choice += ' selected';
+			
+			if (editingEvent && i == event.getEnd().getYear()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getYear()) choice += ' selected';
+			
 			choice += '>' + i + '</option>';
 			out.println(choice);
 		}
 	%}
 
-</select> - Zeit:
+</select> - time:
 <select name="hour" onChange="OnChangeEndDate()">
-	<option value="00">00</option>
-	<option value="01">01</option>
-	<option value="02">02</option>
-	<option value="03">03</option>
-	<option value="04">04</option>
-	<option value="05">05</option>
-	<option value="06">06</option>
-	<option value="07">07</option>
-	<option value="08">08</option>
-	<option value="09">09</option>
-	<option value="10">10</option>
-	<option value="11">11</option>
-	<option value="12">12</option>
-	<option value="13" selected>13</option>
-	<option value="14">14</option>
-	<option value="15">15</option>
-	<option value="16">16</option>
-	<option value="17">17</option>
-	<option value="18">18</option>
-	<option value="19">19</option>
-	<option value="20">20</option>
-	<option value="21">21</option>
-<option value="22">22</option>
-	<option value="23">23</option>
+	%{
+		for (int i=0; i<=23; i++) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			
+			if (editingEvent && i == event.getEnd().getHourOfDay()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getHourOfDay()) choice += ' selected';
+			
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
 </select> : 
 <select name="mins" onChange="OnChangeEndDate()">
-	<option value="00" selected>00</option>
-	<option value="05">05</option>
-	<option value="10">10</option>
-	<option value="15">15</option>
-	<option value="20">20</option>
-	<option value="25">25</option>
-	<option value="30">30</option>
-	<option value="35">35</option>
-	<option value="40">40</option>
-	<option value="45">45</option>
-	<option value="50">50</option>
-	<option value="55">55</option>
-</select> Uhr <div id="endday" style="display:inline;"></div>
+	%{
+		for (int i=0; i<=55; i+=5) {
+			String choice = "";
+			choice = '<option value="'+i+'"';
+			
+			if (editingEvent && i == event.getEnd().getMinuteOfHour()) choice += ' selected';
+			if (!editingEvent && i == activeDate.getMinuteOfHour()) choice += ' selected';
+			
+			choice += '>'+i+'</option>';
+			out.println(choice);
+		}
+	%}
+	
+</select> o'clock <div id="endday" style="display:inline;"></div>
 </form>
 	
-	%{ if (editingEvent) { %}
+	#{if editingEvent}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.saveEditedEvent()}" method="GET">
 	<input type="hidden" name="eventId" value="${eventId}" />
-	%{ } else { %}
+	#{/if}
+	#{else}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.createEvent()}" method="GET">
-	%{ } %}
+	#{/else}
 	
 	<input type="hidden" name="calendarId" value="${calendarId}" />
 	<input type="hidden" name="name" value="" />
@@ -199,9 +191,9 @@ Enddatum:
 	<input type="hidden" name="end" value="" />
 			<br> Visibility:
 			<select name="visibility" onChange="javascript: change(this.options[this.selectedIndex].value)">
-				<option value="PRIVATE">Private</option>
-				<option value="BUSY">Busy</option>
-				<option value="PUBLIC">Public</option>
+				<option value="PRIVATE" #{if (editingEvent && event.isPrivate())}selected#{/if}>Private</option>
+				<option value="BUSY" #{if (editingEvent && event.isBusy())}selected#{/if}>Busy</option>
+				<option value="PUBLIC" #{if (editingEvent && event.isPublic())}selected#{/if}>Public</option>
 			</select> <br>
 			
 			<div id="openEvent"> </div>
@@ -215,7 +207,7 @@ Enddatum:
 				<option value="YEARLY">yearly 
 			</select> <br>
 			<br> Event Description:	<br>
-			<textarea rows="6" cols="100" name="description"></textarea>
+			<textarea rows="6" cols="100" name="description">#{if editingEvent}${event.getDescription()}#{/if}</textarea>
 			<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" /> <br>
 			<input type="submit" value="save" />
 			<input type="button" name="cancel" value="cancel" onclick="javascript:history.back()">
