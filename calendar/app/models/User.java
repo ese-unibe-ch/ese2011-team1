@@ -68,10 +68,9 @@ public class User {
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
-//		this.birthday = new Event(this, birthday, birthday, name
-//				+ "'s birthday", Visibility.PRIVATE, true, 365,
-//				this.birthdayCalendar.getId(), false);
-		this.birthday = new PointEvent("birthday", birthday, birthday, Visibility.PRIVATE, birthdayCalendar);
+		DateTime birthdayStart = birthday.withHourOfDay(0).withMinuteOfHour(0);
+		DateTime birthdayEnd = birthday.withHourOfDay(23).withMinuteOfHour(59);
+		this.birthday = new PointEvent("birthday", birthdayStart, birthdayEnd, Visibility.PRIVATE, birthdayCalendar);
 		
 		counter++;
 		this.id = counter;

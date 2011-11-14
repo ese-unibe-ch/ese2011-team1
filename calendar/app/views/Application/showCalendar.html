@@ -193,8 +193,10 @@
 						%}
 							<span id="eventName">${event.getNameFor(me)}</span> 
 							
-							%{// TODO Datum nur anzeigen, wenns nicht der aktuelle Tag ist %}
-							<span id="important">${event.getDatesFor(acitiveDate, me)}</span>
+							%{// TODO Datum nur anzeigen, wenns nicht der aktuelle Tag ist
+							// DONE!
+							 %}
+							<span id="important">${event.getDatesFor(activeDate, me)}</span>
 							
 							<div id="important">${event.getDescriptionFor(me)}</div>
 							<div id="unimportant">

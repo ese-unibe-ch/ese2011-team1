@@ -131,7 +131,7 @@ public class Application extends Controller {
 		String oldname = name;
 		String nickname = me.getNickname();
 		String password = me.getPassword();
-		String birthday = null; // user.getBirthday().start.toString("dd/MM/yyyy");
+		String birthday = me.getBirthday().getStart().toString("dd/MM/yyyy");
 		boolean is_visible = me.isBirthdayPublic();
 
 		// NEW
