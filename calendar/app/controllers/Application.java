@@ -297,12 +297,12 @@ public class Application extends Controller {
 			@Required long calendarId, @Required String name,
 			@Required String start, @Required String end,
 			Visibility visibility, Interval interval, String description,
-			String s_activeDate) {
+			String s_activeDate, boolean isOpen) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
-		//
-		// // covert dates
+		
+		// convert dates
 		DateTime d_start = null;
 		DateTime d_end = null;
 		try {
@@ -321,10 +321,8 @@ public class Application extends Controller {
 		
 		for(Event head : calendar.getEventHeads()) calendar.PrintHeadAndHisTail(head);
 		
-		
 		event.editDescription(description);
-		
-		
+
 		event.edit(name, d_start, d_end, visibility, interval, d_start, d_start, description);
 		
 		//
@@ -358,6 +356,14 @@ public class Application extends Controller {
 		}
 		
 		*/
+		
+		if (!isOpen) {
+			event.setClosed();
+		}
+		else if (isOpen) {
+			event.setOpen();
+			event.addUserToAttending(me);
+		}
 		
 		
 		

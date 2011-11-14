@@ -190,13 +190,18 @@ End date:
 	<input type="hidden" name="start" value="" />
 	<input type="hidden" name="end" value="" />
 			<br> Visibility:
-			<select name="visibility" onChange="javascript: change(this.options[this.selectedIndex].value)">
+			<select name="visibility" onChange="javascript: changeVisibility(this.options[this.selectedIndex].value)">
 				<option value="PRIVATE" #{if (editingEvent && event.isPrivate())}selected#{/if}>Private</option>
 				<option value="BUSY" #{if (editingEvent && event.isBusy())}selected#{/if}>Busy</option>
 				<option value="PUBLIC" #{if (editingEvent && event.isPublic())}selected#{/if}>Public</option>
 			</select> <br>
 			
-			<div id="openEvent"> </div>
+			<div id="openEvent">
+			#{if (editingEvent && event.isPublic())}
+			Declare as open Event: <input type="checkbox" name="isOpen" #{if (editingEvent && event.isOpen())}checked#{/if}> 
+			<br> (NOTE: This will allow all users to attend this Event.)
+			#{/if}
+			</div>
 			
 			<br> Repeatable:
 			<select name="interval">
@@ -214,8 +219,8 @@ End date:
 		</form>
 			
 <script type="text/javascript">
-function change(val) {
-	var inhalt = 'Declare as open Event: <input type="checkbox" name="isOpen"> <br> (NOTE: This will allow all users to attend this Event.)';
+function changeVisibility(val) {
+	var inhalt = 'Declare as open Event: <input type="checkbox" name="isOpen" #{if (editingEvent && event.isOpen())}checked#{/if}> <br> (NOTE: This will allow all users to attend this Event.)';
 	if (val == "PUBLIC") {
 		document.getElementById("openEvent").innerHTML = inhalt;
 	}

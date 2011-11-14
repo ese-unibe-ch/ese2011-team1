@@ -400,6 +400,16 @@ public abstract class Event implements Comparable<Event>{
 	}
 	
 	/**
+	 * close the event from a previously open (or already closed, doesn't matter) state .
+	 */
+	public void setClosed() {
+		this.isOpen = false;
+		this.attendingUsers = new ArrayList<User>();
+		
+	}
+	
+	
+	/**
 	 * Edit the description of this Event.
 	 * @param text The new description to be set.
 	 */
