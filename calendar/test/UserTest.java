@@ -46,29 +46,24 @@ public class UserTest extends UnitTest {
 		assertEquals("12345", user.getPassword());
 	}
 
-	// We can't access birthday directly anymore!
-//	@Test
-//	public void testIsBirthday() {
-//		assertEquals(user.birthday, user.getBirthday());
-//
-//	}
+	@Test
+	public void testSetBrithdayDate() {
+		final DateTimeFormatter birthdayFormatter = DateTimeFormat
+				.forPattern("dd/MM/yyyy");
+		user.setBirthdayDate(birthdayFormatter.parseDateTime("24/10/1989"));
+		assertEquals("24/10/1989",
+				user.getBirthday().getStart().toString(birthdayFormatter));
+		assertEquals("24/10/1989",
+				user.getBirthday().getEnd().toString(birthdayFormatter));
+	}
 
-	// BIRTHDAY STUFF NOT IMPLEMENTED IN NEW VERSION!
-//	@Test
-//	public void testSetBirthdayDate() {
-//		user.setBirthdayDate(birthdayFormatter.parseDateTime("25/10/1989"));
-//		assertEquals(user.birthday, user.getBirthday());
-//	}
-//
-//	@Test
-//	public void testSetBirthdayPublic() {
-//		assertTrue(user.getBirthday().isPrivate());
-//		user.setBirthdayPublic(true);
-//		assertTrue(user.getBirthday().isPublic());
-//		user.setBirthdayPublic(false);
-//		assertTrue(user.getBirthday().isPrivate());
-//
-//	}
+	@Test
+	public void testSetBirthdayPublic() {
+		user.setBirthdayPublic(true);
+		assertEquals(true, user.isBirthdayPublic());
+		user.setBirthdayPublic(false);
+		assertEquals(false, user.isBirthdayPublic());
+	}
 
 	@Test
 	public void testGetBrithdayVisibility() {
@@ -118,25 +113,46 @@ public class UserTest extends UnitTest {
 				.getLast());
 	}
 
-	/*
-	 * @Test public void testAddAndRemoveShownObservedCalendar() { // Add the Id
-	 * of the calendar to the shownObservedCalendars LinkedList Calendar
-	 * newShownObservedTestCalendar1 = new Calendar( "newObservedTestCalendar1",
-	 * this.user); Calendar newShownObservedTestCalendar2 = new Calendar(
-	 * "newObservedTestCalendar2", this.user); long calendarId1 =
-	 * newShownObservedTestCalendar1.getId(); long calendarId2 =
-	 * newShownObservedTestCalendar2.getId();
-	 * user.addShownObservedCalendar(calendarId1);
-	 * user.addShownObservedCalendar(calendarId2);
-	 * assertNotNull(user.getShownObservedCalendars().getFirst());
-	 * assertSame(calendarId1, user.getShownObservedCalendars().getFirst());
-	 * assertNotNull(user.getShownObservedCalendars().getLast());
-	 * assertSame(calendarId2, user.getShownObservedCalendars().getLast()); //
-	 * And remove it again user.removeShownObservedCalendar(calendarId1);
-	 * assertSame(calendarId2, user.getShownObservedCalendars().getLast());
-	 * 
-	 * }
-	 */
+	@Test
+	public void testAddAndRemoveShownObservedCalendar() {
+		// Add the Id of the calendar to the shownObservedCalendar LinkedList
+		// Calendar
+
+		Calendar ShownObservedTestCalendar1 = new Calendar(
+				"newObservedTestCalendar1", this.user);
+		Calendar ShownObservedTestCalendar2 = new Calendar(
+				"newObservedTestCalendar2", this.user);
+		long calendarId1 = ShownObservedTestCalendar1.getId();
+		long calendarId2 = ShownObservedTestCalendar2.getId();
+		user.addShownObservedCalendar(calendarId1);
+		user.addShownObservedCalendar(calendarId2);
+		assertNotNull(user.getShownObservedCalendars().getFirst());
+		assertEquals(calendarId1, (long) user.getShownObservedCalendars()
+				.getFirst());
+		assertNotNull(user.getShownObservedCalendars().getLast());
+		assertEquals(calendarId2, (long) user.getShownObservedCalendars()
+				.getLast());
+		// And remove it again
+		user.removeShownObservedCalendar(calendarId1);
+		assertEquals(calendarId2, (long) user.getShownObservedCalendars()
+				.getLast());
+
+	}
+
+	@Test
+	public void testNewCalendar() {
+		user.newCalendar("hans second calendar", this.user);
+		assertEquals("hans second calendar", user.getCalendars().getLast()
+				.getName().toString());
+	}
+
+	@Test
+	public void testDeleteCalendar() {
+		Calendar testCalendar = new Calendar("TestCalendar", this.user);
+		long id = testCalendar.getId();
+		user.deleteCalendar(id);
+		assertNotSame(user.getCalendars().getLast(), testCalendar);
+	}
 
 	@Test
 	public void testIsCalendarObserved() {
@@ -151,7 +167,6 @@ public class UserTest extends UnitTest {
 
 	@Test
 	public void testGetBirthdayCalendar() {
-		// hehe ;-) --> mah nüm^
 		assertNotNull(user.getBirthdayCalendar());
 	}
 

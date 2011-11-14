@@ -10,11 +10,8 @@
 
 GET		/										Application.index
 GET 	/calendars/{username}/					Application.showCalendarList
-#GET 	/events									Application.showEvents
-#GET 	/addEvent								Application.addEvent
-#GET 	/editEvent								Application.editEvent
-GET		/addEditEvents/{calendarId}/{eventId}/{name}/	Application.addEditEvent({eventId}, {calendarId}, {name}, {s_activeDate}, {message})
-GET 	/showCalendar/{username}/{calendarId}/			Application.showCalendar({calendarId}, {username}, {s_activeDate}, {counter}, {message})
+GET		/addEditEvents/{name}/{calendarId}/{eventId}/	Application.addEditEvent({eventId}, {calendarId}, {name}, {s_activeDate})
+GET 	/showCalendar/{username}/{calendarId}/			Application.showCalendar({calendarId}, {username}, {s_activeDate})
 GET		/Registration							Application.showregistration
 GET		/showProfile/{userName}/				Application.showProfile
 
