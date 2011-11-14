@@ -18,7 +18,7 @@ public class RepeatingEvent extends Event{
 	public RepeatingEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar, Interval interval) {
 		super(name, start, end, visibility, calendar);
 		this.setBaseId(this.getId());
-		this.setOriginId(this.getBaseId());
+		//this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
 	
@@ -27,7 +27,7 @@ public class RepeatingEvent extends Event{
 		this.interval = interval;
 		this.forceSetId(event.getId());
 		this.setBaseId(this.getId());
-		this.setOriginId(this.getBaseId());
+		//this.setOriginId(this.getBaseId());
 	}
 
 	@Override
@@ -80,9 +80,10 @@ public class RepeatingEvent extends Event{
 	}
 	
 	// TODO add some comment
-	protected void generateDaylyOrWeekly(Event base, DateTime limiter, Interval interval){
+	protected void generateYearly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
+		RepeatingEvent nextEvent = null;
 		// as long as whole month is calculated
 		while(cursor.getStart().isBefore(limiter) && !isCurrentInBounds()){
 			
@@ -92,11 +93,15 @@ public class RepeatingEvent extends Event{
 				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
 				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
 				
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
 				
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
+				
+				
+				nextEvent.getPreviousReference();
+				
 			}
 			
 			//move cursor
@@ -142,18 +147,20 @@ public class RepeatingEvent extends Event{
 	
 	// TODO highly buggy due to corner cases.
 	// TODO huge optimization potential: calculate no only events till limiter but about always constant amount.
-	protected void generateYearly(Event base, DateTime limiter, Interval interval){
+	
+	protected void generateDaylyOrWeekly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
-		// solange bis monat abgedeckt
-		while(cursor.getStart().compareTo(limiter) == -1 && !hasBoundReached){
+		RepeatingEvent nextEvent = null;
+		// as long as whole month is calculated
+		while(cursor.getStart().isBefore(limiter) && !isCurrentInBounds()){
 			
-			// wenn kein n�chster event
+			// if there is no next event, then create a new one.
 			if(!cursor.hasNext()){
-				
-				DateTime newStartDate = cursor.getStart().plusYears(1);
-				DateTime newEndDate = cursor.getEnd().plusYears(1);
-				
+					
+				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
+				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
+
 				// corner case for 29feb problem
 				Event head = getCalendar().getHeadById(this.getBaseId());
 				if (head.getStart().getDayOfMonth() > newStartDate.getDayOfMonth()) {
@@ -162,12 +169,23 @@ public class RepeatingEvent extends Event{
 				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
 					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
 				}
-				
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+
+				if(this instanceof IntervalEvent){
+					System.out.println("we are creating an intervalEvent");
+					DateTime from = ((IntervalEvent)this).getFrom();
+					DateTime to = ((IntervalEvent)this).getTo();
+					nextEvent = new IntervalEvent(this.getName(), newStartDate, newEndDate,from, to, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				}else{
+					nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				}
 				cursor.setNext(nextEvent);
 				
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
+				
+				
+				nextEvent.getPreviousReference();
+				
 			}
 			
 			//move cursor
@@ -236,6 +254,7 @@ public class RepeatingEvent extends Event{
 			
 			// go through posthead tail	
 			postHead.setBaseId(postHead.getId());
+			postHead.setOriginId(head.getOriginId());
 			Event cursor = postHead; 
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
@@ -251,11 +270,14 @@ public class RepeatingEvent extends Event{
 			head.setNext(null);
 	
 			Event newPointEvent = new PointEvent((RepeatingEvent)head);
-
+			newPointEvent.setOriginId(head.getOriginId());
+			
 			this.getCalendar().removeHeadFromHeadList(head);
 			this.getCalendar().addEvent(newPointEvent);	
 			this.getCalendar().addEvent(postPostHead);
-
+			
+			postPostHead.setOriginId(head.getOriginId());
+			
 			postPostHead.setBaseId(postPostHead.getId());
 			Event cursor = postPostHead; 
 			
@@ -274,7 +296,9 @@ public class RepeatingEvent extends Event{
 			postVictim.setPrevious(null);
 			this.getCalendar().removeHeadFromHeadList(head);
 			
+			// this is a future new head.
 			IntervalEvent newIntervalEvent = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)head);
+			newIntervalEvent.setOriginId(head.getOriginId());
 			newIntervalEvent.setBaseId(newIntervalEvent.getId());
 			
 			this.getCalendar().addEvent(newIntervalEvent);
@@ -293,21 +317,22 @@ public class RepeatingEvent extends Event{
 			}
 			newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)preVictim);
 			newIntervalCursor.setBaseId(newIntervalEvent.getId());
+			
 			prev.setNext(newIntervalCursor);
 			newIntervalCursor.setPrevious(prev);
-			//newIntervalCursor.setNext(null);
-			//this.getPreviousReference().getParsedStartDate();
-			//this.getCalendar().PrintHeadAndHisTail(newIntervalEvent);
-			//System.out.println(" get the state of the reference " + newIntervalCursor.getNextReference());
 			
 			// set new base id for right interval
 			this.getCalendar().addEvent(postVictim);
 			postVictim.setBaseId(postVictim.getId());
+			postVictim.setOriginId(head.getOriginId());
 			cursor = postVictim; 
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
 			}
+			// TODO the code above fixes some errors but, if we use it, we get as well some errors to
+			// see if it can be fixed. furthermore fix soon generateNextEvents()...
+			//this.getCalendar().getEventById(newIntervalCursor.getId()).setNext(null);
 			
 			this.getCalendar().PrintAllHeadTails();
 		}

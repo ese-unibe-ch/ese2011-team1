@@ -19,6 +19,7 @@ public class PointEvent extends Event{
 				intervalEvent.getEnd(), intervalEvent.getVisibility(), intervalEvent.getCalendar());
 		this.forceSetId(intervalEvent.getId());
 		this.setBaseId(this.getId());
+		this.setOriginId(this.getBaseId());
 	}
 	
 	// transform an Repeating Event into a PointEvent
@@ -28,6 +29,7 @@ public class PointEvent extends Event{
 				repeatingEvent.getEnd(), repeatingEvent.getVisibility(), repeatingEvent.getCalendar());
 		this.forceSetId(repeatingEvent.getId());
 		this.setBaseId(this.getId());
+		this.setOriginId(this.getBaseId());
 	}
 	
 	// since a point event has no next event, don't do anything here.
@@ -82,6 +84,7 @@ public class PointEvent extends Event{
 		// update base id and create successor events for the new head.
 		if(interval != Interval.NONE){
 			RepeatingEvent newHead = new RepeatingEvent(name, start, end, visibility, this.getCalendar(), interval);
+			newHead.setOriginId(newHead.getId());
 			this.getCalendar().addEvent(newHead);
 			this.remove(); // call remove of a PointEvent
 			
