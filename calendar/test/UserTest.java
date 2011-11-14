@@ -117,6 +117,7 @@ public class UserTest extends UnitTest {
 	public void testAddAndRemoveShownObservedCalendar() {
 		// Add the Id of the calendar to the shownObservedCalendar LinkedList
 		// Calendar
+
 		Calendar ShownObservedTestCalendar1 = new Calendar(
 				"newObservedTestCalendar1", this.user);
 		Calendar ShownObservedTestCalendar2 = new Calendar(
@@ -126,12 +127,15 @@ public class UserTest extends UnitTest {
 		user.addShownObservedCalendar(calendarId1);
 		user.addShownObservedCalendar(calendarId2);
 		assertNotNull(user.getShownObservedCalendars().getFirst());
-		assertSame(calendarId1, user.getShownObservedCalendars().getFirst());
+		assertEquals(calendarId1, (long) user.getShownObservedCalendars()
+				.getFirst());
 		assertNotNull(user.getShownObservedCalendars().getLast());
-		assertSame(calendarId2, user.getShownObservedCalendars().getLast());
+		assertEquals(calendarId2, (long) user.getShownObservedCalendars()
+				.getLast());
 		// And remove it again
 		user.removeShownObservedCalendar(calendarId1);
-		assertSame(calendarId2, user.getShownObservedCalendars().getLast());
+		assertEquals(calendarId2, (long) user.getShownObservedCalendars()
+				.getLast());
 
 	}
 
