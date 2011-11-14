@@ -13,9 +13,10 @@ GET 	/calendars/{username}/					Application.showCalendarList
 #GET 	/events									Application.showEvents
 #GET 	/addEvent								Application.addEvent
 #GET 	/editEvent								Application.editEvent
-GET		/addEditEvents							Application.addEditEvent
-GET 	/showCalendar							Application.showCalendar
+GET		/addEditEvents/{calendarId}/{eventId}/{name}/	Application.addEditEvent({eventId}, {calendarId}, {name}, {s_activeDate}, {message})
+GET 	/showCalendar/{username}/{calendarId}/			Application.showCalendar({calendarId}, {username}, {s_activeDate}, {counter}, {message})
 GET		/Registration							Application.showregistration
+GET		/showProfile/{userName}/				Application.showProfile
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
