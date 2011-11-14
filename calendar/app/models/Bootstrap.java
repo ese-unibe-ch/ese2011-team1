@@ -29,82 +29,81 @@ public class Bootstrap extends Job {
 	public void doJob() {
 		// Event(Date start, Date end, String name, boolean is_visible)
 
-		User simplay;
-		Event event;
+		
 		DateTime now = new DateTime();
 		// dataset 1
-		simplay = new User("simplay", "123", now, "senderos");
-		Calendar cal = simplay.getdefaultCalendar();
-		event = new PointEvent("abc", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
+		User simplay = new User("simplay", "123", now, "senderos");
+		Calendar simplayDefaultCal = simplay.getdefaultCalendar();
+		Event abc = new PointEvent("abc", now, now, Visibility.PUBLIC, simplayDefaultCal);
+		simplayDefaultCal.addEvent(abc);
 
-		cal = new Calendar("2nd simplay", simplay);
-		simplay.addCalendar(cal);
+		Calendar secondSimplay = new Calendar("2nd simplay", simplay);
+		simplay.addCalendar(secondSimplay);
 		
-		cal = new Calendar("3rd simplay", simplay);
-		simplay.addCalendar(cal);
+		Calendar thirdSimplay = new Calendar("3rd simplay", simplay);
+		simplay.addCalendar(thirdSimplay);
 		
 		Database.addUser(simplay);
 
 		// dataset 2
-		User user;
-		user = new User("mib", "1337", now, "fox");
-		cal = new Calendar("Work", user);
-		event = new PointEvent("mib_ev1", now, now, Visibility.PUBLIC, cal);
-		event.setOpen();
-		event.addUserToAttending(user);
-		user.getdefaultCalendar().addEvent(event);
-		simplay.addObservedCalendar(user.getdefaultCalendar());
-		simplay.addShownObservedCalendar(cal.getId());
+		User mib = new User("mib", "1337", now, "fox");
+		Database.addUser(mib);
+		Calendar mibsFirstCalendar = mib.getdefaultCalendar();
+		
+		// mibs first calendar
+		Event mib_ev1_1 = new PointEvent("mib_ev1", now, now, Visibility.PUBLIC, mibsFirstCalendar);
+		mib_ev1_1.setOpen();
+		mib_ev1_1.addUserToAttending(mib);
+		mibsFirstCalendar.addEvent(mib_ev1_1);
+		simplay.addObservedCalendar(mib.getdefaultCalendar());
+		simplay.addShownObservedCalendar(mibsFirstCalendar.getId());
 
-		event = new PointEvent("mib_ev2", now, now, Visibility.PUBLIC, cal);
-		user.getdefaultCalendar().addEvent(event);
+		Event mib_ev1_2 = new PointEvent("mib_ev2", now, now, Visibility.PUBLIC, mibsFirstCalendar);
+		mibsFirstCalendar.addEvent(mib_ev1_2);
 
-		event = new PointEvent("mib_ev3", now, now, Visibility.PUBLIC, cal);
-		user.getdefaultCalendar().addEvent(event);
+		Event mib_ev1_3 = new PointEvent("mib_ev3", now, now, Visibility.PUBLIC, mibsFirstCalendar);
+		mibsFirstCalendar.addEvent(mib_ev1_3);
 
-		cal = new Calendar("second mib", user);
+		// mibs second calendar
+		Calendar mibsSecondCalendar = new Calendar("second mib", mib);
+		mib.addCalendar(mibsSecondCalendar);
 
-		event = new PointEvent("second mib_ev1", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
+		Event mib_ev2_1 = new PointEvent("second mib_ev1", now, now, Visibility.PUBLIC, mibsSecondCalendar);
+		mibsSecondCalendar.addEvent(mib_ev2_1);
 
-		event = new PointEvent("second mib_ev2", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
+		Event mib_ev2_2 = new PointEvent("second mib_ev2", now, now, Visibility.PUBLIC, mibsSecondCalendar);
+		mibsSecondCalendar.addEvent(mib_ev2_2);
 
-		event = new PointEvent("second mib_ev3", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
+		Event mib_ev2_3 = new PointEvent("second mib_ev3", now, now, Visibility.PUBLIC, mibsSecondCalendar);
+		mibsSecondCalendar.addEvent(mib_ev2_3);
 
-		user.addCalendar(cal);
+	
 
-		Database.addUser(user);
+		User simon = new User("simon", "1337", now, "simu");
+		Database.addUser(simon);
+		Calendar simonsFirstCalendar = simon.getdefaultCalendar();
+		
+		Event simon1_1 = new PointEvent("simonb_ev1", now, now, Visibility.PUBLIC, simonsFirstCalendar);
+		simonsFirstCalendar.addEvent(simon1_1);
+		simplay.addObservedCalendar(simon.getdefaultCalendar());
 
-		user = new User("simon", "1337", now, "simu");
-		cal = new Calendar("Simon Work", user);
-		event = new PointEvent("simonb_ev1", now, now, Visibility.PUBLIC, cal);
-		user.getdefaultCalendar().addEvent(event);
-		simplay.addObservedCalendar(user.getdefaultCalendar());
+		Event simon1_2 = new PointEvent("simonb_ev2", now, now, Visibility.PUBLIC, simonsFirstCalendar);
+		simonsFirstCalendar.addEvent(simon1_2);
 
-		event = new PointEvent("simonb_ev2", now, now, Visibility.PUBLIC, cal);
-		user.getdefaultCalendar().addEvent(event);
+		Event simon1_3 = new PointEvent("simonb_ev3", now, now, Visibility.PUBLIC, simonsFirstCalendar);
+		simonsFirstCalendar.addEvent(simon1_3);
 
-		event = 
-				new PointEvent("simonb_ev3", now, now, Visibility.PUBLIC, cal);
-		user.getdefaultCalendar().addEvent(event);
+		Calendar simonsSecondCalendar = new Calendar("second simon", simon);
+		simon.addCalendar(simonsSecondCalendar);
 
-		cal = new Calendar("second simon", user);
+		Event simon2_1 = new PointEvent("second simon_ev1", now, now, Visibility.PUBLIC, simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(simon2_1);
 
-		event = new PointEvent("second simon_ev1", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
+		Event simon2_2 = new PointEvent("second simon_ev2", now, now, Visibility.PUBLIC, simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(simon2_2);
 
-		event = new PointEvent("second simon_ev2", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
-
-		event = new PointEvent("second simon_ev3", now, now, Visibility.PUBLIC, cal);
-		cal.addEvent(event);
-
-		user.addCalendar(cal);
-
-		Database.addUser(user);
+		Event simon2_3 = new PointEvent("second simon_ev3", now, now, Visibility.PUBLIC, simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(simon2_3);
 
 	}
 }
