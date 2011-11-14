@@ -18,7 +18,7 @@ public class RepeatingEvent extends Event{
 	public RepeatingEvent(String name, DateTime start, DateTime end, Visibility visibility, Calendar calendar, Interval interval) {
 		super(name, start, end, visibility, calendar);
 		this.setBaseId(this.getId());
-		this.setOriginId(this.getBaseId());
+		//this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
 	
@@ -27,7 +27,7 @@ public class RepeatingEvent extends Event{
 		this.interval = interval;
 		this.forceSetId(event.getId());
 		this.setBaseId(this.getId());
-		this.setOriginId(this.getBaseId());
+		//this.setOriginId(this.getBaseId());
 	}
 
 	@Override
@@ -219,6 +219,7 @@ public class RepeatingEvent extends Event{
 			
 			// go through posthead tail	
 			postHead.setBaseId(postHead.getId());
+			postHead.setOriginId(head.getOriginId());
 			Event cursor = postHead; 
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
@@ -234,11 +235,14 @@ public class RepeatingEvent extends Event{
 			head.setNext(null);
 	
 			Event newPointEvent = new PointEvent((RepeatingEvent)head);
-
+			newPointEvent.setOriginId(head.getOriginId());
+			
 			this.getCalendar().removeHeadFromHeadList(head);
 			this.getCalendar().addEvent(newPointEvent);	
 			this.getCalendar().addEvent(postPostHead);
-
+			
+			postPostHead.setOriginId(head.getOriginId());
+			
 			postPostHead.setBaseId(postPostHead.getId());
 			Event cursor = postPostHead; 
 			
@@ -257,7 +261,9 @@ public class RepeatingEvent extends Event{
 			postVictim.setPrevious(null);
 			this.getCalendar().removeHeadFromHeadList(head);
 			
+			// this is a future new head.
 			IntervalEvent newIntervalEvent = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)head);
+			newIntervalEvent.setOriginId(head.getOriginId());
 			newIntervalEvent.setBaseId(newIntervalEvent.getId());
 			
 			this.getCalendar().addEvent(newIntervalEvent);
@@ -278,14 +284,11 @@ public class RepeatingEvent extends Event{
 			newIntervalCursor.setBaseId(newIntervalEvent.getId());
 			prev.setNext(newIntervalCursor);
 			newIntervalCursor.setPrevious(prev);
-			//newIntervalCursor.setNext(null);
-			//this.getPreviousReference().getParsedStartDate();
-			//this.getCalendar().PrintHeadAndHisTail(newIntervalEvent);
-			//System.out.println(" get the state of the reference " + newIntervalCursor.getNextReference());
 			
 			// set new base id for right interval
 			this.getCalendar().addEvent(postVictim);
 			postVictim.setBaseId(postVictim.getId());
+			postVictim.setOriginId(head.getOriginId());
 			cursor = postVictim; 
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();

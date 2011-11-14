@@ -8,7 +8,7 @@ public class IntervalEvent extends RepeatingEvent{
 
 	public IntervalEvent(String name, DateTime start, DateTime end, DateTime from, DateTime to, Visibility visibility,Calendar calendar, Interval interval) {
 		super(name, start, end, visibility,calendar, interval);
-		this.setOriginId(this.getBaseId());
+		//this.setOriginId(this.getBaseId());
 		this.lowerBound = from;
 		this.upperBound = to;
 		// TODO fixe vieles...

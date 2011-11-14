@@ -373,10 +373,19 @@ public class Calendar {
 	public void removeSerieOfRepeatingEvents(Event member){
 		// 1. get corresponding head
 		// 2. remove victimHead from head list
+		long baseId = member.getBaseId();
+		Event victimHead = getHeadById(baseId);
+		long originId = victimHead.getOriginId();
+		LinkedList<Event> originHeads = this.getHeadsByOriginId(originId);
+		for(Event head : originHeads){
+			this.getHeadList().remove(head);
+		}
 		
+		/*
 		long baseId = member.getBaseId();
 		Event victimHead = getHeadById(baseId);
 		this.getHeadList().remove(victimHead);
+		*/
 	}
 	
 	/**
