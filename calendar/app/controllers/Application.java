@@ -269,10 +269,12 @@ public class Application extends Controller {
 		Event e;
 		if (!repeated) {
 			e = new PointEvent(name, d_start, d_end, visibility, calendar);
+			
 		} 
 		else {
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
 					interval);
+			e.setOriginId(e.getId());
 			e.generateNextEvents(e.getStart());
 		}
 

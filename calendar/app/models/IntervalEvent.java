@@ -92,6 +92,7 @@ public class IntervalEvent extends RepeatingEvent{
 			postHead.setPrevious(null);
 			this.getCalendar().getHeadList().add(postHead);
 			postHead.setBaseId(postHead.getId());
+			postHead.setOriginId(head.getOriginId());
 			
 			// reset baseIds of tails of postHead
 			Event cursor = postHead;
