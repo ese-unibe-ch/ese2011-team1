@@ -582,7 +582,9 @@ public class Application extends Controller {
 	public static void addUserToEvent(String eventOwner, long calendarId,
 			long eventId, String s_activeDate) {
 		User me = Database.getUserByName(Security.connected());
-		Calendar cal = me.getCalendarById(calendarId);
+		User user = Database.getUserByName(eventOwner);
+		Calendar cal = user.getCalendarById(calendarId);
+		assert (cal != null);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
@@ -594,14 +596,15 @@ public class Application extends Controller {
 		}
 		assert (event != null);
 		event.addUserToAttending(me);
-		showCalendar(calendarId, me.getName(), s_activeDate,
+		showCalendar(calendarId, user.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 
-	public static void removeUserFromEvent(String requesterName,
+	public static void removeUserFromEvent(String eventOwner,
 			long calendarId, long eventId, String s_activeDate) {
-		User me = Database.getUserByName(requesterName);
-		Calendar cal = me.getCalendarById(calendarId);
+		User me = Database.getUserByName(Security.connected());
+		User user = Database.getUserByName(eventOwner);
+		Calendar cal = user.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
@@ -613,7 +616,7 @@ public class Application extends Controller {
 		}
 		assert (event != null);
 		event.removeUserFromAttending(me);
-		showCalendar(calendarId, requesterName, s_activeDate,
+		showCalendar(calendarId, user.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 	
