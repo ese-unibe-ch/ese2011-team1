@@ -80,9 +80,10 @@ public class RepeatingEvent extends Event{
 	}
 	
 	// TODO add some comment
-	protected void generateDaylyOrWeekly(Event base, DateTime limiter, Interval interval){
+	protected void generateYearly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
+		RepeatingEvent nextEvent = null;
 		// as long as whole month is calculated
 		while(cursor.getStart().isBefore(limiter) && !isCurrentInBounds()){
 			
@@ -92,11 +93,15 @@ public class RepeatingEvent extends Event{
 				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
 				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
 				
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
 				cursor.setNext(nextEvent);
 				
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
+				
+				
+				nextEvent.getPreviousReference();
+				
 			}
 			
 			//move cursor
@@ -134,23 +139,35 @@ public class RepeatingEvent extends Event{
 	
 	// TODO highly buggy due to corner cases.
 	// TODO huge optimization potential: calculate no only events till limiter but about always constant amount.
-	protected void generateYearly(Event base, DateTime limiter, Interval interval){
+	
+	protected void generateDaylyOrWeekly(Event base, DateTime limiter, Interval interval){
 		Event cursor = base;
 		this.current = cursor;
-		// solange bis monat abgedeckt
-		while(cursor.getStart().compareTo(limiter) == -1 && !hasBoundReached){
+		RepeatingEvent nextEvent = null;
+		// as long as whole month is calculated
+		while(cursor.getStart().isBefore(limiter) && !isCurrentInBounds()){
 			
-			// wenn kein n�chster event
+			// if there is no next event, then create a new one.
 			if(!cursor.hasNext()){
-				
-				DateTime newStartDate = cursor.getStart().plusYears(1);
-				DateTime newEndDate = cursor.getEnd().plusYears(1);
-				
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+					
+				DateTime newStartDate = cursor.getStart().plusDays(getInterval().getDays());
+				DateTime newEndDate = cursor.getEnd().plusDays(getInterval().getDays());
+				if(this instanceof IntervalEvent){
+					System.out.println("we are creating an intervalEvent");
+					DateTime from = ((IntervalEvent)this).getFrom();
+					DateTime to = ((IntervalEvent)this).getTo();
+					nextEvent = new IntervalEvent(this.getName(), newStartDate, newEndDate,from, to, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				}else{
+					nextEvent = new RepeatingEvent(this.getName(), newStartDate, newEndDate, cursor.getVisibility(), this.getCalendar(), this.getInterval());
+				}
 				cursor.setNext(nextEvent);
 				
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
+				
+				
+				nextEvent.getPreviousReference();
+				
 			}
 			
 			//move cursor
@@ -282,6 +299,7 @@ public class RepeatingEvent extends Event{
 			}
 			newIntervalCursor = new IntervalEvent(head.getStart(), preVictim.getStart(), (RepeatingEvent)preVictim);
 			newIntervalCursor.setBaseId(newIntervalEvent.getId());
+			
 			prev.setNext(newIntervalCursor);
 			newIntervalCursor.setPrevious(prev);
 			
@@ -294,6 +312,9 @@ public class RepeatingEvent extends Event{
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
 			}
+			// TODO the code above fixes some errors but, if we use it, we get as well some errors to
+			// see if it can be fixed. furthermore fix soon generateNextEvents()...
+			//this.getCalendar().getEventById(newIntervalCursor.getId()).setNext(null);
 			
 			this.getCalendar().PrintAllHeadTails();
 		}
