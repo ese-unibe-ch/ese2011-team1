@@ -42,9 +42,9 @@ public class Calendar {
 	public Calendar(String name, User owner){
 		this.name = name;
 		this.owner = owner;
-		this.id = counter;
-		System.out.println(this.name + " || id: " + id);
 		counter++;
+		this.id = counter;
+		System.out.println(this.name + " || id: " + id);	
 		eventHeads = new PriorityQueue<Event>();
 	}
 	

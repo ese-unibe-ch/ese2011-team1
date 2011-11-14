@@ -235,6 +235,7 @@ public class RepeatingEvent extends Event{
 	// (a) victim equals current head => next of head gets new head
 	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head 
 	// (c) [head, previctim] | victim | [postVictim, +infinite]
+	// (d) [head, posthead] | victim | [postVictim,inf]
 	// care about setting new baseId correctly.
 	// TODO there are some bugs in case c)
 	@Override

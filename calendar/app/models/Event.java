@@ -19,15 +19,23 @@ import enums.Visibility;
  * Event is an abstract class which provides some base methods and fields for concrete event classes.
  * we can identify an event as a double linked data structure with a reference to its next and to its previous event.
  * An event is either one of a series of events (types: IntervalEvent, RepeatingEvent)
- * or a lone point (type: PointEvent) event. an event can be a head or a successor of a head.
- * a head is similar to an root - i.e. the 1st element of a series of events. 
+ * or a lone point (type: PointEvent) event. an event can be a head or a successor of a head or an other event. 
+ * we call this head-tail structure. a head is similar to an root - i.e. the 1st element of a series of events. 
+ * A series of events has also a leaf, i.e. the last element.
  * if an event is of type PointEvent, then this event has no next and previous references
- * each event has an unique id and a baseId. the baseId indicates the id of its head. 
+ * each event has an unique id, a baseId and a originId. 
+ * id defines an unique identifier for each event 
+ * the baseId indicates the id of its head. the originId indicates a set of correlated heads 
+ * and is set only for head events. See (*) for further explanation.
  * An event has a name, an end date, an start date, and a visibility
  * Remark: We assume: if an event.next == null, then event is a leaf 
  * and if event.previous == null, then event is a root so care about references.
  * @author team1
- *
+ * 
+ * (*) suppose we have a Repeating series of events [head,...,victim,...,inf]
+ *     now we remove victim from this series and we get:
+ *     [head,...,preVictim] and [postVictim,...,inf] both this series have same originId
+ *     we need this id to delete correlated intervals as a whole, i.e. removeAll() functionality.
  */
 public abstract class Event implements Comparable<Event>{
 
@@ -70,8 +78,8 @@ public abstract class Event implements Comparable<Event>{
 		this.visibility = visibility;
 		this.calendar = calendar;
 		this.attendingUsers = new ArrayList<User>();
+		counter++;
 		this.id = counter;
-		counter++;	
 	}
 	
 	/*
