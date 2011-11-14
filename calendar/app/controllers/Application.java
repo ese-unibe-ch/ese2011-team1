@@ -274,6 +274,8 @@ public class Application extends Controller {
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
 					interval);
 			e.setOriginId(e.getId());
+			e.setBaseId(e.getId()); // nicht notwendig
+			
 			e.generateNextEvents(e.getStart());
 		}
 

@@ -286,10 +286,58 @@ public class RepeatingEvent extends Event{
 				cursor.setBaseId(postPostHead.getId());
 			}
 			postPostHead.generateNextEvents(postPostHead.getNextReference().getStart());
+		
+		// hated case!! atm i dont see why this cases is not covered in case c) but if it works...
+		}else if(head.getNextReference().getNextReference() == this){
+			System.out.println("***************************************************" +
+					"this case we rly do hate!!! " +
+					"***********************************************");
+			Event postPostHead = this; // this one we gonna kill - harhar
+			Event postHead = this.getNextReference();
+			// work to do: create a intervalEvent series of [head, posthead] and  repeatingEvent series [postVictim,inf]
+			// remove all references to and from victim.
+			postVictim.setPrevious(null);
+			postPostHead.setNext(null);
+			postPostHead.setPrevious(null);
+			postHead.setNext(null);
+			
+			// remove head from head list
+			this.getCalendar().getHeadList().remove(head);
+			
+			//1. build [postVictim,inf]
+			
+			// add new head into head list
+			this.getCalendar().addEvent(postVictim);
+			postVictim.setOriginId(head.getOriginId());
+			postVictim.setBaseId(postVictim.getId());
+			// reset base id for tail of postVictim
+			Event cursor = postVictim; 
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+			}
+			
+			//2. build [head, posthead]
+			Event newIntervalEventHead = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)head);
+			newIntervalEventHead.setOriginId(head.getOriginId());
+			newIntervalEventHead.setBaseId(newIntervalEventHead.getId());
+			this.getCalendar().addEvent(newIntervalEventHead);
+			
+			Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
+			newIntervalEvent.setBaseId(newIntervalEventHead.getId());
+			
+			newIntervalEventHead.setNext(newIntervalEvent);
+			newIntervalEvent.setPrevious(newIntervalEventHead);
+		
+			
 			
 		// case (c)
 		}else{
-			System.out.println("case c entrered");
+			System.out.println("***************************************************" +
+					"case c entrered " +
+					"***********************************************");
+			
+			
 			this.setNext(null);
 			this.setPrevious(null);
 			preVictim.setNext(null);

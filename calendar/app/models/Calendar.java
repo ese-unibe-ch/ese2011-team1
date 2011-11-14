@@ -114,7 +114,8 @@ public class Calendar {
 	 */
 	
 	// TODO remove if new version is approved to be correct.
-	/*
+	
+	
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
 			Event cursor = event;
@@ -127,15 +128,16 @@ public class Calendar {
 		}
 		return null;
 	}
-	*/
 	
+	
+	/*
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
 			return event.findEventById(id);
 		}
 		return null;
 	}
-	
+	*/
 	
 	/**
 	 * get an head from eventHeads by a given id.
@@ -146,8 +148,8 @@ public class Calendar {
 	public Event getHeadById(long id){
 		for(Event event : this.eventHeads)
 			// TODO remove if new version is approved to be correct.
-			//if(event.getId() == id) return event;
-			if(event.equalId(id))return event;
+			if(event.getId() == id) return event;
+			//if(event.equalId(id))return event;
 		return null;
 	}
 	
@@ -160,8 +162,8 @@ public class Calendar {
 		LinkedList<Event> result = new LinkedList<Event>();
 		for(Event head : this.getHeadList())
 			// TODO remove if new version is approved to be correct.
-			//if(head.getOriginId() == originId) result.add(head);
-			if(head.equalOriginId(originId)) result.add(head);
+			if(head.getOriginId() == originId) result.add(head);
+			//if(head.equalOriginId(originId)) result.add(head);
 		return result;
 	}
 	
@@ -253,6 +255,7 @@ public class Calendar {
 		//DateTime currentDate = head.getStart();
 		DateTime currentDate = baseDate;
 		DateTime nextDate = currentDate.plusMonths(1);
+		System.out.println("next date " + nextDate.toString());
 		head.generateNextEvents(nextDate);
 		
 		// TODO later: set here new leaf for the head!
