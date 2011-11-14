@@ -5,6 +5,8 @@ import models.RepeatingEvent;
 import models.User;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,8 +25,9 @@ public class EventTest extends UnitTest {
 	private Event event;
 	private Event event2AfterEvent;
 	private Event event3BeforeEvent;
-	private Calendar calendar;
 	private PointEvent attendingEvent;
+	private Calendar calendar;
+	private Calendar francisCalendar;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,10 +35,11 @@ public class EventTest extends UnitTest {
 		this.francis = new User("francis", "1234", today, "fran");
 		this.simon = new User("simon", "1234", today, "sim");
 		this.calendar = new Calendar("testCalendar", user);
+		this.francisCalendar = new Calendar("francisTestCalendar", francis);
 		this.event = new PointEvent("anEvent", today, tomorrow,
 				Visibility.PRIVATE, calendar);
 		this.attendingEvent = new PointEvent("anAttendingEvent", today,
-				tomorrow, Visibility.PUBLIC, calendar);
+				tomorrow, Visibility.PUBLIC, francisCalendar);
 		this.event2AfterEvent = new PointEvent("event2AfterEvent",
 				new DateTime(3), new DateTime(4), Visibility.PRIVATE, calendar);
 		this.event3BeforeEvent = new PointEvent("event3BeforeEvent",
@@ -104,12 +108,33 @@ public class EventTest extends UnitTest {
 		assertEquals("public Event", publicEvent.getNameFor(user));
 		assertEquals("Busy", busyEvent.getNameFor(francis));
 		assertEquals("anEvent", event.getNameFor(user));
-
 	}
 
 	@Test
 	public void testGetDatesFor() {
-		System.out.println(event.getDatesFor(today, user));
+		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
+				.forPattern("dd/MM/yyyy, HH:mm");
+		this.event = new PointEvent("anEvent",
+				dateTimeInputFormatter.parseDateTime("13/11/2011, 12:00"),
+				dateTimeInputFormatter.parseDateTime("13/11/2011, 13:00"),
+				Visibility.PRIVATE, calendar);
+		assertEquals("12:00 - 13:00",
+				event.getDatesFor(dateTimeInputFormatter
+						.parseDateTime("13/11/2011, 12:00"), user));
+
+		assertEquals("13/11/2011 12:00 - 13/11/2011 13:00",
+				event.getDatesFor(dateTimeInputFormatter
+						.parseDateTime("20/11/2011, 12:00"), user));
+	}
+
+	@Test
+	public void testGetDescriptionFor() {
+		event.editDescription("Hello World!");
+		attendingEvent.editDescription("ESE Meeting");
+		assertEquals("Hello World!", event.getDescriptionFor(user));
+		assertEquals(null, event.getDescriptionFor(francis));
+		assertEquals("ESE Meeting", attendingEvent.getDescriptionFor(user));
+		assertEquals("ESE Meeting", attendingEvent.getDescriptionFor(francis));
 	}
 
 	@Test
