@@ -92,10 +92,21 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetAttendingUsers() {
 		attendingEvent.setOpen();
+		assertTrue(attendingEvent.isOpen());
 		attendingEvent.addUserToAttending(francis);
 		attendingEvent.addUserToAttending(simon);
 		assertEquals("francis, simon", attendingEvent.getAttendingUsers());
 
+	}
+
+	@Test
+	public void testUserIsAttending() {
+		attendingEvent.setOpen();
+		attendingEvent.addUserToAttending(francis);
+		attendingEvent.addUserToAttending(simon);
+		System.out.println(attendingEvent.userIsAttending("francis"));
+		assertTrue(attendingEvent.userIsAttending("francis"));
+		assertTrue(attendingEvent.userIsAttending("simon"));
 	}
 
 	@Test
