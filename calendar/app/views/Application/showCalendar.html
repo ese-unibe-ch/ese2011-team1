@@ -217,8 +217,8 @@
 								<a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
 								- <a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
 								#{if event.isRepeating()}
-									<b><a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> Remove All Repeating </a></b><br>  
-									<b><a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">Cancel Repetition from here </a></b>
+									<a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> - remove all repeating </a>
+									<a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">- cancel repetition from here </a>
 								#{/if}
 							#{/if}
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
