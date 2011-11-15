@@ -680,37 +680,4 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
-	/**
-	 * This is a debugging helper
-	 * it prints starting from this event all its tail events its/their next 
-	 * and previous reference, if there is any and the type of the event.
-	 * if the event is an interval event, then print their upper and lower bound too.
-	 */
-	public void PrintThisAndTail(){
-		Event event = this;
-		String previousEvent = null;
-		String nextEvent = null;
-		System.out.println();
-		System.out.println("*************************************************");
-		while(event.hasNext()){
-			if(event.getPreviousReference() != null) previousEvent = event.getPreviousReference().getParsedStartDate();
-			System.out.print(event.getType() + " ");
-			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
-					+ " prevR:" + previousEvent);
-			if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom().toString()+ " to:"+((IntervalEvent)event).getTo().toString());
-			System.out.println();
-			event = event.getNextReference();
-		}
-		previousEvent = null;
-		if(event.getNextReference() != null) nextEvent = event.getNextReference().getParsedStartDate();
-		if(event.getPreviousReference() != null) previousEvent = event.getPreviousReference().getParsedStartDate();
-		System.out.print(event.getType() + " ");
-		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ nextEvent 
-				+ "              prevR:" + previousEvent);
-		if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom()+ " to:"+((IntervalEvent)event).getTo());
-		System.out.println();
-		System.out.println("*************************************************");
-		System.out.println();
-	}
-
 }
