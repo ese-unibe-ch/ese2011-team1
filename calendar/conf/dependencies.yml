@@ -4,3 +4,5 @@ require:
     require:
         - play -> secure
         - secure:ov -login
+        - secore:ov -layout
+        - secure:ov -css
