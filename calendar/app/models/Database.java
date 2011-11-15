@@ -149,4 +149,11 @@ public static HashMap<String, User> users = new HashMap<String, User>();
     	return false;
     }
 
+    /**
+     * Removes all users from the hashmap <code>users</code>.
+     */
+	public static void clearDatabase() {
+		users.clear();
+	}
+
 }

@@ -20,7 +20,7 @@ public class EventTest extends UnitTest {
 	private RepeatingEvent repeatingEvent;
 	private User user;
 	private User francis;
-	private User simon;
+	private User stefan;
 	private DateTime today = new DateTime(0);
 	private DateTime tomorrow = new DateTime(1);
 	private Event event;
@@ -32,9 +32,14 @@ public class EventTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Database.clearDatabase();
 		this.user = new User("hans", "1234", today, "hans2");
 		this.francis = new User("francis", "1234", today, "fran");
-		this.simon = new User("simon", "1234", today, "sim");
+		Database.addUser(francis);
+		assertTrue(Database.getUserList().contains(francis));
+		this.stefan = new User("stefan", "1234", today, "stef");
+		Database.addUser(stefan);
+		assertTrue(Database.getUserList().contains(stefan));
 		this.calendar = new Calendar("testCalendar", user);
 		this.francisCalendar = new Calendar("francisTestCalendar", francis);
 		this.event = new PointEvent("anEvent", today, tomorrow,
@@ -95,8 +100,8 @@ public class EventTest extends UnitTest {
 		attendingEvent.setOpen();
 		assertTrue(attendingEvent.isOpen());
 		attendingEvent.addUserToAttending(francis);
-		attendingEvent.addUserToAttending(simon);
-		assertEquals("francis, simon", attendingEvent.getAttendingUsers());
+		attendingEvent.addUserToAttending(stefan);
+		assertEquals("francis, stefan", attendingEvent.getAttendingUsers());
 
 	}
 
@@ -104,12 +109,9 @@ public class EventTest extends UnitTest {
 	public void testUserIsAttending() {
 		attendingEvent.setOpen();
 		attendingEvent.addUserToAttending(francis);
-		Database.addUser(francis);
-		Database.addUser(simon);
-		attendingEvent.addUserToAttending(simon);
-		System.out.println(attendingEvent.userIsAttending("francis"));
+		attendingEvent.addUserToAttending(stefan);
 		assertTrue(attendingEvent.userIsAttending("francis"));
-		assertTrue(attendingEvent.userIsAttending("simon"));
+		assertTrue(attendingEvent.userIsAttending("stefan"));
 	}
 
 	@Test
