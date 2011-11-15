@@ -182,17 +182,18 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getHeadList().add(newLeftPointEvent);
 			
 			
-		// [head, previctim] | victim | [postVictim,victim.getTo()]	
+		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
 			//System.out.println("==============> this case");
 			
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
 			this.getCalendar().addEvent(postVictim);
-			
-			// set for all postvictims events their new baseId
-			Event cursor = postVictim;
 			postVictim.setBaseId(postVictim.getId());
+			postVictim.setOriginId(head.getOriginId());
+			
+			// set for whole post victim tail events their new baseId
+			Event cursor = postVictim;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
