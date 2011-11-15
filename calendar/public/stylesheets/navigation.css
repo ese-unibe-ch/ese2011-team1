@@ -7,7 +7,7 @@ a.button {
 	border-style: solid;
 	border-radius: 5px;
 	border-width: thin;
-	background: -webkit-gradient(linear, left top, left bottom, from(#6F6), to(#FA1));
+	background: white;
 	text-decoration: none;
 	padding: 4px;
 	border-color: black;
