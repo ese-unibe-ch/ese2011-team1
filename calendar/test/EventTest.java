@@ -110,9 +110,6 @@ public class EventTest extends UnitTest {
 		attendingEvent.setOpen();
 		attendingEvent.addUserToAttending(francis);
 		attendingEvent.addUserToAttending(stefan);
-		System.out.println("wEFYRGXCKJHGTRFEDWSFGHJGFDSAFGHJGFDSA");
-		System.out.println("efgsfgb: " + attendingEvent.userIsAttending("francis"));
-		assertTrue(Database.getUserList().contains(francis));
 		assertTrue(attendingEvent.userIsAttending("francis"));
 		assertTrue(attendingEvent.userIsAttending("stefan"));
 	}
