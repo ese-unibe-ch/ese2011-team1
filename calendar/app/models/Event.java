@@ -416,7 +416,6 @@ public abstract class Event implements Comparable<Event>{
 		
 	}
 	
-	
 	/**
 	 * Edit the description of this Event.
 	 * @param text The new description to be set.
@@ -630,13 +629,19 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
-	/**
-	 * returns the interval length of an event if it has any.
-	 */
-	// TODO too ugly for this new design - how can we drop this without trashing our view?
-	public int getPreviousIntervalValue(){
-		if(this instanceof RepeatingEvent) return ((RepeatingEvent)this).getInterval().getDays();
-		return 0;
+	public void PrintThisAndTail(Event head){
+		Event event = head;
+		String ee = null;
+		while(event.hasNext()){
+			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
+			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
+					+ " prevR:" + ee);
+			event = event.getNextReference();
+		}
+		ee = null;
+		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
+		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
+				+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
 	}
-	
+
 }

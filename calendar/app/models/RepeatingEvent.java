@@ -152,6 +152,7 @@ public class RepeatingEvent extends Event{
 			cursor = cursor.getNextReference();
 			this.current = cursor;
 		}
+		
 	}
 	
 	// TODO highly buggy due to corner cases.
@@ -183,15 +184,13 @@ public class RepeatingEvent extends Event{
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
 				
-				
-				nextEvent.getPreviousReference();
-				
 			}
 			
 			//move cursor
 			cursor = cursor.getNextReference();
 			this.current = cursor;
 		}
+		//nextEvent.setNext(null)
 	}
 	
 	/*
@@ -327,6 +326,7 @@ public class RepeatingEvent extends Event{
 			this.getCalendar().addEvent(newIntervalEventHead);
 			newIntervalEventHead.setNext(null);
 			/*//there is somewhere a bug!
+			
 			Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
 			System.out.println("****************  new event next head "+newIntervalEvent.getParsedStartDate());
 			newIntervalEvent.setBaseId(newIntervalEventHead.getId());

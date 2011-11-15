@@ -44,7 +44,6 @@ public class Calendar {
 		this.owner = owner;
 		counter++;
 		this.id = counter;
-		System.out.println(this.name + " || id: " + id);	
 		eventHeads = new PriorityQueue<Event>();
 	}
 	
