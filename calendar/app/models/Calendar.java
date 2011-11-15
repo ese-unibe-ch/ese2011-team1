@@ -260,7 +260,7 @@ public class Calendar {
 		// TODO later: set here new leaf for the head!
 		// i think this would be the most efficient way to do that here.
 		
-		newNextEventsPrinter(head);
+		//newNextEventsPrinter(head);
 	}
 	
 	/**
@@ -487,16 +487,7 @@ public class Calendar {
 	 */
 	public boolean hasEventOnDate(LocalDate date, User requester){
 		for(Event event : this.eventHeads){
-			Event cursor = event;
-			if(event.findEventByIdOnDate(id, date) != null) return true;
-			
-			do{
-				if(cursor.happensOn(date))
-					if(requester == owner || cursor.getVisibility() != Visibility.PRIVATE) return true;
-				
-				cursor = cursor.getNextReference();
-				if(cursor == null) break;
-			}while(cursor.hasNext());
+			if(event.findHasEventOnDate(date) != null) return true;	
 		}
 		return false;
 	}
@@ -551,6 +542,8 @@ public class Calendar {
 	 * remove this method later, just a private helper.
 	 * @param head head of a series of events
 	 */
+	
+	@SuppressWarnings("unused")
 	private void newNextEventsPrinter(Event head){
 		Event event = head;
 		String ee = null;

@@ -417,9 +417,7 @@ public class Application extends Controller {
 			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
-		System.out.print("we are going to remove this event: " + eventId);
 		calendar.removeEvent(eventId);
-		System.out.print("done");
 		DateTime activeDate = dateTimeInputFormatter
 			.parseDateTime(s_activeDate);
 		showCalendar(calendarId, me.getName(), s_activeDate,

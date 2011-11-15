@@ -59,14 +59,13 @@ public class IntervalEvent extends RepeatingEvent{
 	}
 	
 
-	@SuppressWarnings("unused")
+
+	@SuppressWarnings("null")
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
-		System.out.println("***************** " + this +" date " +this.getParsedStartDate());
-		System.out.println("***************** " + postVictim +" date " +postVictim.getParsedStartDate());
 		
 		// interval structure: [head,victim], i.e. there are two elements
 		if(preVictim == head && postVictim == null){
@@ -104,13 +103,13 @@ public class IntervalEvent extends RepeatingEvent{
 		// if victim is the leaf, i.e. victim is the last element of the list.
 		}else if(postVictim == null){
 			// TODO set new upper bound;
-			System.out.println("this case i am currently reworking, right?!");
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
 		// [head ,previctim] | victim | [postVictim,victim.getTo()]
 		}else if(preVictim.previous == null && postVictim.getNextReference() == null){
 			System.out.println("special case ");
+			
 		}else{
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);

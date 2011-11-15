@@ -327,8 +327,10 @@ public class RepeatingEvent extends Event {
 			postPostHead.generateNextEvents(postPostHead.getNextReference()
 					.getStart());
 
+			
 			// hated case!! atm i dont see why this cases is not covered in case
 			// c) but if it works...
+			// case (d)
 		} else if (head.getNextReference().getNextReference() == this) {
 			Event postPostHead = this; // this one we gonna kill - harhar
 			Event postHead = head.getNextReference();
@@ -365,17 +367,10 @@ public class RepeatingEvent extends Event {
 			newIntervalEventHead.setOriginId(head.getOriginId());
 			newIntervalEventHead.setBaseId(newIntervalEventHead.getId());
 			
-			
-			
-			//this.getCalendar().addEvent(newIntervalEventHead);
-			//newIntervalEventHead.setNext(null);
 			/*
 			 * //there is somewhere a bug!
 			 */
 			  Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
-			 // System.out.println
-			 // ("#####################  posthead "+postHead
-			  //.getParsedStartDate());
 			  newIntervalEvent.setBaseId(newIntervalEventHead.getId());
 			  
 			  newIntervalEventHead.setNext(newIntervalEvent);
@@ -383,17 +378,9 @@ public class RepeatingEvent extends Event {
 			  
 			  
 			this.getCalendar().addEvent(newIntervalEventHead);
-			System.out.println("##################st " + newIntervalEventHead.getParsedStartDate()
-					+ " nst ");
-			
-			
+			this.getCalendar().PrintAllHeadTails();
 			// case (c)
 		} else {
-			System.out
-					.println("***************************************************"
-							+ "case c entrered "
-							+ "***********************************************");
-
 			this.setNext(null);
 			this.setPrevious(null);
 			preVictim.setNext(null);
@@ -421,13 +408,19 @@ public class RepeatingEvent extends Event {
 				newIntervalCursor.setPrevious(prev);
 				prev = newIntervalCursor;
 			}
+			System.out.println("## last element : "+newIntervalCursor.getParsedStartDate());
+			newIntervalCursor.setNext(null);
+			// TODO this is buggy! but without buggy too...
+			/*
 			newIntervalCursor = new IntervalEvent(head.getStart(),
 					preVictim.getStart(), (RepeatingEvent) preVictim);
 			newIntervalCursor.setBaseId(newIntervalEvent.getId());
 
 			prev.setNext(newIntervalCursor);
 			newIntervalCursor.setPrevious(prev);
-
+			*/
+			// end buggy code
+			
 			// set new base id for right interval
 			this.getCalendar().addEvent(postVictim);
 			postVictim.setBaseId(postVictim.getId());
@@ -442,8 +435,8 @@ public class RepeatingEvent extends Event {
 			// see if it can be fixed. furthermore fix soon
 			// generateNextEvents()...
 			// this.getCalendar().getEventById(newIntervalCursor.getId()).setNext(null);
-
-			this.getCalendar().PrintAllHeadTails();
+			//this.getCalendar().PrintAllHeadTails();
+			
 		}
 	}
 
