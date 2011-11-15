@@ -2,11 +2,9 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.h2.expression.Comparison;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
 import enums.Interval;
 import enums.Visibility;
 
