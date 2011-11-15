@@ -73,12 +73,15 @@ public class IntervalEvent extends RepeatingEvent{
 	
 	/**
 	 * removes this event from the calendar to which it belongs to.
-	// there are 4 cases which we have to consider for a deletion of a repeating event:
-	// (a) victim equals current head => next of head gets new head
-	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head
-	// (c) [head, posthead] | victim | [postVictim,inf]
-	// (d) [head,..., previctim] | victim | [postVictim, +infinite]	
-	// care about setting new baseId correctly.
+	 * there are 4 cases which we have to consider for a deletion of a repeating event:
+	 * (a) there are two elements in a given interval [head, posthead]
+	 *     (i) victim == head ==> deduce a new point event of posthead
+	 *     (ii)victim = posthead ==> deduce a new point event of head
+	 * (b) there are three elements in a given interval [head, posthead, postposthead]
+	 *     victim == posthead ==> deduce two new point events, one for head, and one for postposthead
+	 * (c) [head, previctim] | victim | [postVictim,victim.getTo()]	
+	 * (d) [head,..., previctim] | victim | [postVictim, +infinite]	
+	 * care about setting new baseId correctly.
 	 */
 	@Override
 	public void remove() {
@@ -136,7 +139,25 @@ public class IntervalEvent extends RepeatingEvent{
 			// TODO put this case in first case with a if... 
 			preVictim.setNext(null);
 			this.setPrevious(null);
-		
+			
+			// [head,...,victim,postvictim]
+		}else if(postVictim.getNextReference() == null){
+			System.out.println("==============> this case ppv == null");
+			
+			//reset references
+			postVictim.setPrevious(null);
+			this.setNext(null);
+			this.setPrevious(null);
+			preVictim.setNext(null);
+			
+			//postVictim point creation
+			Event newPoint = new PointEvent((IntervalEvent)postVictim);
+			newPoint.editDescription(postVictim.getDescription());
+			newPoint.setBaseId(newPoint.getId());
+			newPoint.setOriginId(head.getOriginId());
+			
+			this.getCalendar().getHeadList().add(newPoint);
+			
 		//[head,victim,postvictim] ==> two point events	
 		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
 	
@@ -161,15 +182,18 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getHeadList().add(newLeftPointEvent);
 			
 			
-		// [head, previctim] | victim | [postVictim,victim.getTo()]	
+		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
+			//System.out.println("==============> this case");
+			
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
 			this.getCalendar().addEvent(postVictim);
-			
-			// set for all postvictims events their new baseId
-			Event cursor = postVictim;
 			postVictim.setBaseId(postVictim.getId());
+			postVictim.setOriginId(head.getOriginId());
+			
+			// set for whole post victim tail events their new baseId
+			Event cursor = postVictim;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());

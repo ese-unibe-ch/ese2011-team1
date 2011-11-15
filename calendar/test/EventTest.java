@@ -32,14 +32,9 @@ public class EventTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Database.clearDatabase();
 		this.user = new User("hans", "1234", today, "hans2");
 		this.francis = new User("francis", "1234", today, "fran");
-		Database.addUser(francis);
-		assertTrue(Database.getUserList().contains(francis));
 		this.stefan = new User("stefan", "1234", today, "stef");
-		Database.addUser(stefan);
-		assertTrue(Database.getUserList().contains(stefan));
 		this.calendar = new Calendar("testCalendar", user);
 		this.francisCalendar = new Calendar("francisTestCalendar", francis);
 		this.event = new PointEvent("anEvent", today, tomorrow,
@@ -179,6 +174,9 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testUserIsAttending() {
+		Database.clearDatabase();
+		Database.addUser(francis);
+		Database.addUser(stefan);
 		attendingEvent.setOpen();
 		attendingEvent.addUserToAttending(francis);
 		attendingEvent.addUserToAttending(stefan);
