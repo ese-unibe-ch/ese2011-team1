@@ -473,11 +473,28 @@ public abstract class Event implements Comparable<Event>{
 	 *         null if there is no event in this head-tail event structure which has an id equals id
 	 */
 	public Event findEventById(long id){
-		if(this.getId() == id) return this;
+		if(this.equalId(id)) return this;
 		else{
 			if(this.hasNext()) return this.getNextReference().findEventById(id);
 			else return null;
 		}
+	}
+	
+	public Event findEventByIdFor(long id, User requester){
+		if(this.equalId(id)){
+			
+			return this;
+		}
+		else{
+			if(this.hasNext()){
+				return this.getNextReference().findEventById(id);
+			}
+			else return null;
+		}
+	}
+	
+	private boolean tester(Event cursor, User requester, LocalDate compareDate){
+		return happensOn(compareDate)&& (cursor.getVisibility() != Visibility.PRIVATE || this.getOwner() == requester);
 	}
 	
 	/*
