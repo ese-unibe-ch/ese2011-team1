@@ -481,14 +481,19 @@ public abstract class Event implements Comparable<Event>{
 		}
 	}
 	
-	public Event findHasEventOnDate(LocalDate date){
-		if(this.happensOn(date)) return this;
+	public Event findHasEventOnDate(LocalDate date, User requester){
+		if(this.happensOn(date) && visibilityCheck(requester)) return this;
 		else{
-			if(this.hasNext()) return this.getNextReference().findHasEventOnDate(date);
+			if(this.hasNext()) return this.getNextReference().findHasEventOnDate(date, requester);
 			else return null;
 		}
 	}
 	
+	private boolean visibilityCheck(User requester){
+		return this.getVisibility() != Visibility.PRIVATE 
+		 || this.getOwner() == requester;
+	}
+
 	public Event findEventByIdForUserOnDate(long id, User requester, LocalDate date){
 		if(this.equalId(id)){
 			if(tester(this, requester, null))
@@ -497,7 +502,7 @@ public abstract class Event implements Comparable<Event>{
 		else{
 			if(this.hasNext()){
 				if(tester(this, requester, null))
-					return this.getNextReference().findHasEventOnDate(date);
+					return this.getNextReference().findHasEventOnDate(date, requester);
 			}
 			else return null;
 		}

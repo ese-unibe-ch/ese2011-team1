@@ -487,7 +487,7 @@ public class Calendar {
 	 */
 	public boolean hasEventOnDate(LocalDate date, User requester){
 		for(Event event : this.eventHeads){
-			if(event.findHasEventOnDate(date) != null) return true;	
+			if(event.findHasEventOnDate(date, requester) != null) return true;	
 		}
 		return false;
 	}
