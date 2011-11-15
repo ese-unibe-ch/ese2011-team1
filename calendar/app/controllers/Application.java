@@ -1,32 +1,24 @@
 package controllers;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
+
+import models.Calendar;
+import models.Database;
+import models.Event;
+import models.PointEvent;
+import models.RepeatingEvent;
+import models.User;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
-import models.Calendar;
-import models.Calendar;
-import models.Database;
-import models.Event;
-import enums.Interval;
-import enums.Visibility;
-import models.IntervalEvent;
-import models.PointEvent;
-import models.RepeatingEvent;
-import models.User;
 import play.data.validation.Required;
 import play.mvc.Controller;
 import play.mvc.With;
+import enums.Interval;
+import enums.Visibility;
 
 //so far: jeder user kann neue user erzeugen mit default password 123
 
@@ -44,10 +36,10 @@ public class Application extends Controller {
 		List<User> users = Database.getUserList();
 		String s_activeDate = new DateTime().toString("dd/MM/yyyy, HH:mm");
 		// todo: remove ourself from list
-		
+
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = me.getCalendars();
-		
+
 		render(users, me, s_activeDate, calendars, user);
 	}
 
@@ -71,14 +63,14 @@ public class Application extends Controller {
 
 	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
-		
+
 		if (userName.equals(""))
 			render(me, null);
-		
+
 		List<User> results = Database.searchUser(userName);
-		
-		System.out.println("Resultate: "+results);
-		
+
+		System.out.println("Resultate: " + results);
+
 		render(me, results);
 	}
 
@@ -86,15 +78,15 @@ public class Application extends Controller {
 			String calendarName) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		//DateTime d = new DateTime();
-		//Iterator allVisibleEvents = user.getCalendarById(calendarId)
-		//		.getEventList(d, me);
+		// DateTime d = new DateTime();
+		// Iterator allVisibleEvents = user.getCalendarById(calendarId)
+		// .getEventList(d, me);
 		Calendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = new LinkedList<Event>();
 
-		//while (allVisibleEvents.hasNext()) {
-		//	events.add((Event) allVisibleEvents.next());
-		//}
+		// while (allVisibleEvents.hasNext()) {
+		// events.add((Event) allVisibleEvents.next());
+		// }
 
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
@@ -150,8 +142,8 @@ public class Application extends Controller {
 		String notes = me.getNotes();
 		boolean is_note_visible = me.getNotesVis();
 
-		render(me, name, oldname, nickname, password, birthday, is_visible, emailP,
-				is_emailP_visible, emailB, is_emailB_visible, telP,
+		render(me, name, oldname, nickname, password, birthday, is_visible,
+				emailP, is_emailP_visible, emailB, is_emailB_visible, telP,
 				is_telP_visible, telB, is_telB_visible, notes, is_note_visible);
 	}
 
@@ -188,7 +180,7 @@ public class Application extends Controller {
 				newUser.setName(name);
 				newUser.setNickname(nickname);
 				newUser.setPassword(password);
-				// newUser.setBirthdayPublic(is_visible);
+				newUser.setBirthdayPublic(is_visible);
 				newUser.setEmailP(emailP);
 				newUser.setEmailPVis(is_emailP_visible);
 				newUser.setEmailB(emailB);
@@ -200,11 +192,11 @@ public class Application extends Controller {
 				newUser.setNotes(notes);
 				newUser.setNotesVis(is_note_visible);
 
-				Database.addUser(newUser);
+				// Database.addUser(newUser);
 
 				// TODO delete old user
-				// Database.changeUserName(user); //TODO does not work properly
-				// jet!
+				Database.changeUserName(newUser, user.getName(),
+						user.getPassword());
 
 				index(name);
 			} catch (Exception e) {
@@ -217,7 +209,7 @@ public class Application extends Controller {
 			// Database.deleteUser(user.getName(), user.getPassword());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * Creates a new event of the right subclass (PointEvent or RepeatingEvent)
@@ -233,9 +225,10 @@ public class Application extends Controller {
 	 * @param s_activeDate
 	 * @param isOpen
 	 */
-	public static void createEvent(@Required long calendarId, @Required String name, 
-			@Required String start, @Required String end, Visibility visibility, 
-			Interval interval, String description, String s_activeDate, boolean isOpen) {
+	public static void createEvent(@Required long calendarId,
+			@Required String name, @Required String start,
+			@Required String end, Visibility visibility, Interval interval,
+			String description, String s_activeDate, boolean isOpen) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -243,7 +236,7 @@ public class Application extends Controller {
 		// convert dates
 		DateTime d_start = null;
 		DateTime d_end = null;
-		
+
 		if (name.length() < 1) {
 			message = "INVALID INPUT: PLEASE ENTER A NAME!";
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
@@ -254,7 +247,7 @@ public class Application extends Controller {
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
-			
+
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 		if (d_end.isBefore(d_start)) {
@@ -268,26 +261,26 @@ public class Application extends Controller {
 		Event e;
 		if (!repeated) {
 			e = new PointEvent(name, d_start, d_end, visibility, calendar);
-			
-		} 
-		else {
+
+		} else {
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
 					interval);
 			e.setOriginId(e.getId());
 			e.setBaseId(e.getId()); // nicht notwendig
-			
+
 			e.generateNextEvents(e.getStart());
 		}
 
-//		Event e = new Event(me, d_start, d_end, name, visibility, repeated,
-//				intervall, calendarId, is_open);
+		// Event e = new Event(me, d_start, d_end, name, visibility, repeated,
+		// intervall, calendarId, is_open);
 		e.editDescription(description);
 		if (isOpen) {
 			e.setOpen();
 			e.addUserToAttending(me);
 		}
-		System.out.println("Creating and adding "+e+" to calendar: "+calendar);
-		
+		System.out.println("Creating and adding " + e + " to calendar: "
+				+ calendar);
+
 		calendar.addEvent(e);
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
 				message);
@@ -301,7 +294,7 @@ public class Application extends Controller {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
-		
+
 		// convert dates
 		DateTime d_start = null;
 		DateTime d_end = null;
@@ -312,19 +305,21 @@ public class Application extends Controller {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
-		
+
 		System.out.println("inteval size: " + interval);
-		
+
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
 		System.out.println("event id: " + eventId + " " + event);
-		
-		for(Event head : calendar.getEventHeads()) calendar.PrintHeadAndHisTail(head);
-		
+
+		for (Event head : calendar.getEventHeads())
+			calendar.PrintHeadAndHisTail(head);
+
 		event.editDescription(description);
 
-		event.edit(name, d_start, d_end, visibility, interval, d_start, d_start, description);
-		
+		event.edit(name, d_start, d_end, visibility, interval, d_start,
+				d_start, description);
+
 		//
 		// if (repeated && !event.wasPreviouslyRepeating) {
 		// event.wasPreviouslyRepeating = true;
@@ -332,53 +327,52 @@ public class Application extends Controller {
 		// }
 		//
 		//
-	//	event.edit(d_start, d_end, name, visibility, repeated, interval);
-		
+		// event.edit(d_start, d_end, name, visibility, repeated, interval);
+
 		/*
-		if(!repeated){
-			
-			((PointEvent) event).edit(name, d_start, d_end, visibility);
-		}else{
-			// TODO here wo do have bugs...
-			if(event instanceof IntervalEvent){
-				((IntervalEvent) event).edit(name, d_start, d_end, visibility, interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent) event).getTo());
-			}else{
-				// TODO irgendwas ist in showCalendar.html nicht iO, denn für den 1. Tag zeigt es nach edit den event doppelt an in liste. 
-				// event ist nicht mehrfach gespeichert, habe das verifiziert - siehe print statements below
-				// auch möglich, dass der bug in der methode showCalendar in der klasse application ist und die liste mit den daten,
-				// welche dargestellt werden sollen, falsch berechnet wir...
-				calendar.removeEvent(event.getBaseId());
-				RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event, interval);
-				calendar.addEvent(newEvent);
-				newEvent.editDescription(description);
-				calendar.generateNextEvents(newEvent, newEvent.getStart());
-			}
-		}
-		
-		*/
-		
+		 * if(!repeated){
+		 * 
+		 * ((PointEvent) event).edit(name, d_start, d_end, visibility); }else{
+		 * // TODO here wo do have bugs... if(event instanceof IntervalEvent){
+		 * ((IntervalEvent) event).edit(name, d_start, d_end, visibility,
+		 * interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent)
+		 * event).getTo()); }else{ // TODO irgendwas ist in showCalendar.html
+		 * nicht iO, denn für den 1. Tag zeigt es nach edit den event doppelt an
+		 * in liste. // event ist nicht mehrfach gespeichert, habe das
+		 * verifiziert - siehe print statements below // auch möglich, dass der
+		 * bug in der methode showCalendar in der klasse application ist und die
+		 * liste mit den daten, // welche dargestellt werden sollen, falsch
+		 * berechnet wir... calendar.removeEvent(event.getBaseId());
+		 * RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event,
+		 * interval); calendar.addEvent(newEvent);
+		 * newEvent.editDescription(description);
+		 * calendar.generateNextEvents(newEvent, newEvent.getStart()); } }
+		 */
+
 		if (!isOpen) {
 			event.setClosed();
-		}
-		else if (isOpen) {
+		} else if (isOpen) {
 			event.setOpen();
 			event.addUserToAttending(me);
 		}
-		
-		
-		
+
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				d_start.getDayOfMonth(), message);
 	}
-	
+
 	/**
 	 * Add a new or edit a given event.
 	 * 
-	 * @param eventId Id of the event, -1 if not given (= adding an event)
-	 * @param calendarId The id of the calendar which is viewed
-	 * @param name The name of event
-	 * @param s_activeDate The given start date.
-	 * @param message A message for the user in case an error occurs.
+	 * @param eventId
+	 *            Id of the event, -1 if not given (= adding an event)
+	 * @param calendarId
+	 *            The id of the calendar which is viewed
+	 * @param name
+	 *            The name of event
+	 * @param s_activeDate
+	 *            The given start date.
+	 * @param message
+	 *            A message for the user in case an error occurs.
 	 */
 	public static void addEditEvent(long eventId, long calendarId, String name,
 			String s_activeDate, String message) {
@@ -392,39 +386,41 @@ public class Application extends Controller {
 			editingEvent = true;
 		}
 		System.out.println("===============> " + event);
-		
-		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
-		
-		render(me, calendar, event, calendarId, eventId, activeDate, message, editingEvent);
+
+		DateTime activeDate = dateTimeInputFormatter
+				.parseDateTime(s_activeDate);
+
+		render(me, calendar, event, calendarId, eventId, activeDate, message,
+				editingEvent);
 	}
-	
-//	public static void editEvent(long eventId, long calendarId, String name,
-//		String s_activeDate, String message) {
-//		User me = Database.users.get(Security.connected());
-//		Calendar calendar = me.getCalendarById(calendarId);
-//		Event event = calendar.getEventById(eventID);
-//		render(me, calendar, event, calendarId, eventId, s_activeDate, message);
-//	}
-//
-//	public static void addEvent(long calendarId, String name,
-//			String s_activeDate, String message) {
-//		User me = Database.users.get(Security.connected());
-//		Calendar calendar = me.getCalendarById(calendarId);
-//		DateTime activeDate = dateTimeInputFormatter
-//				.parseDateTime(s_activeDate);
-//		render(me, calendar, calendarId, activeDate, message);
-//	}
+
+	// public static void editEvent(long eventId, long calendarId, String name,
+	// String s_activeDate, String message) {
+	// User me = Database.users.get(Security.connected());
+	// Calendar calendar = me.getCalendarById(calendarId);
+	// Event event = calendar.getEventById(eventID);
+	// render(me, calendar, event, calendarId, eventId, s_activeDate, message);
+	// }
+	//
+	// public static void addEvent(long calendarId, String name,
+	// String s_activeDate, String message) {
+	// User me = Database.users.get(Security.connected());
+	// Calendar calendar = me.getCalendarById(calendarId);
+	// DateTime activeDate = dateTimeInputFormatter
+	// .parseDateTime(s_activeDate);
+	// render(me, calendar, calendarId, activeDate, message);
+	// }
 
 	public static void removeEvent(long calendarId, long eventId,
 			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
-		
+
 		Calendar calendar = me.getCalendarById(calendarId);
 		calendar.removeEvent(eventId);
 		DateTime activeDate = dateTimeInputFormatter
-			.parseDateTime(s_activeDate);
+				.parseDateTime(s_activeDate);
 		showCalendar(calendarId, me.getName(), s_activeDate,
-			activeDate.getDayOfMonth(), message);
+				activeDate.getDayOfMonth(), message);
 	}
 
 	public static void cancelEventRepetition(long calendarId, long eventId,
@@ -432,11 +428,11 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
 		calendar.cancelRepeatingEventRepetitionFromDate(calendar
-			.getEventById(eventId));
+				.getEventById(eventId));
 		DateTime activeDate = dateTimeInputFormatter
-			.parseDateTime(s_activeDate);
+				.parseDateTime(s_activeDate);
 		showCalendar(calendarId, me.getName(), s_activeDate,
-			activeDate.getDayOfMonth(), message);
+				activeDate.getDayOfMonth(), message);
 	}
 
 	public static void removeRepeatingEvents(long calendarId, long eventId,
@@ -458,7 +454,7 @@ public class Application extends Controller {
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
 		assert (calendar != null) : "Calendar must not be null";
-		
+
 		// get active date
 		DateTime activeDate = null;
 		DateTime today = new DateTime();
@@ -478,21 +474,20 @@ public class Application extends Controller {
 		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
-		//System.out.println(eventsOfDate);
-		
-		
+		// System.out.println(eventsOfDate);
+
 		// TODO pls fix this - it works but it is ugly
 		// filter
 		LinkedList<Event> tmp = new LinkedList<Event>(eventsOfDate);
-		for(Event e : eventsOfDate){
+		for (Event e : eventsOfDate) {
 			long currentId = e.getId();
 			boolean flag = true;
-			for(Event t : tmp){
-				if(t.getId() == currentId){
-					if(flag){
+			for (Event t : tmp) {
+				if (t.getId() == currentId) {
+					if (flag) {
 						flag = false;
-						
-					}else{
+
+					} else {
 						// delete here duplicated event
 						eventsOfDate.remove(t);
 						break;
@@ -500,30 +495,32 @@ public class Application extends Controller {
 				}
 			}
 		}
-		
+
 		// end of filter
-		
-		//calendar.PrintAllHeadTails();
-		
+
+		// calendar.PrintAllHeadTails();
+
 		System.out.println("Events of current selcected date:");
-		for(Event e : eventsOfDate)
-			System.out.println("date " + e.getParsedStartDate() + " id " + e.getId() + " base " + e.getBaseId());
+		for (Event e : eventsOfDate)
+			System.out.println("date " + e.getParsedStartDate() + " id "
+					+ e.getId() + " base " + e.getBaseId());
 		System.out.println("done");
-		
+
 		// get bounds for calendar construction
 		int bound = activeDate.withDayOfMonth(1).getDayOfWeek();
 		int bound2 = activeDate.dayOfMonth().getMaximumValue();
-		
+
 		DateTime nextMonth = activeDate.plusMonths(1);
 		DateTime prevMonth = activeDate.minusMonths(1);
 
 		boolean faved = me.isCalendarObserved(calendarId);
-		
+
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
-		LinkedList<Long> shownObservedCalendars = me.getShownObservedCalendars();
-		
+		LinkedList<Long> shownObservedCalendars = me
+				.getShownObservedCalendars();
+
 		calendar.generateAllNextEvents(activeDate);
-		
+
 		render(me, user, calendar, bound, bound2, prevMonth, nextMonth,
 				activeDate, today, eventsOfDate, message, faved,
 				observedCalendars, shownObservedCalendars);
@@ -598,8 +595,9 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		for (Event e : cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
-				activeDate.getMonthOfYear(), activeDate.getYear(), me)) {
+		for (Event e : cal.getAllVisibleEventsOfDate(
+				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
+				activeDate.getYear(), me)) {
 			if (e.getId() == eventId) {
 				event = e;
 			}
@@ -610,16 +608,17 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), null);
 	}
 
-	public static void removeUserFromEvent(String eventOwner,
-			long calendarId, long eventId, String s_activeDate) {
+	public static void removeUserFromEvent(String eventOwner, long calendarId,
+			long eventId, String s_activeDate) {
 		User me = Database.getUserByName(Security.connected());
 		User user = Database.getUserByName(eventOwner);
 		Calendar cal = user.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		for (Event e : cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
-				activeDate.getMonthOfYear(), activeDate.getYear(), me)) {
+		for (Event e : cal.getAllVisibleEventsOfDate(
+				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
+				activeDate.getYear(), me)) {
 			if (e.getId() == eventId) {
 				event = e;
 			}
@@ -629,33 +628,37 @@ public class Application extends Controller {
 		showCalendar(calendarId, user.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
-	
+
 	/**
 	 * Creates a new calendar and adds it to the calendars of the given user.
 	 * 
-	 * @param userName the user which wants a new calendar
-	 * @param calenderName the name of the new calendar
+	 * @param userName
+	 *            the user which wants a new calendar
+	 * @param calenderName
+	 *            the name of the new calendar
 	 */
-	public static void createCalendar(@Required String userName, 
+	public static void createCalendar(@Required String userName,
 			@Required String calendarName) {
 		User me = Database.users.get(Security.connected());
-		
+
 		Calendar cal = new Calendar(calendarName, me);
 		me.addCalendar(cal);
-		
+
 		index(userName);
 	}
-	
+
 	/**
 	 * Removes a calendar from the list of inherited calendars from the owner.
 	 * 
-	 * @param calendarId the calendar to delete
-	 * @param userName the user who wants to delete
+	 * @param calendarId
+	 *            the calendar to delete
+	 * @param userName
+	 *            the user who wants to delete
 	 */
 	public static void deleteCalendar(long calendarId) {
 		User me = Database.users.get(Security.connected());
 		me.deleteCalendar(calendarId);
 		index(me.getName());
 	}
-	
+
 }
