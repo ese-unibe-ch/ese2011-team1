@@ -97,10 +97,8 @@ public class RepeatingEvent extends Event {
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
 
-				DateTime newStartDate = cursor.getStart().plusDays(
-						getInterval().getDays());
-				DateTime newEndDate = cursor.getEnd().plusDays(
-						getInterval().getDays());
+				DateTime newStartDate = cursor.getStart().plusYears(1);
+				DateTime newEndDate = cursor.getEnd().plusYears(1);
 
 				// corner case for 29feb problem
 				newStartDate = correctDateForCornerCase(newStartDate);
