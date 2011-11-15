@@ -1,6 +1,8 @@
 import models.Calendar;
 import models.Event;
+import models.IntervalEvent;
 import models.PointEvent;
+import models.RepeatingEvent;
 import models.User;
 
 import org.joda.time.DateTime;
@@ -52,7 +54,43 @@ public class PointEventTest extends UnitTest {
 		newStart = new DateTime(300000);
 		newEnd = new DateTime(4000000);
 		newVisibility = Visibility.PUBLIC;
-		Interval newInterval = Interval.WEEKLY;
+		newInterval = Interval.WEEKLY;
 		newDescription = "new Description";
+		event.edit(newName, newStart, newEnd, newVisibility, newInterval, null, null, newDescription);
+		assertEquals(newName, event.getName());
+		assertEquals(newStart, event.getStart());
+		assertEquals(newEnd, event.getEnd());
+		assertEquals(newVisibility, event.getVisibility());
+		assertEquals(newDescription, event.getDescription());
+	}
+	
+	@Test
+	public void testChangeFromIntervalEventToPointEventConstructor() {
+		String name = "newName";
+		DateTime start = new DateTime(300000);
+		DateTime end = new DateTime(400000);
+		DateTime from = new DateTime(300000);
+		DateTime to = new DateTime(200000000);
+		Visibility visibility = Visibility.PUBLIC;
+		Interval interval = Interval.WEEKLY;
+		IntervalEvent intervalEvent = new IntervalEvent(name, start, end, from, to, visibility, calendar, interval);
+		PointEvent newPointEvent = new PointEvent(intervalEvent);
+		assertEquals(start, newPointEvent.getStart());
+		assertEquals(end, newPointEvent.getEnd());
+		assertEquals(visibility, newPointEvent.getVisibility());
+	}
+	
+	@Test
+	public void testChangeFromRepeatingEventToPointEventConstructor() {
+		String name = "newName";
+		DateTime start = new DateTime(300000);
+		DateTime end = new DateTime(4000000);
+		Visibility visibility = Visibility.PUBLIC;
+		Interval interval = Interval.WEEKLY;
+		RepeatingEvent repeatingEvent = new RepeatingEvent(name, start, end, visibility, calendar, interval);
+		PointEvent newPointEvent = new PointEvent(repeatingEvent);
+		assertEquals(start, newPointEvent.getStart());
+		assertEquals(end, newPointEvent.getEnd());
+		assertEquals(visibility, newPointEvent.getVisibility());
 	}
 }
