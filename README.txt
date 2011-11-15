@@ -2,7 +2,7 @@ Install Guide for Calendar-App (Windows)
 ******************************************************************************************
 Install the play framework
 
-	- Make sure that you got the last Java-Version
+	- Make sure that you got the latest Java-Version
 
 	- Download the last Play-Version at: http://www.playframework.org/download
 	- Add the location of the downloaded folder to your PATH.
