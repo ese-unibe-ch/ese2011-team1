@@ -413,7 +413,6 @@ public abstract class Event implements Comparable<Event>{
 	public void setClosed() {
 		this.isOpen = false;
 		this.attendingUsers = new ArrayList<User>();
-		
 	}
 	
 	/**
@@ -474,7 +473,7 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	// TODO i'm not quite sure, but is there a bug in this method?
 	public Event findEventById(long id){
-		System.out.println(this.getParsedStartDate() + " has same id " + this.equalId(id));
+//		System.out.println(this.getParsedStartDate() + " has same id " + this.equalId(id));
 		if(this.equalId(id)) return this;
 		else{
 			if(this.hasNext()) return this.getNextReference().findEventById(id);
@@ -509,14 +508,15 @@ public abstract class Event implements Comparable<Event>{
 	
 	
 	// TODO currently this method is a mess and is not used but i plan to get it ready.
+	// SIMU: added method name and changed last arg from null to date, seems to work...
 	public Event findEventByIdForUserOnDate(long id, User requester, LocalDate date){
 		if(this.equalId(id)){
-			if(tester(this, requester, null))
+			if(checkHappensOnAndVisibility(this, requester, date))
 				return this;
 		}
 		else{
 			if(this.hasNext()){
-				if(tester(this, requester, null))
+				if(checkHappensOnAndVisibility(this, requester, date))
 					return this.getNextReference().findHasEventOnDate(date, requester);
 			}
 			else return null;
@@ -525,7 +525,7 @@ public abstract class Event implements Comparable<Event>{
 	}
 	
 	// TODO messy code + messy name => trash, well it is only used in a "trashy" method-
-	private boolean tester(Event cursor, User requester, LocalDate compareDate){
+	private boolean checkHappensOnAndVisibility(Event cursor, User requester, LocalDate compareDate){
 		return happensOn(compareDate)&& 
 					(cursor.getVisibility() != Visibility.PRIVATE 
 							|| this.getOwner() == requester);
@@ -680,37 +680,4 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
-	/**
-	 * This is a debugging helper
-	 * it prints starting from this event all its tail events its/their next 
-	 * and previous reference, if there is any and the type of the event.
-	 * if the event is an interval event, then print their upper and lower bound too.
-	 */
-	public void PrintThisAndTail(){
-		Event event = this;
-		String previousEvent = null;
-		String nextEvent = null;
-		System.out.println();
-		System.out.println("*************************************************");
-		while(event.hasNext()){
-			if(event.getPreviousReference() != null) previousEvent = event.getPreviousReference().getParsedStartDate();
-			System.out.print(event.getType() + " ");
-			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
-					+ " prevR:" + previousEvent);
-			if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom().toString()+ " to:"+((IntervalEvent)event).getTo().toString());
-			System.out.println();
-			event = event.getNextReference();
-		}
-		previousEvent = null;
-		if(event.getNextReference() != null) nextEvent = event.getNextReference().getParsedStartDate();
-		if(event.getPreviousReference() != null) previousEvent = event.getPreviousReference().getParsedStartDate();
-		System.out.print(event.getType() + " ");
-		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ nextEvent 
-				+ "              prevR:" + previousEvent);
-		if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom()+ " to:"+((IntervalEvent)event).getTo());
-		System.out.println();
-		System.out.println("*************************************************");
-		System.out.println();
-	}
-
 }

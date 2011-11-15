@@ -6,6 +6,7 @@ import models.RepeatingEvent;
 import models.User;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -32,9 +33,13 @@ public class EventTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Database.clearDatabase();
 		this.user = new User("hans", "1234", today, "hans2");
 		this.francis = new User("francis", "1234", today, "fran");
 		this.stefan = new User("stefan", "1234", today, "stef");
+		Database.addUser(user);
+		Database.addUser(francis);
+		Database.addUser(stefan);
 		this.calendar = new Calendar("testCalendar", user);
 		this.francisCalendar = new Calendar("francisTestCalendar", francis);
 		this.event = new PointEvent("anEvent", today, tomorrow,
@@ -54,6 +59,12 @@ public class EventTest extends UnitTest {
 	public void testGetId() {
 		assertEquals(event.getId(), event.getId());
 	}
+	
+	@Test
+	public void testGetCalendarId() {
+		Calendar calendar = event.getCalendar();
+		assertEquals(calendar.getId(), event.getCalendarId());
+	}
 
 	@Test
 	public void testGetName() {
@@ -72,7 +83,91 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testisVisible() {
-		assertFalse(event.getVisibility() != Visibility.PRIVATE);
+		assertFalse(event.isPublic());
+		assertFalse(event.isBusy());
+		assertTrue(event.isPrivate());
+	}
+	
+	@Test
+	public void testSetVisibility() {
+		assertTrue(event.isPrivate());
+		assertFalse(event.isPublic());
+		event.setVisiblility(Visibility.PUBLIC);
+		assertTrue(event.isPublic());
+		event.setVisiblility(Visibility.BUSY);
+		assertTrue(event.isBusy());
+	}
+	
+	@Test
+	public void testGetOriginId() {
+		event.setOriginId(27);
+		assertEquals(27, event.getOriginId());
+	}
+	
+	@Test
+	public void testSetOriginId() {
+		long originId = 27;
+		event.setOriginId(originId);
+		assertEquals(originId, event.getOriginId());
+	}
+	
+	@Test
+	public void testSetOpen() {
+		assertFalse(event.isOpen());
+		event.setOpen();
+		assertTrue(event.isOpen());
+	}
+	
+	@Test
+	public void testSetClosed() {
+		event.setOpen();
+		assertTrue(event.isOpen());
+		event.addUserToAttending(francis);
+		assertTrue(Database.getUserList().contains(stefan));
+		assertTrue(event.userIsAttending(francis.getName()));
+		event.setClosed();
+		assertFalse(event.isOpen());
+		assertTrue(event.getAttendingUsers().isEmpty());
+	}
+	
+	@Test
+	public void testForceSetId() {
+		assertNotSame(event.getId(), 27);
+		event.forceSetId(27);
+		assertEquals(27, event.getId());
+	}
+	
+	@Test
+	public void testPointEventIsRepeating() {
+		assertTrue(event instanceof PointEvent);
+		assertFalse(event.isRepeating());
+	}
+	
+	@Test
+	public void testEqualId() {
+		long id = event.getId();
+		assertTrue(event.equalId(id));
+		id = 27;
+		assertNotSame(event.getId(), 27);
+		assertFalse(event.equalId(27));
+	}
+	
+	@Test
+	public void testEqualBaseId() {
+		long baseId = event.getBaseId();
+		assertTrue(event.equalBaseId(baseId));
+		baseId = 27;
+		assertNotSame(event.getBaseId(), 27);
+		assertFalse(event.equalBaseId(27));
+	}
+	
+	@Test
+	public void testEqualOriginId() {
+		long originId = event.getOriginId();
+		assertTrue(event.equalOriginId(originId));
+		originId = 27;
+		assertNotSame(event.getOriginId(), 27);
+		assertFalse(event.equalOriginId(27));
 	}
 
 	@Test
@@ -97,7 +192,6 @@ public class EventTest extends UnitTest {
 		attendingEvent.addUserToAttending(francis);
 		attendingEvent.addUserToAttending(stefan);
 		assertEquals("francis, stefan", attendingEvent.getAttendingUsers());
-
 	}
 
 	@Test
@@ -110,6 +204,16 @@ public class EventTest extends UnitTest {
 		attendingEvent.addUserToAttending(stefan);
 		assertTrue(attendingEvent.userIsAttending("francis"));
 		assertTrue(attendingEvent.userIsAttending("stefan"));
+	}
+	
+	@Test
+	public void testRemoveUserFromAttending() {
+		event.setOpen();
+		assertFalse(event.userIsAttending(stefan.getName()));
+		event.addUserToAttending(stefan);
+		assertTrue(event.userIsAttending(stefan.getName()));
+		event.removeUserFromAttending(stefan);
+		assertFalse(event.userIsAttending(stefan.getName()));
 	}
 
 	@Test
@@ -164,57 +268,37 @@ public class EventTest extends UnitTest {
 				event3BeforeEvent.getStart().compareTo(event.getStart()));
 		assertEquals(1, event2AfterEvent.getStart().compareTo(event.getStart()));
 	}
-
+	
 	@Test
-	public void testGetInterVall() {
-		Interval interval = Interval.WEEKLY;
-		RepeatingEvent repeatingEvent = new RepeatingEvent("test",
-				new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendar,
-				interval);
-		assertEquals(interval, repeatingEvent.getInterval());
+	public void testFindHasEventOnDate() {
+		User eventOwner = event.getOwner();
+		LocalDate testDate = event.getStart().toLocalDate();
+		assertNotNull(event.findHasEventOnDate(testDate, eventOwner));
+		testDate = event.getEnd().toLocalDate();
+		assertNotNull(event.findHasEventOnDate(testDate, eventOwner));
+		testDate = new LocalDate(2000, 12, 12);
+		assertFalse(event.happensOn(testDate));
+		assertNull(event.findHasEventOnDate(testDate, eventOwner));
 	}
-
+	
 	@Test
-	public void testGetNextRepetitionIntervall7() {
-		assertEquals(Interval.WEEKLY, repeatingEvent.getInterval());
-		Event nextRepetition = repeatingEvent.getNextReference();
-		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusDays(7),
-				nextRepetition.getStart());
-		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(),
-				nextRepetition.getStart().dayOfMonth());
-		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(),
-				nextRepetition.getStart().getYear());
+	public void testFindEventByIdForUserOnDate() {
+		long eventId = event.getId();
+		User eventOwner = event.getOwner();
+		LocalDate testDate = event.getStart().toLocalDate();
+		assertNotNull(event.findEventByIdForUserOnDate(eventId, eventOwner, testDate));
+		User notEventOwner = francis;
+		assertNull(event.findEventByIdForUserOnDate(eventId, notEventOwner, testDate));
 	}
-
-	/*
-	 * @Test public void testGetNextRepetitionIntervallMonth() { repeatingEvent
-	 * = new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(),
-	 * repeatingEvent.getEnd(), repeatingEvent.getVisibility(),
-	 * repeatingEvent.getCalendar(), Interval.MONTHLY); repeatingEvent.init();
-	 * assertEquals(repeatingEvent.getInterval(), 30); Event nextRepetition =
-	 * repeatingEvent.getNextReference();
-	 * assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
-	 * repeatingEvent.getNextReference().getStart().getMillis());
-	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getMillis(),
-	 * nextRepetition.getStart().getMillis());
-	 * assertEquals(repeatingEvent.getStart().plusMonths(1).getYear(),
-	 * nextRepetition.getStart().getYear()); }
-	 * 
-	 * @Test public void testGetNextRepetitionIntervallYear() { repeatingEvent =
-	 * new RepeatingEvent("repeatingEvent", repeatingEvent.getStart(),
-	 * repeatingEvent.getEnd(), repeatingEvent.getVisibility(),
-	 * repeatingEvent.getCalendar(), Interval.YEARLY); repeatingEvent.init();
-	 * assertEquals(repeatingEvent.getInterval(), 365); Event nextRepetition =
-	 * repeatingEvent.getNextReference();
-	 * assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-	 * assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
-	 * repeatingEvent.getNextReference().getStart().getMillis());
-	 * assertEquals(repeatingEvent.getStart().getDayOfMonth(), nextRepetition
-	 * .getStart().getDayOfMonth());
-	 * assertEquals(repeatingEvent.getStart().plusYears(1).getMillis(),
-	 * nextRepetition.getStart().getMillis()); }
-	 */
-
+	
+	@Test
+	public void testGetVisibilityFor() {
+		Visibility eventVisibility = event.getVisibility();
+		User eventOwner = event.getOwner();
+		assertNotNull(event.getVisibilityFor(eventOwner));
+		assertEquals(eventVisibility.toString(), event.getVisibilityFor(eventOwner));
+		User notEventOwner = francis;
+		assertNull(event.getVisibilityFor(notEventOwner));
+	}
+	
 }

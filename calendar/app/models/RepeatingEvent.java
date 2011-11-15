@@ -244,7 +244,7 @@ public class RepeatingEvent extends Event {
 			//this.current = cursor;
 		}
 		// nextEvent.setNext(null)
-		base.PrintThisAndTail();
+//		base.PrintThisAndTail();
 	}
 
 	/*
@@ -403,7 +403,7 @@ public class RepeatingEvent extends Event {
 			newIntervalEvent.setPrevious(newIntervalEventHead);
 			    
 			this.getCalendar().addEvent(newIntervalEventHead);
-			this.getCalendar().PrintAllHeadTails();
+//			this.getCalendar().PrintAllHeadTails();
 			
 		// case (d)
 		} else {
