@@ -59,8 +59,6 @@ public class IntervalEvent extends RepeatingEvent{
 	}
 	
 
-
-	@SuppressWarnings("null")
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
@@ -73,6 +71,7 @@ public class IntervalEvent extends RepeatingEvent{
 			head.setNext(null);
 			this.getCalendar().getHeadList().remove(head);		
 			Event newPointEvent = new PointEvent((IntervalEvent)head);
+			newPointEvent.editDescription(head.getDescription());
 			newPointEvent.setBaseId(newPointEvent.getId());
 			newPointEvent.setOriginId(head.getOriginId());
 			this.getCalendar().addEvent(newPointEvent);
@@ -86,6 +85,7 @@ public class IntervalEvent extends RepeatingEvent{
 				postVictim.setPrevious(null);
 				this.getCalendar().getHeadList().remove(head);
 				Event newPointEvent = new PointEvent((IntervalEvent)postVictim);
+				newPointEvent.editDescription(postVictim.getDescription());
 				newPointEvent.setBaseId(newPointEvent.getId());
 				newPointEvent.setOriginId(head.getOriginId());
 				this.getCalendar().addEvent(newPointEvent);
@@ -93,9 +93,6 @@ public class IntervalEvent extends RepeatingEvent{
 			// [victim,posthead,...,leafOfInterval]
 			}else{
 				
-			
-				
-			
 			// TODO set new lower bound atm not problematic.
 				Event postHead = head.getNextReference();
 				this.getCalendar().getHeadList().remove(head);
@@ -130,10 +127,12 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getHeadList().remove(head);
 			
 			Event newRightPointEvent = new PointEvent((IntervalEvent)postVictim);
+			newRightPointEvent.editDescription(postVictim.getDescription());
 			newRightPointEvent.setBaseId(newRightPointEvent.getBaseId());
 			newRightPointEvent.setOriginId(head.getOriginId());
 			
 			Event newLeftPointEvent = new PointEvent((IntervalEvent)preVictim);
+			newLeftPointEvent.editDescription(preVictim.getDescription());
 			newLeftPointEvent.setBaseId(newLeftPointEvent.getBaseId());
 			newLeftPointEvent.setOriginId(head.getOriginId());
 			
@@ -141,10 +140,8 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getHeadList().add(newLeftPointEvent);
 			
 			
-			
-		// [head ,previctim] | victim | [postVictim,victim.getTo()]	
+		// [head, previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
-			System.out.println("regular case");
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
 			this.getCalendar().addEvent(postVictim);
