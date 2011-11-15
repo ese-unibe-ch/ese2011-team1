@@ -69,37 +69,49 @@ public class IntervalEvent extends RepeatingEvent{
 		
 		// interval structure: [head,victim], i.e. there are two elements
 		if(preVictim == head && postVictim == null){
-			postVictim.setPrevious(null);
-
-			this.getCalendar().getHeadList().remove(this);
-			this.getCalendar().addEvent(postVictim);			
-			
-			Event cursor = postVictim;
-			postVictim.setBaseId(postVictim.getId());
-			
-			while(cursor.hasNext()){
-				cursor = cursor.getNextReference();
-				cursor.setBaseId(postVictim.getId());
-			}
+			this.setPrevious(null); // victim back reference null
+			head.setNext(null);
+			this.getCalendar().getHeadList().remove(head);		
+			Event newPointEvent = new PointEvent((IntervalEvent)head);
+			newPointEvent.setBaseId(newPointEvent.getId());
+			newPointEvent.setOriginId(head.getOriginId());
+			this.getCalendar().addEvent(newPointEvent);
 			
 		// if we want to delete the head
 		}else if(this == head){
-		// TODO set new lower bound atm not problematic.
-			Event postHead = head.getNextReference();
-			this.getCalendar().getHeadList().remove(head);
-			head.setNext(null);
-			postHead.setPrevious(null);
-			this.getCalendar().getHeadList().add(postHead);
-			postHead.setBaseId(postHead.getId());
-			postHead.setOriginId(head.getOriginId());
 			
-			// reset baseIds of tails of postHead
-			Event cursor = postHead;
-			while(cursor.hasNext()){
-				cursor = cursor.getNextReference();
-				cursor.setBaseId(postHead.getId());
+			//[victim,posthead]
+			if(postVictim.getNextReference() == null){
+				head.setNext(null);
+				postVictim.setPrevious(null);
+				this.getCalendar().getHeadList().remove(head);
+				Event newPointEvent = new PointEvent((IntervalEvent)postVictim);
+				newPointEvent.setBaseId(newPointEvent.getId());
+				newPointEvent.setOriginId(head.getOriginId());
+				this.getCalendar().addEvent(newPointEvent);
+				
+			// [victim,posthead,...,leafOfInterval]
+			}else{
+				
+			
+				
+			
+			// TODO set new lower bound atm not problematic.
+				Event postHead = head.getNextReference();
+				this.getCalendar().getHeadList().remove(head);
+				head.setNext(null);
+				postHead.setPrevious(null);
+				this.getCalendar().getHeadList().add(postHead);
+				postHead.setBaseId(postHead.getId());
+				postHead.setOriginId(head.getOriginId());
+				
+				// reset baseIds of tails of postHead
+				Event cursor = postHead;
+				while(cursor.hasNext()){
+					cursor = cursor.getNextReference();
+					cursor.setBaseId(postHead.getId());
+				}
 			}
-			
 		// if victim is the leaf, i.e. victim is the last element of the list.
 		}else if(postVictim == null){
 			// TODO set new upper bound;

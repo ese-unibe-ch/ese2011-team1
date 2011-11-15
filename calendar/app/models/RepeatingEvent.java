@@ -432,6 +432,7 @@ public class RepeatingEvent extends Event {
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
 			}
+			// TODO seems to be okay now...
 			// TODO the code above fixes some errors but, if we use it, we get
 			// as well some errors to
 			// see if it can be fixed. furthermore fix soon
