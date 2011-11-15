@@ -151,8 +151,13 @@
 
 	<div id="Nav">
 		#{if user==me} 
-	 		<a class="button" href="@{Application.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+		<form name="form" action="javascript: document.location = '@{Application.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}'">
+		<input type="submit" value="New Event"> 
+		</form>
 		#{/if}
+		<!-- #{if user==me} 
+	 		<a class="button" href="@{Application.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+		#{/if} -->
 	</div>
 	<table id="events">
 			<h2>Events on ${activeDate.toString("dd-MM-yyyy")} </h2>
