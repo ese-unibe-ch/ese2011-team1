@@ -656,4 +656,5 @@ public class Application extends Controller {
 		me.deleteCalendar(calendarId);
 		index(me.getName());
 	}
+	
 }

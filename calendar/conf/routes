@@ -12,7 +12,7 @@ GET		/										Application.index
 GET 	/calendars/{username}/					Application.showCalendarList
 GET		/addEditEvents/{name}/{calendarId}/{eventId}/	Application.addEditEvent({eventId}, {calendarId}, {name}, {s_activeDate})
 GET 	/showCalendar/{username}/{calendarId}/			Application.showCalendar({calendarId}, {username}, {s_activeDate})
-GET		/Registration							Application.showregistration
+GET		/Registration							publicApplication.showRegistration
 GET		/showProfile/{userName}/				Application.showProfile
 
 # Ignore favicon requests
