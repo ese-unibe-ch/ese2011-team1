@@ -131,8 +131,8 @@ public class Calendar {
 	public Event getHeadById(long id){
 		for(Event event : this.eventHeads)
 			// TODO remove if new version is approved to be correct.
-			if(event.getId() == id) return event;
-			//if(event.equalId(id))return event;
+			//if(event.getId() == id) return event;
+			if(event.equalId(id))return event;
 		return null;
 	}
 	
@@ -145,8 +145,8 @@ public class Calendar {
 		LinkedList<Event> result = new LinkedList<Event>();
 		for(Event head : this.getHeadList())
 			// TODO remove if new version is approved to be correct.
-			if(head.getOriginId() == originId) result.add(head);
-			//if(head.equalOriginId(originId)) result.add(head);
+			//if(head.getOriginId() == originId) result.add(head);
+			if(head.equalOriginId(originId)) result.add(head);
 		return result;
 	}
 	
@@ -235,15 +235,12 @@ public class Calendar {
 	//      => generate new events, starting from leaf
 	
 	public void generateNextEvents(Event head, DateTime baseDate){
-		//DateTime currentDate = head.getStart();
 		DateTime currentDate = baseDate;
 		DateTime nextDate = currentDate.plusMonths(1);
-		System.out.println("next date " + nextDate.toString());
 		head.generateNextEvents(nextDate);
 		
 		// TODO later: set here new leaf for the head!
 		// i think this would be the most efficient way to do that here.
-		
 		//newNextEventsPrinter(head);
 	}
 	
@@ -258,12 +255,12 @@ public class Calendar {
 			event.generateNextEvents(nextDate);
 		}
 		
-		 LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
-		  for (Calendar observedCalendar : observedCalendars) {
-		   if (!observedCalendar.equals(this)) {
-		   observedCalendar.generateNextEvents(baseDate);
-		   }
-		  }
+		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
+		for (Calendar observedCalendar : observedCalendars) {
+			if (!observedCalendar.equals(this)) {
+				observedCalendar.generateNextEvents(baseDate);
+			}
+		}
 	}
 	
 	/*
@@ -324,10 +321,6 @@ public class Calendar {
 	 */
 	public void removeEvent(long id) {
 		Event victim = getEventById(id);
-		System.out.println("========> remover id " + id);
-		System.out.println("========> remover id " + victim);
-		this.PrintAllHeadTails();
-		System.out.println("========> end");
 		victim.remove();
 	}
 	
@@ -445,9 +438,11 @@ public class Calendar {
 	public boolean hasEventOnDateIncludingObserved(int day, int month, int year, User requester){
 		boolean hasEvent = false;
 		LocalDate compareDate = null;
+		
 		try {
 			compareDate = new LocalDate(year, month, day);
 		} catch (Exception e) {}
+		
 		hasEvent = hasEventOnDate(compareDate, requester);
 		
 		// check observedCalendars
@@ -458,8 +453,7 @@ public class Calendar {
 				if (shownObservedCalendars.contains(observedCalendar.getId())) {
 					hasEvent = observedCalendar.hasEventOnDate(compareDate, requester);
 				}
-				if (hasEvent)
-					break;
+				if (hasEvent) break;
 			}
 		}
 		return hasEvent;
