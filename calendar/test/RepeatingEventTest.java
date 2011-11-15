@@ -1,3 +1,4 @@
+
 import models.Calendar;
 import models.Database;
 import models.Event;
@@ -15,7 +16,8 @@ import play.test.UnitTest;
 import enums.Interval;
 import enums.Visibility;
 
-public class EventTest extends UnitTest {
+//TODO: remove unused tests from EventTest
+public class RepeatingEventTest extends UnitTest {
 
 	private RepeatingEvent repeatingEvent;
 	private User user;
@@ -261,3 +263,4 @@ public class EventTest extends UnitTest {
 				nextRepetition.getStart().getYear());
 	}
 }
+

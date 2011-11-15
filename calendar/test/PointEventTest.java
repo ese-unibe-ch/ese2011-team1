@@ -29,4 +29,5 @@ public class PointEventTest extends UnitTest {
 	public void testGetType() {
 		assertEquals("PointEvent", event.getType());
 	}
+
 }

@@ -413,7 +413,6 @@ public abstract class Event implements Comparable<Event>{
 	public void setClosed() {
 		this.isOpen = false;
 		this.attendingUsers = new ArrayList<User>();
-		
 	}
 	
 	/**
@@ -474,7 +473,7 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	// TODO i'm not quite sure, but is there a bug in this method?
 	public Event findEventById(long id){
-		System.out.println(this.getParsedStartDate() + " has same id " + this.equalId(id));
+//		System.out.println(this.getParsedStartDate() + " has same id " + this.equalId(id));
 		if(this.equalId(id)) return this;
 		else{
 			if(this.hasNext()) return this.getNextReference().findEventById(id);

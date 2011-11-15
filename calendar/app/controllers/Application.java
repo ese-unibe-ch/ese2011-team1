@@ -317,9 +317,8 @@ public class Application extends Controller {
 		
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
-		System.out.println("event id: " + eventId + " " + event);
 		
-		for(Event head : calendar.getEventHeads()) calendar.PrintHeadAndHisTail(head);
+//		for(Event head : calendar.getEventHeads()) calendar.PrintHeadAndHisTail(head);
 		
 		event.editDescription(description);
 
