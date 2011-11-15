@@ -191,6 +191,7 @@ public class RepeatingEvent extends Event{
 			this.current = cursor;
 		}
 		//nextEvent.setNext(null)
+		base.PrintThisAndTail();
 	}
 	
 	/*

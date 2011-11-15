@@ -273,6 +273,13 @@ public class Calendar {
 			DateTime nextDate = currentDate.plusMonths(1);
 			event.generateNextEvents(nextDate);
 		}
+		
+		 LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
+		  for (Calendar observedCalendar : observedCalendars) {
+		   if (!observedCalendar.equals(this)) {
+		   observedCalendar.generateNextEvents(baseDate);
+		   }
+		  }
 	}
 	
 	/*

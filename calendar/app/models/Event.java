@@ -629,9 +629,11 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
-	public void PrintThisAndTail(Event head){
-		Event event = head;
+	public void PrintThisAndTail(){
+		Event event = this;
 		String ee = null;
+		String pp = null;
+		System.out.println("*************************************************");
 		while(event.hasNext()){
 			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
 			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
@@ -639,9 +641,13 @@ public abstract class Event implements Comparable<Event>{
 			event = event.getNextReference();
 		}
 		ee = null;
+		pp = null;
 		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
+		if(event.getPreviousReference() != null) pp = event.getPreviousReference().getParsedStartDate();
 		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
-				+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
+				+ "              prevR:" + pp);
+		
+		System.out.println("*************************************************");
 	}
 
 }
