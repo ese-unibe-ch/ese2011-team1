@@ -4,15 +4,14 @@ import enums.Visibility;
 import org.joda.time.DateTime;
 
 /**
- * RepeatingEvent is a specialization of Event. A repeating event has an interval, 
+ * IntervalEvent inherits from RepeatingEvent. An IntevalEvent event has an interval, 
  * which defines the time step size for its repetition. there are also the attributes,
- * upperBound and lowerBound, which are for none IntervalEvent always equal null.
- * We have this attributes just for inheritance issues. 
- * an repeating event can be edited, removed, set interval size. for each repeating event, we can call
- * the method generateNextEvents which generates its successor event if certain conditions
- * (see for that generateNextEvents) are fulfilled.
+ * upperBound and lowerBound, which are set by its constructors. they define bound for 
+ * generating successor events and bound for the event itself.
+ * an interval event can be edited, removed, set interval size, set upper and lower bound.
+ * for each repeating event, we can call the method generateNextEvents which generates its 
+ * successor event if certain conditions (see for that generateNextEvents) are fulfilled.
  * @author team1
- *
  */
 
 public class IntervalEvent extends RepeatingEvent{

@@ -222,15 +222,13 @@ public class Calendar {
 	 * generates the next couple of events for a given head till a limit date.
 	 * each time we click for the next month in our calendar, we have to generate following events RepeatingEvents.
 	 * the generating process is handled in the event classes itself and depends on the run-time type of an event.
+	 * call this method, whenever we change the month in the calendar GUI
+	 * or added a new event an declared him as an IntervalEvent or RepeatingEvent
+	 * or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
 	 * @param head for this head we are going to generate its following events.
 	 * @param baseDate this DateTime object defines the limiter till which we generate new events for given head.
 	 */
 	
-	// call this method, whenever we change the month in the calendar GUI
-	// or added a new event an declared him as an IntervalEvent or RepeatingEvent
-	// or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
-	// TODO change date stuff to DateTime
-	// TODO check about corner cases, if there exists any.
 	// TODO utilize getLeaf() for calculation improvement 
 	//      => generate new events, starting from leaf
 	
@@ -241,7 +239,6 @@ public class Calendar {
 		
 		// TODO later: set here new leaf for the head!
 		// i think this would be the most efficient way to do that here.
-		//newNextEventsPrinter(head);
 	}
 	
 	/**
