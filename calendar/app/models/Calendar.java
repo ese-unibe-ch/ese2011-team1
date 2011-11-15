@@ -114,9 +114,11 @@ public class Calendar {
 	
 	// TODO remove if new version is approved to be correct.
 	
-	
+	/*
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
+			event.PrintThisAndTail();
+			
 			Event cursor = event;
 			
 			do{
@@ -127,16 +129,16 @@ public class Calendar {
 		}
 		return null;
 	}
+	*/
 	
 	
-	/*
 	public Event getEventById(long id){
 		for(Event event : this.eventHeads){
 			return event.findEventById(id);
 		}
 		return null;
 	}
-	*/
+	
 	
 	/**
 	 * get an head from eventHeads by a given id.

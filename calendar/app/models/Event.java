@@ -472,7 +472,7 @@ public abstract class Event implements Comparable<Event>{
 	 * 		   a successor event of this, if successor has id equals id or 
 	 *         null if there is no event in this head-tail event structure which has an id equals id
 	 */
-	
+	// TODO i'm not quite sure, but is there a bug in this method?
 	public Event findEventById(long id){
 		if(this.equalId(id)) return this;
 		else{
@@ -481,6 +481,13 @@ public abstract class Event implements Comparable<Event>{
 		}
 	}
 	
+	/**
+	 * this method returns the corresponding for a given user on a given date
+	 * if visibility policies are fulfilled and there exist any.
+	 * @param date date for which we are looking for an event
+	 * @param requester user based on we are going to check the visibility policies
+	 * @return an Event if it exists one and fulfills all necessary conditions, otherwise null.
+	 */
 	public Event findHasEventOnDate(LocalDate date, User requester){
 		if(this.happensOn(date) && visibilityCheck(requester)) return this;
 		else{
@@ -489,11 +496,18 @@ public abstract class Event implements Comparable<Event>{
 		}
 	}
 	
+	/**
+	 * Checks if a given user may see this event
+	 * @param requester user we are going to check his visibility
+	 * @return returns a boolean which is true if requester may see this event, otherwise false.
+	 */
 	private boolean visibilityCheck(User requester){
 		return this.getVisibility() != Visibility.PRIVATE 
 		 || this.getOwner() == requester;
 	}
-
+	
+	
+	// TODO currently this method is a mess and is not used but i plan to get it ready.
 	public Event findEventByIdForUserOnDate(long id, User requester, LocalDate date){
 		if(this.equalId(id)){
 			if(tester(this, requester, null))
@@ -509,6 +523,7 @@ public abstract class Event implements Comparable<Event>{
 		return null;
 	}
 	
+	// TODO messy code + messy name => trash, well it is only used in a "trashy" method-
 	private boolean tester(Event cursor, User requester, LocalDate compareDate){
 		return happensOn(compareDate)&& 
 					(cursor.getVisibility() != Visibility.PRIVATE 

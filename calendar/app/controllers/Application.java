@@ -386,11 +386,13 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarId);
 		boolean editingEvent = false;
 		Event event = null;
-		
+		System.out.println("===============> " + eventId);
 		if (eventId >= 0) {
 			event = calendar.getEventById(eventId);
 			editingEvent = true;
 		}
+		System.out.println("===============> " + event);
+		
 		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		
 		render(me, calendar, event, calendarId, eventId, activeDate, message, editingEvent);

@@ -410,6 +410,8 @@ public class RepeatingEvent extends Event {
 			}
 			System.out.println("## last element : "+newIntervalCursor.getParsedStartDate());
 			newIntervalCursor.setNext(null);
+			
+			// TODO it seems this method works now correctly.
 			// TODO this is buggy! but without buggy too...
 			/*
 			newIntervalCursor = new IntervalEvent(head.getStart(),
