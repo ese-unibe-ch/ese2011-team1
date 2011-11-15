@@ -472,15 +472,15 @@ public abstract class Event implements Comparable<Event>{
 	 * 		   a successor event of this, if successor has id equals id or 
 	 *         null if there is no event in this head-tail event structure which has an id equals id
 	 */
-	public Event findEventById(long id){
-		if(this.equalId(id)) return this;
+	public Event findEventByIdOnDate(long id, LocalDate date){
+		if(this.equalId(id) && this.happensOn(date)) return this;
 		else{
-			if(this.hasNext()) return this.getNextReference().findEventById(id);
+			if(this.hasNext()) return this.getNextReference().findEventByIdOnDate(id, date);
 			else return null;
 		}
 	}
 	
-	public Event findEventByIdFor(long id, User requester){
+	public Event findEventByIdForUserOnDate(long id, User requester, LocalDate date){
 		if(this.equalId(id)){
 			if(tester(this, requester, null))
 				return this;
@@ -488,7 +488,7 @@ public abstract class Event implements Comparable<Event>{
 		else{
 			if(this.hasNext()){
 				if(tester(this, requester, null))
-					return this.getNextReference().findEventById(id);
+					return this.getNextReference().findEventByIdOnDate(id, date);
 			}
 			else return null;
 		}
