@@ -508,14 +508,15 @@ public abstract class Event implements Comparable<Event>{
 	
 	
 	// TODO currently this method is a mess and is not used but i plan to get it ready.
+	// SIMU: added method name and changed last arg from null to date, seems to work...
 	public Event findEventByIdForUserOnDate(long id, User requester, LocalDate date){
 		if(this.equalId(id)){
-			if(tester(this, requester, null))
+			if(checkHappensOnAndVisibility(this, requester, date))
 				return this;
 		}
 		else{
 			if(this.hasNext()){
-				if(tester(this, requester, null))
+				if(checkHappensOnAndVisibility(this, requester, date))
 					return this.getNextReference().findHasEventOnDate(date, requester);
 			}
 			else return null;
@@ -524,7 +525,7 @@ public abstract class Event implements Comparable<Event>{
 	}
 	
 	// TODO messy code + messy name => trash, well it is only used in a "trashy" method-
-	private boolean tester(Event cursor, User requester, LocalDate compareDate){
+	private boolean checkHappensOnAndVisibility(Event cursor, User requester, LocalDate compareDate){
 		return happensOn(compareDate)&& 
 					(cursor.getVisibility() != Visibility.PRIVATE 
 							|| this.getOwner() == requester);

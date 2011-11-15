@@ -6,6 +6,7 @@ import models.RepeatingEvent;
 import models.User;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -32,9 +33,13 @@ public class EventTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Database.clearDatabase();
 		this.user = new User("hans", "1234", today, "hans2");
 		this.francis = new User("francis", "1234", today, "fran");
 		this.stefan = new User("stefan", "1234", today, "stef");
+		Database.addUser(user);
+		Database.addUser(francis);
+		Database.addUser(stefan);
 		this.calendar = new Calendar("testCalendar", user);
 		this.francisCalendar = new Calendar("francisTestCalendar", francis);
 		this.event = new PointEvent("anEvent", today, tomorrow,
@@ -102,6 +107,8 @@ public class EventTest extends UnitTest {
 		event.setOpen();
 		assertTrue(event.isOpen());
 		event.addUserToAttending(francis);
+		assertTrue(Database.getUserList().contains(stefan));
+		assertTrue(event.userIsAttending(francis.getName()));
 		event.setClosed();
 		assertFalse(event.isOpen());
 		assertTrue(event.getAttendingUsers().isEmpty());
@@ -137,15 +144,6 @@ public class EventTest extends UnitTest {
 		long originId = event.getOriginId();
 		assertTrue(event.equalOriginId(originId));
 	}
-	
-	@Test
-	public void testRemoveUserFromAttending() {
-		event.setOpen();
-		event.addUserToAttending(stefan);
-		assertTrue(event.userIsAttending(stefan.getName()));
-		event.removeUserFromAttending(stefan);
-		assertFalse(event.userIsAttending(stefan.getName()));
-	}
 
 	@Test
 	public void testGetParsedDate() {
@@ -169,7 +167,6 @@ public class EventTest extends UnitTest {
 		attendingEvent.addUserToAttending(francis);
 		attendingEvent.addUserToAttending(stefan);
 		assertEquals("francis, stefan", attendingEvent.getAttendingUsers());
-
 	}
 
 	@Test
@@ -182,6 +179,16 @@ public class EventTest extends UnitTest {
 		attendingEvent.addUserToAttending(stefan);
 		assertTrue(attendingEvent.userIsAttending("francis"));
 		assertTrue(attendingEvent.userIsAttending("stefan"));
+	}
+	
+	@Test
+	public void testRemoveUserFromAttending() {
+		event.setOpen();
+		assertFalse(event.userIsAttending(stefan.getName()));
+		event.addUserToAttending(stefan);
+		assertTrue(event.userIsAttending(stefan.getName()));
+		event.removeUserFromAttending(stefan);
+		assertFalse(event.userIsAttending(stefan.getName()));
 	}
 
 	@Test
@@ -236,26 +243,25 @@ public class EventTest extends UnitTest {
 				event3BeforeEvent.getStart().compareTo(event.getStart()));
 		assertEquals(1, event2AfterEvent.getStart().compareTo(event.getStart()));
 	}
-
+	
 	@Test
-	public void testGetInterVall() {
-		Interval interval = Interval.WEEKLY;
-		RepeatingEvent repeatingEvent = new RepeatingEvent("test",
-				new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendar,
-				interval);
-		assertEquals(interval, repeatingEvent.getInterval());
+	public void testFindHasEventOnDate() {
+		User eventOwner = event.getOwner();
+		LocalDate testDate = event.getStart().toLocalDate();
+		assertNotNull(event.findHasEventOnDate(testDate, eventOwner));
+		testDate = event.getEnd().toLocalDate();
+		assertNotNull(event.findHasEventOnDate(testDate, eventOwner));
+		testDate = new LocalDate(2000, 12, 12);
+		assertFalse(event.happensOn(testDate));
+		assertNull(event.findHasEventOnDate(testDate, eventOwner));
+	}
+	
+	@Test
+	public void testFindEventByIdForUserOnDate() {
+		long eventId = event.getId();
+		User eventOwner = event.getOwner();
+		LocalDate testDate = event.getStart().toLocalDate();
+		assertNotNull(event.findEventByIdForUserOnDate(eventId, eventOwner, testDate));
 	}
 
-	@Test
-	public void testGetNextRepetitionIntervall7() {
-		assertEquals(Interval.WEEKLY, repeatingEvent.getInterval());
-		Event nextRepetition = repeatingEvent.getNextReference();
-		assertEquals(repeatingEvent.getBaseId(), nextRepetition.getBaseId());
-		assertEquals(repeatingEvent.getStart().plusDays(7),
-				nextRepetition.getStart());
-		assertEquals(repeatingEvent.getStart().plusDays(7).dayOfMonth(),
-				nextRepetition.getStart().dayOfMonth());
-		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(),
-				nextRepetition.getStart().getYear());
-	}
 }
