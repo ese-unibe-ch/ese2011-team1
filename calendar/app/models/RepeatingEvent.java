@@ -11,11 +11,20 @@ import android.database.Cursor;
 
 public class RepeatingEvent extends Event {
 	private Interval interval;
-	protected Event current = null;
+	//protected Event current = null;
 	protected DateTime upperBound = null;
 	protected DateTime lowerBound = null;
 	protected boolean hasBoundReached = isCurrentInBounds(null);
-
+	
+	/**
+	 * Default constructor for an new repeating event.
+	 * @param name name for this event.
+	 * @param start start date/time for this event.
+	 * @param end date/time for this event.
+	 * @param visibility visibility state for this event.
+	 * @param calendar the calendar to this event belongs to.
+	 * @param interval time-step size for repentance for this event.
+	 */
 	public RepeatingEvent(String name, DateTime start, DateTime end,
 			Visibility visibility, Calendar calendar, Interval interval) {
 		super(name, start, end, visibility, calendar);
@@ -23,26 +32,40 @@ public class RepeatingEvent extends Event {
 		// this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
-
+	
+	/**
+	 * This constructor transform an PointEvent into a RepeatingEvent.
+	 * @param event point event which we are going to transform into a RepeatingEvent.
+	 * @param interval time-step size for repentance for this event.
+	 */
 	public RepeatingEvent(PointEvent event, Interval interval) {
 		super(event.getName(), event.getStart(), event.getEnd(), event
 				.getVisibility(), event.getCalendar());
 		this.interval = interval;
 		this.forceSetId(event.getId());
 		this.setBaseId(this.getId());
-		// this.setOriginId(this.getBaseId());
 	}
-
+	
+	/**
+	 * sets the next/following event of this event.
+	 */
 	@Override
 	public void setNext(Event event) {
 		this.next = event;
 	}
-
+	
+	/**
+	 * sets the previous event of this event.
+	 */
 	@Override
 	public void setPrevious(Event event) {
 		this.previous = event;
 	}
-
+	
+	/**
+	 * set the time-step size for this event.
+	 * @param interval time-step size for repentance for this event.
+	 */
 	public void setInterval(Interval interval) {
 		this.interval = interval;
 	}
@@ -59,12 +82,11 @@ public class RepeatingEvent extends Event {
 	}
 
 	/**
-	 * Calculate all next events for the current selected month. precondition
-	 * and postcondition: current = null
+	 * Calculate all next events for the current selected month. 
 	 */
 	@Override
 	public void generateNextEvents(DateTime limitDate) {
-		this.current = null;
+		//this.current = null;
 		Interval interval = this.getInterval();
 
 		switch (interval) {
@@ -82,14 +104,14 @@ public class RepeatingEvent extends Event {
 			break;
 		}
 
-		this.current = null;
+		//this.current = null;
 	}
 
 	// TODO add some comment
 	protected void generateYearly(Event base, DateTime limiter,
 			Interval interval) {
 		Event cursor = base;
-		this.current = cursor;
+		//this.current = cursor;
 		RepeatingEvent nextEvent = null;
 		// as long as whole month is calculated
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
@@ -118,7 +140,7 @@ public class RepeatingEvent extends Event {
 
 			// move cursor
 			cursor = cursor.getNextReference();
-			this.current = cursor;
+			//this.current = cursor;
 		}
 	}
 
@@ -128,7 +150,7 @@ public class RepeatingEvent extends Event {
 	protected void generateMonthly(Event base, DateTime limiter,
 			Interval interval) {
 		Event cursor = base;
-		this.current = cursor;
+		//this.current = cursor;
 		// solange bis monat abgedeckt
 		while (cursor.getStart().compareTo(limiter) == -1 && isCurrentInBounds(cursor)) {
 
@@ -153,7 +175,7 @@ public class RepeatingEvent extends Event {
 
 			// move cursor
 			cursor = cursor.getNextReference();
-			this.current = cursor;
+			//this.current = cursor;
 		}
 
 	}
@@ -229,15 +251,16 @@ public class RepeatingEvent extends Event {
 	 * checks
 	 */
 
-	// TODO verify if boundchecks are okay
-	// bounds not null and then lowerBound < current < upperBound?
+
+	/**
+	 * checks the upper-and lower bound of this event are equal null 
+	 * (since a none interval event has no bounds)
+	 * @param event
+	 */
 	protected boolean isCurrentInBounds(Event event) {
 		if (upperBound == null && lowerBound == null)
 			return true;
 		else return false;
-			
-		//return (event.getStart().compareTo(upperBound) == -1 && event
-		//		.getStart().compareTo(lowerBound) == 1);
 	}
 
 	/**
@@ -262,20 +285,26 @@ public class RepeatingEvent extends Event {
 		this.setVisiblility(visibility);
 		this.setInterval(interval);
 	}
-
+	
+	/**
+	 * Generates next events (for repeating events) till the following months
+	 * for the first time we open the calendar, we have to call this method,
+	 * to generate sufficient enough events for the calendar
+	 */
 	public void init() {
 		generateNextEvents(this.getStart().plusMonths(1));
 	}
 
-	// possible resulting interval structures after deletion
-	// there are 3 cases which we have to consider:
+
+	/**
+	 * removes this event from the calendar to which it belongs to.
+	// there are 4 cases which we have to consider for a deletion of a repeating event:
 	// (a) victim equals current head => next of head gets new head
-	// (b) victim equals next after head => head gets a PointEvent, victim.next
-	// a new head
-	// (c) [head, previctim] | victim | [postVictim, +infinite]
-	// (d) [head, posthead] | victim | [postVictim,inf]
+	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head
+	// (c) [head, posthead] | victim | [postVictim,inf]
+	// (d) [head,..., previctim] | victim | [postVictim, +infinite]	
 	// care about setting new baseId correctly.
-	// TODO there are some bugs in case c)
+	 */
 	@Override
 	public void remove() {
 
@@ -283,7 +312,7 @@ public class RepeatingEvent extends Event {
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
 
-		// case (a) -- seems to work after some testing
+		// case (a)
 		if (this == head) {
 			Event postHead = this.getNextReference();
 			postHead.setPrevious(null);
@@ -300,7 +329,7 @@ public class RepeatingEvent extends Event {
 				cursor.setBaseId(postHead.getBaseId());
 			}
 
-			// case (b)
+		// case (b)
 		} else if (this == head.getNextReference()) {
 			Event postPostHead = this.getNextReference();
 			postPostHead.setPrevious(null);
@@ -329,7 +358,7 @@ public class RepeatingEvent extends Event {
 					.getStart());
 
 			
-			// case (d)
+		// case (c)
 		} else if (head.getNextReference().getNextReference() == this) {
 			Event postPostHead = this; // this one we gonna kill - harhar
 			Event postHead = head.getNextReference();
@@ -358,7 +387,6 @@ public class RepeatingEvent extends Event {
 				cursor.setBaseId(postVictim.getId());
 			}
 
-
 			// 2. build [head, posthead]
 			Event newIntervalEventHead = new IntervalEvent(head.getStart(),
 					postHead.getStart(), (RepeatingEvent) head);
@@ -366,21 +394,18 @@ public class RepeatingEvent extends Event {
 			newIntervalEventHead.setOriginId(head.getOriginId());
 			newIntervalEventHead.setBaseId(newIntervalEventHead.getId());
 			
-			/*
-			 * //there is somewhere a bug!
-			 */
-			  Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
-			  newIntervalEvent.editDescription(postHead.getDescription());
-			  newIntervalEvent.setBaseId(newIntervalEventHead.getId());
+			Event newIntervalEvent = new IntervalEvent(head.getStart(), 
+					postHead.getStart(), (RepeatingEvent)postHead);
+			newIntervalEvent.editDescription(postHead.getDescription());
+			newIntervalEvent.setBaseId(newIntervalEventHead.getId());
 			  
-			  newIntervalEventHead.setNext(newIntervalEvent);
-			  newIntervalEvent.setPrevious(newIntervalEventHead);
-			  
-			  
+			newIntervalEventHead.setNext(newIntervalEvent);
+			newIntervalEvent.setPrevious(newIntervalEventHead);
+			    
 			this.getCalendar().addEvent(newIntervalEventHead);
 			this.getCalendar().PrintAllHeadTails();
 			
-			// case (c)
+		// case (d)
 		} else {
 			this.setNext(null);
 			this.setPrevious(null);
@@ -400,6 +425,7 @@ public class RepeatingEvent extends Event {
 			IntervalEvent newIntervalCursor = null;
 			Event cursor = head;
 			Event prev = newIntervalEvent;
+			
 			// add tail elements to left interval head
 			while (cursor.hasNext()) {
 				cursor = cursor.getNextReference();
@@ -424,24 +450,40 @@ public class RepeatingEvent extends Event {
 			}		
 		}
 	}
-
+	
+	/**
+	 * Returns the interval value of this event if given requester is allowed to see it
+	 * otherwise return an empty string.
+	 * @param requester user which requests for this information.
+	 */
 	public String getRepetitionFor(User requester) {
 		return requester == getOwner() ? "" + this.interval : new String();
 	}
-
+	
+	/**
+	 * get type of this event back
+	 * @return a string equals "PointEvent"
+	 */
 	@Override
 	public String getType() {
 		return "RepeatingEvent";
 	}
 
-	// currently design decision:
-	// there is no way to transform an repeating event to an point event by edit
-	// functionality atm.
-	// we can just reset trivial stats (i.e. not possible to set repentance by
-	// edit atm...)
-	// same holds for interval events so. GUI does not support bound edit for
-	// them.
-
+	/**
+	 * Edits this event by given input arguments. Update the attributes of this RepeatingEvent.
+	 * @param name new name of event
+	 * @param start new start date/time of this event
+	 * @param end new end date/time of this event
+	 * @param visibility new visibility state of this event
+	 * @param interval new interval size for time/date steps for repentance of event
+	 * @param from new from date/time - is being ignored, since a point event never gets transformed to an interval event
+	 * @param to new to date/time - is being ignored, since a point event never gets transformed to an interval event
+	 * @param description new description of this event.
+	 * actual design decision:
+	 * there is no way to transform an repeating event to an point event by edit functionality at the moment.
+	 * we can just reset trivial stats (i.e. not possible to set repentance by edit atm.
+	 * same holds for interval events so. GUI does not support bound edit for them.
+	 */
 	@Override
 	public void edit(String name, DateTime start, DateTime end,
 			Visibility visibility, Interval interval, DateTime from,
