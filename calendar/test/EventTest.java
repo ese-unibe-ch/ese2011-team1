@@ -59,6 +59,12 @@ public class EventTest extends UnitTest {
 	public void testGetId() {
 		assertEquals(event.getId(), event.getId());
 	}
+	
+	@Test
+	public void testGetCalendarId() {
+		Calendar calendar = event.getCalendar();
+		assertEquals(calendar.getId(), event.getCalendarId());
+	}
 
 	@Test
 	public void testGetName() {
@@ -80,6 +86,16 @@ public class EventTest extends UnitTest {
 		assertFalse(event.isPublic());
 		assertFalse(event.isBusy());
 		assertTrue(event.isPrivate());
+	}
+	
+	@Test
+	public void testSetVisibility() {
+		assertTrue(event.isPrivate());
+		assertFalse(event.isPublic());
+		event.setVisiblility(Visibility.PUBLIC);
+		assertTrue(event.isPublic());
+		event.setVisiblility(Visibility.BUSY);
+		assertTrue(event.isBusy());
 	}
 	
 	@Test
@@ -131,18 +147,27 @@ public class EventTest extends UnitTest {
 	public void testEqualId() {
 		long id = event.getId();
 		assertTrue(event.equalId(id));
+		id = 27;
+		assertNotSame(event.getId(), 27);
+		assertFalse(event.equalId(27));
 	}
 	
 	@Test
 	public void testEqualBaseId() {
 		long baseId = event.getBaseId();
 		assertTrue(event.equalBaseId(baseId));
+		baseId = 27;
+		assertNotSame(event.getBaseId(), 27);
+		assertFalse(event.equalBaseId(27));
 	}
 	
 	@Test
 	public void testEqualOriginId() {
 		long originId = event.getOriginId();
 		assertTrue(event.equalOriginId(originId));
+		originId = 27;
+		assertNotSame(event.getOriginId(), 27);
+		assertFalse(event.equalOriginId(27));
 	}
 
 	@Test
@@ -262,6 +287,18 @@ public class EventTest extends UnitTest {
 		User eventOwner = event.getOwner();
 		LocalDate testDate = event.getStart().toLocalDate();
 		assertNotNull(event.findEventByIdForUserOnDate(eventId, eventOwner, testDate));
+		User notEventOwner = francis;
+		assertNull(event.findEventByIdForUserOnDate(eventId, notEventOwner, testDate));
 	}
-
+	
+	@Test
+	public void testGetVisibilityFor() {
+		Visibility eventVisibility = event.getVisibility();
+		User eventOwner = event.getOwner();
+		assertNotNull(event.getVisibilityFor(eventOwner));
+		assertEquals(eventVisibility.toString(), event.getVisibilityFor(eventOwner));
+		User notEventOwner = francis;
+		assertNull(event.getVisibilityFor(notEventOwner));
+	}
+	
 }
