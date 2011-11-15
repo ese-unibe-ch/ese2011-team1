@@ -668,7 +668,8 @@ public abstract class Event implements Comparable<Event>{
 	 * @param user user which we want to add to attendingUsers list.
 	 */
 	public void addUserToAttending(User user) {
-		this.attendingUsers.add(user);
+		if (!this.attendingUsers.contains(user)) this.attendingUsers.add(user);
+		
 	}
 	
 	/**
