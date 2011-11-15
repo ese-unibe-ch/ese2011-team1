@@ -112,17 +112,16 @@ public class IntervalEvent extends RepeatingEvent{
 					cursor.setBaseId(postHead.getId());
 				}
 			}
-		// if victim is the leaf, i.e. victim is the last element of the list.
+		// if victim is the leaf, i.e. victim is the last element of the list and list has more than two elements.
 		}else if(postVictim == null){
 			// TODO set new upper bound;
+			// TODO put this case in first case with a if... 
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
-		// [head ,previctim] | victim | [postVictim,victim.getTo()]
-		}else if(preVictim.previous == null && postVictim.getNextReference() == null){
-			System.out.println("special case ");
-			
+		// [head ,previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
+			System.out.println("regular case");
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
 			this.getCalendar().addEvent(postVictim);
