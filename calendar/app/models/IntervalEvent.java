@@ -131,4 +131,12 @@ public class IntervalEvent extends RepeatingEvent{
 		return "IntervalEvent";
 	}
 	
+	@Override
+	protected boolean isCurrentInBounds(Event event) {
+		if (upperBound == null && lowerBound == null)
+			return true;
+		return (event.getStart().compareTo(upperBound) == -1 && event
+				.getStart().compareTo(lowerBound) == 1);
+	}
+	
 }

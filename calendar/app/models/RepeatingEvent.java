@@ -14,7 +14,7 @@ public class RepeatingEvent extends Event {
 	protected Event current = null;
 	protected DateTime upperBound = null;
 	protected DateTime lowerBound = null;
-	protected boolean hasBoundReached = isCurrentInBounds();
+	protected boolean hasBoundReached = isCurrentInBounds(null);
 
 	public RepeatingEvent(String name, DateTime start, DateTime end,
 			Visibility visibility, Calendar calendar, Interval interval) {
@@ -92,7 +92,7 @@ public class RepeatingEvent extends Event {
 		this.current = cursor;
 		RepeatingEvent nextEvent = null;
 		// as long as whole month is calculated
-		while (cursor.getStart().isBefore(limiter) && !isCurrentInBounds()) {
+		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
@@ -130,7 +130,7 @@ public class RepeatingEvent extends Event {
 		Event cursor = base;
 		this.current = cursor;
 		// solange bis monat abgedeckt
-		while (cursor.getStart().compareTo(limiter) == -1 && !hasBoundReached) {
+		while (cursor.getStart().compareTo(limiter) == -1 && isCurrentInBounds(cursor)) {
 
 			// wenn kein n�chster event
 			if (!cursor.hasNext()) {
@@ -185,10 +185,10 @@ public class RepeatingEvent extends Event {
 	protected void generateDaylyOrWeekly(Event base, DateTime limiter,
 			Interval interval) {
 		Event cursor = base;
-		this.current = cursor;
+		//this.current = cursor;
 		RepeatingEvent nextEvent = null;
 		// as long as whole month is calculated
-		while (cursor.getStart().isBefore(limiter) && !isCurrentInBounds()) {
+		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
@@ -219,7 +219,7 @@ public class RepeatingEvent extends Event {
 
 			// move cursor
 			cursor = cursor.getNextReference();
-			this.current = cursor;
+			//this.current = cursor;
 		}
 		// nextEvent.setNext(null)
 		base.PrintThisAndTail();
@@ -231,11 +231,13 @@ public class RepeatingEvent extends Event {
 
 	// TODO verify if boundchecks are okay
 	// bounds not null and then lowerBound < current < upperBound?
-	protected boolean isCurrentInBounds() {
+	protected boolean isCurrentInBounds(Event event) {
 		if (upperBound == null && lowerBound == null)
-			return false;
-		return (this.current.getStart().compareTo(upperBound) == -1 && this.current
-				.getStart().compareTo(lowerBound) == 1);
+			return true;
+		else return false;
+			
+		//return (event.getStart().compareTo(upperBound) == -1 && event
+		//		.getStart().compareTo(lowerBound) == 1);
 	}
 
 	/**
@@ -328,14 +330,11 @@ public class RepeatingEvent extends Event {
 			// hated case!! atm i dont see why this cases is not covered in case
 			// c) but if it works...
 		} else if (head.getNextReference().getNextReference() == this) {
-			System.out
-					.println("***************************************************"
-							+ "this case we rly do hate!!! "
-							+ "***********************************************");
 			Event postPostHead = this; // this one we gonna kill - harhar
-			Event postHead = this.getNextReference();
+			Event postHead = head.getNextReference();
 			// work to do: create a intervalEvent series of [head, posthead] and
 			// repeatingEvent series [postVictim,inf]
+			
 			// remove all references to and from victim.
 			postVictim.setPrevious(null);
 			postPostHead.setNext(null);
@@ -365,22 +364,29 @@ public class RepeatingEvent extends Event {
 					postHead.getStart(), (RepeatingEvent) head);
 			newIntervalEventHead.setOriginId(head.getOriginId());
 			newIntervalEventHead.setBaseId(newIntervalEventHead.getId());
-			this.getCalendar().addEvent(newIntervalEventHead);
-			newIntervalEventHead.setNext(null);
+			
+			
+			
+			//this.getCalendar().addEvent(newIntervalEventHead);
+			//newIntervalEventHead.setNext(null);
 			/*
 			 * //there is somewhere a bug!
-			 * 
-			 * Event newIntervalEvent = new IntervalEvent(head.getStart(),
-			 * postHead.getStart(), (RepeatingEvent)postHead);
-			 * System.out.println
-			 * ("****************  new event next head "+newIntervalEvent
-			 * .getParsedStartDate());
-			 * newIntervalEvent.setBaseId(newIntervalEventHead.getId());
-			 * 
-			 * newIntervalEventHead.setNext(newIntervalEvent);
-			 * newIntervalEvent.setPrevious(newIntervalEventHead);
 			 */
-
+			  Event newIntervalEvent = new IntervalEvent(head.getStart(), postHead.getStart(), (RepeatingEvent)postHead);
+			 // System.out.println
+			 // ("#####################  posthead "+postHead
+			  //.getParsedStartDate());
+			  newIntervalEvent.setBaseId(newIntervalEventHead.getId());
+			  
+			  newIntervalEventHead.setNext(newIntervalEvent);
+			  newIntervalEvent.setPrevious(newIntervalEventHead);
+			  
+			  
+			this.getCalendar().addEvent(newIntervalEventHead);
+			System.out.println("##################st " + newIntervalEventHead.getParsedStartDate()
+					+ " nst ");
+			
+			
 			// case (c)
 		} else {
 			System.out

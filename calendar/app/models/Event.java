@@ -472,6 +472,15 @@ public abstract class Event implements Comparable<Event>{
 	 * 		   a successor event of this, if successor has id equals id or 
 	 *         null if there is no event in this head-tail event structure which has an id equals id
 	 */
+	
+	public Event findEventById(long id){
+		if(this.equalId(id)) return this;
+		else{
+			if(this.hasNext()) return this.getNextReference().findEventById(id);
+			else return null;
+		}
+	}
+	
 	public Event findEventByIdOnDate(long id, LocalDate date){
 		if(this.equalId(id) && this.happensOn(date)) return this;
 		else{
@@ -650,6 +659,11 @@ public abstract class Event implements Comparable<Event>{
 		this.attendingUsers.remove(user);
 	}
 	
+	/**
+	 * This is a debugging helper
+	 * it prints starting from this event all its tail events its/their next 
+	 * and previous reference, if there is any and the type
+	 */
 	public void PrintThisAndTail(){
 		Event event = this;
 		String ee = null;
@@ -657,17 +671,21 @@ public abstract class Event implements Comparable<Event>{
 		System.out.println("*************************************************");
 		while(event.hasNext()){
 			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
+			System.out.print(event.getType() + " ");
 			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
 					+ " prevR:" + ee);
+			if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom().toString()+ " to:"+((IntervalEvent)event).getTo().toString());
+			System.out.println();
 			event = event.getNextReference();
 		}
 		ee = null;
 		pp = null;
 		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
 		if(event.getPreviousReference() != null) pp = event.getPreviousReference().getParsedStartDate();
+		System.out.print(event.getType() + " ");
 		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
 				+ "              prevR:" + pp);
-		
+		if(event.getType().equals("IntervalEvent")) System.out.print(" from: " +((IntervalEvent)event).getFrom()+ " to:"+((IntervalEvent)event).getTo());
 		System.out.println("*************************************************");
 	}
 
