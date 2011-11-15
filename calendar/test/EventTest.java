@@ -1,4 +1,5 @@
 import models.Calendar;
+import models.Database;
 import models.Event;
 import models.PointEvent;
 import models.RepeatingEvent;
@@ -103,6 +104,8 @@ public class EventTest extends UnitTest {
 	public void testUserIsAttending() {
 		attendingEvent.setOpen();
 		attendingEvent.addUserToAttending(francis);
+		Database.addUser(francis);
+		Database.addUser(simon);
 		attendingEvent.addUserToAttending(simon);
 		System.out.println(attendingEvent.userIsAttending("francis"));
 		assertTrue(attendingEvent.userIsAttending("francis"));
