@@ -482,19 +482,23 @@ public abstract class Event implements Comparable<Event>{
 	
 	public Event findEventByIdFor(long id, User requester){
 		if(this.equalId(id)){
-			
-			return this;
+			if(tester(this, requester, null))
+				return this;
 		}
 		else{
 			if(this.hasNext()){
-				return this.getNextReference().findEventById(id);
+				if(tester(this, requester, null))
+					return this.getNextReference().findEventById(id);
 			}
 			else return null;
 		}
+		return null;
 	}
 	
 	private boolean tester(Event cursor, User requester, LocalDate compareDate){
-		return happensOn(compareDate)&& (cursor.getVisibility() != Visibility.PRIVATE || this.getOwner() == requester);
+		return happensOn(compareDate)&& 
+					(cursor.getVisibility() != Visibility.PRIVATE 
+							|| this.getOwner() == requester);
 	}
 	
 	/*
