@@ -8,6 +8,35 @@ Install the play framework
 	- Add the location of the downloaded folder to your PATH.
 
 	(see also: http://www.playframework.org/documentation/1.2.3/install)  
+******************************************************************************************
+Install Guide for Calendar-App for MAC OS X
+
+Short Guide:
+The first thing you need to do is to install Homebrew this can be done by running the 
+command below in a terminal window:
+
+$	/usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+
+then you have to update brew:
+
+$	brew update
+
+then type in the same window
+
+$	brew install play
+
+Everything should now work and you can create a new project with:
+
+$	play new app_name
+
+
+You can find the exact installation guide online on the following page:
+http://www.arenpatel.com/blog/7-how-to-install-play-framework-in-osx
+
+Hombrew on GitHub:
+http://mxcl.github.com/homebrew/
+
+(see also: http://www.playframework.org/documentation/1.2.3/install)
 
 Run the calendar-app
 ******************************************************************************************
