@@ -42,6 +42,19 @@ public class IntervalEvent extends RepeatingEvent{
 		this.upperBound = to;
 	}
 	
+	/**
+	 * Edits this event by given input arguments. if interval is not none, this point event gets transformed to a repeating event.
+	 * otherwise just update the attributes of this point event.
+	 * @param name new name of event
+	 * @param start new start date/time of this event
+	 * @param end new end date/time of this event
+	 * @param visibility new visibility state of this event
+	 * @param interval new interval size for time/date steps for repentance of event
+	 * @param from new from date/time - is being ignored, since a point event never gets transformed to an interval event
+	 * @param to new to date/time - is being ignored, since a point event never gets transformed to an interval event
+	 * @param description new description of this event.
+	 * 
+	 */
 	public void edit(String name, DateTime start, DateTime end,
 			Visibility visibility, Interval interval, DateTime from, DateTime to) {
 		this.setStart(start);
@@ -58,7 +71,15 @@ public class IntervalEvent extends RepeatingEvent{
 		return this.getStart().compareTo(event.getStart());
 	}
 	
-
+	/**
+	 * removes this event from the calendar to which it belongs to.
+	// there are 4 cases which we have to consider for a deletion of a repeating event:
+	// (a) victim equals current head => next of head gets new head
+	// (b) victim equals next after head => head gets a PointEvent, victim.next a new head
+	// (c) [head, posthead] | victim | [postVictim,inf]
+	// (d) [head,..., previctim] | victim | [postVictim, +infinite]	
+	// care about setting new baseId correctly.
+	 */
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
@@ -156,11 +177,17 @@ public class IntervalEvent extends RepeatingEvent{
 		}		
 	}
 	
+	/**
+	 * get type of this event back
+	 * @return a string equals "PointEvent"
+	 */
 	@Override
 	public String getType() {
 		return "IntervalEvent";
 	}
 	
+	// TODO verify if boundchecks are okay
+	// bounds not null and then lowerBound < current < upperBound?
 	@Override
 	protected boolean isCurrentInBounds(Event event) {
 		if (upperBound == null && lowerBound == null)
