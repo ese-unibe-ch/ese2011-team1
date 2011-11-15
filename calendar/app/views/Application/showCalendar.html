@@ -115,7 +115,7 @@
 	
 	#{list items:observedCalendars, as:'cal'}
 		
-		<input type="checkbox" name="${cal.getName()}" id="${cal.id}" value="${cal.getName()}" onclick="changeSelection(this)" 
+		<input type="checkbox" name="${cal.getName()}" id="${cal.getId()}" value="${cal.getName()}" onclick="changeSelection(this)" 
 		%{
 		//if observable calendar is shown, display checkbox as checked
 		boolean statementClosed = false;
