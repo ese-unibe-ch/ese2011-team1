@@ -112,31 +112,13 @@ public class Calendar {
 	 * @return returns the event with id equals id of input argument.
 	 */
 	
-	// TODO remove if new version is approved to be correct.
-	
-	/*
 	public Event getEventById(long id){
+		Event result = null;
 		for(Event event : this.eventHeads){
-			event.PrintThisAndTail();
-			
-			Event cursor = event;
-			
-			do{
-				if(cursor.getId() == id) return cursor;
-				cursor = cursor.getNextReference();
-				if(cursor == null) break;
-			}while(cursor.hasNext());
+			result = event.findEventById(id);
+			if(result != null) return result;
 		}
-		return null;
-	}
-	*/
-	
-	
-	public Event getEventById(long id){
-		for(Event event : this.eventHeads){
-			return event.findEventById(id);
-		}
-		return null;
+		return result;
 	}
 	
 	
@@ -342,6 +324,10 @@ public class Calendar {
 	 */
 	public void removeEvent(long id) {
 		Event victim = getEventById(id);
+		System.out.println("========> remover id " + id);
+		System.out.println("========> remover id " + victim);
+		this.PrintAllHeadTails();
+		System.out.println("========> end");
 		victim.remove();
 	}
 	

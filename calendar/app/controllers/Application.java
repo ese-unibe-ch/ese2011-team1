@@ -418,6 +418,7 @@ public class Application extends Controller {
 	public static void removeEvent(long calendarId, long eventId,
 			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
+		
 		Calendar calendar = me.getCalendarById(calendarId);
 		calendar.removeEvent(eventId);
 		DateTime activeDate = dateTimeInputFormatter
