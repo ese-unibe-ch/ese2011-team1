@@ -103,14 +103,8 @@ public class RepeatingEvent extends Event {
 						getInterval().getDays());
 
 				// corner case for 29feb problem
-				Event head = getCalendar().getHeadById(this.getBaseId());
-				if (head.getStart().getDayOfMonth() > newStartDate
-						.getDayOfMonth()) {
-					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
-				}
-				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
-					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
-				}
+				newStartDate = correctDateForCornerCase(newStartDate);
+				newEndDate = correctDateForCornerCase(newEndDate);
 
 				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
 						newEndDate, cursor.getVisibility(), this.getCalendar(),
@@ -145,15 +139,10 @@ public class RepeatingEvent extends Event {
 
 				DateTime newStartDate = cursor.getStart().plusMonths(1);
 				DateTime newEndDate = cursor.getEnd().plusMonths(1);
+				
 				// corner case for 30th/31th of month problem
-				Event head = getCalendar().getHeadById(this.getBaseId());
-				if (head.getStart().getDayOfMonth() > newStartDate
-						.getDayOfMonth()) {
-					newStartDate = newStartDate.dayOfMonth().withMaximumValue();
-				}
-				if (head.getEnd().getDayOfMonth() > newEndDate.getDayOfMonth()) {
-					newEndDate = newEndDate.dayOfMonth().withMaximumValue();
-				}
+				newStartDate = correctDateForCornerCase(newStartDate);
+				newEndDate = correctDateForCornerCase(newEndDate);
 
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
 						newStartDate, newEndDate, cursor.getVisibility(),
@@ -169,6 +158,26 @@ public class RepeatingEvent extends Event {
 			this.current = cursor;
 		}
 
+	}
+
+	/**
+	 * Correct corner case Dates for 29/31 of month for repeatingEvents
+	 * 
+	 * If headEvent of argument happens on any of the above mentioned Dates,
+	 * this method corrects the Date of the next repetition to the heads
+	 * original date.
+	 * 
+	 * @param dateToCorrect
+	 *            The date of the new repetition to be corrected.
+	 * @return The possibly corrected date.
+	 */
+	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
+		Event head = getCalendar().getHeadById(this.getBaseId());
+		DateTime correctedDate = dateToCorrect;
+		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
+			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
+		}
+		return correctedDate;
 	}
 
 	// TODO highly buggy due to corner cases.
