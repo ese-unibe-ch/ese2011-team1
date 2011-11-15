@@ -669,7 +669,6 @@ public abstract class Event implements Comparable<Event>{
 	 */
 	public void addUserToAttending(User user) {
 		this.attendingUsers.add(user);
-		
 	}
 	
 	/**
