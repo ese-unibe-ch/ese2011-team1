@@ -169,10 +169,10 @@ public class Calendar {
 	
 	/**
 	 * get all events which are visible for given requester on given local date, correlated to day, month, year
-	 * @param day
-	 * @param month
-	 * @param year
-	 * @param requester
+	 * @param day the day of a month.
+	 * @param month the month of a year.
+	 * @param year year value.
+	 * @param requester user which request for events.
 	 * @return returns a linked list which contains all for given requester visible events for a given date.
 	 */
 	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month, int year, User requester) {
@@ -192,13 +192,12 @@ public class Calendar {
 	}
 	
 	/**
-	 * get all events which are visible for given requester on given local date, correlated to day, month, year
-	 * @param date
-	 * @param requester
+	 * get all events which are visible for given requester on a given date.
+	 * @param date for this date we want to get all events which are visible.
+	 * @param requester the visibility of an event depends on this user. 
 	 * @return returns a linked list which contains all for given requester visible events for a given date.
 	 */
 	// TODO use a priority queue instead of a linked list.
-	// TODO do something about code duplication: maybe have an private method...
 	public LinkedList<Event> getEventsOfDate(LocalDate date, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
@@ -255,6 +254,11 @@ public class Calendar {
 		}
 	}
 	
+	/**
+	 * Generate for each head in our head list the following/successor events
+	 * till a given date base date
+	 * @param baseDate this date/time defines the limit till which we generate events.
+	 */
 	private void generateNextEvents(DateTime baseDate) {
 		for(Event event : this.eventHeads){
 			DateTime currentDate = baseDate;
@@ -351,7 +355,9 @@ public class Calendar {
 	
 	/**
 	 * remove whole series to which an event "member" belongs to.
-	 * I.e. remove an head and its tail from this calendar.
+	 * I.e. remove an head and its tail from this calendar and all
+	 * correlated head-tails which have the same origin id like 
+	 * the origin id of the given member's head.
 	 * @param member this event is part of a head-tail series.
 	 */
 	public void removeSerieOfRepeatingEvents(Event member){
@@ -365,11 +371,6 @@ public class Calendar {
 			this.getHeadList().remove(head);
 		}
 		
-		/*
-		long baseId = member.getBaseId();
-		Event victimHead = getHeadById(baseId);
-		this.getHeadList().remove(victimHead);
-		*/
 	}
 	
 	/**
@@ -393,6 +394,8 @@ public class Calendar {
 		
 		this.getHeadList().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
+		newHead.editDescription(victimHead.getDescription());
+		newHead.setOriginId(victimHead.getOriginId());
 		newHead.setBaseId(newHead.getId());
 		this.addEvent(newHead);
 		
@@ -404,6 +407,7 @@ public class Calendar {
 			intervalCursor.setPrevious(previous);
 			previous = intervalCursor; // store previous
 			intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+			intervalCursor.editDescription(cursor.getDescription());
 			intervalCursor.setBaseId(newHead.getBaseId());
 			previous.setNext(intervalCursor);
 			intervalCursor.setPrevious(previous);
@@ -412,10 +416,12 @@ public class Calendar {
 		
 		previous = intervalCursor;
 		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+		intervalCursor.editDescription(cursor.getDescription());
 		intervalCursor.setBaseId(newHead.getId());
 		previous.setNext(intervalCursor);
 		intervalCursor.setPrevious(previous);
 		Event newEnd = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
+		newEnd.editDescription(cancelFromThis.getDescription());
 		newEnd.setBaseId(newHead.getId());
 		intervalCursor.setNext(newEnd);
 		newEnd.setPrevious(intervalCursor);
