@@ -248,13 +248,8 @@ public class Calendar {
 	 * Generate the following events for all events in eventHeads depending on a given base date.
 	 * @param baseDate basis for limit date - we generate up to this date plus one month new events
 	 */
-	public void generateNextEvents(DateTime baseDate){
-		for(Event event : this.eventHeads){
-			DateTime currentDate = baseDate;
-			DateTime nextDate = currentDate.plusMonths(1);
-			event.generateNextEvents(nextDate);
-		}
-		
+	public void generateAllNextEvents(DateTime baseDate){
+		this.generateNextEvents(baseDate);
 		LinkedList<Calendar> observedCalendars = owner.getObservedCalendars();
 		for (Calendar observedCalendar : observedCalendars) {
 			if (!observedCalendar.equals(this)) {
@@ -263,6 +258,14 @@ public class Calendar {
 		}
 	}
 	
+	private void generateNextEvents(DateTime baseDate) {
+		for(Event event : this.eventHeads){
+			DateTime currentDate = baseDate;
+			DateTime nextDate = currentDate.plusMonths(1);
+			event.generateNextEvents(nextDate);
+		}
+	}
+
 	/*
 	 * setter
 	 */

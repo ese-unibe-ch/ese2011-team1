@@ -522,7 +522,7 @@ public class Application extends Controller {
 		LinkedList<Calendar> observedCalendars = me.getObservedCalendars();
 		LinkedList<Long> shownObservedCalendars = me.getShownObservedCalendars();
 		
-		calendar.generateNextEvents(activeDate);
+		calendar.generateAllNextEvents(activeDate);
 		
 		render(me, user, calendar, bound, bound2, prevMonth, nextMonth,
 				activeDate, today, eventsOfDate, message, faved,
