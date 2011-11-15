@@ -118,6 +118,29 @@ public class IntervalEvent extends RepeatingEvent{
 			// TODO put this case in first case with a if... 
 			preVictim.setNext(null);
 			this.setPrevious(null);
+		
+		//[head,victim,postvictim] ==> two point events	
+		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
+	
+			this.setNext(null);
+			this.setPrevious(null);
+			postVictim.setPrevious(null);
+			preVictim.setNext(null);
+			
+			this.getCalendar().getHeadList().remove(head);
+			
+			Event newRightPointEvent = new PointEvent((IntervalEvent)postVictim);
+			newRightPointEvent.setBaseId(newRightPointEvent.getBaseId());
+			newRightPointEvent.setOriginId(head.getOriginId());
+			
+			Event newLeftPointEvent = new PointEvent((IntervalEvent)preVictim);
+			newLeftPointEvent.setBaseId(newLeftPointEvent.getBaseId());
+			newLeftPointEvent.setOriginId(head.getOriginId());
+			
+			this.getCalendar().getHeadList().add(newRightPointEvent);
+			this.getCalendar().getHeadList().add(newLeftPointEvent);
+			
+			
 			
 		// [head ,previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
