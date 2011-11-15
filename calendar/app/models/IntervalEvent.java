@@ -1,43 +1,82 @@
 package models;
 import enums.Interval;
 import enums.Visibility;
-
 import org.joda.time.DateTime;
 
-public class IntervalEvent extends RepeatingEvent{
+/**
+ * RepeatingEvent is a specialization of Event. A repeating event has an interval, 
+ * which defines the time step size for its repetition. there are also the attributes,
+ * upperBound and lowerBound, which are for none IntervalEvent always equal null.
+ * We have this attributes just for inheritance issues. 
+ * an repeating event can be edited, removed, set interval size. for each repeating event, we can call
+ * the method generateNextEvents which generates its successor event if certain conditions
+ * (see for that generateNextEvents) are fulfilled.
+ * @author team1
+ *
+ */
 
+public class IntervalEvent extends RepeatingEvent{
+	
+	/**
+	 * Default constructor for an new interval event.
+	 * @param name name for this event.
+	 * @param start start date/time for this event.
+	 * @param end date/time for this event.
+	 * @param from lower date/time bound for this event.
+	 * @param to upper date/time bound for this event.
+	 * @param end date/time for this event.
+	 * @param visibility visibility state for this event.
+	 * @param calendar the calendar to this event belongs to.
+	 * @param interval time-step size for repentance for this event.
+	 */
 	public IntervalEvent(String name, DateTime start, DateTime end, DateTime from, DateTime to, Visibility visibility,Calendar calendar, Interval interval) {
 		super(name, start, end, visibility,calendar, interval);
-		//this.setOriginId(this.getBaseId());
 		this.lowerBound = from;
 		this.upperBound = to;
-		// TODO fixe vieles...
 	}
 	
-	// we need this constructor, to create an object of type IntervalEvent from a given object of type RepeatingEvent
-	// important: preserve id of given RepeatingEvent by calling forceSetId().
+	/**
+	 * This constructor transform an RepeatingEvent into a IntervalEvent.
+	 * @param from lower date/time bound for this event.
+	 * @param to upper date/time bound for this event.
+	 * @param repeatingEvent the repeating event which we are going to transform into a RepeatingEvent.
+	 */
 	public IntervalEvent(DateTime from, DateTime to, RepeatingEvent repeatingEvent) {
 		super(repeatingEvent.getName(),repeatingEvent.getStart(), repeatingEvent.getEnd(), 
 				repeatingEvent.getVisibility(),repeatingEvent.getCalendar(), repeatingEvent.getInterval());
 		this.forceSetId(repeatingEvent.getId());
 		this.lowerBound = from;
 		this.upperBound = to;
-		// TODO fixe vieles... falg usw
 	}
 	
+	/**
+	 * return lower bound of this event.
+	 * @return returns lower bound of this event
+	 */
 	public DateTime getFrom(){
 		return this.lowerBound;
 	}
 	
+	/**
+	 * return upper bound of this event.
+	 * @return returns upper bound of this event
+	 */
 	public DateTime getTo(){
 		return this.upperBound;
 	}
 	
-
+	/**
+	 * set a lower bound for this event.
+	 * @param from lower bound.
+	 */
 	public void setFrom(DateTime from){
 		this.lowerBound = from;
 	}
 	
+	/**
+	 * set an upper bound for this event.
+	 * @param to upper bound.
+	 */
 	public void setTo(DateTime to){
 		this.upperBound = to;
 	}
@@ -65,7 +104,12 @@ public class IntervalEvent extends RepeatingEvent{
 		this.setFrom(from);
 		this.setTo(to);
 	}
-
+	
+	/**
+	 * Compare this Events start date with the arguments start date according to the definition of {@link Comparable#compareTo}
+	 * @param event The event to compare this Event with.
+	 * @returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 */
 	@Override
 	public int compareTo(Event event) {
 		return this.getStart().compareTo(event.getStart());
@@ -81,8 +125,9 @@ public class IntervalEvent extends RepeatingEvent{
 	 *     victim == posthead ==> deduce two new point events, one for head, and one for postposthead
 	 * (c) [head, previctim] | victim | [postVictim,victim.getTo()]	
 	 * (d) [head,..., previctim] | victim | [postVictim, +infinite]	
-	 * care about setting new baseId correctly.
 	 */
+	
+	// TODO set new lower bound atm not problematic.
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
@@ -117,7 +162,7 @@ public class IntervalEvent extends RepeatingEvent{
 			// [victim,posthead,...,leafOfInterval]
 			}else{
 				
-			// TODO set new lower bound atm not problematic.
+			
 				Event postHead = head.getNextReference();
 				this.getCalendar().getHeadList().remove(head);
 				head.setNext(null);
@@ -133,6 +178,7 @@ public class IntervalEvent extends RepeatingEvent{
 					cursor.setBaseId(postHead.getId());
 				}
 			}
+			
 		// if victim is the leaf, i.e. victim is the last element of the list and list has more than two elements.
 		}else if(postVictim == null){
 			// TODO set new upper bound;
@@ -140,9 +186,8 @@ public class IntervalEvent extends RepeatingEvent{
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
-			// [head,...,victim,postvictim]
+		// [head,...,victim,postvictim]
 		}else if(postVictim.getNextReference() == null){
-			System.out.println("==============> this case ppv == null");
 			
 			//reset references
 			postVictim.setPrevious(null);
@@ -184,7 +229,6 @@ public class IntervalEvent extends RepeatingEvent{
 			
 		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
-			//System.out.println("==============> this case");
 			
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
@@ -210,8 +254,11 @@ public class IntervalEvent extends RepeatingEvent{
 		return "IntervalEvent";
 	}
 	
-	// TODO verify if boundchecks are okay
-	// bounds not null and then lowerBound < current < upperBound?
+	/**
+	 * checks the upper-and lower bound of this event are equal null 
+	 * or if lowerBound < event < upperBound holds
+	 * @param event event we are going to check if it is in between its bounds
+	 */
 	@Override
 	protected boolean isCurrentInBounds(Event event) {
 		if (upperBound == null && lowerBound == null)

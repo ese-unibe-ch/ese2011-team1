@@ -1,20 +1,28 @@
 package models;
 
 import java.util.LinkedList;
-
 import org.joda.time.DateTime;
-
 import enums.Interval;
 import enums.Visibility;
-
 import android.database.Cursor;
+
+
+/**
+ * RepeatingEvent is a specialization of Event. A repeating event has an interval, 
+ * which defines the time step size for its repetition. there are also the attributes,
+ * upperBound and lowerBound, which are for none IntervalEvent always equal null.
+ * We have this attributes just for inheritance issues. 
+ * an repeating event can be edited, removed, set interval size. for each repeating event, we can call
+ * the method generateNextEvents which generates its successor event if certain conditions
+ * (see for that generateNextEvents) are fulfilled.
+ * @author team1
+ *
+ */
 
 public class RepeatingEvent extends Event {
 	private Interval interval;
-	//protected Event current = null;
 	protected DateTime upperBound = null;
 	protected DateTime lowerBound = null;
-	protected boolean hasBoundReached = isCurrentInBounds(null);
 	
 	/**
 	 * Default constructor for an new repeating event.
@@ -29,13 +37,12 @@ public class RepeatingEvent extends Event {
 			Visibility visibility, Calendar calendar, Interval interval) {
 		super(name, start, end, visibility, calendar);
 		this.setBaseId(this.getId());
-		// this.setOriginId(this.getBaseId());
 		this.interval = interval;
 	}
 	
 	/**
 	 * This constructor transform an PointEvent into a RepeatingEvent.
-	 * @param event point event which we are going to transform into a RepeatingEvent.
+	 * @param event the point event which we are going to transform into a RepeatingEvent.
 	 * @param interval time-step size for repentance for this event.
 	 */
 	public RepeatingEvent(PointEvent event, Interval interval) {
@@ -82,11 +89,14 @@ public class RepeatingEvent extends Event {
 	}
 
 	/**
-	 * Calculate all next events for the current selected month. 
+	 * Generate the following events for this event 
+	 * till a given limit date/time, depending on 
+	 * the interval size of this event
+	 * @param limitDate till this date/time 
+	 * we generate following events (the successors) for this event.
 	 */
 	@Override
 	public void generateNextEvents(DateTime limitDate) {
-		//this.current = null;
 		Interval interval = this.getInterval();
 
 		switch (interval) {
@@ -103,113 +113,31 @@ public class RepeatingEvent extends Event {
 			generateYearly(this, limitDate, interval);
 			break;
 		}
-
-		//this.current = null;
 	}
-
-	// TODO add some comment
-	protected void generateYearly(Event base, DateTime limiter,
-			Interval interval) {
-		Event cursor = base;
-		//this.current = cursor;
-		RepeatingEvent nextEvent = null;
-		// as long as whole month is calculated
-		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
-
-			// if there is no next event, then create a new one.
-			if (!cursor.hasNext()) {
-
-				DateTime newStartDate = cursor.getStart().plusYears(1);
-				DateTime newEndDate = cursor.getEnd().plusYears(1);
-
-				// corner case for 29feb problem
-				newStartDate = correctDateForCornerCase(newStartDate);
-				newEndDate = correctDateForCornerCase(newEndDate);
-
-				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
-						newEndDate, cursor.getVisibility(), this.getCalendar(),
-						this.getInterval());
-				cursor.setNext(nextEvent);
-
-				nextEvent.setPrevious(cursor);
-				nextEvent.setBaseId(this.getBaseId());
-
-				nextEvent.getPreviousReference();
-
-			}
-
-			// move cursor
-			cursor = cursor.getNextReference();
-			//this.current = cursor;
-		}
-	}
-
-	// TODO highly buggy due to corner cases
-	// TODO huge optimization potential: calculate no only events till limiter
-	// but about always constant amount.
-	protected void generateMonthly(Event base, DateTime limiter,
-			Interval interval) {
-		Event cursor = base;
-		//this.current = cursor;
-		// solange bis monat abgedeckt
-		while (cursor.getStart().compareTo(limiter) == -1 && isCurrentInBounds(cursor)) {
-
-			// wenn kein n�chster event
-			if (!cursor.hasNext()) {
-
-				DateTime newStartDate = cursor.getStart().plusMonths(1);
-				DateTime newEndDate = cursor.getEnd().plusMonths(1);
-				
-				// corner case for 30th/31th of month problem
-				newStartDate = correctDateForCornerCase(newStartDate);
-				newEndDate = correctDateForCornerCase(newEndDate);
-
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
-						newStartDate, newEndDate, cursor.getVisibility(),
-						this.getCalendar(), this.getInterval());
-				cursor.setNext(nextEvent);
-
-				nextEvent.setPrevious(cursor);
-				nextEvent.setBaseId(this.getBaseId());
-			}
-
-			// move cursor
-			cursor = cursor.getNextReference();
-			//this.current = cursor;
-		}
-
-	}
-
+	
 	/**
-	 * Correct corner case Dates for 29/31 of month for repeatingEvents
+	 * generates for weekly or daily repeating events based on a given base event 
+	 * its following events till a given limit date/time. 
+	 * it handles the following special cases:
 	 * 
-	 * If headEvent of argument happens on any of the above mentioned Dates,
-	 * this method corrects the Date of the next repetition to the heads
-	 * original date.
+	 * since IntervalEvent inherits from RepeatingEvent,
+	 * this method works similar for interval events, expect that
+	 * for interval events, there is an additional bound check, if current generated event is in between
+	 * its lower and upper bound, besides the limit check for a given base event
 	 * 
-	 * @param dateToCorrect
-	 *            The date of the new repetition to be corrected.
-	 * @return The possibly corrected date.
+	 * @param base base event from which we start our event generating process
+	 * @param limiter limit date for event generating process (generate till this date/time)
 	 */
-	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
-		Event head = getCalendar().getHeadById(this.getBaseId());
-		DateTime correctedDate = dateToCorrect;
-		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
-			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
-		}
-		return correctedDate;
-	}
-
 	// TODO highly buggy due to corner cases.
 	// TODO huge optimization potential: calculate no only events till limiter
-	// but about always constant amount.
-
 	protected void generateDaylyOrWeekly(Event base, DateTime limiter,
 			Interval interval) {
 		Event cursor = base;
-		//this.current = cursor;
+		
+		// set up a cursor, starting form base.
 		RepeatingEvent nextEvent = null;
-		// as long as whole month is calculated
+		
+		// as long as whole month is calculated or is in cursor is in bounds
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
@@ -241,11 +169,129 @@ public class RepeatingEvent extends Event {
 
 			// move cursor
 			cursor = cursor.getNextReference();
-			//this.current = cursor;
 		}
-		// nextEvent.setNext(null)
-//		base.PrintThisAndTail();
 	}
+
+	// TODO highly buggy due to corner cases
+	// TODO huge optimization potential: calculate no only events till limiter
+	// but about always constant amount.
+	/**
+	 * generates for monthly repeating events based on a given base event 
+	 * its following events till a given limit date/time. 
+	 * it handles the following special cases:
+	 * 
+	 * since IntervalEvent inherits from RepeatingEvent,
+	 * this method works similar for interval events, expect that
+	 * for interval events, there is an additional bound check, if current generated event is in between
+	 * its lower and upper bound, besides the limit check for a given base event
+	 * 
+	 * @param base base event from which we start our event generating process
+	 * @param limiter limit date for event generating process (generate till this date/time)
+	 */
+	protected void generateMonthly(Event base, DateTime limiter,
+			Interval interval) {
+		
+		// set up a cursor, starting form base.
+		Event cursor = base;
+		
+		// as long as whole month is calculated or is in cursor is in bounds
+		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
+
+			// if there is no next event, then create a new one.
+			if (!cursor.hasNext()) {
+
+				DateTime newStartDate = cursor.getStart().plusMonths(1);
+				DateTime newEndDate = cursor.getEnd().plusMonths(1);
+				
+				// corner case for 30th/31th of month problem
+				newStartDate = correctDateForCornerCase(newStartDate);
+				newEndDate = correctDateForCornerCase(newEndDate);
+
+				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
+						newStartDate, newEndDate, cursor.getVisibility(),
+						this.getCalendar(), this.getInterval());
+				cursor.setNext(nextEvent);
+
+				nextEvent.setPrevious(cursor);
+				nextEvent.setBaseId(this.getBaseId());
+			}
+
+			// move cursor
+			cursor = cursor.getNextReference();
+		}
+	}
+	
+	/**
+	 * generates for yearly repeating events based on a given base event 
+	 * its following events till a given limit date/time. 
+	 * it handles the following special cases:
+	 * 
+	 * since IntervalEvent inherits from RepeatingEvent,
+	 * this method works similar for interval events, expect that
+	 * for interval events, there is an additional bound check, if current generated event is in between
+	 * its lower and upper bound, besides the limit check for a given base event
+	 * 
+	 * @param base base event from which we start our event generating process
+	 * @param limiter limit date for event generating process (generate till this date/time)
+	 */
+	protected void generateYearly(Event base, DateTime limiter,
+			Interval interval) {
+		
+		// set up a cursor, starting form base.
+		Event cursor = base;
+		RepeatingEvent nextEvent = null;
+		
+		// as long as whole month is calculated
+		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
+
+			// if there is no next event, then create a new one.
+			if (!cursor.hasNext()) {
+
+				DateTime newStartDate = cursor.getStart().plusYears(1);
+				DateTime newEndDate = cursor.getEnd().plusYears(1);
+
+				// corner case for 29feb problem
+				newStartDate = correctDateForCornerCase(newStartDate);
+				newEndDate = correctDateForCornerCase(newEndDate);
+
+				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
+						newEndDate, cursor.getVisibility(), this.getCalendar(),
+						this.getInterval());
+				cursor.setNext(nextEvent);
+
+				nextEvent.setPrevious(cursor);
+				nextEvent.setBaseId(this.getBaseId());
+
+				nextEvent.getPreviousReference();
+
+			}
+
+			// move cursor
+			cursor = cursor.getNextReference();
+		}
+	}
+
+	/**
+	 * Correct corner case Dates for 29/31 of month for repeatingEvents
+	 * 
+	 * If headEvent of argument happens on any of the above mentioned Dates,
+	 * this method corrects the Date of the next repetition to the heads
+	 * original date.
+	 * 
+	 * @param dateToCorrect
+	 *            The date of the new repetition to be corrected.
+	 * @return The possibly corrected date.
+	 */
+	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
+		Event head = getCalendar().getHeadById(this.getBaseId());
+		DateTime correctedDate = dateToCorrect;
+		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
+			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
+		}
+		return correctedDate;
+	}
+
+
 
 	/*
 	 * checks
@@ -275,15 +321,6 @@ public class RepeatingEvent extends Event {
 	@Override
 	public int compareTo(Event event) {
 		return this.getStart().compareTo(event.getStart());
-	}
-
-	public void edit(String name, DateTime start, DateTime end,
-			Visibility visibility, Interval interval) {
-		this.setStart(start);
-		this.setEnd(end);
-		this.setName(name);
-		this.setVisiblility(visibility);
-		this.setInterval(interval);
 	}
 	
 	/**
@@ -403,7 +440,6 @@ public class RepeatingEvent extends Event {
 			newIntervalEvent.setPrevious(newIntervalEventHead);
 			    
 			this.getCalendar().addEvent(newIntervalEventHead);
-//			this.getCalendar().PrintAllHeadTails();
 			
 		// case (d)
 		} else {
@@ -495,5 +531,23 @@ public class RepeatingEvent extends Event {
 		this.setVisiblility(visibility);
 		this.editDescription(description);
 
+	}
+	
+	/**
+	 * overloaded version for editing this event.
+	 * @param name new name of event
+	 * @param start new start date/time of this event
+	 * @param end new end date/time of this event
+	 * @param visibility new visibility state of this event
+	 * @param interval new interval size for time/date steps for repentance of event
+	 * @param description new description of this event.
+	 */
+	public void edit(String name, DateTime start, DateTime end,
+			Visibility visibility, Interval interval) {
+		this.setStart(start);
+		this.setEnd(end);
+		this.setName(name);
+		this.setVisiblility(visibility);
+		this.setInterval(interval);
 	}
 }
