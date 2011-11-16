@@ -19,6 +19,7 @@
 	clickAndWait('link=>>')
 	clickAndWait('css=input[value=New Event]')
 	assertTextPresent('Add Event to simplay's first calendar')
+	assertTextPresent('Repeatable:')
 	type('titlename', 'Repetable Event Daily')
 	select(sday, 1)
 	select(interval, daily)
