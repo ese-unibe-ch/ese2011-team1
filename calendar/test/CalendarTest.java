@@ -57,6 +57,39 @@ public class CalendarTest extends UnitTest {
 		long id = calendarOfOwner.getId();
 		assertEquals(id, calendarOfOwner.getId());
 	}
+	
+	@Test
+	public void testGetHeadById() {
+		long id = event.getId();
+		assertNull(calendarOfOwner.getHeadById(id));
+		calendarOfOwner.addEvent(event);
+		assertEquals(event, calendarOfOwner.getHeadById(id));
+	}
+	
+	@Test
+	public void testGetHeadByOriginId() {
+		long originId = repeatingEvent.getOriginId();
+		assertTrue(calendarOfOwner.getHeadsByOriginId(originId).isEmpty());
+		calendarOfOwner.addEvent(repeatingEvent);
+		assertTrue(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent));
+		assertFalse(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent.getNextReference()));
+	}
+	
+	@Test
+	public void testGetEventHeads() {
+		calendarOfOwner.addEvent(event);
+		assertTrue(calendarOfOwner.getEventHeads().contains(event));
+	}
+	
+	@Test
+	public void testGetSameBaseIdEvents() {
+		long baseId = repeatingEvent.getBaseId();
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).isEmpty());
+		calendarOfOwner.addEvent(repeatingEvent);
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent));
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent.getNextReference()));
+		//NOTE: to avoid generating unnecessary Events, only the first and second are generated on instantiation.
+	}
 
 	@Test
 	public void testAddEvent() {
@@ -69,10 +102,11 @@ public class CalendarTest extends UnitTest {
 	@Test
 	public void testGetEventById() {
 		long id = event.getId();
+		assertNull(calendarOfOwner.getEventById(id));
 		calendarOfOwner.addEvent(event);
 		assertEquals(event, calendarOfOwner.getEventById(id));
 	}
-
+	
 	@Test
 	public void testGetDayEvents() {
 		this.eventToday = new PointEvent("eventToday", new DateTime(),
@@ -90,8 +124,6 @@ public class CalendarTest extends UnitTest {
 		assertFalse(DayEventsFrancis.isEmpty());
 		assertEquals("[eventToday, eventToday2]", DayEvents.toString());
 		assertEquals("[eventToday2]", DayEventsFrancis.toString());
-		System.out.println(DayEvents);
-		System.out.println(DayEventsFrancis);
 	}
 
 	@Test

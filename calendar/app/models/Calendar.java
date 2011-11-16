@@ -76,14 +76,6 @@ public class Calendar {
 	}
 	
 	/**
-	 * return head list of this calendar
-	 * @return returns eventHeads
-	 */
-	public PriorityQueue<Event> getHeadList(){
-		return this.eventHeads;
-	}
-	
-	/**
 	 *  get the last element of a series of repeating events or 
 	 *  if we have a point event, get back the event itself.
 	 *  only heads have a none null reference to leaf. care about this fact.
@@ -143,7 +135,7 @@ public class Calendar {
 	 */
 	public LinkedList<Event> getHeadsByOriginId(long originId){
 		LinkedList<Event> result = new LinkedList<Event>();
-		for(Event head : this.getHeadList())
+		for(Event head : this.getEventHeads())
 			// TODO remove if new version is approved to be correct.
 			//if(head.getOriginId() == originId) result.add(head);
 			if(head.equalOriginId(originId)) result.add(head);
@@ -158,10 +150,12 @@ public class Calendar {
 	public LinkedList<Event> getSameBaseIdEvents(long baseId) {
 		LinkedList<Event> result = new LinkedList<Event>();
 		Event head = this.getHeadById(baseId);
-		Event cursor = head;
-		while(cursor.hasNext()){
-			result.add(cursor);
-			cursor = cursor.getNextReference();
+		if (head != null) {
+			Event cursor = head;
+			while(cursor.hasNext()){
+				result.add(cursor);
+				cursor = cursor.getNextReference();
+			}
 		}
 		return result;
 	}
@@ -210,7 +204,7 @@ public class Calendar {
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				if(cursor.happensOn(date))
-					if(cursor.getVisibility() != Visibility.PRIVATE 
+					if(cursor.getVisibility() != Visibility.PRIVATE
 							|| owner == requester) result.add(cursor);
 			}
 		}
@@ -368,7 +362,7 @@ public class Calendar {
 		long originId = victimHead.getOriginId();
 		LinkedList<Event> originHeads = this.getHeadsByOriginId(originId);
 		for(Event head : originHeads){
-			this.getHeadList().remove(head);
+			this.getEventHeads().remove(head);
 		}
 		
 	}
@@ -398,7 +392,7 @@ public class Calendar {
 		cancelFromThis.setNext(null);
 		if(nextFromCancel != null) nextFromCancel.setPrevious(null);
 		
-		this.getHeadList().remove(victimHead);
+		this.getEventHeads().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
 		newHead.editDescription(victimHead.getDescription());
 		newHead.setOriginId(victimHead.getOriginId());
@@ -519,30 +513,30 @@ public class Calendar {
 		return this.name + " ["+this.id+"]";
 	}
 	
-	/**
-	 * for debugging
-	 * print head and its tail, 
-	 * the member itself can be any element of such tail-head structure.
-	 * @param member a member of a head and it's tail.
-	 */
-	public void PrintHeadAndHisTail(Event member){
-		long baseId = member.getBaseId();
-		LinkedList<Event> events = this.getSameBaseIdEvents(baseId);
-		for (Event event : events) 
-			System.out.println(event.getParsedStartDate() + " baseid: " + event.getBaseId() + " id " + event.getId());
-	}
-	
-	/**
-	 * for debugging
-	 * print for all heads in getHeadList the head and its tail, 
-	 */
-	public void PrintAllHeadTails(){
-		for(Event event : this.getHeadList()){
-			System.out.println();
-			System.out.println("head: " + event.getParsedStartDate() + " id:"+event.getId() );
-			this.PrintHeadAndHisTail(event);
-		}
-	}
+//	/**
+//	 * for debugging
+//	 * print head and its tail, 
+//	 * the member itself can be any element of such tail-head structure.
+//	 * @param member a member of a head and it's tail.
+//	 */
+//	public void PrintHeadAndHisTail(Event member){
+//		long baseId = member.getBaseId();
+//		LinkedList<Event> events = this.getSameBaseIdEvents(baseId);
+//		for (Event event : events) 
+//			System.out.println(event.getParsedStartDate() + " baseid: " + event.getBaseId() + " id " + event.getId());
+//	}
+//	
+//	/**
+//	 * for debugging
+//	 * print for all heads in getHeadList the head and its tail, 
+//	 */
+//	public void PrintAllHeadTails(){
+//		for(Event event : this.getHeadList()){
+//			System.out.println();
+//			System.out.println("head: " + event.getParsedStartDate() + " id:"+event.getId() );
+//			this.PrintHeadAndHisTail(event);
+//		}
+//	}
 	
 	/**
 	 * print current, next and previous events starting from a head till its tail.
@@ -551,19 +545,19 @@ public class Calendar {
 	 * @param head head of a series of events
 	 */
 	
-	@SuppressWarnings("unused")
-	private void newNextEventsPrinter(Event head){
-		Event event = head;
-		String ee = null;
-		while(event.hasNext()){
-			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
-			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
-					+ " prevR:" + ee);
-			event = event.getNextReference();
-		}
-		ee = null;
-		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
-		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
-				+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
-	}
+//	@SuppressWarnings("unused")
+//	private void newNextEventsPrinter(Event head){
+//		Event event = head;
+//		String ee = null;
+//		while(event.hasNext()){
+//			if(event.getPreviousReference() != null) ee = event.getPreviousReference().getParsedStartDate();
+//			System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ event.getNextReference().getParsedStartDate() 
+//					+ " prevR:" + ee);
+//			event = event.getNextReference();
+//		}
+//		ee = null;
+//		if(event.getNextReference() != null) ee = event.getNextReference().getParsedStartDate();
+//		System.out.println("current: " +event.getParsedStartDate() + " nextR:"+ ee 
+//				+ "              prevR:" + event.getPreviousReference().getParsedStartDate());
+//	}
 }

@@ -3,15 +3,11 @@
 # ~~~~
 
 # Home page
-# public static void showCalendar(long calendarId, String username,
-#			String calendarName, String s_date, int dday, int mmonth,
-#			int yyear, String message) {
-#String username, String s_date
 
 GET		/										Application.index
 GET 	/calendars/{username}/					Application.showCalendarList
-GET		/addEditEvents/{name}/{calendarId}/{eventId}/	Application.addEditEvent({eventId}, {calendarId}, {name}, {s_activeDate})
-GET 	/showCalendar/{username}/{calendarId}/			Application.showCalendar({calendarId}, {username}, {s_activeDate})
+GET		/addEditEvents/{name}/{calendarId}/{eventId}/	Application.addEditEvent
+GET 	/showCalendar/{username}/{calendarId}/		Application.showCalendar
 GET		/Registration							publicApplication.showRegistration
 GET		/showProfile/{userName}/				Application.showProfile
 

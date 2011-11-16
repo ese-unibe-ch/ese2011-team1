@@ -137,7 +137,7 @@ public class IntervalEvent extends RepeatingEvent{
 		if(preVictim == head && postVictim == null){
 			this.setPrevious(null); // victim back reference null
 			head.setNext(null);
-			this.getCalendar().getHeadList().remove(head);		
+			this.getCalendar().getEventHeads().remove(head);		
 			Event newPointEvent = new PointEvent((IntervalEvent)head);
 			newPointEvent.editDescription(head.getDescription());
 			newPointEvent.setBaseId(newPointEvent.getId());
@@ -151,7 +151,7 @@ public class IntervalEvent extends RepeatingEvent{
 			if(postVictim.getNextReference() == null){
 				head.setNext(null);
 				postVictim.setPrevious(null);
-				this.getCalendar().getHeadList().remove(head);
+				this.getCalendar().getEventHeads().remove(head);
 				Event newPointEvent = new PointEvent((IntervalEvent)postVictim);
 				newPointEvent.editDescription(postVictim.getDescription());
 				newPointEvent.setBaseId(newPointEvent.getId());
@@ -162,10 +162,10 @@ public class IntervalEvent extends RepeatingEvent{
 			}else{
 				
 				Event postHead = head.getNextReference();
-				this.getCalendar().getHeadList().remove(head);
+				this.getCalendar().getEventHeads().remove(head);
 				head.setNext(null);
 				postHead.setPrevious(null);
-				this.getCalendar().getHeadList().add(postHead);
+				this.getCalendar().getEventHeads().add(postHead);
 				postHead.setBaseId(postHead.getId());
 				postHead.setOriginId(head.getOriginId());
 				
@@ -191,7 +191,7 @@ public class IntervalEvent extends RepeatingEvent{
 			postVictim.setPrevious(null);
 			preVictim.setNext(null);
 			
-			this.getCalendar().getHeadList().remove(head);
+			this.getCalendar().getEventHeads().remove(head);
 			
 			Event newRightPointEvent = new PointEvent((IntervalEvent)postVictim);
 			newRightPointEvent.editDescription(postVictim.getDescription());
@@ -203,8 +203,8 @@ public class IntervalEvent extends RepeatingEvent{
 			newLeftPointEvent.setBaseId(newLeftPointEvent.getBaseId());
 			newLeftPointEvent.setOriginId(head.getOriginId());
 			
-			this.getCalendar().getHeadList().add(newRightPointEvent);
-			this.getCalendar().getHeadList().add(newLeftPointEvent);
+			this.getCalendar().getEventHeads().add(newRightPointEvent);
+			this.getCalendar().getEventHeads().add(newLeftPointEvent);
 			
 			
 			// [head,...,victim,postvictim]

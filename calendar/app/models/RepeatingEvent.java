@@ -411,7 +411,7 @@ public class RepeatingEvent extends Event {
 			postHead.setNext(null);
 
 			// remove head from head list
-			this.getCalendar().getHeadList().remove(head);
+			this.getCalendar().getEventHeads().remove(head);
 
 			// 1. build [postVictim,inf]
 
