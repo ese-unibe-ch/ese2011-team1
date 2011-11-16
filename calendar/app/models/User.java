@@ -30,16 +30,16 @@ public class User {
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
-	private String emailP;
-	private boolean emailPVis;
-	private String emailB;
-	private boolean emailBVis;
-	private String telP;
-	private boolean telPVis;
-	private String telB;
-	private boolean telBVis;
-	private String notes;
-	private boolean notesVis;
+	private String emailP;	//privateEmailAddress
+	private boolean emailPVis; //isPrivateEmailVisible
+	private String emailB; //businessEmailAdress
+	private boolean emailBVis; //isBusinessEmailVisible
+	private String telP; // privatePhoneNumber
+	private boolean telPVis; // isPrivatePhoneNumberVisible
+	private String telB; // businessPhoneNumber
+	private boolean telBVis; // isBusinessPhoneNumberVisible
+	private String notes; // note
+	private boolean notesVis; //isNoteVisible
 	private static long counter;
 	
 	/**
