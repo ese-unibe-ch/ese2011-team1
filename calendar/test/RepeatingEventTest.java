@@ -92,5 +92,20 @@ public class RepeatingEventTest extends UnitTest {
 		assertEquals(specialEvent.getStart().plusMonths(2), specialEvent.getNextReference().getStart());
 		
 	}
+	
+	@Test
+	public void testRemove() {
+		DateTime now = new DateTime();
+		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
+		calendar.addEvent(testRemove);
+		testRemove.generateNextEvents(now.plusMonths(1));
+		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
+		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
+		Event nextReference = testRemove.getNextReference();
+		nextReference = nextReference.getNextReference();
+		nextReference = nextReference.getNextReference();
+		testRemove.getNextReference().getNextReference().getNextReference().remove();
+		assertFalse(calendar.hasEventOnDate(nextReference.getStart().toLocalDate(), user));
+	}
 }
 

@@ -130,15 +130,13 @@ public class IntervalEvent extends RepeatingEvent{
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
-		System.out.println("============>>>>> " + head);
 		
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
+		assert (postVictim != null);
 		
 		// interval structure: [head,victim], i.e. there are two elements
 		if(preVictim == head && postVictim == null){
-		//if else(preVictim == head){
-			System.out.print("=====> dsfsdfsd fsdf sfd s");
 			this.setPrevious(null); // victim back reference null
 			head.setNext(null);
 			this.getCalendar().getEventHeads().remove(head);		

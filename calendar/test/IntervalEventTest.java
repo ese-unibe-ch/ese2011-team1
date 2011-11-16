@@ -1,5 +1,6 @@
 import models.Calendar;
 import models.Database;
+import models.Event;
 import models.IntervalEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -80,12 +81,60 @@ public class IntervalEventTest extends UnitTest{
 	
 	@Test
 	public void testRemove() {
-		IntervalEvent testRemove = new IntervalEvent("test", new DateTime(), new DateTime(), new DateTime(), new DateTime(), Visibility.PRIVATE, calendar, Interval.DAILY);
+		DateTime now = new DateTime();
+		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
 		calendar.addEvent(testRemove);
-		calendar.generateAllNextEvents(testRemove.getStart());
+		testRemove.generateNextEvents(now.plusMonths(1));
+		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
 		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
-		testRemove.remove();
-		assertFalse(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
+		Event nextReference = testRemove.getNextReference();
+		nextReference = nextReference.getNextReference();
+		nextReference = nextReference.getNextReference();
+		testRemove.getNextReference().getNextReference().getNextReference().remove();
+		assertFalse(calendar.hasEventOnDate(nextReference.getStart().toLocalDate(), user));
+		nextReference = nextReference.getPreviousReference();
+		Event event = calendar.getEventById(testRemove.getId());
+		Event next = event.getNextReference();
+		next.remove();
 	}
-
+	
+	@Test
+	public void testRemove2() {
+		DateTime now = new DateTime();
+		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
+		calendar.addEvent(testRemove);
+		testRemove.generateNextEvents(now.plusMonths(1));
+		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
+		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
+		Event nextReference = testRemove.getNextReference();
+		nextReference = nextReference.getNextReference();
+		nextReference = nextReference.getNextReference();
+		testRemove.getNextReference().getNextReference().getNextReference().remove();
+		assertFalse(calendar.hasEventOnDate(nextReference.getStart().toLocalDate(), user));
+		nextReference = nextReference.getPreviousReference();
+		Event event = calendar.getEventById(testRemove.getId());
+		event.remove();
+	}
+	
+	@Test
+	public void testRemove3() {
+		DateTime now = new DateTime();
+		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
+		calendar.addEvent(testRemove);
+		testRemove.generateNextEvents(now.plusMonths(1));
+		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
+		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
+		Event nextReference = testRemove.getNextReference();
+		nextReference = nextReference.getNextReference();
+		nextReference = nextReference.getNextReference();
+		nextReference = nextReference.getNextReference();
+		testRemove.getNextReference().getNextReference().getNextReference().getNextReference().remove();
+		assertFalse(calendar.hasEventOnDate(nextReference.getStart().toLocalDate(), user));
+		nextReference = nextReference.getPreviousReference();
+		Event event = calendar.getEventById(testRemove.getId());
+		Event next = event.getNextReference();
+		next = next.getNextReference();
+		next.remove();
+	}
+	
 }
