@@ -130,11 +130,15 @@ public class IntervalEvent extends RepeatingEvent{
 	@Override
 	public void remove() {
 		Event head = this.getCalendar().getHeadById(this.getBaseId());
+		System.out.println("============>>>>> " + head);
+		
 		Event preVictim = this.getPreviousReference();
 		Event postVictim = this.getNextReference();
 		
 		// interval structure: [head,victim], i.e. there are two elements
 		if(preVictim == head && postVictim == null){
+		//if else(preVictim == head){
+			System.out.print("=====> dsfsdfsd fsdf sfd s");
 			this.setPrevious(null); // victim back reference null
 			head.setNext(null);
 			this.getCalendar().getEventHeads().remove(head);		
@@ -143,6 +147,31 @@ public class IntervalEvent extends RepeatingEvent{
 			newPointEvent.setBaseId(newPointEvent.getId());
 			newPointEvent.setOriginId(head.getOriginId());
 			this.getCalendar().addEvent(newPointEvent);
+		
+		//[head,victim,....bound] 
+		}else if(preVictim == head){
+
+			head.setNext(null);
+			this.setPrevious(null);
+			Event newHead = new PointEvent((IntervalEvent)head);
+			newHead.editDescription(head.getDescription());
+			newHead.setBaseId(newHead.getId());
+			newHead.setOriginId(head.getOriginId());
+			this.getCalendar().getEventHeads().remove(head);
+			this.getCalendar().getEventHeads().add(newHead);
+			
+			this.getCalendar().getEventHeads().add(postVictim);
+			postVictim.setBaseId(postVictim.getId());
+			postVictim.setOriginId(head.getOriginId());
+			
+			// reset baseIds of tails of postHead
+			Event cursor = postVictim;
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+			}
+	
+		
 			
 		// if we want to delete the head
 		}else if(this == head){
@@ -161,7 +190,6 @@ public class IntervalEvent extends RepeatingEvent{
 			// [victim,posthead,...,leafOfInterval]
 			}else{
 				
-			
 				Event postHead = head.getNextReference();
 				this.getCalendar().getEventHeads().remove(head);
 				head.setNext(null);
@@ -187,7 +215,6 @@ public class IntervalEvent extends RepeatingEvent{
 			
 		//[head,victim,postvictim] ==> two point events	
 		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
-			System.out.println("=======> sdfsdfsdfsdfsdfsdfsdf");
 			this.setNext(null);
 			this.setPrevious(null);
 			postVictim.setPrevious(null);
@@ -208,6 +235,7 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getEventHeads().add(newRightPointEvent);
 			this.getCalendar().getEventHeads().add(newLeftPointEvent);
 			
+
 			
 			// [head,...,victim,postvictim]
 		}else if(postVictim.getNextReference() == null){
