@@ -389,8 +389,13 @@ public class Calendar {
 		Event victimHead = getHeadById(baseId);
 		Event nextFromCancel = cancelFromThis.getNextReference();
 		
+		LinkedList<Event> sameOriginHeads = this.getHeadsByOriginId(victimHead.getOriginId());
+		
+		
+		if(cancelFromThis != victimHead){
+		
 		cancelFromThis.setNext(null);
-		nextFromCancel.setPrevious(null);
+		if(nextFromCancel != null) nextFromCancel.setPrevious(null);
 		
 		this.getHeadList().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
@@ -415,16 +420,30 @@ public class Calendar {
 		}
 		
 		previous = intervalCursor;
-		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
-		intervalCursor.editDescription(cursor.getDescription());
+		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
+		intervalCursor.editDescription(cancelFromThis.getDescription());
 		intervalCursor.setBaseId(newHead.getId());
 		previous.setNext(intervalCursor);
 		intervalCursor.setPrevious(previous);
-		Event newEnd = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
-		newEnd.editDescription(cancelFromThis.getDescription());
-		newEnd.setBaseId(newHead.getId());
-		intervalCursor.setNext(newEnd);
-		newEnd.setPrevious(intervalCursor);
+		
+		}else{
+			victimHead.setNext(null);
+			cancelFromThis.setPrevious(null);
+			this.eventHeads.remove(victimHead);
+			Event newPointHead = new PointEvent((RepeatingEvent)victimHead);
+			newPointHead.editDescription(victimHead.getDescription());
+			newPointHead.setBaseId(newPointHead.getId());
+			newPointHead.setOriginId(victimHead.getOriginId());
+			this.eventHeads.add(newPointHead);
+		}
+		
+		// remove all origins to the right of us (time).
+		
+		for(Event head : sameOriginHeads){
+			if(victimHead.getStart().isBefore(head.getStart()))
+				this.eventHeads.remove(head);
+		}
+		
 	}
 	
 	// checker
