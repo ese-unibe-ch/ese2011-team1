@@ -161,7 +161,6 @@ public class IntervalEvent extends RepeatingEvent{
 			// [victim,posthead,...,leafOfInterval]
 			}else{
 				
-			
 				Event postHead = head.getNextReference();
 				this.getCalendar().getHeadList().remove(head);
 				head.setNext(null);
@@ -187,7 +186,6 @@ public class IntervalEvent extends RepeatingEvent{
 			
 		//[head,victim,postvictim] ==> two point events	
 		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
-			System.out.println("=======> sdfsdfsdfsdfsdfsdfsdf");
 			this.setNext(null);
 			this.setPrevious(null);
 			postVictim.setPrevious(null);
@@ -224,7 +222,7 @@ public class IntervalEvent extends RepeatingEvent{
 			newPoint.setBaseId(newPoint.getId());
 			newPoint.setOriginId(head.getOriginId());
 			
-			this.getCalendar().getHeadList().add(newPoint);
+			this.getCalendar().getEventHeads().add(newPoint);
 			
 			
 		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
