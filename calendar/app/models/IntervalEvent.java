@@ -222,7 +222,8 @@ public class IntervalEvent extends RepeatingEvent{
 			Event newPoint = new PointEvent((IntervalEvent)postVictim);
 			newPoint.editDescription(postVictim.getDescription());
 			newPoint.setBaseId(newPoint.getId());
-			newPoint.setOriginId(head.getOriginId());
+			long originId = head.getOriginId();
+			newPoint.setOriginId(originId);
 			
 			this.getCalendar().getEventHeads().add(newPoint);
 			
@@ -241,9 +242,10 @@ public class IntervalEvent extends RepeatingEvent{
 			Event cursor = head;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
-				cursor.setBaseId(postVictim.getId());
+				cursor.setBaseId(head.getId());
 				((IntervalEvent)cursor).setTo(preVictim.getStart());
 			}
+			
 			
 			((IntervalEvent)postVictim).setFrom(postVictim.getStart());
 			

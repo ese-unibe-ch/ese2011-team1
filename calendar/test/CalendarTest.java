@@ -21,25 +21,52 @@ public class CalendarTest extends UnitTest {
 	private Calendar calendarOfOwner;
 	// private Calendar calendarOfFrancis;
 	private Event event;
-	private RepeatingEvent repeatingEvent;
+	private RepeatingEvent repeatingEvent1;
+	private RepeatingEvent repeatingEvent2;
 	private Event eventToday;
 	private Event eventToday2;
+	private Calendar francisCalendar;
 
 	@Before
 	public void setUp() throws Exception {
 		this.owner = new User("hans", "123", new DateTime(), "hans1");
 		this.francis = new User("Francis", "1234", new DateTime(), "francis");
-		/*
-		 * this.calendarOfFrancis = new Calendar("Calendar of Francis",
-		 * this.francis);
-		 */
 		this.calendarOfOwner = new Calendar("Calendar", this.owner);
+		this.francisCalendar = new Calendar("FrancisCal", francis);
 		this.event = new PointEvent("anEvent", new DateTime(0),
 				new DateTime(0), Visibility.PRIVATE, calendarOfOwner);
-		this.repeatingEvent = new RepeatingEvent("repeatingEvent",
+		this.eventToday = new PointEvent("eventToday", new DateTime(),
+				new DateTime(), Visibility.PRIVATE, calendarOfOwner);
+		this.eventToday2 = new PointEvent("eventToday2", new DateTime(),
+				new DateTime(), Visibility.PUBLIC, francisCalendar);
+		this.repeatingEvent1 = new RepeatingEvent("repeatingEvent",
 				new DateTime(0), new DateTime(0), Visibility.PRIVATE,
 				calendarOfOwner, Interval.WEEKLY);
-		this.repeatingEvent.init();
+		this.repeatingEvent1.init();
+		this.repeatingEvent2 = new RepeatingEvent("repeatingEvent",
+				new DateTime(), new DateTime(), Visibility.PRIVATE,
+				calendarOfOwner, Interval.MONTHLY);
+		this.repeatingEvent2.init();
+	}
+	
+	@Test
+	public void testToString() {
+		long calendarId = calendarOfOwner.getId();
+		assertEquals("Calendar ["+calendarId+"]", calendarOfOwner.toString());
+	}
+	
+	@Test
+	public void testSetOwner() {
+		assertEquals(owner, calendarOfOwner.getOwner());
+		calendarOfOwner.setOwner(francis);
+		assertEquals(francis, calendarOfOwner.getOwner());
+	}
+	
+	@Test
+	public void testSetName() {
+		assertEquals("Calendar", calendarOfOwner.getName());
+		calendarOfOwner.setName("CalendarChanged");
+		assertEquals("CalendarChanged", calendarOfOwner.getName());
 	}
 
 	@Test
@@ -68,11 +95,11 @@ public class CalendarTest extends UnitTest {
 	
 	@Test
 	public void testGetHeadByOriginId() {
-		long originId = repeatingEvent.getOriginId();
+		long originId = repeatingEvent1.getOriginId();
 		assertTrue(calendarOfOwner.getHeadsByOriginId(originId).isEmpty());
-		calendarOfOwner.addEvent(repeatingEvent);
-		assertTrue(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent));
-		assertFalse(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent.getNextReference()));
+		calendarOfOwner.addEvent(repeatingEvent1);
+		assertTrue(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent1));
+		assertFalse(calendarOfOwner.getHeadsByOriginId(originId).contains(repeatingEvent1.getNextReference()));
 	}
 	
 	@Test
@@ -83,11 +110,11 @@ public class CalendarTest extends UnitTest {
 	
 	@Test
 	public void testGetSameBaseIdEvents() {
-		long baseId = repeatingEvent.getBaseId();
+		long baseId = repeatingEvent1.getBaseId();
 		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).isEmpty());
-		calendarOfOwner.addEvent(repeatingEvent);
-		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent));
-		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent.getNextReference()));
+		calendarOfOwner.addEvent(repeatingEvent1);
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent1));
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(baseId).contains(repeatingEvent1.getNextReference()));
 		//NOTE: to avoid generating unnecessary Events, only the first and second are generated on instantiation.
 	}
 
@@ -109,10 +136,6 @@ public class CalendarTest extends UnitTest {
 	
 	@Test
 	public void testGetDayEvents() {
-		this.eventToday = new PointEvent("eventToday", new DateTime(),
-				new DateTime(), Visibility.PRIVATE, calendarOfOwner);
-		this.eventToday2 = new PointEvent("eventToday2", new DateTime(),
-				new DateTime(), Visibility.PUBLIC, calendarOfOwner);
 		calendarOfOwner.addEvent(event);
 		calendarOfOwner.addEvent(eventToday);
 		calendarOfOwner.addEvent(eventToday2);
@@ -125,13 +148,43 @@ public class CalendarTest extends UnitTest {
 		assertEquals("[eventToday, eventToday2]", DayEvents.toString());
 		assertEquals("[eventToday2]", DayEventsFrancis.toString());
 	}
+	
+	@Test
+	public void testHasEventOnDate() {
+		DateTime testDate = eventToday.getStart();
+		assertTrue(eventToday.happensOn(testDate.toLocalDate()));
+		assertFalse(calendarOfOwner.hasEventOnDate(testDate.toLocalDate(), owner));
+		calendarOfOwner.addEvent(eventToday);
+		assertTrue(calendarOfOwner.hasEventOnDate(testDate.toLocalDate(), owner));
+	}
+	
+	@Test
+	public void testHasEventOnDateIncludingObserved() {
+		eventToday2.setVisiblility(Visibility.PRIVATE);
+		DateTime testDate = eventToday.getStart();
+		owner.addObservedCalendar(francisCalendar);
+		owner.addShownObservedCalendar(francisCalendar.getId());
+		assertTrue(eventToday.happensOn(testDate.toLocalDate()));
+		assertTrue(eventToday2.happensOn(testDate.toLocalDate()));
+		assertFalse(calendarOfOwner.hasEventOnDateIncludingObserved(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner));
+		calendarOfOwner.addEvent(eventToday);
+		francisCalendar.addEvent(eventToday2);
+		assertTrue(calendarOfOwner.hasEventOnDateIncludingObserved(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner));
+		eventToday2.setVisiblility(Visibility.PUBLIC);
+		assertTrue(calendarOfOwner.hasEventOnDateIncludingObserved(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner));
+		calendarOfOwner.removeEvent(eventToday.getId());
+		assertTrue(calendarOfOwner.hasEventOnDateIncludingObserved(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner));
+		eventToday2.setVisiblility(Visibility.PRIVATE);
+		System.out.println(calendarOfOwner.getEventsOfDate(testDate.toLocalDate(), owner));
+		assertFalse(calendarOfOwner.hasEventOnDateIncludingObserved(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner));
+	}
 
 	@Test
 	public void testAddRepeatingEvent() {
 		assertTrue(calendarOfOwner.getEventHeads().isEmpty());
-		calendarOfOwner.addEvent(repeatingEvent);
+		calendarOfOwner.addEvent(repeatingEvent1);
 		assertFalse(calendarOfOwner.getEventHeads().isEmpty());
-		assertTrue(calendarOfOwner.getEventHeads().contains(repeatingEvent));
+		assertTrue(calendarOfOwner.getEventHeads().contains(repeatingEvent1));
 	}
 
 	@Test
@@ -146,13 +199,13 @@ public class CalendarTest extends UnitTest {
 	@Test
 	public void testRemoveRepeatedEvents() {
 		assertTrue(calendarOfOwner.getEventHeads().isEmpty());
-		Event repeating1 = repeatingEvent.getNextReference();
+		Event repeating1 = repeatingEvent1.getNextReference();
 		Event repeating2 = repeating1.getNextReference();
 		Event repeating3 = repeating2.getNextReference();
-		assertEquals(repeatingEvent.getBaseId(), repeating1.getBaseId());
+		assertEquals(repeatingEvent1.getBaseId(), repeating1.getBaseId());
 		assertEquals(repeating1.getBaseId(), repeating2.getBaseId());
 		assertEquals(repeating2.getBaseId(), repeating3.getBaseId());
-		calendarOfOwner.addEvent(repeatingEvent);
+		calendarOfOwner.addEvent(repeatingEvent1);
 		calendarOfOwner.addEvent(repeating1);
 		calendarOfOwner.addEvent(repeating2);
 		calendarOfOwner.addEvent(repeating3);
@@ -161,5 +214,53 @@ public class CalendarTest extends UnitTest {
 		assertTrue(calendarOfOwner.getEventHeads().contains(repeating2));
 		assertTrue(calendarOfOwner.getEventHeads().contains(repeating3));
 	}
-
+	
+	@Test
+	public void testGenerateNextEventsForOneEvent() {
+		User owner = calendarOfOwner.getOwner();
+		DateTime repeatingStart = repeatingEvent1.getStart();
+		calendarOfOwner.addEvent(repeatingEvent1);
+		calendarOfOwner.generateNextEvents(repeatingEvent1, repeatingStart);
+		DateTime nextRepetitionDate = repeatingStart.plusDays(repeatingEvent1.getInterval().getDays());
+		Event nextRepetition = repeatingEvent1.getNextReference();
+		assertTrue(nextRepetition.happensOn(nextRepetitionDate.toLocalDate()));
+		assertTrue(nextRepetition.getStart().equals(repeatingStart.plusDays(repeatingEvent1.getInterval().getDays())));
+		assertTrue(calendarOfOwner.hasEventOnDate(nextRepetitionDate.toLocalDate(), owner));
+		assertTrue(calendarOfOwner.getEventsOfDate(nextRepetitionDate.toLocalDate(), owner).contains(nextRepetition));
+	}
+	
+	@Test
+	public void testGenerateAllNextEvents() {
+		User owner = calendarOfOwner.getOwner();
+		DateTime repeatingStart = repeatingEvent1.getStart();
+		DateTime repeating2Start = repeatingEvent2.getStart();
+		calendarOfOwner.addEvent(repeatingEvent1);
+		calendarOfOwner.addEvent(repeatingEvent2);
+		calendarOfOwner.generateAllNextEvents(repeatingStart);
+		DateTime nextRepetitionDate1 = repeatingStart.plusDays(repeatingEvent1.getInterval().getDays());
+		DateTime nextRepetitionDate2 = repeating2Start.plusMonths(1);
+		Event nextRepetition1 = repeatingEvent1.getNextReference();
+		Event nextRepetition2 = repeatingEvent2.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(nextRepetitionDate1.toLocalDate(), owner));
+		assertTrue(calendarOfOwner.getEventsOfDate(nextRepetitionDate1.toLocalDate(), owner).contains(nextRepetition1));
+		assertTrue(calendarOfOwner.hasEventOnDate(nextRepetitionDate2.toLocalDate(), owner));
+		assertTrue(calendarOfOwner.getEventsOfDate(nextRepetitionDate2.toLocalDate(), owner).contains(nextRepetition2));
+	}
+	
+	@Test
+	public void testGetAllEventsOfDate() {
+		eventToday2.setVisiblility(Visibility.PRIVATE);
+		calendarOfOwner.addEvent(eventToday);
+		francisCalendar.addEvent(eventToday2);
+		owner.addObservedCalendar(francisCalendar);
+		owner.addShownObservedCalendar(francisCalendar.getId());
+		DateTime testDate = eventToday.getStart();
+		assertTrue(eventToday2.isPrivate());
+		assertTrue(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday));
+		assertFalse(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday2));
+		eventToday2.setVisiblility(Visibility.PUBLIC);
+		assertTrue(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday));
+		assertTrue(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday2));
+	}
+	
 }

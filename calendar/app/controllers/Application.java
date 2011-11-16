@@ -439,7 +439,7 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
 		Event event = calendar.getEventById(eventId);
-		calendar.removeSerieOfRepeatingEvents(event);
+		calendar.removeSeriesOfRepeatingEvents(event);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		showCalendar(calendarId, me.getName(), s_activeDate,

@@ -354,7 +354,7 @@ public class Calendar {
 	 * the origin id of the given member's head.
 	 * @param member this event is part of a head-tail series.
 	 */
-	public void removeSerieOfRepeatingEvents(Event member){
+	public void removeSeriesOfRepeatingEvents(Event member){
 		// 1. get corresponding head
 		// 2. remove victimHead from head list
 		long baseId = member.getBaseId();

@@ -206,8 +206,8 @@ public class RepeatingEvent extends Event {
 				DateTime newEndDate = cursor.getEnd().plusMonths(1);
 				
 				// corner case for 30th/31th of month problem
-				newStartDate = correctDateForCornerCase(newStartDate);
-				newEndDate = correctDateForCornerCase(newEndDate);
+//				newStartDate = correctDateForCornerCase(newStartDate);
+//				newEndDate = correctDateForCornerCase(newEndDate);
 
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
 						newStartDate, newEndDate, cursor.getVisibility(),
@@ -253,8 +253,8 @@ public class RepeatingEvent extends Event {
 				DateTime newEndDate = cursor.getEnd().plusYears(1);
 
 				// corner case for 29feb problem
-				newStartDate = correctDateForCornerCase(newStartDate);
-				newEndDate = correctDateForCornerCase(newEndDate);
+//				newStartDate = correctDateForCornerCase(newStartDate);
+//				newEndDate = correctDateForCornerCase(newEndDate);
 
 				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
 						newEndDate, cursor.getVisibility(), this.getCalendar(),
@@ -284,14 +284,14 @@ public class RepeatingEvent extends Event {
 	 *            The date of the new repetition to be corrected.
 	 * @return The possibly corrected date.
 	 */
-	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
-		Event head = getCalendar().getHeadById(this.getBaseId());
-		DateTime correctedDate = dateToCorrect;
-		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
-			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
-		}
-		return correctedDate;
-	}
+//	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
+//		Event head = getCalendar().getHeadById(this.getBaseId());
+//		DateTime correctedDate = dateToCorrect;
+//		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
+//			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
+//		}
+//		return correctedDate;
+//	}
 
 
 
