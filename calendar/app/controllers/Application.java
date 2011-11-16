@@ -108,10 +108,10 @@ public class Application extends Controller {
 		Event birthday = user.getBirthday();
 		String nickname = user.getNickname();
 		String emailP = user.getPrivateEmailAddress();
-		String emailB = user.getEmailB();
-		String telP = user.getTelP();
-		String telB = user.getTelB();
-		String notes = user.getNotes();
+		String emailB = user.getBusinessEmailAdress();
+		String telP = user.getPrivatePhoneNumber();
+		String telB = user.getBusinessPhoneNumber();
+		String notes = user.getDescription();
 
 		render(me, user, nickname, birthday, emailP, emailB, telP, telB, notes);
 	}
@@ -127,20 +127,20 @@ public class Application extends Controller {
 		boolean is_visible = me.isBirthdayPublic();
 
 		// NEW
-		String emailP = me.getEmailP();
-		boolean is_emailP_visible = me.getEmailPVis();
+		String emailP = me.getPrivateEmailAddress();
+		boolean is_emailP_visible = me.getIsPrivateEmailVisible();
 
-		String emailB = me.getEmailB();
-		boolean is_emailB_visible = me.getEmailBVis();
+		String emailB = me.getBusinessEmailAdress();
+		boolean is_emailB_visible = me.getIsBusinessEmailVisible();
 
-		String telP = me.getTelP();
-		boolean is_telP_visible = me.getTelPVis();
+		String telP = me.getPrivatePhoneNumber();
+		boolean is_telP_visible = me.getIsPrivatePhoneNumberVisible();
 
-		String telB = me.getTelB();
-		boolean is_telB_visible = me.getTelBVis();
+		String telB = me.getBusinessPhoneNumber();
+		boolean is_telB_visible = me.getIsBusinessPhoneNumberVisible();
 
-		String notes = me.getNotes();
-		boolean is_note_visible = me.getNotesVis();
+		String notes = me.getDescription();
+		boolean is_note_visible = me.getIsDescriptionVisible();
 
 		render(me, name, oldname, nickname, password, birthday, is_visible,
 				emailP, is_emailP_visible, emailB, is_emailB_visible, telP,
@@ -181,16 +181,16 @@ public class Application extends Controller {
 				newUser.setNickname(nickname);
 				newUser.setPassword(password);
 				newUser.setBirthdayPublic(is_visible);
-				newUser.setEmailP(emailP);
-				newUser.setEmailPVis(is_emailP_visible);
-				newUser.setEmailB(emailB);
-				newUser.setEmailBVis(is_emailB_visible);
-				newUser.setTelP(telP);
-				newUser.setTelPVis(is_telP_visible);
-				newUser.setTelB(telB);
-				newUser.setTelBVis(is_telB_visible);
-				newUser.setNotes(notes);
-				newUser.setNotesVis(is_note_visible);
+				newUser.setPrivateEmailAddress(emailP);
+				newUser.setIsPrivateEmailVisible(is_emailP_visible);
+				newUser.setBusinessEmailAdress(emailB);
+				newUser.setIsBusinessEmailVisible(is_emailB_visible);
+				newUser.setPrivatePhoneNumber(telP);
+				newUser.setIsPrivatePhoneNumberVisible(is_telP_visible);
+				newUser.setbusinessPhoneNumber(telB);
+				newUser.setIsBusinessPhoneNumberVisible(is_telB_visible);
+				newUser.setDescription(notes);
+				newUser.setIsDescriptionVisible(is_note_visible);
 
 				// Database.addUser(newUser);
 

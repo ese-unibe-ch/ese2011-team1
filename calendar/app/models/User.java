@@ -30,16 +30,16 @@ public class User {
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
-	private String privateEmailAddress;	//privateEmailAddress
-	private boolean emailPVis; //isPrivateEmailVisible
-	private String emailB; //businessEmailAdress
-	private boolean emailBVis; //isBusinessEmailVisible
-	private String telP; // privatePhoneNumber
-	private boolean telPVis; // isPrivatePhoneNumberVisible
-	private String telB; // businessPhoneNumber
-	private boolean telBVis; // isBusinessPhoneNumberVisible
-	private String notes; // note
-	private boolean notesVis; //isNoteVisible
+	private String privateEmailAddress;	
+	private boolean isPrivateEmailVisible; 
+	private String businessEmailAdress; 
+	private boolean isBusinessEmailVisible; 
+	private String privatePhoneNumber; 
+	private boolean isPrivatePhoneNumberVisible; 
+	private String businessPhoneNumber; 
+	private boolean isBusinessPhoneNumberVisible; 
+	private String description; 
+	private boolean isDescriptionVisible;
 	private static long counter;
 	
 	/**
@@ -378,86 +378,93 @@ public class User {
 	}
 
 	public String getPrivateEmailAddress() {
-		return privateEmailAddress;
+		return this.privateEmailAddress;
 	}
 
-	public boolean getEmailPVis() {
-		return emailPVis;
+	public boolean getIsPrivateEmailVisible() {
+		return this.isPrivateEmailVisible;
 	}
 
-	public String getEmailB() {
-		return emailB;
+	public String getBusinessEmailAdress() {
+		return this.businessEmailAdress;
 	}
 
-	public boolean getEmailBVis() {
-		return emailBVis;
+	public boolean getIsBusinessEmailVisible() {
+		return this.isBusinessEmailVisible;
 	}
 
-	public String getTelP() {
-		return telP;
+	public String getPrivatePhoneNumber() {
+		return this.privatePhoneNumber;
 	}
 
-	public boolean getTelPVis() {
-		return telPVis;
+	public boolean getIsPrivatePhoneNumberVisible() {
+		return this.isPrivatePhoneNumberVisible;
 	}
 
-	public String getTelB() {
-		return telB;
+	public String getBusinessPhoneNumber() {
+		return this.businessPhoneNumber;
 	}
 
-	public boolean getTelBVis() {
-		return telBVis;
+	public boolean getIsBusinessPhoneNumberVisible() {
+		return this.isBusinessPhoneNumberVisible;
 	}
 
-	public String getNotes() {
-		return notes;
+	public String getDescription() {
+		return this.description;
 	}
 
-	public boolean getNotesVis() {
-		return notesVis;
+	public boolean getIsDescriptionVisible() {
+		return this.isDescriptionVisible;
 	}
 
 	public void setPrivateEmailAddress(String privateEmailAddress) {
 		this.privateEmailAddress = privateEmailAddress;
 	}
 
-	public void setEmailPVis(boolean isEmailPVisible) {
-		this.emailPVis = isEmailPVisible;
+	public void setIsPrivateEmailVisible(boolean isPrivateEmailVisible) {
+		this.isPrivateEmailVisible = isPrivateEmailVisible;
 	}
 
-	public void setEmailB(String emailB) {
-		this.emailB = emailB;
+	public void setBusinessEmailAdress(String businessEmailAdress) {
+		this.businessEmailAdress = businessEmailAdress;
 
 	}
 
-	public void setEmailBVis(boolean isEmailBVisible) {
-		this.emailBVis = isEmailBVisible;
+	public void setIsBusinessEmailVisible(boolean isBusinessEmailVisible) {
+		this.isBusinessEmailVisible = isBusinessEmailVisible;
 	}
 
-	public void setTelP(String telP) {
-		this.telP = telP;
+	public void setPrivatePhoneNumber(String privatePhoneNumber) {
+		this.privatePhoneNumber = privatePhoneNumber;
 	}
 
-	public void setTelPVis(boolean isTelPVisible) {
-		this.telPVis = isTelPVisible;
+	public void setIsPrivatePhoneNumberVisible(boolean isPrivatePhoneNumberVisible) {
+		this.isPrivatePhoneNumberVisible = isPrivatePhoneNumberVisible;
 	}
 
-	public void setTelB(String telB) {
-		this.telB = telB;
+	public void setbusinessPhoneNumber(String businessPhoneNumber) {
+		this.businessPhoneNumber = businessPhoneNumber;
 	}
 
-	public void setTelBVis(boolean isTelBVisible) {
-		this.telBVis = isTelBVisible;
+	public void setIsBusinessPhoneNumberVisible(boolean isBusinessPhoneNumberVisible) {
+		this.isBusinessPhoneNumberVisible = isBusinessPhoneNumberVisible;
 	}
 
-	public void setNotes(String notes) {
-		this.notes = notes;
-	}
-
-	public void setNotesVis(boolean isNoteVisible) {
-		this.notesVis = isNoteVisible;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
+	/**
+	 * 
+	 * @param isDescriptionVisible
+	 */
+	public void setIsDescriptionVisible(boolean isDescriptionVisible) {
+		this.isDescriptionVisible = isDescriptionVisible;
+	}
+	
+	/**
+	 * 
+	 */
 	public String toString() {
 		return this.name;
 	}
