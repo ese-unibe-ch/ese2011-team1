@@ -45,7 +45,7 @@ public class RepeatingEventTest extends UnitTest {
 
 	@Test
 	public void testGetInterVall() {
-		Interval interval = Interval.WEEKLY;
+		Interval interval = Interval.DAILY;
 		RepeatingEvent repeatingEvent = new RepeatingEvent("test",
 				new DateTime(0), new DateTime(0), Visibility.PRIVATE, calendar,
 				interval);
@@ -63,6 +63,34 @@ public class RepeatingEventTest extends UnitTest {
 				nextRepetition.getStart().dayOfMonth());
 		assertEquals(repeatingEvent.getStart().plusDays(7).getYear(),
 				nextRepetition.getStart().getYear());
+	}
+	
+	@Test
+	public void testPointEventConstructor() {
+		String eventName = "newEvent";
+		DateTime now = new DateTime();
+		Visibility visibility = Visibility.PRIVATE;
+		PointEvent event = new PointEvent(eventName, now, now, visibility, calendar);
+		RepeatingEvent newEvent = new RepeatingEvent(event, Interval.DAILY);
+		assertEquals(eventName, newEvent.getName());
+		assertEquals(now, newEvent.getStart());
+		assertEquals(now, newEvent.getEnd());
+		assertEquals(calendar, newEvent.getCalendar());
+	}
+	
+	@Test
+	public void testSpecialDaysOfMonth() {
+		//test new Event on 31 of month
+		//should only show up on every 31st
+		Interval interval = Interval.MONTHLY;
+		DateTime special = new DateTime(2011, 1, 31, 12, 20);
+		RepeatingEvent specialEvent = new RepeatingEvent("testSpecial", special, special, Visibility.PRIVATE, calendar, interval);
+		calendar.addEvent(specialEvent);
+		calendar.generateNextEvents(specialEvent, special.plusMonths(4));
+		assertFalse(calendar.hasEventOnDate(specialEvent.getStart().plusMonths(1).toLocalDate(), user));
+		assertTrue(calendar.hasEventOnDate(specialEvent.getStart().plusMonths(2).toLocalDate(), user));
+		assertEquals(specialEvent.getStart().plusMonths(2), specialEvent.getNextReference().getStart());
+		
 	}
 }
 

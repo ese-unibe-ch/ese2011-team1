@@ -1,17 +1,14 @@
-import models.Calendar;
-import models.Event;
-import models.IntervalEvent;
-import models.PointEvent;
-import models.RepeatingEvent;
-import models.User;
-
+import models.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import play.test.UnitTest;
 import enums.Interval;
 import enums.Visibility;
+
+import play.test.UnitTest;
+
+
 
 public class PointEventTest extends UnitTest {
 	private User user;
@@ -37,8 +34,8 @@ public class PointEventTest extends UnitTest {
 	public void testEditEvent() {
 		// basic editing of attributes
 		String newName = "newName";
-		DateTime newStart = new DateTime(300000);
-		DateTime newEnd = new DateTime(4000000);
+		DateTime newStart = new DateTime();
+		DateTime newEnd = new DateTime();
 		Visibility newVisibility = Visibility.PUBLIC;
 		Interval newInterval = Interval.NONE;
 		String newDescription = "new Description";
@@ -51,8 +48,8 @@ public class PointEventTest extends UnitTest {
 		
 		// change from PointEvent to RepeatingEvent
 		newName = "newName";
-		newStart = new DateTime(300000);
-		newEnd = new DateTime(4000000);
+		newStart = new DateTime();
+		newEnd = new DateTime();
 		newVisibility = Visibility.PUBLIC;
 		newInterval = Interval.WEEKLY;
 		newDescription = "new Description";
