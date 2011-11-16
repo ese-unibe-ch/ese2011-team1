@@ -2,6 +2,7 @@ import java.util.LinkedList;
 
 import models.Calendar;
 import models.Event;
+import models.IntervalEvent;
 import models.PointEvent;
 import models.RepeatingEvent;
 import models.User;
@@ -20,7 +21,7 @@ public class CalendarTest extends UnitTest {
 	private User francis;
 	private Calendar calendarOfOwner;
 	// private Calendar calendarOfFrancis;
-	private Event event;
+	private PointEvent event;
 	private RepeatingEvent repeatingEvent1;
 	private RepeatingEvent repeatingEvent2;
 	private Event eventToday;
@@ -261,6 +262,171 @@ public class CalendarTest extends UnitTest {
 		eventToday2.setVisiblility(Visibility.PUBLIC);
 		assertTrue(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday));
 		assertTrue(calendarOfOwner.getAllVisibleEventsOfDate(testDate.getDayOfMonth(), testDate.getMonthOfYear(), testDate.getYear(), owner).contains(eventToday2));
+	}
+	
+	@Test
+	public void testEditEvent() {
+		String newName = "newName";
+		DateTime newStart = new DateTime(5000000);
+		DateTime newEnd = new DateTime(6000000);
+		Visibility newVisibility = Visibility.BUSY;
+		Interval newInterval = Interval.NONE;
+		DateTime newFrom = new DateTime(5500000);
+		DateTime newTo = new DateTime(6600000);
+		String newDescription = "new Description";
+		calendarOfOwner.editEvent(event, newName, newStart, newEnd, newVisibility, newInterval, newFrom, newTo, newDescription);
+		assertEquals(newName, event.getName());
+		assertEquals(newStart, event.getStart());
+		assertEquals(newEnd, event.getEnd());
+		assertEquals(newVisibility, event.getVisibility());
+		assertEquals(newDescription, event.getDescription());
+	}
+	
+	@Test
+	public void testRemoveSeriesOfRepeatingEvents() {
+		DateTime startDate = repeatingEvent1.getStart();
+		calendarOfOwner.addEvent(repeatingEvent1);
+		
+		repeatingEvent1.generateNextEvents(startDate);
+		assertTrue(calendarOfOwner.hasEventOnDate(startDate.toLocalDate(), owner));
+		Event repetition1 = repeatingEvent1.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+		Event repetition2 = repetition1.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(repeatingEvent1.getBaseId()).contains(repeatingEvent1));
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(repetition1.getBaseId()).contains(repeatingEvent1));
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(repetition2.getBaseId()).contains(repeatingEvent1));
+		calendarOfOwner.removeSeriesOfRepeatingEvents(repeatingEvent1);
+		assertTrue(calendarOfOwner.getSameBaseIdEvents(repeatingEvent1.getBaseId()).isEmpty());
+		assertFalse(calendarOfOwner.hasEventOnDate(startDate.toLocalDate(), owner));
+		assertFalse(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+		assertFalse(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+	}
+	
+	@Test
+	public void testCancelRepeatingEventRepetitionInEndlessIterval() {
+		
+		//set up some repetitions
+		DateTime startDate = repeatingEvent1.getStart();
+		calendarOfOwner.addEvent(repeatingEvent1);
+		calendarOfOwner.generateNextEvents(repeatingEvent1, startDate.plusMonths(3));
+		assertTrue(calendarOfOwner.hasEventOnDate(startDate.toLocalDate(), owner));
+		Event repetition1 = repeatingEvent1;
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+		Event repetition2 = repetition1.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+		Event repetition3 = repetition2.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+		Event repetition4 = repetition3.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+		Event repetition5 = repetition4.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+		Event repetition6 = repetition5.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+		Event repetition7 = repetition6.getNextReference();
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repeatingEvent1.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+		
+		// first, cancel somewhere in repeating Event
+		calendarOfOwner.cancelRepeatingEventRepetitionFromDate(repetition5);
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+		assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+		assertFalse(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+		assertFalse(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+		
+	}
+	
+	@Test
+	public void testCancelRepeatingEventRepetitionInInterval() {
+		//set up some repetitions
+				DateTime startDate = repeatingEvent1.getStart();
+				calendarOfOwner.addEvent(repeatingEvent1);
+				calendarOfOwner.generateNextEvents(repeatingEvent1, startDate.plusMonths(3));
+				assertTrue(calendarOfOwner.hasEventOnDate(startDate.toLocalDate(), owner));
+				Event repetition1 = repeatingEvent1;
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				Event repetition2 = repetition1.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				Event repetition3 = repetition2.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				Event repetition4 = repetition3.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				Event repetition5 = repetition4.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				Event repetition6 = repetition5.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				Event repetition7 = repetition6.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repeatingEvent1.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+				
+				// second, cancel somewhere in the above generated interval (from repeatingEvent1 to repetition5)
+				calendarOfOwner.cancelRepeatingEventRepetitionFromDate(repetition3);
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+				
+	}
+	
+	@Test
+	public void testCancelRepeatingEventRepetitionForHead() {
+		//set up some repetitions
+				DateTime startDate = repeatingEvent1.getStart();
+				calendarOfOwner.addEvent(repeatingEvent1);
+				calendarOfOwner.generateNextEvents(repeatingEvent1, startDate.plusMonths(3));
+				assertTrue(calendarOfOwner.hasEventOnDate(startDate.toLocalDate(), owner));
+				Event repetition1 = repeatingEvent1;
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				Event repetition2 = repetition1.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				Event repetition3 = repetition2.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				Event repetition4 = repetition3.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				Event repetition5 = repetition4.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				Event repetition6 = repetition5.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				Event repetition7 = repetition6.getNextReference();
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repeatingEvent1.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
+				
+				//third, Cancel from repeatingEvent1
+				calendarOfOwner.cancelRepeatingEventRepetitionFromDate(repeatingEvent1);
+				assertTrue(calendarOfOwner.hasEventOnDate(repetition1.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition2.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition3.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition4.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition5.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition6.getStart().toLocalDate(), owner));
+				assertFalse(calendarOfOwner.hasEventOnDate(repetition7.getStart().toLocalDate(), owner));
 	}
 	
 }
