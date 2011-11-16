@@ -224,7 +224,7 @@ public class IntervalEvent extends RepeatingEvent{
 			newPoint.setBaseId(newPoint.getId());
 			newPoint.setOriginId(head.getOriginId());
 			
-			this.getCalendar().getHeadList().add(newPoint);
+			this.getCalendar().getEventHeads().add(newPoint);
 			
 			
 		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
