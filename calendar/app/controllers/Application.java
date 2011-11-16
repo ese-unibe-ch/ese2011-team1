@@ -473,29 +473,6 @@ public class Application extends Controller {
 		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
-		// System.out.println(eventsOfDate);
-
-		// TODO pls fix this - it works but it is ugly
-		// filter
-		LinkedList<Event> tmp = new LinkedList<Event>(eventsOfDate);
-		for (Event e : eventsOfDate) {
-			long currentId = e.getId();
-			boolean flag = true;
-			for (Event t : tmp) {
-				if (t.getId() == currentId) {
-					if (flag) {
-						flag = false;
-
-					} else {
-						// delete here duplicated event
-						eventsOfDate.remove(t);
-						break;
-					}
-				}
-			}
-		}
-
-		// end of filter
 
 		// calendar.PrintAllHeadTails();
 
