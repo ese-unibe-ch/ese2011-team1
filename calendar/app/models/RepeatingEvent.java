@@ -112,7 +112,7 @@ public class RepeatingEvent extends Event {
 			generateMonthly(this, limitDate, interval);
 			break;
 		case YEARLY:
-			generateYearly(this, limitDate.plusYears(5), interval);
+			generateYearly(this, limitDate, interval);
 			break;
 		}
 	}
@@ -130,7 +130,6 @@ public class RepeatingEvent extends Event {
 	 * @param base base event from which we start our event generating process
 	 * @param limiter limit date for event generating process (generate till this date/time)
 	 */
-	// TODO highly buggy due to corner cases.
 	// TODO huge optimization potential: calculate no only events till limiter
 	protected void generateDaylyOrWeekly(Event base, DateTime limiter,
 			Interval interval) {
@@ -174,7 +173,6 @@ public class RepeatingEvent extends Event {
 		}
 	}
 
-	// TODO highly buggy due to corner cases
 	// TODO huge optimization potential: calculate no only events till limiter
 	// but about always constant amount.
 	/**
@@ -205,7 +203,7 @@ public class RepeatingEvent extends Event {
 				DateTime newStartDate = cursor.getStart();
 				DateTime newEndDate = cursor.getEnd();
 				
-				// corner case for 30th/31th of month problem
+				// corner case for 30th/31st/29th of month problem
 				
 				newStartDate = monthDateSpecialCaseTransformer(newStartDate);
 				newEndDate = monthDateSpecialCaseTransformer(newEndDate);
@@ -275,68 +273,77 @@ public class RepeatingEvent extends Event {
 			cursor = cursor.getNextReference();
 		}
 	}
-
-	/**
-	 * Correct corner case Dates for 29/31 of month for repeatingEvents
-	 * 
-	 * If headEvent of argument happens on any of the above mentioned Dates,
-	 * this method corrects the Date of the next repetition to the heads
-	 * original date.
-	 * 
-	 * @param dateToCorrect
-	 *            The date of the new repetition to be corrected.
-	 * @return The possibly corrected date.
-	 */
-//	private DateTime correctDateForCornerCase(DateTime dateToCorrect) {
-//		Event head = getCalendar().getHeadById(this.getBaseId());
-//		DateTime correctedDate = dateToCorrect;
-//		if (head.getStart().getDayOfMonth() > dateToCorrect.getDayOfMonth()) {
-//			correctedDate = dateToCorrect.dayOfMonth().withMaximumValue();
-//		}
-//		return correctedDate;
-//	}
 	
+	/**
+	 * this method calculate based on given base date the next date
+	 * for a monthly repeating event. there are 3 special cases:
+	 * if date is the 29th, 30th or 31st day of month.
+	 * if a following month does not have this day, for example, 
+	 * a February has never an 30 or even a 31 day of month, but suppose
+	 * we have a monthly repeating event for every 30th of month, then on February,
+	 * there wont be any event, since there is no 30th February.
+	 * For regular cases, just increment this base date by one month.
+	 * @param baseDate date/time on which our calculation is based on.
+	 */
 	private DateTime monthDateSpecialCaseTransformer(DateTime baseDate) {
-		int dayOfmonth = baseDate.minusMonths(1).getDayOfMonth();
-
+		int dayOfmonth = baseDate.getDayOfMonth();
+		int monthOfYear = baseDate.getMonthOfYear();
+		System.out.println("new base for gen " + baseDate.toString());
+		
 		// we have a monthly repeating event on a 29th, 30th or 31th.
 		if(dayOfmonth == 31){
-			int monthOfYear = baseDate.minusMonths(1).getMonthOfYear();
+			
 			if(monthOfYear == 1 || monthOfYear == 3 
 					|| monthOfYear == 5 || monthOfYear == 7 
 					|| monthOfYear == 8 || monthOfYear == 10 
 					|| monthOfYear == 12){
 				if(monthOfYear == 7 || monthOfYear == 12){
-					return baseDate;
-				}else{
 					return baseDate.plusMonths(1);
+				}else{
+					return baseDate.plusMonths(2);
 				}
+	
+			}else return baseDate.plusMonths(1);
 			
-			// case februar 	
-			}else if(monthOfYear == 2){
-				return baseDate.plusMonths(1);
-			// residual months
+		
+		// case day 30 of month
+		}else if(dayOfmonth == 30){
+			if(monthOfYear == 1) return baseDate.plusMonths(2);
+			else return baseDate.plusMonths(1);
+			
+			
+		// case day 29 of month
+		}else if(dayOfmonth == 29){
+			if(monthOfYear == 1 && baseDate.dayOfYear().getMaximumValue() == 365){
+				return baseDate.plusMonths(2);
 			}else{
 				return baseDate.plusMonths(1);
 			}
 		
-		// regular dates are handled here
+		// regular dates are handled here, i.e.
+		// dates not on a 29th, 30th or 31st.
 		}else{
-			return baseDate;
+			return baseDate.plusMonths(1);
 		}
-		
+				
 	}
 	
-	// special case: 29 february else return ordinary
+	/**
+	 * this method calculate based on given base date the next date
+	 * for a yearly repeating event. there are 3 special cases:
+	 * if date is the 29th of month and we have a leap year, 
+	 * then the following date for a February is just in 4 years again.
+	 * otherwise for all other cases increment given date by one year.
+	 * @param baseDate date/time on which our calculation is based on.
+	 */
 		private DateTime yearDateSpecialCaseTransformer(DateTime baseDate) {
-			System.out.println("new base for gen " + baseDate.toString());
+			
 			int dayOfmonth = baseDate.getDayOfMonth();
 			int monthOfYear = baseDate.getMonthOfYear();
 			if(dayOfmonth == 29 && monthOfYear == 2){
 				return baseDate.plusYears(4);
 			}else return baseDate.plusYears(1);
 		}
-
 
 
 	/*
