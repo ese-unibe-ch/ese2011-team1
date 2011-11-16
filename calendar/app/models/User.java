@@ -30,7 +30,7 @@ public class User {
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
-	private String emailP;	//privateEmailAddress
+	private String privateEmailAddress;	//privateEmailAddress
 	private boolean emailPVis; //isPrivateEmailVisible
 	private String emailB; //businessEmailAdress
 	private boolean emailBVis; //isBusinessEmailVisible
@@ -377,8 +377,8 @@ public class User {
 		return (this.birthday.getId() == event.getBaseId());
 	}
 
-	public String getEmailP() {
-		return emailP;
+	public String getPrivateEmailAddress() {
+		return privateEmailAddress;
 	}
 
 	public boolean getEmailPVis() {
@@ -417,8 +417,8 @@ public class User {
 		return notesVis;
 	}
 
-	public void setEmailP(String emailP) {
-		this.emailP = emailP;
+	public void setPrivateEmailAddress(String privateEmailAddress) {
+		this.privateEmailAddress = privateEmailAddress;
 	}
 
 	public void setEmailPVis(boolean isEmailPVisible) {

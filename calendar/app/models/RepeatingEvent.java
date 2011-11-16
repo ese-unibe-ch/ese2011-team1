@@ -130,7 +130,7 @@ public class RepeatingEvent extends Event {
 	 * @param base base event from which we start our event generating process
 	 * @param limiter limit date for event generating process (generate till this date/time)
 	 */
-	// TODO huge optimization potential: calculate no only events till limiter
+
 	protected void generateDaylyOrWeekly(Event base, DateTime limiter,
 			Interval interval) {
 		Event cursor = base;
@@ -173,8 +173,6 @@ public class RepeatingEvent extends Event {
 		}
 	}
 
-	// TODO huge optimization potential: calculate no only events till limiter
-	// but about always constant amount.
 	/**
 	 * generates for monthly repeating events based on a given base event 
 	 * its following events till a given limit date/time. 
@@ -293,6 +291,7 @@ public class RepeatingEvent extends Event {
 		// we have a monthly repeating event on a 29th, 30th or 31th.
 		if(dayOfmonth == 31){
 			
+			// if we have a 31er month
 			if(monthOfYear == 1 || monthOfYear == 3 
 					|| monthOfYear == 5 || monthOfYear == 7 
 					|| monthOfYear == 8 || monthOfYear == 10 

@@ -49,7 +49,7 @@ public class publicApplication extends Controller
     			DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
     			User user = new User(name, password, birthdate, nickname);
     			
-    			user.setEmailP(emailP);
+    			user.setPrivateEmailAddress(emailP);
     	    	user.setEmailPVis(is_emailP_visible);
     	    	
     	    	user.setEmailB(emailB);

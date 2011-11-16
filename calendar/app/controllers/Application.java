@@ -107,7 +107,7 @@ public class Application extends Controller {
 		User user = Database.getUserByName(userName);
 		Event birthday = user.getBirthday();
 		String nickname = user.getNickname();
-		String emailP = user.getEmailP();
+		String emailP = user.getPrivateEmailAddress();
 		String emailB = user.getEmailB();
 		String telP = user.getTelP();
 		String telB = user.getTelB();
