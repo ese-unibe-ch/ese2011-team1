@@ -119,22 +119,20 @@
 		%{
 		//if observable calendar is shown, display checkbox as checked
 		boolean statementClosed = false;
-		 if (shownObservedCalendars != null) {
 
-			for (int i=0; i<shownObservedCalendars.size(); i++) {
+			for (int i=0; i<observedCalendars.size(); i++) {
+				// if shown, mark checkbox
 				if (shownObservedCalendars.contains(cal.id)) {
 					out.print('checked="true"');
 				}
-				if (observedCalendars.contains(cal)) {
-					// Color observed calendars
-					int col = interval*c;
-		 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
-		 			c++;
-					statementClosed = true;
-					break;
-				}
+
+				// Color observed calendars
+				int col = interval*c;
+	 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName()+'<br>');
+	 			c++;
+				statementClosed = true;
+				break;
 			}
-		 }
 		 
 		 if (!statementClosed) {
 			out.print('> '+cal.getName()+'<br>');

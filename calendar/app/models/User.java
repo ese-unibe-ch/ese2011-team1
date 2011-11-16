@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import enums.Interval;
 import enums.Visibility;
 
-
 /**
  * The User class represents a User of this Calendar application. Users may have
  * multiple Calendars, all of which can contain multiple Events. Users are
@@ -26,22 +25,22 @@ public class User {
 	private LinkedList<Long> shownObservedCalendars;
 	private String password;
 	private RepeatingEvent birthday;
-//	public boolean isPublicBirthday;
+	// public boolean isPublicBirthday;
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
-	private String privateEmailAddress;	
-	private boolean isPrivateEmailVisible; 
-	private String businessEmailAdress; 
-	private boolean isBusinessEmailVisible; 
-	private String privatePhoneNumber; 
-	private boolean isPrivatePhoneNumberVisible; 
-	private String businessPhoneNumber; 
-	private boolean isBusinessPhoneNumberVisible; 
-	private String description; 
+	private String privateEmailAddress;
+	private boolean isPrivateEmailVisible;
+	private String businessEmailAdress;
+	private boolean isBusinessEmailVisible;
+	private String privatePhoneNumber;
+	private boolean isPrivatePhoneNumberVisible;
+	private String businessPhoneNumber;
+	private boolean isBusinessPhoneNumberVisible;
+	private String description;
 	private boolean isDescriptionVisible;
 	private static long counter;
-	
+
 	/**
 	 * Create a new User for this calendar application.
 	 * 
@@ -55,7 +54,8 @@ public class User {
 	 *            The Users nickname.
 	 * @see {@link User}
 	 */
-	public User(String name, String password, DateTime birthDate, String nickname) {
+	public User(String name, String password, DateTime birthDate,
+			String nickname) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
@@ -70,7 +70,7 @@ public class User {
 		counter++;
 		this.id = counter;
 		initializeBirthday(birthDate);
-		
+
 		// each user x has a default a calender called: x's first calendar
 		calendars.add(new Calendar(name + "'s first calendar", this));
 
@@ -78,18 +78,23 @@ public class User {
 		assert this.name.equals(name);
 		assert calendars != null;
 	}
-	
+
 	/**
 	 * Initializes the birthday calendar and event for this user.
 	 * 
-	 * Sets the correct start and end time of the birthday and adds it to the birthdayCalendar 
-	 * @param birthDate The date of this birthday.
+	 * Sets the correct start and end time of the birthday and adds it to the
+	 * birthdayCalendar
+	 * 
+	 * @param birthDate
+	 *            The date of this birthday.
 	 */
 	private void initializeBirthday(DateTime birthDate) {
 		this.birthdayCalendar = new Calendar("Birthdays", this);
 		DateTime birthdayStart = birthDate.withHourOfDay(0).withMinuteOfHour(0);
 		DateTime birthdayEnd = birthDate.withHourOfDay(23).withMinuteOfHour(59);
-		this.birthday = new RepeatingEvent("birthday", birthdayStart, birthdayEnd, Visibility.PRIVATE, birthdayCalendar, Interval.YEARLY);
+		this.birthday = new RepeatingEvent("birthday", birthdayStart,
+				birthdayEnd, Visibility.PRIVATE, birthdayCalendar,
+				Interval.YEARLY);
 		this.birthdayCalendar.addEvent(birthday);
 		this.birthday.generateNextEvents(birthDate);
 		observedCalendars.add(birthdayCalendar);
@@ -149,9 +154,14 @@ public class User {
 	 *            The new date of the Users <code>birthday</code>.
 	 */
 	public void setBirthdayDate(DateTime birthdayDate) {
-		DateTime newBirthdayStart = birthday.getStart().withDate(birthdayDate.getYear(), birthdayDate.getMonthOfYear(), birthdayDate.getDayOfMonth());
-		DateTime newBirthdayEnd = birthday.getEnd().withDate(birthdayDate.getYear(), birthdayDate.getMonthOfYear(), birthdayDate.getDayOfMonth());
-		birthday.edit(birthday.getName(), newBirthdayStart, newBirthdayEnd, birthday.getVisibility(), birthday.getInterval());
+		DateTime newBirthdayStart = birthday.getStart().withDate(
+				birthdayDate.getYear(), birthdayDate.getMonthOfYear(),
+				birthdayDate.getDayOfMonth());
+		DateTime newBirthdayEnd = birthday.getEnd().withDate(
+				birthdayDate.getYear(), birthdayDate.getMonthOfYear(),
+				birthdayDate.getDayOfMonth());
+		birthday.edit(birthday.getName(), newBirthdayStart, newBirthdayEnd,
+				birthday.getVisibility(), birthday.getInterval());
 	}
 
 	/**
@@ -175,7 +185,8 @@ public class User {
 	public void setBirthdayPublic(boolean is_visible) {
 		Visibility visibility = is_visible ? Visibility.PUBLIC
 				: Visibility.PRIVATE;
-		birthday.edit(birthday.getName(), birthday.getStart(), birthday.getEnd(), visibility, birthday.getInterval());
+		birthday.edit(birthday.getName(), birthday.getStart(),
+				birthday.getEnd(), visibility, birthday.getInterval());
 	}
 
 	/**
@@ -236,8 +247,8 @@ public class User {
 		}
 		return result;
 	}
-	
-	public long getId(){
+
+	public long getId() {
 		return this.id;
 	}
 
@@ -290,35 +301,38 @@ public class User {
 	public void removeShownObservedCalendar(long calId) {
 		shownObservedCalendars.remove(calId);
 	}
-	
+
 	/**
 	 * Adds a calendar to the user's list.
 	 * 
-	 * @param name The name of the calendar to be added
-	 * @param owner The owner of the calendar to be added
+	 * @param name
+	 *            The name of the calendar to be added
+	 * @param owner
+	 *            The owner of the calendar to be added
 	 */
-	public void newCalendar(String name, User owner){
+	public void newCalendar(String name, User owner) {
 		Calendar calendar = new Calendar(name, owner);
 		this.calendars.add(calendar);
 	}
-	
+
 	/**
 	 * Removes a calendar from the user's list.
 	 * 
-	 * @param name The name of the calendar to be added
-	 * @param owner The owner of the calendar to be added
+	 * @param name
+	 *            The name of the calendar to be added
+	 * @param owner
+	 *            The owner of the calendar to be added
 	 */
-	public void deleteCalendar(long calendarId){
-		System.out.println("CalendarId to be deleted: "+calendarId);
-		for (Calendar cal: calendars) {
-			System.out.println("CalendarId checked: "+cal.getId());
+	public void deleteCalendar(long calendarId) {
+		System.out.println("CalendarId to be deleted: " + calendarId);
+		for (Calendar cal : calendars) {
+			System.out.println("CalendarId checked: " + cal.getId());
 			if (cal.getId() == calendarId) {
 				this.calendars.remove(cal);
 				break;
 			}
 		}
 	}
-	
 
 	/**
 	 * Check if a Calendar is observed by this User, based on the Calendars id.
@@ -376,168 +390,200 @@ public class User {
 	public boolean isBirthday(Event event) {
 		return (this.birthday.getId() == event.getBaseId());
 	}
-	
+
 	/**
 	 * get the Private Private Email of this user.
+	 * 
 	 * @return returns Private Email of this user.
 	 */
 	public String getPrivateEmailAddress() {
 		return this.privateEmailAddress;
 	}
-	
+
 	/**
 	 * checks if the Private Email for this user is visible
+	 * 
 	 * @return returns if Private Email of this user is visible
 	 */
 	public boolean getIsPrivateEmailVisible() {
 		return this.isPrivateEmailVisible;
 	}
-	
+
 	/**
 	 * get the Private Business Email of this user.
+	 * 
 	 * @return returns Business Email of this user.
 	 */
 	public String getBusinessEmailAdress() {
 		return this.businessEmailAdress;
 	}
-	
+
 	/**
 	 * checks if the Business Email for this user is visible
+	 * 
 	 * @return returns if Business Email of this user is visible
 	 */
 	public boolean getIsBusinessEmailVisible() {
 		return this.isBusinessEmailVisible;
 	}
-	
+
 	/**
 	 * get the Private Phone Number of this user.
+	 * 
 	 * @return returns Private Phone Number of this user.
 	 */
 	public String getPrivatePhoneNumber() {
 		return this.privatePhoneNumber;
 	}
-	
+
 	/**
 	 * checks if the Private Phone Number for this user is visible
+	 * 
 	 * @return returns if Private Phone Number of this user is visible
 	 */
 	public boolean getIsPrivatePhoneNumberVisible() {
 		return this.isPrivatePhoneNumberVisible;
 	}
-	
+
 	/**
 	 * get the Business Phone Number of this user.
+	 * 
 	 * @return returns Business Phone Number of this user.
 	 */
 	public String getBusinessPhoneNumber() {
 		return this.businessPhoneNumber;
 	}
-	
+
 	/**
 	 * checks if the Business Phone Number for this user is visible
+	 * 
 	 * @return returns if Business Phone Number of this user is visible
 	 */
 	public boolean getIsBusinessPhoneNumberVisible() {
 		return this.isBusinessPhoneNumberVisible;
 	}
-	
+
 	/**
 	 * get the description of this user.
+	 * 
 	 * @return returns description of this user.
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	/**
 	 * checks if the description for this user is visible
+	 * 
 	 * @return returns if description of this user is visible
 	 */
 	public boolean getIsDescriptionVisible() {
 		return this.isDescriptionVisible;
 	}
-	
+
 	/**
 	 * sets Private Email for this user.
-	 * @param privateEmailAddress new Private Email.
+	 * 
+	 * @param privateEmailAddress
+	 *            new Private Email.
 	 */
 	public void setPrivateEmailAddress(String privateEmailAddress) {
 		this.privateEmailAddress = privateEmailAddress;
 	}
-	
+
 	/**
 	 * sets if Private Email for user is visible.
-	 * @param isPrivateEmailVisible visibility for user's PrivateEmail
+	 * 
+	 * @param isPrivateEmailVisible
+	 *            visibility for user's PrivateEmail
 	 */
 	public void setIsPrivateEmailVisible(boolean isPrivateEmailVisible) {
 		this.isPrivateEmailVisible = isPrivateEmailVisible;
 	}
-	
+
 	/**
 	 * sets Business Email for this user.
-	 * @param businessEmailAdress new Business Email.
+	 * 
+	 * @param businessEmailAdress
+	 *            new Business Email.
 	 */
 	public void setBusinessEmailAdress(String businessEmailAdress) {
 		this.businessEmailAdress = businessEmailAdress;
 
 	}
-	
+
 	/**
 	 * sets if Business Email for user is visible.
-	 * @param isBusinessEmailVisible visibility for user's Business Email
+	 * 
+	 * @param isBusinessEmailVisible
+	 *            visibility for user's Business Email
 	 */
 	public void setIsBusinessEmailVisible(boolean isBusinessEmailVisible) {
 		this.isBusinessEmailVisible = isBusinessEmailVisible;
 	}
-	
+
 	/**
 	 * sets Private Phone Number for this user.
-	 * @param privatePhoneNumber new Private Phone Number.
+	 * 
+	 * @param privatePhoneNumber
+	 *            new Private Phone Number.
 	 */
 	public void setPrivatePhoneNumber(String privatePhoneNumber) {
 		this.privatePhoneNumber = privatePhoneNumber;
 	}
-	
+
 	/**
 	 * sets if Private Phone Number for user is visible.
-	 * @param isPrivatePhoneNumberVisible visibility for user's Private Phone Number
+	 * 
+	 * @param isPrivatePhoneNumberVisible
+	 *            visibility for user's Private Phone Number
 	 */
-	public void setIsPrivatePhoneNumberVisible(boolean isPrivatePhoneNumberVisible) {
+	public void setIsPrivatePhoneNumberVisible(
+			boolean isPrivatePhoneNumberVisible) {
 		this.isPrivatePhoneNumberVisible = isPrivatePhoneNumberVisible;
 	}
-	
+
 	/**
-	 * sets business phone number for this user. 
-	 * @param businessPhoneNumber new business phone number.
+	 * sets business phone number for this user.
+	 * 
+	 * @param businessPhoneNumber
+	 *            new business phone number.
 	 */
 	public void setbusinessPhoneNumber(String businessPhoneNumber) {
 		this.businessPhoneNumber = businessPhoneNumber;
 	}
-	
+
 	/**
 	 * sets if business phone number for user is visible.
-	 * @param isBusinessPhoneNumberVisible visibility for user's BusinessPhoneNumber
+	 * 
+	 * @param isBusinessPhoneNumberVisible
+	 *            visibility for user's BusinessPhoneNumber
 	 */
-	public void setIsBusinessPhoneNumberVisible(boolean isBusinessPhoneNumberVisible) {
+	public void setIsBusinessPhoneNumberVisible(
+			boolean isBusinessPhoneNumberVisible) {
 		this.isBusinessPhoneNumberVisible = isBusinessPhoneNumberVisible;
 	}
-	
+
 	/**
-	 * sets description for this user. 
-	 * @param description new description.
+	 * sets description for this user.
+	 * 
+	 * @param description
+	 *            new description.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * sets if description for user is visible.
-	 * @param isDescriptionVisible visibility for user's description
+	 * 
+	 * @param isDescriptionVisible
+	 *            visibility for user's description
 	 */
 	public void setIsDescriptionVisible(boolean isDescriptionVisible) {
 		this.isDescriptionVisible = isDescriptionVisible;
 	}
-	
+
 	/**
 	 * 
 	 */
