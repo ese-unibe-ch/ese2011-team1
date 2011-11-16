@@ -126,15 +126,10 @@ public class Database {
 		List<User> userList = getUserList();
 		List<User> usersFound = new ArrayList<User>();
 
-		// System.out.println("In Datenbank gesucht nach "+query);
-
 		for (int i = 0; i < userList.size(); i++) {
-			System.out.println("Suche nach "
-					+ userList.get(i).getName().toLowerCase());
 			if (userList.get(i).getName().toLowerCase()
 					.contains(query.toLowerCase())) {
 				usersFound.add(userList.get(i));
-				// System.out.println("Füge "+userList.get(i).getName()+" in Resultatmenge hinzu.");
 			}
 		}
 

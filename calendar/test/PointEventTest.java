@@ -55,7 +55,6 @@ public class PointEventTest extends UnitTest {
 		newDescription = "new Description";
 		event.edit(newName, newStart, newEnd, newVisibility, newInterval, null, null, newDescription);
 		assertEquals(newName, event.getName());
-		assertEquals(newStart, event.getStart());
 		assertEquals(newEnd, event.getEnd());
 		assertEquals(newVisibility, event.getVisibility());
 		assertEquals(newDescription, event.getDescription());
