@@ -376,87 +376,163 @@ public class User {
 	public boolean isBirthday(Event event) {
 		return (this.birthday.getId() == event.getBaseId());
 	}
-
+	
+	/**
+	 * get the Private Private Email of this user.
+	 * @return returns Private Email of this user.
+	 */
 	public String getPrivateEmailAddress() {
 		return this.privateEmailAddress;
 	}
-
+	
+	/**
+	 * checks if the Private Email for this user is visible
+	 * @return returns if Private Email of this user is visible
+	 */
 	public boolean getIsPrivateEmailVisible() {
 		return this.isPrivateEmailVisible;
 	}
-
+	
+	/**
+	 * get the Private Business Email of this user.
+	 * @return returns Business Email of this user.
+	 */
 	public String getBusinessEmailAdress() {
 		return this.businessEmailAdress;
 	}
-
+	
+	/**
+	 * checks if the Business Email for this user is visible
+	 * @return returns if Business Email of this user is visible
+	 */
 	public boolean getIsBusinessEmailVisible() {
 		return this.isBusinessEmailVisible;
 	}
-
+	
+	/**
+	 * get the Private Phone Number of this user.
+	 * @return returns Private Phone Number of this user.
+	 */
 	public String getPrivatePhoneNumber() {
 		return this.privatePhoneNumber;
 	}
-
+	
+	/**
+	 * checks if the Private Phone Number for this user is visible
+	 * @return returns if Private Phone Number of this user is visible
+	 */
 	public boolean getIsPrivatePhoneNumberVisible() {
 		return this.isPrivatePhoneNumberVisible;
 	}
-
+	
+	/**
+	 * get the Business Phone Number of this user.
+	 * @return returns Business Phone Number of this user.
+	 */
 	public String getBusinessPhoneNumber() {
 		return this.businessPhoneNumber;
 	}
-
+	
+	/**
+	 * checks if the Business Phone Number for this user is visible
+	 * @return returns if Business Phone Number of this user is visible
+	 */
 	public boolean getIsBusinessPhoneNumberVisible() {
 		return this.isBusinessPhoneNumberVisible;
 	}
-
+	
+	/**
+	 * get the description of this user.
+	 * @return returns description of this user.
+	 */
 	public String getDescription() {
 		return this.description;
 	}
-
+	
+	/**
+	 * checks if the description for this user is visible
+	 * @return returns if description of this user is visible
+	 */
 	public boolean getIsDescriptionVisible() {
 		return this.isDescriptionVisible;
 	}
-
+	
+	/**
+	 * sets Private Email for this user.
+	 * @param privateEmailAddress new Private Email.
+	 */
 	public void setPrivateEmailAddress(String privateEmailAddress) {
 		this.privateEmailAddress = privateEmailAddress;
 	}
-
+	
+	/**
+	 * sets if Private Email for user is visible.
+	 * @param isPrivateEmailVisible visibility for user's PrivateEmail
+	 */
 	public void setIsPrivateEmailVisible(boolean isPrivateEmailVisible) {
 		this.isPrivateEmailVisible = isPrivateEmailVisible;
 	}
-
+	
+	/**
+	 * sets Business Email for this user.
+	 * @param businessEmailAdress new Business Email.
+	 */
 	public void setBusinessEmailAdress(String businessEmailAdress) {
 		this.businessEmailAdress = businessEmailAdress;
 
 	}
-
+	
+	/**
+	 * sets if Business Email for user is visible.
+	 * @param isBusinessEmailVisible visibility for user's Business Email
+	 */
 	public void setIsBusinessEmailVisible(boolean isBusinessEmailVisible) {
 		this.isBusinessEmailVisible = isBusinessEmailVisible;
 	}
-
+	
+	/**
+	 * sets Private Phone Number for this user.
+	 * @param privatePhoneNumber new Private Phone Number.
+	 */
 	public void setPrivatePhoneNumber(String privatePhoneNumber) {
 		this.privatePhoneNumber = privatePhoneNumber;
 	}
-
+	
+	/**
+	 * sets if Private Phone Number for user is visible.
+	 * @param isPrivatePhoneNumberVisible visibility for user's Private Phone Number
+	 */
 	public void setIsPrivatePhoneNumberVisible(boolean isPrivatePhoneNumberVisible) {
 		this.isPrivatePhoneNumberVisible = isPrivatePhoneNumberVisible;
 	}
-
+	
+	/**
+	 * sets business phone number for this user. 
+	 * @param businessPhoneNumber new business phone number.
+	 */
 	public void setbusinessPhoneNumber(String businessPhoneNumber) {
 		this.businessPhoneNumber = businessPhoneNumber;
 	}
-
+	
+	/**
+	 * sets if business phone number for user is visible.
+	 * @param isBusinessPhoneNumberVisible visibility for user's BusinessPhoneNumber
+	 */
 	public void setIsBusinessPhoneNumberVisible(boolean isBusinessPhoneNumberVisible) {
 		this.isBusinessPhoneNumberVisible = isBusinessPhoneNumberVisible;
 	}
-
+	
+	/**
+	 * sets description for this user. 
+	 * @param description new description.
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * 
-	 * @param isDescriptionVisible
+	 * sets if description for user is visible.
+	 * @param isDescriptionVisible visibility for user's description
 	 */
 	public void setIsDescriptionVisible(boolean isDescriptionVisible) {
 		this.isDescriptionVisible = isDescriptionVisible;
