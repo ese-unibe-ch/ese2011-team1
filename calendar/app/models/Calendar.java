@@ -391,7 +391,8 @@ public class Calendar {
 		
 		LinkedList<Event> sameOriginHeads = this.getHeadsByOriginId(victimHead.getOriginId());
 		
-		
+		// case: cancel from not a , given some repeating sequence of event 
+		// [a,b],[c,...,d],[e,..,inf] or [a,b] or [a,b],{c}
 		if(cancelFromThis != victimHead){
 		
 		cancelFromThis.setNext(null);
@@ -426,6 +427,7 @@ public class Calendar {
 		previous.setNext(intervalCursor);
 		intervalCursor.setPrevious(previous);
 		
+		// case: cancel from a , given [a,b],[c,...,d],[e,..,inf] or [a,b] or [a,b],{c}
 		}else{
 			victimHead.setNext(null);
 			cancelFromThis.setPrevious(null);
@@ -437,8 +439,7 @@ public class Calendar {
 			this.eventHeads.add(newPointHead);
 		}
 		
-		// remove all origins to the right of us (time).
-		
+		// remove all same origin heads to the right of us (in terms of time).
 		for(Event head : sameOriginHeads){
 			if(victimHead.getStart().isBefore(head.getStart()))
 				this.eventHeads.remove(head);

@@ -185,26 +185,9 @@ public class IntervalEvent extends RepeatingEvent{
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
-		// [head,...,victim,postvictim]
-		}else if(postVictim.getNextReference() == null){
-			
-			//reset references
-			postVictim.setPrevious(null);
-			this.setNext(null);
-			this.setPrevious(null);
-			preVictim.setNext(null);
-			
-			//postVictim point creation
-			Event newPoint = new PointEvent((IntervalEvent)postVictim);
-			newPoint.editDescription(postVictim.getDescription());
-			newPoint.setBaseId(newPoint.getId());
-			newPoint.setOriginId(head.getOriginId());
-			
-			this.getCalendar().getHeadList().add(newPoint);
-			
 		//[head,victim,postvictim] ==> two point events	
 		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
-	
+			System.out.println("=======> sdfsdfsdfsdfsdfsdfsdf");
 			this.setNext(null);
 			this.setPrevious(null);
 			postVictim.setPrevious(null);
@@ -226,20 +209,50 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getHeadList().add(newLeftPointEvent);
 			
 			
+			// [head,...,victim,postvictim]
+		}else if(postVictim.getNextReference() == null){
+			
+			//reset references
+			postVictim.setPrevious(null);
+			this.setNext(null);
+			this.setPrevious(null);
+			preVictim.setNext(null);
+			
+			//postVictim point creation
+			Event newPoint = new PointEvent((IntervalEvent)postVictim);
+			newPoint.editDescription(postVictim.getDescription());
+			newPoint.setBaseId(newPoint.getId());
+			newPoint.setOriginId(head.getOriginId());
+			
+			this.getCalendar().getHeadList().add(newPoint);
+			
+			
 		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
 			
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
+			
 			this.getCalendar().addEvent(postVictim);
 			postVictim.setBaseId(postVictim.getId());
 			postVictim.setOriginId(head.getOriginId());
+			((IntervalEvent)head).setFrom(preVictim.getStart());
 			
-			// set for whole post victim tail events their new baseId
-			Event cursor = postVictim;
+			Event cursor = head;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
+				((IntervalEvent)cursor).setTo(preVictim.getStart());
+			}
+			
+			((IntervalEvent)postVictim).setFrom(postVictim.getStart());
+			
+			// set for whole post victim tail events their new baseId
+			cursor = postVictim;
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+				((IntervalEvent)cursor).setTo(postVictim.getStart());
 			}
 		}		
 	}
