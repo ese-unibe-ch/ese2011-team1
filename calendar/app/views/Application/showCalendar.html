@@ -203,12 +203,12 @@
 							
 							<div id="important">${event.getDescriptionFor(me)}</div>
 							<div id="unimportant">
-							Created by: ${event.getOwner()} - 
-							${event.getRepetitionFor(me)} - 
-							${event.getVisibilityFor(me)} - 
-							${event.getType()} - 
-							Id ${event.getId()} BaseId ${event.getBaseId()} originId ${event.getOriginId()}
-						 	 ::next #{if event.getNextReference() != null}${event.getNextReference().getParsedStartDate()}  #{/if}
+							Created by: ${event.getOwner()}
+							#{if event.isRepeating()} - repeating: ${event.getRepetitionFor(me).toLowerCase()} #{/if}
+							#{if event.getVisibility() != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
+							<!--  ${event.getType()} -  --> 
+							<!-- Id ${event.getId()} BaseId ${event.getBaseId()} originId ${event.getOriginId()} -->
+						 	<!--  ::next #{if event.getNextReference() != null}${event.getNextReference().getParsedStartDate()}  #{/if} -->
 							
 							</div>
 							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
@@ -222,7 +222,7 @@
 							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
 							<b>Attending: </b> ${event.getAttendingUsers()}<br>
 								#{if event.userIsAttending(me.getName())}
-									You are attending!<b><a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> No longer Attend </a></b><br>
+									You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
 								#{/if}
 								#{else}
 									<a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
