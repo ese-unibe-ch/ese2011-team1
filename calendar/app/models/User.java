@@ -324,9 +324,7 @@ public class User {
 	 *            The owner of the calendar to be added
 	 */
 	public void deleteCalendar(long calendarId) {
-		System.out.println("CalendarId to be deleted: " + calendarId);
 		for (Calendar cal : calendars) {
-			System.out.println("CalendarId checked: " + cal.getId());
 			if (cal.getId() == calendarId) {
 				this.calendars.remove(cal);
 				break;

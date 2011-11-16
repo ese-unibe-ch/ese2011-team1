@@ -20,7 +20,6 @@ import play.mvc.With;
 import enums.Interval;
 import enums.Visibility;
 
-
 @With(Secure.class)
 public class Application extends Controller {
 
@@ -66,8 +65,6 @@ public class Application extends Controller {
 			render(me, null);
 
 		List<User> results = Database.searchUser(userName);
-
-		System.out.println("Resultate: " + results);
 
 		render(me, results);
 	}
@@ -254,7 +251,6 @@ public class Application extends Controller {
 		}
 
 		boolean repeated = interval != Interval.NONE;
-		System.out.println("interval: " + interval + repeated);
 
 		Event e;
 		if (!repeated) {
@@ -276,8 +272,6 @@ public class Application extends Controller {
 			e.setOpen();
 			e.addUserToAttending(me);
 		}
-		System.out.println("Creating and adding " + e + " to calendar: "
-				+ calendar);
 
 		calendar.addEvent(e);
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
@@ -303,8 +297,6 @@ public class Application extends Controller {
 			message = "INVALID INPUT: PLEASE TRY AGAIN!";
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
-
-		System.out.println("inteval size: " + interval);
 
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
@@ -377,12 +369,11 @@ public class Application extends Controller {
 		Calendar calendar = me.getCalendarById(calendarId);
 		boolean editingEvent = false;
 		Event event = null;
-		System.out.println("===============> " + eventId);
+
 		if (eventId >= 0) {
 			event = calendar.getEventById(eventId);
 			editingEvent = true;
 		}
-		System.out.println("===============> " + event);
 
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
@@ -471,14 +462,6 @@ public class Application extends Controller {
 		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me);
-
-		// calendar.PrintAllHeadTails();
-
-		System.out.println("Events of current selcected date:");
-		for (Event e : eventsOfDate)
-			System.out.println("date " + e.getParsedStartDate() + " id "
-					+ e.getId() + " base " + e.getBaseId());
-		System.out.println("done");
 
 		// get bounds for calendar construction
 		int bound = activeDate.withDayOfMonth(1).getDayOfWeek();

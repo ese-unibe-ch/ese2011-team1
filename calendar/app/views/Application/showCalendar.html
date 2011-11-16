@@ -172,15 +172,8 @@
 							int interval = (int)(space/(Math.max(observedCalendars.size(),1)));				
 							int idx = 0;
 							
-							// TODO: Debug CalendarId
-							// System.out.println("Event: " + event + " calendar: " + event.getCalendar()+", color index = "+idx+", interval = "+interval);				
-							// System.out.println("Id des Event-Kalenders:"+event.getCalendarId());
-							// System.out.println("Prüfe calendarIds... ");
-							
 							for (int i=0; i < observedCalendars.size(); i++) {
-								System.out.print(observedCalendars.get(i).getId()+" ");
 								if (observedCalendars.get(i).getId() == event.getCalendarId() || observedCalendars.get(i).getId()+1 == event.getCalendarId()) {
-									// System.out.println("gefunden an Stelle i = "+i);
 									idx = i;
 									break;
 								}
