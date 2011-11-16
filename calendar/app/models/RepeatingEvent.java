@@ -112,7 +112,7 @@ public class RepeatingEvent extends Event {
 			generateMonthly(this, limitDate, interval);
 			break;
 		case YEARLY:
-			generateYearly(this, limitDate, interval);
+			generateYearly(this, limitDate.plusYears(5), interval);
 			break;
 		}
 	}
@@ -202,12 +202,15 @@ public class RepeatingEvent extends Event {
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
 
-				DateTime newStartDate = cursor.getStart().plusMonths(1);
-				DateTime newEndDate = cursor.getEnd().plusMonths(1);
+				DateTime newStartDate = cursor.getStart();
+				DateTime newEndDate = cursor.getEnd();
 				
 				// corner case for 30th/31th of month problem
-//				newStartDate = correctDateForCornerCase(newStartDate);
-//				newEndDate = correctDateForCornerCase(newEndDate);
+				
+				newStartDate = monthDateSpecialCaseTransformer(newStartDate);
+				newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+				//newStartDate = correctDateForCornerCase(newStartDate);
+				//newEndDate = correctDateForCornerCase(newEndDate);
 
 				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
 						newStartDate, newEndDate, cursor.getVisibility(),
@@ -249,12 +252,12 @@ public class RepeatingEvent extends Event {
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
 
-				DateTime newStartDate = cursor.getStart().plusYears(1);
-				DateTime newEndDate = cursor.getEnd().plusYears(1);
+				DateTime newStartDate = cursor.getStart();
+				DateTime newEndDate = cursor.getEnd();
 
 				// corner case for 29feb problem
-//				newStartDate = correctDateForCornerCase(newStartDate);
-//				newEndDate = correctDateForCornerCase(newEndDate);
+				newStartDate = yearDateSpecialCaseTransformer(newStartDate);
+				newEndDate = yearDateSpecialCaseTransformer(newEndDate);
 
 				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
 						newEndDate, cursor.getVisibility(), this.getCalendar(),
@@ -292,6 +295,47 @@ public class RepeatingEvent extends Event {
 //		}
 //		return correctedDate;
 //	}
+	
+	private DateTime monthDateSpecialCaseTransformer(DateTime baseDate) {
+		int dayOfmonth = baseDate.minusMonths(1).getDayOfMonth();
+
+		// we have a monthly repeating event on a 29th, 30th or 31th.
+		if(dayOfmonth == 31){
+			int monthOfYear = baseDate.minusMonths(1).getMonthOfYear();
+			if(monthOfYear == 1 || monthOfYear == 3 
+					|| monthOfYear == 5 || monthOfYear == 7 
+					|| monthOfYear == 8 || monthOfYear == 10 
+					|| monthOfYear == 12){
+				if(monthOfYear == 7 || monthOfYear == 12){
+					return baseDate;
+				}else{
+					return baseDate.plusMonths(1);
+				}
+			
+			// case februar 	
+			}else if(monthOfYear == 2){
+				return baseDate.plusMonths(1);
+			// residual months
+			}else{
+				return baseDate.plusMonths(1);
+			}
+		
+		// regular dates are handled here
+		}else{
+			return baseDate;
+		}
+		
+	}
+	
+	// special case: 29 february else return ordinary
+		private DateTime yearDateSpecialCaseTransformer(DateTime baseDate) {
+			System.out.println("new base for gen " + baseDate.toString());
+			int dayOfmonth = baseDate.getDayOfMonth();
+			int monthOfYear = baseDate.getMonthOfYear();
+			if(dayOfmonth == 29 && monthOfYear == 2){
+				return baseDate.plusYears(4);
+			}else return baseDate.plusYears(1);
+		}
 
 
 

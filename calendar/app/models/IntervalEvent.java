@@ -171,8 +171,6 @@ public class IntervalEvent extends RepeatingEvent{
 				cursor.setBaseId(postVictim.getId());
 			}
 	
-		
-			
 		// if we want to delete the head
 		}else if(this == head){
 			
@@ -237,7 +235,7 @@ public class IntervalEvent extends RepeatingEvent{
 			
 
 			
-			// [head,...,victim,postvictim]
+		// [head,...,victim,postvictim]
 		}else if(postVictim.getNextReference() == null){
 			
 			//reset references
