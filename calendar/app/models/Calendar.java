@@ -389,13 +389,13 @@ public class Calendar {
 		Event victimHead = getHeadById(baseId);
 		Event nextFromCancel = cancelFromThis.getNextReference();
 		
-		LinkedList<Event> sameOriginEvents = this.getHeadsByOriginId(victimHead.getOriginId());
+		LinkedList<Event> sameOriginHeads = this.getHeadsByOriginId(victimHead.getOriginId());
 		
 		
 		if(cancelFromThis != victimHead){
 		
 		cancelFromThis.setNext(null);
-		nextFromCancel.setPrevious(null);
+		if(nextFromCancel != null) nextFromCancel.setPrevious(null);
 		
 		this.getHeadList().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
@@ -437,7 +437,12 @@ public class Calendar {
 			this.eventHeads.add(newPointHead);
 		}
 		
-		// lösche alle origins rechts!
+		// remove all origins to the right of us (time).
+		
+		for(Event head : sameOriginHeads){
+			if(victimHead.getStart().isBefore(head.getStart()))
+				this.eventHeads.remove(head);
+		}
 		
 	}
 	
