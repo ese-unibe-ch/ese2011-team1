@@ -198,7 +198,7 @@
 							<div id="unimportant">
 							Created by: ${event.getOwner()}
 							#{if event.isRepeating()} - repeating: ${event.getRepetitionFor(me).toLowerCase()} #{/if}
-							#{if event.getVisibility() != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
+							#{if event.getVisibilityFor(me) != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
 							<!--  ${event.getType()} -  --> 
 							<!-- Id ${event.getId()} BaseId ${event.getBaseId()} originId ${event.getOriginId()} -->
 						 	<!--  ::next #{if event.getNextReference() != null}${event.getNextReference().getParsedStartDate()}  #{/if} -->
