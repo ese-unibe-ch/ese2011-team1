@@ -50,19 +50,19 @@ public class publicApplication extends Controller
     			User user = new User(name, password, birthdate, nickname);
     			
     			user.setPrivateEmailAddress(emailP);
-    	    	user.setEmailPVis(is_emailP_visible);
+    	    	user.setIsPrivateEmailVisible(is_emailP_visible);
     	    	
-    	    	user.setEmailB(emailB);
-    	    	user.setEmailBVis(is_emailB_visible);
+    	    	user.setBusinessEmailAdress(emailB);
+    	    	user.setIsBusinessEmailVisible(is_emailB_visible);
     	    	
-    	    	user.setTelP(telP);
-    	    	user.setTelPVis(is_telP_visible);
+    	    	user.setPrivatePhoneNumber(telP);
+    	    	user.setIsPrivatePhoneNumberVisible(is_telP_visible);
     	    	
-    	    	user.setTelB(telB);
-    	    	user.setTelBVis(is_telB_visible);
+    	    	user.setbusinessPhoneNumber(telB);
+    	    	user.setIsBusinessPhoneNumberVisible(is_telB_visible);
     	    	
-    	    	user.setNotes(notes);
-    	    	user.setNotesVis(is_note_visible);
+    	    	user.setDescription(notes);
+    	    	user.setIsDescriptionVisible(is_note_visible);
     			
     			Database.addUser(user);
 //    			user.setBirthdayPublic(is_visible);
