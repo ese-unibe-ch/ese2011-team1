@@ -20,6 +20,7 @@ You have to restart the Application for succeeding again with ctrl c and run tes
 	type('name', '')
 	type('password', '123')
 	clickAndWait('css=input[type=submit]')
+	waitForPageToLoad(1000)
 	assertTextPresent('All (*) fields required!')
 	assertTextPresent('Required')
 	type('name', 'Francis')
