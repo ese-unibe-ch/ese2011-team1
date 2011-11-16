@@ -20,7 +20,6 @@ import play.mvc.With;
 import enums.Interval;
 import enums.Visibility;
 
-//so far: jeder user kann neue user erzeugen mit default password 123
 
 @With(Secure.class)
 public class Application extends Controller {
@@ -35,7 +34,6 @@ public class Application extends Controller {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
 		String s_activeDate = new DateTime().toString("dd/MM/yyyy, HH:mm");
-		// todo: remove ourself from list
 
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = me.getCalendars();
