@@ -14,7 +14,9 @@ import android.database.Cursor;
  * We have this attributes just for inheritance issues. 
  * an repeating event can be edited, removed, set interval size. for each repeating event, we can call
  * the method generateNextEvents which generates its successor event if certain conditions
- * (see for that generateNextEvents) are fulfilled.
+ * (see for that generateNextEvents) are fulfilled, but it is important to mention: 
+ * there is no upper bound for generating repeating events (if they are not an IntervalEvnt).
+ * .
  * @author team1
  *
  */

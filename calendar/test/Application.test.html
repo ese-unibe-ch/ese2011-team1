@@ -26,19 +26,16 @@
 	clearSession()
     open('/')
     waitForPageToLoad(1000)
-	
-	//input: a password but no user
-	type('password', '123')
-	clickAndWait('css=input[type=submit]')
-	assertTextPresent('Oops, unknown username or password.')
-	
 	//right login
 	type('username', 'simplay')
 	type('password', '123')
 	clickAndWait('css=input[type=submit]')
 	waitForPageToLoad(1000)
 	assertTitle('Home')
-	assertTextPresent('Calendar Team1 - Hello simplay')
+	assertTextPresent('Home')
+	assertTextPresent('Your calendars')
+	assertTextPresent('Your account')
+	assertTextPresent('Followed calendars')
 	clickAndWait('link=Log out')
 	assertTextPresent('You have been logged out.')
 	clickAndWait('css=input[type=submit]')

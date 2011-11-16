@@ -4,15 +4,14 @@ import enums.Visibility;
 import org.joda.time.DateTime;
 
 /**
- * RepeatingEvent is a specialization of Event. A repeating event has an interval, 
+ * IntervalEvent inherits from RepeatingEvent. An IntevalEvent event has an interval, 
  * which defines the time step size for its repetition. there are also the attributes,
- * upperBound and lowerBound, which are for none IntervalEvent always equal null.
- * We have this attributes just for inheritance issues. 
- * an repeating event can be edited, removed, set interval size. for each repeating event, we can call
- * the method generateNextEvents which generates its successor event if certain conditions
- * (see for that generateNextEvents) are fulfilled.
+ * upperBound and lowerBound, which are set by its constructors. they define bound for 
+ * generating successor events and bound for the event itself.
+ * an interval event can be edited, removed, set interval size, set upper and lower bound.
+ * for each repeating event, we can call the method generateNextEvents which generates its 
+ * successor event if certain conditions (see for that generateNextEvents) are fulfilled.
  * @author team1
- *
  */
 
 public class IntervalEvent extends RepeatingEvent{
@@ -186,26 +185,9 @@ public class IntervalEvent extends RepeatingEvent{
 			preVictim.setNext(null);
 			this.setPrevious(null);
 			
-		// [head,...,victim,postvictim]
-		}else if(postVictim.getNextReference() == null){
-			
-			//reset references
-			postVictim.setPrevious(null);
-			this.setNext(null);
-			this.setPrevious(null);
-			preVictim.setNext(null);
-			
-			//postVictim point creation
-			Event newPoint = new PointEvent((IntervalEvent)postVictim);
-			newPoint.editDescription(postVictim.getDescription());
-			newPoint.setBaseId(newPoint.getId());
-			newPoint.setOriginId(head.getOriginId());
-			
-			this.getCalendar().getEventHeads().add(newPoint);
-			
 		//[head,victim,postvictim] ==> two point events	
 		}else if(postVictim.getNextReference() == null && preVictim.getPreviousReference() == null){
-	
+			System.out.println("=======> sdfsdfsdfsdfsdfsdfsdf");
 			this.setNext(null);
 			this.setPrevious(null);
 			postVictim.setPrevious(null);
@@ -227,20 +209,50 @@ public class IntervalEvent extends RepeatingEvent{
 			this.getCalendar().getEventHeads().add(newLeftPointEvent);
 			
 			
+			// [head,...,victim,postvictim]
+		}else if(postVictim.getNextReference() == null){
+			
+			//reset references
+			postVictim.setPrevious(null);
+			this.setNext(null);
+			this.setPrevious(null);
+			preVictim.setNext(null);
+			
+			//postVictim point creation
+			Event newPoint = new PointEvent((IntervalEvent)postVictim);
+			newPoint.editDescription(postVictim.getDescription());
+			newPoint.setBaseId(newPoint.getId());
+			newPoint.setOriginId(head.getOriginId());
+			
+			this.getCalendar().getHeadList().add(newPoint);
+			
+			
 		// [head,..., previctim] | victim | [postVictim,victim.getTo()]	
 		}else{
 			
 			preVictim.setNext(null);
 			postVictim.setPrevious(null);
+			
 			this.getCalendar().addEvent(postVictim);
 			postVictim.setBaseId(postVictim.getId());
 			postVictim.setOriginId(head.getOriginId());
+			((IntervalEvent)head).setFrom(preVictim.getStart());
 			
-			// set for whole post victim tail events their new baseId
-			Event cursor = postVictim;
+			Event cursor = head;
 			while(cursor.hasNext()){
 				cursor = cursor.getNextReference();
 				cursor.setBaseId(postVictim.getId());
+				((IntervalEvent)cursor).setTo(preVictim.getStart());
+			}
+			
+			((IntervalEvent)postVictim).setFrom(postVictim.getStart());
+			
+			// set for whole post victim tail events their new baseId
+			cursor = postVictim;
+			while(cursor.hasNext()){
+				cursor = cursor.getNextReference();
+				cursor.setBaseId(postVictim.getId());
+				((IntervalEvent)cursor).setTo(postVictim.getStart());
 			}
 		}		
 	}

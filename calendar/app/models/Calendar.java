@@ -163,10 +163,10 @@ public class Calendar {
 	
 	/**
 	 * get all events which are visible for given requester on given local date, correlated to day, month, year
-	 * @param day
-	 * @param month
-	 * @param year
-	 * @param requester
+	 * @param day the day of a month.
+	 * @param month the month of a year.
+	 * @param year year value.
+	 * @param requester user which request for events.
 	 * @return returns a linked list which contains all for given requester visible events for a given date.
 	 */
 	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month, int year, User requester) {
@@ -186,13 +186,12 @@ public class Calendar {
 	}
 	
 	/**
-	 * get all events which are visible for given requester on given local date, correlated to day, month, year
-	 * @param date
-	 * @param requester
+	 * get all events which are visible for given requester on a given date.
+	 * @param date for this date we want to get all events which are visible.
+	 * @param requester the visibility of an event depends on this user. 
 	 * @return returns a linked list which contains all for given requester visible events for a given date.
 	 */
 	// TODO use a priority queue instead of a linked list.
-	// TODO do something about code duplication: maybe have an private method...
 	public LinkedList<Event> getEventsOfDate(LocalDate date, User requester){
 		LinkedList<Event> result = new LinkedList<Event>();
 		// 1. go here through heads
@@ -216,15 +215,13 @@ public class Calendar {
 	 * generates the next couple of events for a given head till a limit date.
 	 * each time we click for the next month in our calendar, we have to generate following events RepeatingEvents.
 	 * the generating process is handled in the event classes itself and depends on the run-time type of an event.
+	 * call this method, whenever we change the month in the calendar GUI
+	 * or added a new event an declared him as an IntervalEvent or RepeatingEvent
+	 * or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
 	 * @param head for this head we are going to generate its following events.
 	 * @param baseDate this DateTime object defines the limiter till which we generate new events for given head.
 	 */
 	
-	// call this method, whenever we change the month in the calendar GUI
-	// or added a new event an declared him as an IntervalEvent or RepeatingEvent
-	// or modified an existing event and changed him to an IntervalEvent or RepeatingEvent
-	// TODO change date stuff to DateTime
-	// TODO check about corner cases, if there exists any.
 	// TODO utilize getLeaf() for calculation improvement 
 	//      => generate new events, starting from leaf
 	
@@ -235,7 +232,6 @@ public class Calendar {
 		
 		// TODO later: set here new leaf for the head!
 		// i think this would be the most efficient way to do that here.
-		//newNextEventsPrinter(head);
 	}
 	
 	/**
@@ -252,6 +248,11 @@ public class Calendar {
 		}
 	}
 	
+	/**
+	 * Generate for each head in our head list the following/successor events
+	 * till a given date base date
+	 * @param baseDate this date/time defines the limit till which we generate events.
+	 */
 	private void generateNextEvents(DateTime baseDate) {
 		for(Event event : this.eventHeads){
 			DateTime currentDate = baseDate;
@@ -348,7 +349,9 @@ public class Calendar {
 	
 	/**
 	 * remove whole series to which an event "member" belongs to.
-	 * I.e. remove an head and its tail from this calendar.
+	 * I.e. remove an head and its tail from this calendar and all
+	 * correlated head-tails which have the same origin id like 
+	 * the origin id of the given member's head.
 	 * @param member this event is part of a head-tail series.
 	 */
 	public void removeSerieOfRepeatingEvents(Event member){
@@ -362,11 +365,6 @@ public class Calendar {
 			this.getEventHeads().remove(head);
 		}
 		
-		/*
-		long baseId = member.getBaseId();
-		Event victimHead = getHeadById(baseId);
-		this.getHeadList().remove(victimHead);
-		*/
 	}
 	
 	/**
@@ -385,11 +383,19 @@ public class Calendar {
 		Event victimHead = getHeadById(baseId);
 		Event nextFromCancel = cancelFromThis.getNextReference();
 		
+		LinkedList<Event> sameOriginHeads = this.getHeadsByOriginId(victimHead.getOriginId());
+		
+		// case: cancel from not a , given some repeating sequence of event 
+		// [a,b],[c,...,d],[e,..,inf] or [a,b] or [a,b],{c}
+		if(cancelFromThis != victimHead){
+		
 		cancelFromThis.setNext(null);
-		nextFromCancel.setPrevious(null);
+		if(nextFromCancel != null) nextFromCancel.setPrevious(null);
 		
 		this.getEventHeads().remove(victimHead);
 		Event newHead = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)victimHead);
+		newHead.editDescription(victimHead.getDescription());
+		newHead.setOriginId(victimHead.getOriginId());
 		newHead.setBaseId(newHead.getId());
 		this.addEvent(newHead);
 		
@@ -401,6 +407,7 @@ public class Calendar {
 			intervalCursor.setPrevious(previous);
 			previous = intervalCursor; // store previous
 			intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+			intervalCursor.editDescription(cursor.getDescription());
 			intervalCursor.setBaseId(newHead.getBaseId());
 			previous.setNext(intervalCursor);
 			intervalCursor.setPrevious(previous);
@@ -408,14 +415,30 @@ public class Calendar {
 		}
 		
 		previous = intervalCursor;
-		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cursor);
+		intervalCursor = new IntervalEvent(victimHead.getStart(), cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
+		intervalCursor.editDescription(cancelFromThis.getDescription());
 		intervalCursor.setBaseId(newHead.getId());
 		previous.setNext(intervalCursor);
 		intervalCursor.setPrevious(previous);
-		Event newEnd = new IntervalEvent(victimHead.getStart(),cancelFromThis.getStart(), (RepeatingEvent)cancelFromThis);
-		newEnd.setBaseId(newHead.getId());
-		intervalCursor.setNext(newEnd);
-		newEnd.setPrevious(intervalCursor);
+		
+		// case: cancel from a , given [a,b],[c,...,d],[e,..,inf] or [a,b] or [a,b],{c}
+		}else{
+			victimHead.setNext(null);
+			cancelFromThis.setPrevious(null);
+			this.eventHeads.remove(victimHead);
+			Event newPointHead = new PointEvent((RepeatingEvent)victimHead);
+			newPointHead.editDescription(victimHead.getDescription());
+			newPointHead.setBaseId(newPointHead.getId());
+			newPointHead.setOriginId(victimHead.getOriginId());
+			this.eventHeads.add(newPointHead);
+		}
+		
+		// remove all same origin heads to the right of us (in terms of time).
+		for(Event head : sameOriginHeads){
+			if(victimHead.getStart().isBefore(head.getStart()))
+				this.eventHeads.remove(head);
+		}
+		
 	}
 	
 	// checker

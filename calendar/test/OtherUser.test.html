@@ -10,25 +10,23 @@
 	type('password', '123')
 	clickAndWait('css=input[type=submit]')
 	assertTitle('Home')
-	assertTextPresent('Calendar')
-	assertTextPresent('Hello simplay')
-	assertTextPresent('Search User:')
-	type('userName','safd')
-	clickAndWait('css=input[type=submit]')
-	assertTextPresent('User (safd) not found!')
-	type('userName', 'mib')
-	clickAndWait('css=input[type=submit]')
-	assertTextPresent('simplay is watching')
-	assertTextPresent('mib's first calendar')
+	assertTextPresent('Home')
+	assertTextPresent('Your calendars')
+	assertTextPresent('Your account')
+	assertTextPresent('Followed calendars')
+	assertTextPresent('Search for a User')
+
+	//type('search','s')
+	
 	clickAndWait('link=mib's first calendar')
-	assertTextPresent('mib's Calendar:')
+	assertTextPresent('mib's first calendar')
 	clickAndWait('link=
 	%{
     	Calendar cal = Calendar.getInstance();
      	out.println(String.valueOf(cal.getTime()).substring(8,10));
 	%}
 	')
-	assertTextNotPresent('Edit')
-	assertTextNotPresent('Remove')
+	assertTextNotPresent('edit')
+	assertTextNotPresent('remove')
 	
 #{/selenium}
