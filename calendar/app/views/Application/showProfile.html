@@ -7,13 +7,13 @@
 	<li><b> Nickname:</b> ${nickname} </li> <br>
 	
 	#{if user.isBirthdayPublic()}<li><b> Birthday:</b> ${birthday.start.toString("dd/MM/yyyy")}</li> <br>#{/if}
-	#{if user.getEmailPVis()}<li><b> E-Mail (P):</b> ${emailP}</li> <br>#{/if}
-	#{if user.getEmailBVis()}<li><b> E-Mail (B):</b> ${emailB}</li> <br>#{/if}
+	#{if user.getIsPrivateEmailVisible()}<li><b> E-Mail (P):</b> ${emailP}</li> <br>#{/if}
+	#{if user.getIsBusinessEmailVisible()}<li><b> E-Mail (B):</b> ${emailB}</li> <br>#{/if}
 	
-	#{if user.getTelPVis()}<li><b> Tel (P):</b> ${telP}</li> <br>#{/if}
-	#{if user.getTelBVis()}<li><b> Tel (B):</b> ${telB}</li> <br>#{/if}
+	#{if user.getIsPrivatePhoneNumberVisible()}<li><b> Tel (P):</b> ${telP}</li> <br>#{/if}
+	#{if user.getIsBusinessPhoneNumberVisible()}<li><b> Tel (B):</b> ${telB}</li> <br>#{/if}
 	
-	#{if user.getNotesVis()}
+	#{if user.getIsDescriptionVisible()}
 		<li><b> Notes:</b></li> <br>
 		<textarea rows="6" cols="100" name="notes" value="${notes}" readonly>${notes}</textarea>
 	#{/if}
