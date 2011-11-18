@@ -563,14 +563,14 @@ public class RepeatingEvent extends Event {
 	}
 
 	/**
-	 * Returns the interval value of this event if given requester is allowed to
-	 * see it otherwise return an empty string.
+	 * Returns the interval of this event as a lower case String.
+	 * All users are allowed to see the repetition status of an event.
 	 * 
 	 * @param requester
 	 *            user which requests for this information.
 	 */
 	public String getRepetitionFor(User requester) {
-		return requester == getOwner() ? "" + this.interval : new String();
+		return this.interval.toString().toLowerCase();
 	}
 
 	/**

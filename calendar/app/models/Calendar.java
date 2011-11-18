@@ -227,7 +227,7 @@ public class Calendar {
 		for (Event head : this.eventHeads) {
 			if (head.happensOn(date))
 				if (head.getVisibility() != Visibility.PRIVATE
-						|| owner == requester)
+						|| head.getOwner() == requester)
 					result.add(head);
 
 			Event cursor = head;
@@ -235,7 +235,7 @@ public class Calendar {
 				cursor = cursor.getNextReference();
 				if (cursor.happensOn(date))
 					if (cursor.getVisibility() != Visibility.PRIVATE
-							|| owner == requester)
+							|| cursor.getOwner() == requester)
 						result.add(cursor);
 			}
 		}
@@ -565,6 +565,7 @@ public class Calendar {
 				}
 				if (hasEvent)
 					break;
+					
 			}
 		}
 		return hasEvent;

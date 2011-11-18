@@ -92,11 +92,12 @@ public class User {
 		this.birthdayCalendar = new Calendar("Birthdays", this);
 		DateTime birthdayStart = birthDate.withHourOfDay(0).withMinuteOfHour(0);
 		DateTime birthdayEnd = birthDate.withHourOfDay(23).withMinuteOfHour(59);
-		this.birthday = new RepeatingEvent("birthday", birthdayStart,
+		this.birthday = new RepeatingEvent(this.name + "'s birthday", birthdayStart,
 				birthdayEnd, Visibility.PRIVATE, birthdayCalendar,
 				Interval.YEARLY);
+		this.birthday.setOriginId(birthday.getId());
 		this.birthdayCalendar.addEvent(birthday);
-		this.birthday.generateNextEvents(birthDate);
+		this.birthday.generateNextEvents(birthDate.plusYears(1));
 		observedCalendars.add(birthdayCalendar);
 	}
 
@@ -185,8 +186,14 @@ public class User {
 	public void setBirthdayPublic(boolean is_visible) {
 		Visibility visibility = is_visible ? Visibility.PUBLIC
 				: Visibility.PRIVATE;
+		RepeatingEvent birthday = this.birthday;
 		birthday.edit(birthday.getName(), birthday.getStart(),
 				birthday.getEnd(), visibility, birthday.getInterval());
+		while(birthday.hasNext()) {
+			birthday = (RepeatingEvent) birthday.getNextReference();
+			birthday.edit(birthday.getName(), birthday.getStart(),
+					birthday.getEnd(), visibility, birthday.getInterval());
+		}
 	}
 
 	/**
@@ -270,6 +277,8 @@ public class User {
 	 */
 	public void addObservedCalendar(Calendar cal) {
 		observedCalendars.add(cal);
+		Event birthday = cal.getOwner().getBirthday();
+		birthdayCalendar.addEvent(birthday);
 	}
 
 	/**
@@ -280,6 +289,8 @@ public class User {
 	 */
 	public void removeObservedCalendar(Calendar cal) {
 		observedCalendars.remove(cal);
+		Event birthday = cal.getOwner().getBirthday();
+		birthdayCalendar.removeSeriesOfRepeatingEvents(birthday);
 	}
 
 	/**

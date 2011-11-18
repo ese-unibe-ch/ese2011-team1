@@ -170,11 +170,10 @@ public class Application extends Controller {
 				// Database.deleteUser(user.getName(), user.getPassword());
 
 				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-				newUser.setBirthdayDate(birthdate);
-				newUser.setBirthdayPublic(is_visible);
 				newUser.setName(name);
 				newUser.setNickname(nickname);
 				newUser.setPassword(password);
+				newUser.setBirthdayDate(birthdate);
 				newUser.setBirthdayPublic(is_visible);
 				newUser.setPrivateEmailAddress(emailP);
 				newUser.setIsPrivateEmailVisible(is_emailP_visible);

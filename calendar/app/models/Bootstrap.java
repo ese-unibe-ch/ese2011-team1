@@ -46,6 +46,7 @@ public class Bootstrap extends Job {
 
 		// dataset 2
 		User mib = new User("mib", "1337", now, "fox");
+		mib.setBirthdayPublic(true);
 		Database.addUser(mib);
 		Calendar mibsFirstCalendar = mib.getdefaultCalendar();
 
