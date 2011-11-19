@@ -152,35 +152,17 @@ public class RepeatingEvent extends Event {
 		Event cursor = base;
 
 		// set up a cursor, starting form base.
-		RepeatingEvent nextEvent = null;
+		Event nextEvent = null;
 
 		// as long as whole month is calculated or is in cursor is in bounds
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-
-				DateTime newStartDate = cursor.getStart().plusDays(
-						getInterval().getDays());
-				DateTime newEndDate = cursor.getEnd().plusDays(
-						getInterval().getDays());
-
-				if (this instanceof IntervalEvent) {
-					DateTime from = ((IntervalEvent) this).getFrom();
-					DateTime to = ((IntervalEvent) this).getTo();
-					nextEvent = new IntervalEvent(this.getName(), newStartDate,
-							newEndDate, from, to, cursor.getVisibility(),
-							this.getCalendar(), this.getInterval());
-				} else {
-					nextEvent = new RepeatingEvent(this.getName(),
-							newStartDate, newEndDate, cursor.getVisibility(),
-							this.getCalendar(), this.getInterval());
-				}
+				nextEvent = generateNextEventDailyWeekly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
-
 			}
 
 			// move cursor
@@ -209,28 +191,15 @@ public class RepeatingEvent extends Event {
 
 		// set up a cursor, starting form base.
 		Event cursor = base;
+		Event nextEvent = null;
 
 		// as long as whole month is calculated or is in cursor is in bounds
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-
-				DateTime newStartDate = cursor.getStart();
-				DateTime newEndDate = cursor.getEnd();
-
-				// corner case for 30th/31st/29th of month problem
-
-				newStartDate = monthDateSpecialCaseTransformer(newStartDate);
-				newEndDate = monthDateSpecialCaseTransformer(newEndDate);
-				// newStartDate = correctDateForCornerCase(newStartDate);
-				// newEndDate = correctDateForCornerCase(newEndDate);
-
-				RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
-						newStartDate, newEndDate, cursor.getVisibility(),
-						this.getCalendar(), this.getInterval());
+				nextEvent = generateNextEventMonthly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
 			}
@@ -261,36 +230,76 @@ public class RepeatingEvent extends Event {
 
 		// set up a cursor, starting form base.
 		Event cursor = base;
-		RepeatingEvent nextEvent = null;
+		Event nextEvent = null;
 
 		// as long as whole month is calculated
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-
-				DateTime newStartDate = cursor.getStart();
-				DateTime newEndDate = cursor.getEnd();
-
-				// corner case for 29feb problem
-				newStartDate = yearDateSpecialCaseTransformer(newStartDate);
-				newEndDate = yearDateSpecialCaseTransformer(newEndDate);
-
-				nextEvent = new RepeatingEvent(this.getName(), newStartDate,
-						newEndDate, cursor.getVisibility(), this.getCalendar(),
-						this.getInterval());
+				nextEvent = generateNextEventYearly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
-
-				nextEvent.getPreviousReference();
-
 			}
 
 			// move cursor
 			cursor = cursor.getNextReference();
 		}
+	}
+	
+	/**
+	 * Generates the next daily or weekly Event for event which cursor 
+	 * represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	protected Event generateNextEventDailyWeekly(Event cursor){
+		DateTime newStartDate = cursor.getStart().plusDays(
+				getInterval().getDays());
+		DateTime newEndDate = cursor.getEnd().plusDays(
+				getInterval().getDays());
+		
+		Event nextEvent = new RepeatingEvent(this.getName(),
+				newStartDate, newEndDate, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next monthly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	protected Event generateNextEventMonthly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
+		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+		
+		Event nextEvent = new RepeatingEvent(this.getName(),
+				newStartDate, newEndDate, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	protected Event generateNextEventYearly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = yearDateSpecialCaseTransformer(newStartDate);
+		newEndDate = yearDateSpecialCaseTransformer(newEndDate);
+		
+		Event nextEvent = new RepeatingEvent(this.getName(),
+				newStartDate, newEndDate, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		return nextEvent;
 	}
 
 	/**
@@ -305,7 +314,7 @@ public class RepeatingEvent extends Event {
 	 * @param baseDate
 	 *            date/time on which our calculation is based on.
 	 */
-	private DateTime monthDateSpecialCaseTransformer(DateTime baseDate) {
+	protected DateTime monthDateSpecialCaseTransformer(DateTime baseDate) {
 		int dayOfmonth = baseDate.getDayOfMonth();
 		int monthOfYear = baseDate.getMonthOfYear();
 
@@ -359,7 +368,7 @@ public class RepeatingEvent extends Event {
 	 * @param baseDate
 	 *            date/time on which our calculation is based on.
 	 */
-	private DateTime yearDateSpecialCaseTransformer(DateTime baseDate) {
+	protected DateTime yearDateSpecialCaseTransformer(DateTime baseDate) {
 
 		int dayOfmonth = baseDate.getDayOfMonth();
 		int monthOfYear = baseDate.getMonthOfYear();

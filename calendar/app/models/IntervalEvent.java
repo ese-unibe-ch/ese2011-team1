@@ -160,6 +160,72 @@ public class IntervalEvent extends RepeatingEvent {
 	}
 
 	/**
+	 * Generates the next daily or weekly Event for event which cursor 
+	 * represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	@Override
+	protected Event generateNextEventDailyWeekly(Event cursor){
+		DateTime newStartDate = cursor.getStart().plusDays(
+				getInterval().getDays());
+		DateTime newEndDate = cursor.getEnd().plusDays(
+				getInterval().getDays());
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next monthly or yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	@Override
+	protected Event generateNextEventMonthly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
+		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next monthly or yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	@Override
+	protected Event generateNextEventYearly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = yearDateSpecialCaseTransformer(newStartDate);
+		newEndDate = yearDateSpecialCaseTransformer(newEndDate);
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
+
+	/**
 	 * removes this event from the calendar to which it belongs to. there are 4
 	 * cases which we have to consider for a deletion of a repeating event: (a)
 	 * there are two elements in a given interval [head, posthead] (i) victim ==
@@ -170,7 +236,7 @@ public class IntervalEvent extends RepeatingEvent {
 	 * previctim] | victim | [postVictim,victim.getTo()] (d) [head,...,
 	 * previctim] | victim | [postVictim, +infinite]
 	 */
-
+	
 	// TODO set new lower bound atm not problematic.
 	@Override
 	public void remove() {

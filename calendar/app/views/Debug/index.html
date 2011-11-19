@@ -1,0 +1,81 @@
+#{extends 'main.html' /}
+#{set title:'Debug' /}
+
+<h1>Debug-View</h1>
+
+<h2>User</h2>
+<table border="1">
+	<tr>
+		<td>id</td>
+		<td>name</td>
+		<td>nickname</td>
+		<td>password</td>
+		<td>birthday</td>
+		<td>description</td>
+		<td>businessEmailAddress</td>
+		<td>businessPhoneNumber</td>
+		<td>privateEmailAddress</td>
+		<td>privatePhoneNumber</td>
+	</tr>
+	#{list items:users, as:'user'}
+	<tr>
+		<td>${user.getId()}</td>
+		<td>${user.getName()}</td>
+		<td>${user.getNickname()}</td>
+		<td>${user.getPassword()}</td>
+		<td>${user.getBirthday()}</td>
+		<td>${user.getDescription()}</td>
+		<td>${user.getBusinessEmailAdress()}</td>
+		<td>${user.getBusinessPhoneNumber()}</td>
+		<td>${user.getPrivateEmailAddress()}</td>
+		<td>${user.getPrivatePhoneNumber()}</td>
+	</tr>
+	#{/list}
+</table>
+
+
+<h2>Calendars</h2>
+<table border="1">
+	<tr>
+		<td>id</td>
+		<td>name</td>
+		<td>owner</td>
+	</tr>
+	#{list items:calendars, as:'calendar'}
+	<tr>
+		<td>${calendar.getId()}</td>
+		<td>${calendar.getName()}</td>
+		<td>${calendar.getOwner()}</td>
+	</tr>
+	#{/list}
+</table>
+
+<h2>Events</h2>
+<table border="1">
+	<tr>
+		<td>id</td>
+		<td>baseId</td>
+		<td>orginId</td>
+		<td>attendingUsers</td>
+		<td>description</td>
+		<td>owner</td>
+		<td>isOpen</td>
+		<td>start</td>
+		<td>end</td>
+		<td>visibility</td>
+	</tr>
+	#{list items:events, as:'event'}
+	<tr>
+		<td>${event.getId()}</td>
+		<td>${event.getBaseId()}</td>
+		<td>${event.getOriginId()}</td>
+		<td>${event.getAttendingUsers().toString()}</td>
+		<td>${event.getDescription()}</td>
+		<td>${event.getOwner()}</td>
+		<td>${event.isOpen()}</td>
+		<td>${event.getStart()}</td>
+		<td>${event.getEnd()}</td>
+		<td>${event.getVisibility()}</td>
+	</tr>
+	#{/list}
+</table>
