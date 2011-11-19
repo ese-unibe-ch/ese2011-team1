@@ -170,7 +170,41 @@ public class IntervalEvent extends RepeatingEvent {
 	 * previctim] | victim | [postVictim,victim.getTo()] (d) [head,...,
 	 * previctim] | victim | [postVictim, +infinite]
 	 */
+	
+	@Override
+	protected Event generateNextEventDailyWeekly(Event cursor){
+		DateTime newStartDate = cursor.getStart().plusDays(
+				getInterval().getDays());
+		DateTime newEndDate = cursor.getEnd().plusDays(
+				getInterval().getDays());
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
+	
+	@Override
+	protected Event generateNextEvent(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
+		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
 
+	
 	// TODO set new lower bound atm not problematic.
 	@Override
 	public void remove() {
