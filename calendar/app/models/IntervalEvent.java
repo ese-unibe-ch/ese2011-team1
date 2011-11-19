@@ -187,12 +187,34 @@ public class IntervalEvent extends RepeatingEvent {
 	 * @return returns the successor event of cursor 
 	 */
 	@Override
-	protected Event generateNextEventMonthlyYearly(Event cursor){
+	protected Event generateNextEventMonthly(Event cursor){
 		DateTime newStartDate = cursor.getStart();
 		DateTime newEndDate = cursor.getEnd();
 		
 		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
 		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+		
+		DateTime from = ((IntervalEvent) this).getFrom();
+		DateTime to = ((IntervalEvent) this).getTo();
+		Event nextEvent = new IntervalEvent(this.getName(), newStartDate,
+				newEndDate, from, to, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next monthly or yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	@Override
+	protected Event generateNextEventYearly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = yearDateSpecialCaseTransformer(newStartDate);
+		newEndDate = yearDateSpecialCaseTransformer(newEndDate);
 		
 		DateTime from = ((IntervalEvent) this).getFrom();
 		DateTime to = ((IntervalEvent) this).getTo();
