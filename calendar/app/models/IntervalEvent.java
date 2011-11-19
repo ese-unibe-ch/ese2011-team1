@@ -160,17 +160,11 @@ public class IntervalEvent extends RepeatingEvent {
 	}
 
 	/**
-	 * removes this event from the calendar to which it belongs to. there are 4
-	 * cases which we have to consider for a deletion of a repeating event: (a)
-	 * there are two elements in a given interval [head, posthead] (i) victim ==
-	 * head ==> deduce a new point event of posthead (ii)victim = posthead ==>
-	 * deduce a new point event of head (b) there are three elements in a given
-	 * interval [head, posthead, postposthead] victim == posthead ==> deduce two
-	 * new point events, one for head, and one for postposthead (c) [head,
-	 * previctim] | victim | [postVictim,victim.getTo()] (d) [head,...,
-	 * previctim] | victim | [postVictim, +infinite]
+	 * Generates the next daily or weekly Event for event which cursor 
+	 * represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
 	 */
-	
 	@Override
 	protected Event generateNextEventDailyWeekly(Event cursor){
 		DateTime newStartDate = cursor.getStart().plusDays(
@@ -187,8 +181,13 @@ public class IntervalEvent extends RepeatingEvent {
 		return nextEvent;
 	}
 	
+	/**
+	 * Generates the next monthly or yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
 	@Override
-	protected Event generateNextEvent(Event cursor){
+	protected Event generateNextEventMonthlyYearly(Event cursor){
 		DateTime newStartDate = cursor.getStart();
 		DateTime newEndDate = cursor.getEnd();
 		
@@ -204,6 +203,17 @@ public class IntervalEvent extends RepeatingEvent {
 		return nextEvent;
 	}
 
+	/**
+	 * removes this event from the calendar to which it belongs to. there are 4
+	 * cases which we have to consider for a deletion of a repeating event: (a)
+	 * there are two elements in a given interval [head, posthead] (i) victim ==
+	 * head ==> deduce a new point event of posthead (ii)victim = posthead ==>
+	 * deduce a new point event of head (b) there are three elements in a given
+	 * interval [head, posthead, postposthead] victim == posthead ==> deduce two
+	 * new point events, one for head, and one for postposthead (c) [head,
+	 * previctim] | victim | [postVictim,victim.getTo()] (d) [head,...,
+	 * previctim] | victim | [postVictim, +infinite]
+	 */
 	
 	// TODO set new lower bound atm not problematic.
 	@Override

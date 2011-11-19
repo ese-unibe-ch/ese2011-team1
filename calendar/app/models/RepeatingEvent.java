@@ -159,66 +159,16 @@ public class RepeatingEvent extends Event {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-				
-				/*
-				DateTime newStartDate = cursor.getStart().plusDays(
-						getInterval().getDays());
-				DateTime newEndDate = cursor.getEnd().plusDays(
-						getInterval().getDays());
-
-				if (this instanceof IntervalEvent) {
-					DateTime from = ((IntervalEvent) this).getFrom();
-					DateTime to = ((IntervalEvent) this).getTo();
-					nextEvent = new IntervalEvent(this.getName(), newStartDate,
-							newEndDate, from, to, cursor.getVisibility(),
-							this.getCalendar(), this.getInterval());
-				} else {
-					nextEvent = new RepeatingEvent(this.getName(),
-							newStartDate, newEndDate, cursor.getVisibility(),
-							this.getCalendar(), this.getInterval());
-				}
-				*/
-				nextEvent = generateNextEvent(cursor);
+				nextEvent = generateNextEventDailyWeekly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
-
 			}
 
 			// move cursor
 			cursor = cursor.getNextReference();
 		}
 	}
-	
-	protected Event generateNextEventDailyWeekly(Event cursor){
-		DateTime newStartDate = cursor.getStart().plusDays(
-				getInterval().getDays());
-		DateTime newEndDate = cursor.getEnd().plusDays(
-				getInterval().getDays());
-		
-		Event nextEvent = new RepeatingEvent(this.getName(),
-				newStartDate, newEndDate, cursor.getVisibility(),
-				this.getCalendar(), this.getInterval());
-		return nextEvent;
-	}
-	
-	protected Event generateNextEvent(Event cursor){
-		DateTime newStartDate = cursor.getStart();
-		DateTime newEndDate = cursor.getEnd();
-		
-		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
-		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
-		
-		Event nextEvent = new RepeatingEvent(this.getName(),
-				newStartDate, newEndDate, cursor.getVisibility(),
-				this.getCalendar(), this.getInterval());
-		return nextEvent;
-	}
-	
-	
-
-	
 
 	/**
 	 * generates for monthly repeating events based on a given base event its
@@ -248,23 +198,8 @@ public class RepeatingEvent extends Event {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-
-				//DateTime newStartDate = cursor.getStart();
-				//DateTime newEndDate = cursor.getEnd();
-
-				// corner case for 30th/31st/29th of month problem
-
-				//newStartDate = monthDateSpecialCaseTransformer(newStartDate);
-				//newEndDate = monthDateSpecialCaseTransformer(newEndDate);
-				//newStartDate = correctDateForCornerCase(newStartDate);
-				//newEndDate = correctDateForCornerCase(newEndDate);
-
-				//RepeatingEvent nextEvent = new RepeatingEvent(this.getName(),
-				//		newStartDate, newEndDate, cursor.getVisibility(),
-				//		this.getCalendar(), this.getInterval());
-				nextEvent = generateNextEvent(cursor);
+				nextEvent = generateNextEventMonthlyYearly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
 			}
@@ -302,30 +237,51 @@ public class RepeatingEvent extends Event {
 
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
-
-				//DateTime newStartDate = cursor.getStart();
-				//DateTime newEndDate = cursor.getEnd();
-
-				// corner case for 29feb problem
-				//newStartDate = yearDateSpecialCaseTransformer(newStartDate);
-				//newEndDate = yearDateSpecialCaseTransformer(newEndDate);
-
-				//nextEvent = new RepeatingEvent(this.getName(), newStartDate,
-				//		newEndDate, cursor.getVisibility(), this.getCalendar(),
-				//		this.getInterval());
-				nextEvent = generateNextEvent(cursor);
+				nextEvent = generateNextEventMonthlyYearly(cursor);
 				cursor.setNext(nextEvent);
-
 				nextEvent.setPrevious(cursor);
 				nextEvent.setBaseId(this.getBaseId());
-
-				nextEvent.getPreviousReference();
-
 			}
 
 			// move cursor
 			cursor = cursor.getNextReference();
 		}
+	}
+	
+	/**
+	 * Generates the next daily or weekly Event for event which cursor 
+	 * represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	protected Event generateNextEventDailyWeekly(Event cursor){
+		DateTime newStartDate = cursor.getStart().plusDays(
+				getInterval().getDays());
+		DateTime newEndDate = cursor.getEnd().plusDays(
+				getInterval().getDays());
+		
+		Event nextEvent = new RepeatingEvent(this.getName(),
+				newStartDate, newEndDate, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		return nextEvent;
+	}
+	
+	/**
+	 * Generates the next monthly or yearly Event for event which cursor represents depending on cursor's date/time.
+	 * @param cursor base event based on we generate its successor event.
+	 * @return returns the successor event of cursor 
+	 */
+	protected Event generateNextEventMonthlyYearly(Event cursor){
+		DateTime newStartDate = cursor.getStart();
+		DateTime newEndDate = cursor.getEnd();
+		
+		newStartDate = monthDateSpecialCaseTransformer(newStartDate);
+		newEndDate = monthDateSpecialCaseTransformer(newEndDate);
+		
+		Event nextEvent = new RepeatingEvent(this.getName(),
+				newStartDate, newEndDate, cursor.getVisibility(),
+				this.getCalendar(), this.getInterval());
+		return nextEvent;
 	}
 
 	/**
