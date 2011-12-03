@@ -69,6 +69,28 @@ public class Application extends Controller {
 		render(me, results);
 	}
 
+	public static void searchEvent(String eventName, String calendarOwner, String displayedCalendarId, String s_activeDate)
+	{
+		if (eventName.equals(""))
+		{
+			render();
+		}
+		User curiousUser = Database.users.get(Security.connected());
+		Calendar displayedCalendar = Database.getUserByName(calendarOwner).getCalendarById(Long.parseLong(displayedCalendarId));
+		DateTime activeDate = null;
+		try
+		{
+			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+		}
+		catch(NullPointerException e)
+		{
+			activeDate = new DateTime();
+		}
+		List<Event> results = displayedCalendar.searchEvent(eventName, curiousUser, activeDate);
+		DateTime today = new DateTime();
+		render(results, curiousUser, today);
+	}
+
 	public static void showEvents(long calendarId, String username,
 			String calendarName) {
 		User me = Database.users.get(Security.connected());
@@ -256,6 +278,11 @@ public class Application extends Controller {
 			e = new PointEvent(name, d_start, d_end, visibility, calendar);
 
 		} else {
+			if(!d_start.plusDays(interval.getDays()).isAfter(d_end))
+			{
+				message = "INVALID INPUT: REPEATING EVENT OVERLAPS WITH ITSELF ON NEXT OCCURRENCE!";
+				addEditEvent(-1, calendarId, name, s_activeDate, message);
+			}
 			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
 					interval);
 			e.setOriginId(e.getId());

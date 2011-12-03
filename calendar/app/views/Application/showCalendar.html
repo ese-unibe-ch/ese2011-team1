@@ -147,6 +147,30 @@
 	
 	<div style="clear:both"></div>
 
+	<!-- Event search -->
+	<script type="text/javascript" charset="utf-8">
+	var searchAction = #{jsAction @searchEvent(':query', user, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+
+	//If you type in the #search field, an ajax request is fired and the response is stored in the results-div
+	$(document).ready(function()
+	{
+		$('#search').keyup(function()
+		{
+			$('#results p').load(searchAction({query: this.value}));
+		});
+	});
+	</script>
+
+	<h2>Search for an Event</h2>
+
+	<input type="text" id="search" name="search">
+
+	<div id="results">
+		<p>
+		</p>
+	</div>
+	<!-- Event search -->
+
 	<div id="Nav">
 		#{if user==me} 
 		<form name="form" action="javascript: document.location = '@{Application.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}'">

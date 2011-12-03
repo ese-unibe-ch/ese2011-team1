@@ -1,0 +1,21 @@
+#{if (results.equals(null) || results.size() == 0)}
+	No events found...
+#{/if}
+#{else}
+	#{list items:results, as:'event'}
+		%{
+			if(event.getEnd().isBefore(today))
+			{
+				out.print('<nb style="font-style:italic; color:rgb(128, 128, 128);">'+event.getNameFor(curiousUser)+'</nb>');
+			}
+			else
+			{
+				out.print(event.getNameFor(curiousUser));
+			}
+		%}, <a href="@{Application.showCalendar(event.getCalendarId(), event.getOwner(), event.getParsedStartDate())}">
+		${event.getParsedStartDate()}
+		</a> - <a href="@{Application.showCalendar(event.getCalendarId(), event.getOwner(), event.getParsedEndDate())}">
+		${event.getParsedEndDate()}
+		</a><br />
+	#{/list}
+#{/else}
