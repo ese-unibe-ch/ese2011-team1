@@ -78,14 +78,14 @@ public class Application extends Controller {
 		User curiousUser = Database.users.get(Security.connected());
 		Calendar displayedCalendar = Database.getUserByName(calendarOwner).getCalendarById(Long.parseLong(displayedCalendarId));
 		DateTime activeDate = null;
-		try
+		/*try
 		{
 			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
 		}
 		catch(NullPointerException e)
-		{
+		{*/
 			activeDate = new DateTime();
-		}
+		//}
 		List<Event> results = displayedCalendar.searchEvent(eventName, curiousUser, activeDate);
 		DateTime today = new DateTime();
 		render(results, curiousUser, today);

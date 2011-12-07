@@ -601,8 +601,10 @@ public class Calendar {
 	public LinkedList<Event> searchEvent(String eventName, User curiousUser, DateTime activeDate)
 	{
 		LinkedList<Event> eventsFound = new LinkedList<Event>();
-		DateTime lowerSearchLimit = activeDate.minusMonths(1);
-		DateTime upperSearchLimit = activeDate.plusMonths(1);
+		//DateTime lowerSearchLimit = activeDate.minusMonths(1);
+		DateTime lowerSearchLimit = activeDate.minusDays(31);
+		//DateTime upperSearchLimit = activeDate.plusMonths(1);
+		DateTime upperSearchLimit = activeDate.plusDays(31);
 		for(DateTime selected = lowerSearchLimit; upperSearchLimit.compareTo(selected) >= 0; selected = selected.plusDays(1))
 		{
 			LinkedList<Event> eventsList = this.getEventsOfDate(new LocalDate(selected), curiousUser);
