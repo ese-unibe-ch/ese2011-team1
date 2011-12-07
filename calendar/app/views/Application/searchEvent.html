@@ -6,16 +6,22 @@
 		%{
 			if(event.getEnd().isBefore(today))
 			{
-				out.print('<nb style="font-style:italic; color:rgb(128, 128, 128);">'+event.getNameFor(curiousUser)+'</nb>');
+				out.print('<nb style="font-style:italic; color:rgb(128, 128, 128);">'+event.getParsedStartDate()+' - '+event.getParsedEndDate()+':'+'</nb>');
 			}
 			else
 			{
-				out.print(event.getNameFor(curiousUser));
+				out.print(event.getParsedStartDate()+' - '+event.getParsedEndDate()+':');
 			}
-		%}, <a href="@{Application.showCalendar(event.getCalendarId(), event.getOwner(), event.getParsedStartDate())}">
-		${event.getParsedStartDate()}
-		</a> - <a href="@{Application.showCalendar(event.getCalendarId(), event.getOwner(), event.getParsedEndDate())}">
-		${event.getParsedEndDate()}
-		</a><br />
+		%} <a href="@{Application.showCalendar(event.getCalendarId(), event.getOwner(), event.getParsedStartDate())}">
+		${event.getNameFor(curiousUser)}
+		</a>
+		%{
+			if(event.getEnd().isBefore(today))
+			{
+				out.print('<nb style="font-style:italic; color:rgb(128, 128, 128);">'+'(Past Event)'+'</nb>');	
+			}
+		%}
+		
+		<br />
 	#{/list}
 #{/else}
