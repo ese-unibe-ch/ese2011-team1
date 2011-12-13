@@ -30,7 +30,7 @@ public class Bootstrap extends Job {
 
 		DateTime now = new DateTime();
 		// dataset 1
-		User simplay = new User("simplay", "123", now, "senderos");
+		User simplay = new User("simplay", "123", now, "senderos", Database.messageSystem);
 		Calendar simplayDefaultCal = simplay.getdefaultCalendar();
 		Event abc = new PointEvent("abc", now, now, Visibility.PUBLIC,
 				simplayDefaultCal);
@@ -45,7 +45,7 @@ public class Bootstrap extends Job {
 		Database.addUser(simplay);
 
 		// dataset 2
-		User mib = new User("mib", "1337", now, "fox");
+		User mib = new User("mib", "1337", now, "fox", Database.messageSystem);
 		mib.setBirthdayPublic(true);
 		Database.addUser(mib);
 		Calendar mibsFirstCalendar = mib.getdefaultCalendar();
@@ -83,7 +83,7 @@ public class Bootstrap extends Job {
 				Visibility.PUBLIC, mibsSecondCalendar);
 		mibsSecondCalendar.addEvent(mib_ev2_3);
 
-		User simon = new User("simon", "1337", now, "simu");
+		User simon = new User("simon", "1337", now, "simu", Database.messageSystem);
 		Database.addUser(simon);
 		Calendar simonsFirstCalendar = simon.getdefaultCalendar();
 

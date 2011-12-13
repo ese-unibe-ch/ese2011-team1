@@ -21,7 +21,7 @@ import org.joda.time.DateTime;
 public class Database {
 
 	public static HashMap<String, User> users = new HashMap<String, User>();
-
+	public static MessageSystem messageSystem = new MessageSystem();
 	/**
 	 * Add a User to the Database.
 	 * 
@@ -52,7 +52,7 @@ public class Database {
 			DateTime birthday, String nickname) {
 		if (!users.containsKey(username)) {
 			users.put(username,
-					new User(username, password, birthday, nickname));
+					new User(username, password, birthday, nickname, messageSystem));
 		}
 	}
 

@@ -39,7 +39,7 @@ public class publicApplication extends Controller {
 		} else {
 			try {
 				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
-				User user = new User(name, password, birthdate, nickname);
+				User user = new User(name, password, birthdate, nickname, Database.messageSystem);
 
 				user.setPrivateEmailAddress(emailP);
 				user.setIsPrivateEmailVisible(is_emailP_visible);
