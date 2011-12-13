@@ -609,10 +609,18 @@ public class User {
 	}
 	
 	/**
-	 * handler of this observer - method called by observable after a notify.
+	 * this user wants to send a message to user with with given id userId
 	 */
-	public void handle(){
+	public void sendMessage(long userId){
 		System.out.println("do something here - maybe send a message :D");
+		this.messageSystem.notifyObservingUser(userId);
+	}
+	
+	/**
+	 * Receive message from message system and do something with it
+	 */
+	public void receiveMessage(){
+		System.out.println("do something here - maybe receive a message :D");
 	}
 
 }

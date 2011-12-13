@@ -11,9 +11,9 @@ import java.util.ArrayList;
 public class MessageSystem {
 	private ArrayList<User> listeners = new ArrayList<User>();
 	
-	public void notifyObservers(long userId){
+	public void notifyObservingUser(long userId){
 		for(User user : listeners)
-			if(user.getId() == userId) user.handle();
+			if(user.getId() == userId) user.receiveMessage();
 	}
 	
 	public void subscribe(User user){
