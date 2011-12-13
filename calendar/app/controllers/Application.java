@@ -57,7 +57,19 @@ public class Application extends Controller {
 		}
 		render(me, user, calendars, s_activeDate);
 	}
+	
+	public static void searchUserForAdding(String userName, String calendarOwner, long calendarId, long eventId, String s_activeDate) {
+		User me = Database.users.get(Security.connected());
 
+		if (userName.equals(""))
+			render(me, null);
+
+		List<User> results = Database.searchUser(userName);
+		DateTime activeDate = new DateTime();
+		
+		render(me, results, userName, calendarId, eventId, activeDate);
+	}
+	
 	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
 
@@ -573,21 +585,34 @@ public class Application extends Controller {
 			long eventId, String s_activeDate) {
 		User me = Database.getUserByName(Security.connected());
 		User user = Database.getUserByName(eventOwner);
-		Calendar cal = user.getCalendarById(calendarId);
+		Calendar cal = me.getCalendarById(calendarId);
 		assert (cal != null);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		for (Event e : cal.getAllVisibleEventsOfDate(
-				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
-				activeDate.getYear(), me)) {
-			if (e.getId() == eventId) {
-				event = e;
+		
+		System.out.println("====================================================================");
+		System.out.println("Trying to fetch the calendar "+calendarId+" from User "+me.getName());
+		System.out.println("====================================================================");
+		
+		System.out.println("cal:"+cal.getName());
+		
+		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(), 
+				activeDate.getMonthOfYear(), 
+				activeDate.getYear(), 
+				me).equals(null)) {
+			for (Event e : cal.getAllVisibleEventsOfDate(
+					activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
+					activeDate.getYear(), me)) {
+				if (e.getId() == eventId) {
+					event = e;
+				}
 			}
 		}
+		
 		assert (event != null);
-		event.addUserToAttending(me);
-		showCalendar(calendarId, user.getName(), s_activeDate,
+		event.addUserToAttending(user);
+		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 

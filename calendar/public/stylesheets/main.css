@@ -106,6 +106,17 @@ form#calendarform {
 	max-width: 68.5%;
 }
 
+#searchForUsers {
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 5px;
+	padding: 5px;
+	max-width: 20%;
+	float:left; 
+	width: 10%; 
+	border-color: hsl(0, 50%, 0%);
+}
+
 #eventName {
 	font-weight: bold;
 	font-size: large;

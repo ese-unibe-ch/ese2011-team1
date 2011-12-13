@@ -1,5 +1,5 @@
 package models;
-
+// subscriber to a messagesystem.
 import java.util.LinkedList;
 
 import org.joda.time.DateTime;
@@ -25,7 +25,7 @@ public class User {
 	private LinkedList<Long> shownObservedCalendars;
 	private String password;
 	private RepeatingEvent birthday;
-	// public boolean isPublicBirthday;
+	private MessageSystem messageSystem;
 	private long id;
 	private String nickname;
 	private Calendar birthdayCalendar;
@@ -41,6 +41,7 @@ public class User {
 	private boolean isDescriptionVisible;
 	private static long counter;
 
+
 	/**
 	 * Create a new User for this calendar application.
 	 * 
@@ -52,10 +53,12 @@ public class User {
 	 *            The Users birthday.
 	 * @param nickname
 	 *            The Users nickname.
+	 *  @param messageSystem
+	 *  		  The message system.          
 	 * @see {@link User}
 	 */
 	public User(String name, String password, DateTime birthDate,
-			String nickname) {
+			String nickname, MessageSystem messageSystem) {
 		// preconditions
 		assert name != null : "Parameter not allowed to be null";
 		assert name.isEmpty() == false : "Empty name, User must have a name";
@@ -73,10 +76,15 @@ public class User {
 
 		// each user x has a default a calender called: x's first calendar
 		calendars.add(new Calendar(name + "'s first calendar", this));
-
+		this.messageSystem = messageSystem;
+		this.messageSystem.subscribe(this);
+		
+		
 		// postconditions
 		assert this.name.equals(name);
 		assert calendars != null;
+		
+		
 	}
 
 	/**
@@ -594,10 +602,17 @@ public class User {
 	}
 
 	/**
-	 * 
+	 * returns the name of this user.
 	 */
 	public String toString() {
 		return this.name;
+	}
+	
+	/**
+	 * handler of this observer - method called by observable after a notify.
+	 */
+	public void handle(){
+		System.out.println("do something here - maybe send a message :D");
 	}
 
 }

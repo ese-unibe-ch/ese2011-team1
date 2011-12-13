@@ -149,27 +149,23 @@
 
 	<!-- Event search -->
 	<script type="text/javascript" charset="utf-8">
-	var searchAction = #{jsAction @searchEvent(':query', user, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
-
-	//If you type in the #search field, an ajax request is fired and the response is stored in the results-div
-	$(document).ready(function()
-	{
-		$('#search').keyup(function()
-		{
-			$('#results p').load(searchAction({query: this.value}));
+	var eventSearch = #{jsAction @searchEvent(':query', user, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+	$(document).ready(function() {
+		$('#eventSearch').keyup(function() {
+			$('#eventResults p').load(eventSearch({query: this.value}));
 		});
 	});
 	</script>
 
 	<h2>Search for an Event</h2>
 
-	<input type="text" id="search" name="search">
+	<input type="text" id="eventSearch" name="eventSearch">
 
-	<div id="results">
+	<div id="eventResults">
 		<p>
 		</p>
 	</div>
-	<!-- Event search -->
+
 
 	<div id="Nav">
 		#{if user==me} 
@@ -186,71 +182,85 @@
 			#{if eventsOfDate.isEmpty()}
 				No events to display.
 			#{/if}
-			#{list items:eventsOfDate, as:'event'}
-				<p>
-				
-				<!-- Color for observed Events -->
-						%{
-						if (me == user) {	
-							int space = 360;
-							int interval = (int)(space/(Math.max(observedCalendars.size(),1)));				
-							int idx = 0;
+			
+#{list items:eventsOfDate, as:'event'}
+<p>
+<div id="event"> <!-- event start -->
+%{
+	if (me == user) {	
+	int space = 360;
+	int interval = (int)(space/(Math.max(observedCalendars.size(),1)));				
+	int idx = 0;
 							
-							for (int i=0; i < observedCalendars.size(); i++) {
-								if (observedCalendars.get(i).getId() == event.getCalendarId() || observedCalendars.get(i).getId()+1 == event.getCalendarId()) {
-									idx = i;
-									break;
-								}
-							}
+	for (int i=0; i < observedCalendars.size(); i++) {
+		if (observedCalendars.get(i).getId() == event.getCalendarId() || observedCalendars.get(i).getId()+1 == event.getCalendarId()) {
+				idx = i;
+				break;
+		}
+	}
 							
-							col = interval*idx;
-							// No border if event is from current user
-							if (me == event.getOwner() && event.getName() != "birthday") 
-								out.print('<div id="eventInformation" style="border-color: hsl(0, 100%, 100%)">');
-							else 
-								out.print('<div id="eventInformation" style="border-color: hsl(' + col + ',100%, 50%)">');
-						}
-						%}
-							<span id="eventName">${event.getNameFor(me)}</span> 
-							
-							%{// TODO Datum nur anzeigen, wenns nicht der aktuelle Tag ist
-							// DONE!
-							 %}
-							<span id="important">${event.getDatesFor(activeDate, me)}</span>
-							
-							<div id="important">${event.getDescriptionFor(me)}</div>
-							<div id="unimportant">
-							Created by: ${event.getOwner()}
-							#{if event.isRepeating()} - repeating: ${event.getRepetitionFor(me).toLowerCase()} #{/if}
-							#{if event.getVisibilityFor(me) != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
-							<!--  ${event.getType()} -  --> 
-							<!-- Id ${event.getId()} BaseId ${event.getBaseId()} originId ${event.getOriginId()} -->
-						 	<!-- ::next #{if event.getNextReference() != null}${event.getNextReference().getParsedStartDate()}, ${event.getNextReference().getVisibility()}  #{/if} -->
-							
-							</div>
-							#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
-								<a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
-								- <a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
-								#{if event.isRepeating()}
-									<a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> - remove all repeating </a>
-									<a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">- cancel repetition from here </a>
-								#{/if}
-							#{/if}
-							#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
-							<b>Attending: </b> ${event.getAttendingUsers()}<br>
-								#{if event.userIsAttending(me.getName())}
-									You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
-								#{/if}
-								#{else}
-									<a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
-								#{/else}  
-							#{/if}
-							</div>
-				</p>
-			#{/list}
-	</table>
+	col = interval*idx;
+	// No border if event is from current user
+	if (me == event.getOwner() && event.getName() != "birthday") 
+		out.print('<div id="eventInformation" style="float:left; width: 60%; border-color: hsl(0, 100%, 100%)">');
+	else 
+		out.print('<div id="eventInformation" style="float:left; width: 60%; border-color: hsl(' + col + ',100%, 50%)">');
+	}
+%}
+<span id="eventName">${event.getNameFor(me)}</span> 
+<span id="important">${event.getDatesFor(activeDate, me)}</span>
+<div id="important">${event.getDescriptionFor(me)}</div>
+<div id="unimportant">
+Created by: ${event.getOwner()}
+#{if event.isRepeating()} - repeating: ${event.getRepetitionFor(me).toLowerCase()} #{/if}
+#{if event.getVisibilityFor(me) != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
+</div>
 
-	
+#{if event.getAttendingUsers() != null}
+<b>Attending: </b> ${event.getAttendingUsers()}<br>
+#{/if}
+
+#{if user == me && me==event.getOwner() && !user.isBirthday(event)}
+  <a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
+  - <a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
+    #{if event.isRepeating()}
+    <a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> - remove all repeating </a>
+    <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">- cancel repetition from here </a>
+    #{/if}
+#{/if}
+
+#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
+  #{if event.userIsAttending(me.getName())}
+  You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
+  #{/if}
+  #{else}
+  <a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
+  #{/else}
+#{/if}
+#{if event.getOwner() == me}
+	<br>Add user: <input type="text" id="userSearch${event.getId()}"><br>
+#{/if}
+
+</div>
+<div id="space" style="float:left; width: 5px; color:white;">-</div>
+
+<div id="userResults${event.getId()}">
+<p>
+</p>
+</div>
+
+</div> <!-- event end -->
+<div style="clear:both"></div>
+</p>
+
+<!-- user search -->
+<script type="text/javascript" charset="utf-8">
+var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+$(document).ready(function() { $('#userSearch${event.getId()}').keyup(function() { $('#userResults${event.getId()} p').load(userSearch${event.getId()}({query: this.value})); });});
+</script>
+#{/list}
+</table>
+
 <form name="hiddenform" action="@{Application.changeObservedCalendars()}">
 <input type="hidden" name="calId" value="" />
 <input type="hidden" name="chk" value="" />
@@ -280,4 +290,3 @@ function changeSelection(boxName) {
 </script>
 </body>	
 </div>
-
