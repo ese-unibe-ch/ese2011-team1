@@ -1,4 +1,5 @@
 import models.*;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class PointEventTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.user = new User("hans", "1234", today, "hans2");
+		this.user = new User("hans", "1234", today, "hans2",Database.messageSystem);
 		this.calendar = new Calendar("testCalendar", user);
 		this.event = new PointEvent("anEvent", today, tomorrow,
 				Visibility.PRIVATE, calendar);
