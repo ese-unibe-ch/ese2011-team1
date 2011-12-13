@@ -73,5 +73,6 @@ precompiled
 tmp
 test-result
 eclipse
+modules
 server.pid
 
