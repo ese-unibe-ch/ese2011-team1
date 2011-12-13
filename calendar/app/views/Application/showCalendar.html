@@ -215,6 +215,11 @@ Created by: ${event.getOwner()}
 #{if event.isRepeating()} - repeating: ${event.getRepetitionFor(me).toLowerCase()} #{/if}
 #{if event.getVisibilityFor(me) != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
 </div>
+
+#{if event.getAttendingUsers() != null}
+<b>Attending: </b> ${event.getAttendingUsers()}<br>
+#{/if}
+
 #{if user == me && me==event.getOwner() && !user.isBirthday(event)}
   <a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
   - <a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
@@ -225,7 +230,6 @@ Created by: ${event.getOwner()}
 #{/if}
 
 #{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
-  <b>Attending: </b> ${event.getAttendingUsers()}<br>
   #{if event.userIsAttending(me.getName())}
   You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
   #{/if}
@@ -251,7 +255,7 @@ Created by: ${event.getOwner()}
 
 <!-- user search -->
 <script type="text/javascript" charset="utf-8">
-var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, calendar.getId(),  event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
 $(document).ready(function() { $('#userSearch${event.getId()}').keyup(function() { $('#userResults${event.getId()} p').load(userSearch${event.getId()}({query: this.value})); });});
 </script>
 #{/list}
