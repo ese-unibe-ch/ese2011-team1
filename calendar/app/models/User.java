@@ -610,17 +610,18 @@ public class User {
 	
 	/**
 	 * this user wants to send a message to user with with given id userId
+	 * use this method in event
 	 */
-	public void sendMessage(long userId){
+	public void sendMessage(long userId, String message){
 		System.out.println("do something here - maybe send a message :D");
-		this.messageSystem.notifyObservingUser(userId);
+		this.messageSystem.notifyObservingUser(userId, message);
 	}
 	
 	/**
 	 * Receive message from message system and do something with it
 	 */
-	public void receiveMessage(){
-		System.out.println("do something here - maybe receive a message :D");
+	public void receiveMessage(String message){
+		System.out.println("received message: " + message);
 	}
 
 }
