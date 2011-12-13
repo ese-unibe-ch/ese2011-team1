@@ -34,9 +34,9 @@ public class EventTest extends UnitTest {
 	@Before
 	public void setUp() throws Exception {
 		Database.clearDatabase();
-		this.user = new User("hans", "1234", today, "hans2");
-		this.francis = new User("francis", "1234", today, "fran");
-		this.stefan = new User("stefan", "1234", today, "stef");
+		this.user = new User("hans", "1234", today, "hans2",Database.messageSystem);
+		this.francis = new User("francis", "1234", today, "fran",Database.messageSystem);
+		this.stefan = new User("stefan", "1234", today, "stef",Database.messageSystem);
 		Database.addUser(user);
 		Database.addUser(francis);
 		Database.addUser(stefan);

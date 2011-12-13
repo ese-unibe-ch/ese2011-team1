@@ -1,4 +1,5 @@
 import models.Calendar;
+import models.Database;
 import models.User;
 
 import org.joda.time.DateTime;
@@ -18,7 +19,7 @@ public class UserTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.user = new User("hans", "1234", myBirthday, "hansli");
+		this.user = new User("hans", "1234", myBirthday, "hansli",Database.messageSystem);
 		this.calendarTest = new Calendar("CalendarTest", user);
 		user.addCalendar(calendarTest);
 	}

@@ -30,11 +30,11 @@ public class RepeatingEventTest extends UnitTest {
 	@Before
 	public void setUp() throws Exception {
 		Database.clearDatabase();
-		this.user = new User("hans", "1234", today, "hans2");
-		this.francis = new User("francis", "1234", today, "fran");
+		this.user = new User("hans", "1234", today, "hans2",Database.messageSystem);
+		this.francis = new User("francis", "1234", today, "fran",Database.messageSystem);
 		Database.addUser(francis);
 		assertTrue(Database.getUserList().contains(francis));
-		this.stefan = new User("stefan", "1234", today, "stef");
+		this.stefan = new User("stefan", "1234", today, "stef",Database.messageSystem);
 		Database.addUser(stefan);
 		assertTrue(Database.getUserList().contains(stefan));
 		this.calendar = new Calendar("testCalendar", user);

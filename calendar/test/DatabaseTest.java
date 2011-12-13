@@ -19,8 +19,8 @@ public class DatabaseTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.francis = new User("francis", "1234", today, "fran");
-		this.stefan = new User("stefan", "1234", today, "stef");
+		this.francis = new User("francis", "1234", today, "fran",Database.messageSystem);
+		this.stefan = new User("stefan", "1234", today, "stef",Database.messageSystem);
 
 	}
 
@@ -74,7 +74,7 @@ public class DatabaseTest extends UnitTest {
 	public void testChangeUserName() {
 		Database.clearDatabase();
 		Database.addUser(francis);
-		this.francis = new User("francisChanged", "1234", today, "fran");
+		this.francis = new User("francisChanged", "1234", today, "fran",Database.messageSystem);
 		Database.changeUserName(francis, "francis", "1234");
 		assertTrue(Database.getUserList().contains(francis));
 		assertEquals(null, Database.getUserByName("francis"));

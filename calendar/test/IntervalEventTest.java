@@ -24,7 +24,7 @@ public class IntervalEventTest extends UnitTest{
 	public void setUp() throws Exception {
 		Database.clearDatabase();
 		DateTime today = new DateTime();
-		this.user = new User("hans", "1234", today, "hans2");
+		this.user = new User("hans", "1234", today, "hans2",Database.messageSystem);
 		this.calendar = new Calendar("testCalendar", user);
 		this.event = new IntervalEvent("intervalEvent", today, today, today, today.plusWeeks(1), Visibility.PRIVATE, calendar, Interval.DAILY);
 		this.event.init();

@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 
 import models.Calendar;
+import models.Database;
 import models.Event;
 import models.PointEvent;
 import models.RepeatingEvent;
@@ -29,8 +30,8 @@ public class CalendarTest extends UnitTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.owner = new User("hans", "123", new DateTime(), "hans1");
-		this.francis = new User("Francis", "1234", new DateTime(), "francis");
+		this.owner = new User("hans", "123", new DateTime(), "hans1",Database.messageSystem);
+		this.francis = new User("Francis", "1234", new DateTime(), "francis", Database.messageSystem);
 		this.calendarOfOwner = new Calendar("Calendar", this.owner);
 		this.francisCalendar = new Calendar("FrancisCal", francis);
 		this.event = new PointEvent("anEvent", new DateTime(0),
