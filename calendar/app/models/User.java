@@ -11,6 +11,7 @@ import enums.Visibility;
  * The User class represents a User of this Calendar application. Users may have
  * multiple Calendars, all of which can contain multiple Events. Users are
  * responsible for maintaining the calendar.
+ * a user observes a message system which notifies him if there is a new message for him.
  * 
  * @see {@link Calendar}
  * 
@@ -23,6 +24,7 @@ public class User {
 	// display in our calendar
 	private LinkedList<Calendar> observedCalendars;
 	private LinkedList<Long> shownObservedCalendars;
+	private LinkedList<Long> eventsToAccept;
 	private String password;
 	private RepeatingEvent birthday;
 	private MessageSystem messageSystem;
@@ -66,7 +68,8 @@ public class User {
 		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
-
+		eventsToAccept = new LinkedList<Long>();
+		
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
@@ -612,16 +615,38 @@ public class User {
 	 * this user wants to send a message to user with with given id userId
 	 * use this method in event
 	 */
-	public void sendMessage(long userId, String message){
+	public void sendMessage(long userId, long calendarId, long eventId, String message){
 		System.out.println("do something here - maybe send a message :D");
-		this.messageSystem.notifyObservingUser(userId, message);
+		this.messageSystem.notifyObservingUser(userId, calendarId, eventId, message);
 	}
 	
 	/**
 	 * Receive message from message system and do something with it
 	 */
-	public void receiveMessage(String message){
+	public void receiveMessage(long eventId, String message){
+		this.eventsToAccept.add(eventId);
 		System.out.println("received message: " + message);
+	}
+	
+	/**
+	 * this user accept invitation to a given event.
+	 * @param userId
+	 * @param calendarId
+	 * @param eventId
+	 */
+	public void acceptInvitation(long userId, long calendarId, long eventId){
+		getEventByUserCalendarEventId(userId, calendarId, eventId).realAddUserToAttending(this);
+	}
+	
+	/**
+	 * 
+	 * @param userId
+	 * @param calendarId
+	 * @param eventId
+	 * @return
+	 */
+	private Event getEventByUserCalendarEventId(long userId, long calendarId, long eventId){
+		return Database.getUserById(userId).getCalendarById(calendarId).getEventById(eventId);
 	}
 
 }
