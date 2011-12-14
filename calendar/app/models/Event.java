@@ -765,17 +765,21 @@ public abstract class Event implements Comparable<Event> {
 	 * @param user
 	 *            user which we want to add to attendingUsers list.
 	 */
+	// TODO rename this method after using message system to requestAttedningUser
 	public void addUserToAttending(User user) {
 		if (!this.attendingUsers.contains(user)){
-			this.attendingUsers.add(user);
+			this.attendingUsers.add(user); // TODO comment out , if we use the message system.
 			
-			// kommentiere aus
-			this.getOwner().sendMessage(user.getId(),this.getCalendar().getId(), this.getId(), "habe user"+user.getName()+" geadded");
+			// TODO wenn message system zum einsatz kommt, kommentiere aus
+			//this.getOwner().sendMessage(user.getId(),this.getCalendar().getId(), this.getId(), "habe user"+user.getName()+" geadded");
 		}
 	}
 	
-	// have a better name
-	public void realAddUserToAttending(User user){
+	// TODO have a better name
+	/**
+	 * Add destination user to attending user list.
+	 */
+	public void futureMethodAddUserToAttending(User user){
 		this.attendingUsers.add(user);
 	}
 
