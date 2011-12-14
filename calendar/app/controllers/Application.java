@@ -81,23 +81,17 @@ public class Application extends Controller {
 		render(me, results);
 	}
 
-	public static void searchEvent(String eventName, String calendarOwner, String displayedCalendarId, String s_activeDate)
-	{
-		if (eventName.equals(""))
-		{
-			render();
-		}
+	public static void searchEvent(String eventName, String calendarOwner, 
+			String displayedCalendarId, String s_activeDate){
+		
+		if (eventName.isEmpty()) render();
+		
 		User curiousUser = Database.users.get(Security.connected());
 		Calendar displayedCalendar = Database.getUserByName(calendarOwner).getCalendarById(Long.parseLong(displayedCalendarId));
 		DateTime activeDate = null;
-		/*try
-		{
-			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
-		}
-		catch(NullPointerException e)
-		{*/
-			activeDate = new DateTime();
-		//}
+
+		activeDate = new DateTime();
+
 		List<Event> results = displayedCalendar.searchEvent(eventName, curiousUser, activeDate);
 		DateTime today = new DateTime();
 		render(results, curiousUser, today);
@@ -107,16 +101,8 @@ public class Application extends Controller {
 			String calendarName) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
-		// DateTime d = new DateTime();
-		// Iterator allVisibleEvents = user.getCalendarById(calendarId)
-		// .getEventList(d, me);
 		Calendar calendars = user.getCalendarById(calendarId);
 		LinkedList<Event> events = new LinkedList<Event>();
-
-		// while (allVisibleEvents.hasNext()) {
-		// events.add((Event) allVisibleEvents.next());
-		// }
-
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
 

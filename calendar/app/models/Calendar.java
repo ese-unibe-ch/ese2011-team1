@@ -598,33 +598,32 @@ public class Calendar {
 	 * @param activeDate Date selected in the calendar. Used to determine search limits.
 	 * @return eventsFound A list with all the events containing the input string.
 	 */
-	public LinkedList<Event> searchEvent(String eventName, User curiousUser, DateTime activeDate)
-	{
+	public LinkedList<Event> searchEvent(String eventName, User curiousUser, DateTime activeDate){
 		LinkedList<Event> eventsFound = new LinkedList<Event>();
 		//DateTime lowerSearchLimit = activeDate.minusMonths(1);
 		DateTime lowerSearchLimit = activeDate.minusDays(31);
 		//DateTime upperSearchLimit = activeDate.plusMonths(1);
 		DateTime upperSearchLimit = activeDate.plusDays(31);
-		for(DateTime selected = lowerSearchLimit; upperSearchLimit.compareTo(selected) >= 0; selected = selected.plusDays(1))
-		{
+		for(DateTime selected = lowerSearchLimit; upperSearchLimit.compareTo(selected) >= 0; selected = selected.plusDays(1)){
 			LinkedList<Event> eventsList = this.getEventsOfDate(new LocalDate(selected), curiousUser);
-			for(Event specificEvent : eventsList)
-			{
+			
+			for(Event specificEvent : eventsList){
 				String searchForName = specificEvent.getNameFor(curiousUser);
-				if(searchForName == null)
-				{
+				
+				if(searchForName == null){
 					searchForName = "";
 				}
+				
 				String searchForDescription = specificEvent.getDescriptionFor(curiousUser);
-				if(searchForDescription == null)
-				{
+				if(searchForDescription == null){
 					searchForDescription = "";
 				}
+				
 				if ((searchForName.toLowerCase().contains(eventName.toLowerCase())
 						|| searchForDescription.toLowerCase().contains(eventName.toLowerCase())
 						|| specificEvent.isBusy())
-					&& !eventsFound.contains(specificEvent))
-				{
+					&& !eventsFound.contains(specificEvent)){
+					
 					eventsFound.add(specificEvent);;
 				}
 			}
