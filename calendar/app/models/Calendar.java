@@ -175,7 +175,7 @@ public class Calendar {
 	}
 
 	/**
-	 * get all events which are visible for given requester on given local date,
+	 * Helper which gets all events which are visible for given requester on given local date,
 	 * correlated to day, month, year
 	 * 
 	 * @param day
@@ -189,7 +189,7 @@ public class Calendar {
 	 * @return returns a linked list which contains all for given requester
 	 *         visible events for a given date.
 	 */
-	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month,
+	public LinkedList<Event> getAllVisibleEventsOfDateHelper(int day, int month,
 			int year, User requester) {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
@@ -206,6 +206,45 @@ public class Calendar {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * get all events which are visible for given requester on given local date,
+	 * correlated to day, month, year
+	 * 
+	 * @param day
+	 *            the day of a month.
+	 * @param month
+	 *            the month of a year.
+	 * @param year
+	 *            year value.
+	 * @param requester
+	 *            user which request for events.
+	 * @return returns a linked list which contains all for given requester
+	 *         visible events for a given date.
+	 */
+	public LinkedList<Event> getAllVisibleEventsOfDate(int day, int month,
+			int year, User requester) {
+		
+		return getAllVisibleEventsOfDateHelper(day, month, year, requester);
+	}
+	
+	/**
+	 * get all events which are visible for given requester on given local date,
+	 * correlated to day, month, year
+	 * 
+	 * @param date
+	 *            local date which represents day month year.
+	 * @param requester
+	 *            user which request for events.
+	 * @return returns a linked list which contains all for given requester
+	 *         visible events for a given date.
+	 */
+	public LinkedList<Event> getAllVisibleEventsOfDate(LocalDate date, User requester) {
+		int day = date.getDayOfMonth();
+		int month = date.getMonthOfYear();
+		int year = date.getYear();
+		return getAllVisibleEventsOfDateHelper(day, month, year, requester);
 	}
 
 	/**
@@ -598,26 +637,20 @@ public class Calendar {
 	 * @param activeDate Date selected in the calendar. Used to determine search limits.
 	 * @return eventsFound A list with all the events containing the input string.
 	 */
-	public LinkedList<Event> searchEvent(String eventName, User curiousUser, DateTime activeDate){
+	public LinkedList<Event> searchEvent(String eventName, User requester, DateTime activeDate){
 		LinkedList<Event> eventsFound = new LinkedList<Event>();
-		//DateTime lowerSearchLimit = activeDate.minusMonths(1);
 		DateTime lowerSearchLimit = activeDate.minusDays(31);
-		//DateTime upperSearchLimit = activeDate.plusMonths(1);
 		DateTime upperSearchLimit = activeDate.plusDays(31);
 		for(DateTime selected = lowerSearchLimit; upperSearchLimit.compareTo(selected) >= 0; selected = selected.plusDays(1)){
-			LinkedList<Event> eventsList = this.getEventsOfDate(new LocalDate(selected), curiousUser);
+			LinkedList<Event> eventsList = this.getAllVisibleEventsOfDate(new LocalDate(selected), requester);
 			
 			for(Event specificEvent : eventsList){
-				String searchForName = specificEvent.getNameFor(curiousUser);
+				String searchForName = specificEvent.getNameFor(requester);
 				
-				if(searchForName == null){
-					searchForName = "";
-				}
+				if(searchForName == null) searchForName = "";
 				
-				String searchForDescription = specificEvent.getDescriptionFor(curiousUser);
-				if(searchForDescription == null){
-					searchForDescription = "";
-				}
+				String searchForDescription = specificEvent.getDescriptionFor(requester);
+				if(searchForDescription == null) searchForDescription = "";
 				
 				if ((searchForName.toLowerCase().contains(eventName.toLowerCase())
 						|| searchForDescription.toLowerCase().contains(eventName.toLowerCase())
