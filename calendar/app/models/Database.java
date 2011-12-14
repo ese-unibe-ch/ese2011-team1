@@ -113,6 +113,18 @@ public class Database {
 	public static User getUserByName(String name) {
 		return users.get(name);
 	}
+	
+	/**
+	 * returns a user by an given id.
+	 * @param userId
+	 * @return
+	 */
+	public static User getUserById(long userId){
+		User result = null;
+		for(User user : getUserList())
+			if(user.getId() == userId) result = user;
+		return result;
+	}
 
 	/**
 	 * Search for all users containing a certain input String and get back a
