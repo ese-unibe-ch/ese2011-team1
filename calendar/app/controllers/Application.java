@@ -307,11 +307,11 @@ public class Application extends Controller {
 		// week
 		// TODO: Add flash notice instead of message, ask customer if Events can
 		// still be created/edited or redirect to create page?
-		if (event.isOverlappingWithOtherEvent()) {
-		message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" +
-		event.getOverlappingEvents();
-		addEditEvent(-1, calendarId, name, s_activeDate, message);
-		}
+//		if (event.isOverlappingWithOtherEvent()) {
+//		message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" +
+//		event.getOverlappingEvents();
+//		addEditEvent(-1, calendarId, name, s_activeDate, message);
+//		}
 
 		calendar.addEvent(event);
 		
@@ -390,11 +390,11 @@ public class Application extends Controller {
 		// week
 		// TODO: Add flash notice instead of message, ask customer if Events can
 		// still be created/edited or redirect to create page?
-		if (event.isOverlappingWithOtherEvent()) {
-			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n"
-					+ event.getOverlappingEvents();
-			addEditEvent(-1, calendarId, name, s_activeDate, message);
-		}
+//		if (event.isOverlappingWithOtherEvent()) {
+//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n"
+//					+ event.getOverlappingEvents();
+//			addEditEvent(eventId, calendarId, name, s_activeDate, message);
+//		}
 
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
