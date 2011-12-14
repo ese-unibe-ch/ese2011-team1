@@ -218,7 +218,18 @@ Created by: ${event.getOwner()}
 </div>
 
 #{if event.getAttendingUsers() != null}
-<b>Attending: </b> ${event.getAttendingUsers()}<br>
+<b>Attending: </b> 
+
+#{list items:event.getAttendingUsers(), as:'attendingUser'}
+  #{if me==event.getOwner()}
+  <a href="@{Application.removeUserFromEvent(attendingUser.getName(), event.getOwner(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <img src="/public/images/minus.png " width="12" alt="plus" /></a> 
+  #{/if}
+  
+  ${attendingUser.getName()}
+#{/list}
+<br>
+
 #{/if}
 
 #{if user == me && me==event.getOwner() && !user.isBirthday(event)}

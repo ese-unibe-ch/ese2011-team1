@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -272,7 +273,7 @@ public abstract class Event implements Comparable<Event> {
 	 * 
 	 * @return returns users which are attending this event.
 	 */
-	public String getAttendingUsers() {
+	public List<User> getAttendingUsers() {
 		StringBuffer sb = new StringBuffer();
 		for (User user : this.attendingUsers) {
 			sb.append(user.getName());
@@ -281,7 +282,9 @@ public abstract class Event implements Comparable<Event> {
 		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 2);
 		}
-		return sb.toString();
+		//return sb.toString();
+		
+		return new LinkedList<User>(attendingUsers);
 	}
 
 	/**
