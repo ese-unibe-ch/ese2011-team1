@@ -189,7 +189,7 @@ public class Calendar {
 	 * @return returns a linked list which contains all for given requester
 	 *         visible events for a given date.
 	 */
-	public LinkedList<Event> getAllVisibleEventsOfDateHelper(int day, int month,
+	private LinkedList<Event> getAllVisibleEventsOfDateHelper(int day, int month,
 			int year, User requester) {
 		LocalDate compareDate = new LocalDate(year, month, day);
 		LinkedList<Event> result = new LinkedList<Event>();
