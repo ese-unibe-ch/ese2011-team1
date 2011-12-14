@@ -298,7 +298,7 @@ public class Application extends Controller {
 		}
 		
 		if (e.isOverlappingWithOtherEvent()) {
-			message = "OVERLAPPING WITH OTHER EVENT!\nOverlapping events: " + e.getOverlappingEvents();
+			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + e.getOverlappingEvents();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 

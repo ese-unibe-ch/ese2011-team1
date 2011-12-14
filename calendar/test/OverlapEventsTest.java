@@ -77,12 +77,31 @@ public class OverlapEventsTest extends UnitTest {
 	public void testRepeatingEventCase1() {
 		DateTime start = new DateTime(2011, 05, 22, 8, 0, 0, 0);
 		DateTime overlappingEnd = new DateTime(2011, 05, 22, 15, 0, 0, 0);
-		System.out.println(start.toString("yyyy-MM-dd HH:mm"));
-		System.out.println(overlappingEnd.toString("yyyy-MM-dd HH:mm"));
 		PointEvent overlappingEvent = new PointEvent("overlappingEvent", start,
 				overlappingEnd, Visibility.PRIVATE, calendar);
 		assertTrue(overlappingEvent.isOverlappingWithOtherEvent());
 		assertTrue(overlappingEvent.getOverlappingEvents().contains(repeatingEvent.getNextReference()));
 	}
 
+	// repeatingEvent case 2
+		@Test
+		public void testRepeatingEventCase2() {
+			DateTime start = new DateTime(2011, 05, 22, 15, 0, 0, 0);
+			DateTime overlappingEnd = new DateTime(2011, 05, 22, 23, 0, 0, 0);
+			PointEvent overlappingEvent = new PointEvent("overlappingEvent", start,
+					overlappingEnd, Visibility.PRIVATE, calendar);
+			assertTrue(overlappingEvent.isOverlappingWithOtherEvent());
+			assertTrue(overlappingEvent.getOverlappingEvents().contains(repeatingEvent.getNextReference()));
+		}
+		
+		// repeatingEvent case 3
+		@Test
+		public void testRepeatingEventCase3() {
+			DateTime start = new DateTime(2011, 05, 22, 10, 0, 0, 0);
+			DateTime overlappingEnd = new DateTime(2011, 05, 22, 20, 0, 0, 0);
+			PointEvent overlappingEvent = new PointEvent("overlappingEvent", start,
+					overlappingEnd, Visibility.PRIVATE, calendar);
+			assertTrue(overlappingEvent.isOverlappingWithOtherEvent());
+			assertTrue(overlappingEvent.getOverlappingEvents().contains(repeatingEvent.getNextReference()));
+		}
 }
