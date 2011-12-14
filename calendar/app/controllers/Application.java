@@ -269,9 +269,9 @@ public class Application extends Controller {
 
 		boolean repeated = interval != Interval.NONE;
 
-		Event e;
+		Event event;
 		if (!repeated) {
-			e = new PointEvent(name, d_start, d_end, visibility, calendar);
+			event = new PointEvent(name, d_start, d_end, visibility, calendar);
 
 		} else {
 			if(!d_start.plusDays(interval.getDays()).isAfter(d_end))
@@ -279,28 +279,30 @@ public class Application extends Controller {
 				message = "INVALID INPUT: REPEATING EVENT OVERLAPS WITH ITSELF ON NEXT OCCURRENCE!";
 				addEditEvent(-1, calendarId, name, s_activeDate, message);
 			}
-			e = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
+			event = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
 					interval);
-			e.setOriginId(e.getId());
-			e.setBaseId(e.getId()); // nicht notwendig
+			event.setOriginId(event.getId());
+			event.setBaseId(event.getId()); // nicht notwendig
 
-			e.generateNextEvents(e.getStart());
+			event.generateNextEvents(event.getStart());
 		}
 
 		// Event e = new Event(me, d_start, d_end, name, visibility, repeated,
 		// intervall, calendarId, is_open);
-		e.editDescription(description);
+		event.editDescription(description);
 		if (isOpen) {
-			e.setOpen();
-			e.addUserToAttending(me);
+			event.setOpen();
+			event.addUserToAttending(me);
 		}
 		
-		if (e.isOverlappingWithOtherEvent()) {
-			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + e.getOverlappingEvents();
-			addEditEvent(-1, calendarId, name, s_activeDate, message);
-		}
+		// Must be commented out until next week, this is a requirement for next week
+		// TODO: Add flash notice instead of message, ask customer if Events can still be created/edited or redirect to create page?
+//		if (event.isOverlappingWithOtherEvent()) {
+//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + event.getOverlappingEvents();
+//			addEditEvent(-1, calendarId, name, s_activeDate, message);
+//		}
 
-		calendar.addEvent(e);
+		calendar.addEvent(event);
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
 				message);
 	}
@@ -371,6 +373,13 @@ public class Application extends Controller {
 			event.setOpen();
 			event.addUserToAttending(me);
 		}
+		
+		// Must be commented out until next week, this is a requirement for next week
+				// TODO: Add flash notice instead of message, ask customer if Events can still be created/edited or redirect to create page?
+//		if (event.isOverlappingWithOtherEvent()) {
+//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + event.getOverlappingEvents();
+//			addEditEvent(-1, calendarId, name, s_activeDate, message);
+//		}
 
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				d_start.getDayOfMonth(), message);

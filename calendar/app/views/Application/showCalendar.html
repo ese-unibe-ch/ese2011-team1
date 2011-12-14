@@ -27,6 +27,7 @@
 	<div id="calendarNavigation">
 			<span id="previousMonth"><a class="button" href="@{Application.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"><<</a></span>
 			<span id="currentMonth">${activeDate.toString("MMM")} ${activeDate.getYear().toString()}</span>
+			<span id= "jump_today"><a class="button" href="@{Application.showCalendar(calendar.getId(), user.getName(), null, activeDate.getDayOfMonth())}">Jump to Today</a></span>
 			<span id="nextMonth"><a class="button" href="@{Application.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}">>></a></span>
 			<br><br>
 	</div>
