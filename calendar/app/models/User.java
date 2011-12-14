@@ -24,7 +24,7 @@ public class User {
 	// display in our calendar
 	private LinkedList<Calendar> observedCalendars;
 	private LinkedList<Long> shownObservedCalendars;
-	private LinkedList<Long> eventsToAccept;
+	private LinkedList<long[]> eventsToAccept;
 	private String password;
 	private RepeatingEvent birthday;
 	private MessageSystem messageSystem;
@@ -68,7 +68,7 @@ public class User {
 		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
-		eventsToAccept = new LinkedList<Long>();
+		eventsToAccept = new LinkedList<long[]>();
 		
 		this.name = name;
 		this.nickname = nickname;
@@ -623,8 +623,10 @@ public class User {
 	/**
 	 * Receive message from message system and do something with it
 	 */
-	public void receiveMessage(long eventId, String message){
-		this.eventsToAccept.add(eventId);
+	public void receiveMessage(long userId, long calendarId, long eventId, String message){
+		long[] triple = {userId,calendarId,eventId};
+		this.eventsToAccept.add(triple);
+
 		System.out.println("received message: " + message);
 	}
 	
@@ -635,11 +637,13 @@ public class User {
 	 * @param eventId
 	 */
 	public void acceptInvitation(long userId, long calendarId, long eventId){
-		getEventByUserCalendarEventId(userId, calendarId, eventId).realAddUserToAttending(this);
+		// get source user by ids and invoke futureMethodAddUserToAttending 
+		// => add this user to attendingUser list of source user corresponding event
+		getEventByUserCalendarEventId(userId, calendarId, eventId).futureMethodAddUserToAttending(this);
 	}
 	
 	/**
-	 * 
+	 * Helper
 	 * @param userId
 	 * @param calendarId
 	 * @param eventId

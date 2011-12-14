@@ -21,17 +21,12 @@ public class MessageSystem {
 	 * @param userId id of destination user
 	 * @param message massage for destination user
 	 */
-	// Request
+	
 	public void notifyObservingUser(long userId, long calendarId, long eventId, String message){
 		for(User user : listeners)
-			if(user.getId() == userId) user.receiveMessage(eventId, message);
+			if(user.getId() == userId) user.receiveMessage(userId, calendarId, eventId, message);
 	}
 	
-	// Respond
-	public void notifyObservingUsedddr(long userId, long eventId, String message){
-		for(User user : listeners)
-			if(user.getId() == userId) user.receiveMessage(eventId, message);
-	}
 	
 	/**
 	 * Subscribe a given user to this message system.
