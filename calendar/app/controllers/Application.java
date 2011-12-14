@@ -61,8 +61,7 @@ public class Application extends Controller {
 	public static void searchUserForAdding(String userName, String calendarOwner, long calendarId, long eventId, String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 
-		if (userName.equals(""))
-			render(me, null);
+		if (userName.isEmpty()) render(me, null);
 
 		List<User> results = Database.searchUser(userName);
 		DateTime activeDate = new DateTime();
@@ -73,8 +72,7 @@ public class Application extends Controller {
 	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
 
-		if (userName.equals(""))
-			render(me, null);
+		if (userName.isEmpty()) render(me, null);
 
 		List<User> results = Database.searchUser(userName);
 
