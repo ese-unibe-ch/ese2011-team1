@@ -598,22 +598,22 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), message);
 	}
 
-	public static void addUserToEvent(String eventOwner, long calendarId,
+	public static void addUserToEvent(String userToAddStr, long calendarId,
 			long eventId, String s_activeDate) {
 		User me = Database.getUserByName(Security.connected());
-		User user = Database.getUserByName(eventOwner);
+		User userToAdd = Database.getUserByName(userToAddStr);
 		Calendar cal = me.getCalendarById(calendarId);
 		assert (cal != null);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
 
-		System.out
-				.println("====================================================================");
-		System.out.println("Trying to fetch the calendar " + calendarId
-				+ " from User " + me.getName());
-		System.out
-				.println("====================================================================");
+//		System.out
+//				.println("====================================================================");
+//		System.out.println("Trying to fetch the calendar " + calendarId
+//				+ " from User " + me.getName());
+//		System.out
+//				.println("====================================================================");
 
 		System.out.println("cal:" + cal.getName());
 
@@ -630,16 +630,20 @@ public class Application extends Controller {
 		}
 
 		assert (event != null);
-		event.addUserToAttending(user);
+		event.addUserToAttending(userToAdd);
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 
-	public static void removeUserFromEvent(String eventOwner, long calendarId,
+	public static void removeUserFromEvent(String userToRemoveStr, String eventOwner, long calendarId,
 			long eventId, String s_activeDate) {
+		System.out.println("Called removeUserFromEvent with eventOwner:"+eventOwner);
+		System.out.println("calendarId: "+calendarId+", eventId: "+eventId);
+		System.out.println("User to remove:"+userToRemoveStr);
+		
 		User me = Database.getUserByName(Security.connected());
-		User user = Database.getUserByName(eventOwner);
-		Calendar cal = user.getCalendarById(calendarId);
+		User userToRemove = Database.getUserByName(userToRemoveStr);
+		Calendar cal = me.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
@@ -651,8 +655,8 @@ public class Application extends Controller {
 			}
 		}
 		assert (event != null);
-		event.removeUserFromAttending(me);
-		showCalendar(calendarId, user.getName(), s_activeDate,
+		event.removeUserFromAttending(userToRemove);
+		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 
