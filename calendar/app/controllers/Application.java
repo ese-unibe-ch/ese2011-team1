@@ -57,40 +57,47 @@ public class Application extends Controller {
 		}
 		render(me, user, calendars, s_activeDate);
 	}
-	
-	public static void searchUserForAdding(String userName, String calendarOwner, long calendarId, long eventId, String s_activeDate) {
+
+	public static void searchUserForAdding(String userName,
+			String calendarOwner, long calendarId, long eventId,
+			String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 
-		if (userName.isEmpty()) render(me, null);
+		if (userName.isEmpty())
+			render(me, null);
 
 		List<User> results = Database.searchUser(userName);
 		DateTime activeDate = new DateTime();
-		
+
 		render(me, results, userName, calendarId, eventId, activeDate);
 	}
-	
+
 	public static void searchUser(String userName) {
 		User me = Database.users.get(Security.connected());
 
-		if (userName.isEmpty()) render(me, null);
+		if (userName.isEmpty())
+			render(me, null);
 
 		List<User> results = Database.searchUser(userName);
 
 		render(me, results);
 	}
 
-	public static void searchEvent(String eventName, String calendarOwner, 
-			String displayedCalendarId, String s_activeDate){
-		
-		if (eventName.isEmpty()) render();
-		
+	public static void searchEvent(String eventName, String calendarOwner,
+			String displayedCalendarId, String s_activeDate) {
+
+		if (eventName.isEmpty())
+			render();
+
 		User curiousUser = Database.users.get(Security.connected());
-		Calendar displayedCalendar = Database.getUserByName(calendarOwner).getCalendarById(Long.parseLong(displayedCalendarId));
+		Calendar displayedCalendar = Database.getUserByName(calendarOwner)
+				.getCalendarById(Long.parseLong(displayedCalendarId));
 		DateTime activeDate = null;
 
 		activeDate = new DateTime();
 
-		List<Event> results = displayedCalendar.searchEvent(eventName, curiousUser, activeDate);
+		List<Event> results = displayedCalendar.searchEvent(eventName,
+				curiousUser, activeDate);
 		DateTime today = new DateTime();
 		render(results, curiousUser, today);
 	}
@@ -274,13 +281,12 @@ public class Application extends Controller {
 			event = new PointEvent(name, d_start, d_end, visibility, calendar);
 
 		} else {
-			if(!d_start.plusDays(interval.getDays()).isAfter(d_end))
-			{
+			if (!d_start.plusDays(interval.getDays()).isAfter(d_end)) {
 				message = "INVALID INPUT: REPEATING EVENT OVERLAPS WITH ITSELF ON NEXT OCCURRENCE!";
 				addEditEvent(-1, calendarId, name, s_activeDate, message);
 			}
-			event = new RepeatingEvent(name, d_start, d_end, visibility, calendar,
-					interval);
+			event = new RepeatingEvent(name, d_start, d_end, visibility,
+					calendar, interval);
 			event.setOriginId(event.getId());
 			event.setBaseId(event.getId()); // nicht notwendig
 
@@ -294,15 +300,21 @@ public class Application extends Controller {
 			event.setOpen();
 			event.addUserToAttending(me);
 		}
+
+		calendar.generateAllNextEvents(d_start);
 		
-		// Must be commented out until next week, this is a requirement for next week
-		// TODO: Add flash notice instead of message, ask customer if Events can still be created/edited or redirect to create page?
-//		if (event.isOverlappingWithOtherEvent()) {
-//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + event.getOverlappingEvents();
-//			addEditEvent(-1, calendarId, name, s_activeDate, message);
-//		}
+		// Must be commented out until next week, this is a requirement for next
+		// week
+		// TODO: Add flash notice instead of message, ask customer if Events can
+		// still be created/edited or redirect to create page?
+		if (event.isOverlappingWithOtherEvent()) {
+		message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" +
+		event.getOverlappingEvents();
+		addEditEvent(-1, calendarId, name, s_activeDate, message);
+		}
 
 		calendar.addEvent(event);
+		
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
 				message);
 	}
@@ -373,13 +385,20 @@ public class Application extends Controller {
 			event.setOpen();
 			event.addUserToAttending(me);
 		}
-		
-		// Must be commented out until next week, this is a requirement for next week
-				// TODO: Add flash notice instead of message, ask customer if Events can still be created/edited or redirect to create page?
-//		if (event.isOverlappingWithOtherEvent()) {
-//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" + event.getOverlappingEvents();
-//			addEditEvent(-1, calendarId, name, s_activeDate, message);
-//		}
+
+		// Must be commented out until next week, this is a requirement for next
+		// week
+		// TODO: Add flash notice instead of message, ask customer if Events can
+		// still be created/edited or redirect to create page?
+		if (event.isOverlappingWithOtherEvent()) {
+			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n"
+					+ event.getOverlappingEvents();
+			addEditEvent(-1, calendarId, name, s_activeDate, message);
+		}
+
+		DateTime activeDate = dateTimeInputFormatter
+				.parseDateTime(s_activeDate);
+		calendar.generateAllNextEvents(activeDate);
 
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				d_start.getDayOfMonth(), message);
@@ -588,17 +607,19 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		
-		System.out.println("====================================================================");
-		System.out.println("Trying to fetch the calendar "+calendarId+" from User "+me.getName());
-		System.out.println("====================================================================");
-		
-		System.out.println("cal:"+cal.getName());
-		
-		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(), 
-				activeDate.getMonthOfYear(), 
-				activeDate.getYear(), 
-				me).equals(null)) {
+
+		System.out
+				.println("====================================================================");
+		System.out.println("Trying to fetch the calendar " + calendarId
+				+ " from User " + me.getName());
+		System.out
+				.println("====================================================================");
+
+		System.out.println("cal:" + cal.getName());
+
+		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
+				activeDate.getMonthOfYear(), activeDate.getYear(), me).equals(
+				null)) {
 			for (Event e : cal.getAllVisibleEventsOfDate(
 					activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 					activeDate.getYear(), me)) {
@@ -607,7 +628,7 @@ public class Application extends Controller {
 				}
 			}
 		}
-		
+
 		assert (event != null);
 		event.addUserToAttending(user);
 		showCalendar(calendarId, me.getName(), s_activeDate,
