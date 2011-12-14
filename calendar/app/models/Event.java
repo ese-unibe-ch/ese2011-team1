@@ -781,4 +781,40 @@ public abstract class Event implements Comparable<Event> {
 		this.attendingUsers.remove(user);
 	}
 
+	public boolean isOverlappingWithOtherEvent() {
+		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
+			if (this.overlaps(event)) {
+				return true;
+			}
+		}
+		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
+			if (this.overlaps(event)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean overlaps(Event event) {
+		if (this.end.isBefore(event.start) || this.start.isAfter(event.end)) {
+			return false;
+		}
+		return true;
+	}
+
+	public ArrayList<Event> getOverlappingEvents() {
+		ArrayList<Event> overlappingevents = new ArrayList<Event>();
+		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
+			if (this.overlaps(event) && !overlappingevents.contains(event)) {
+				overlappingevents.add(event);
+			}
+		}
+		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
+			if (this.overlaps(event) && !overlappingevents.contains(event)) {
+				overlappingevents.add(event);
+			}
+		}
+		return overlappingevents;
+	}
+
 }

@@ -104,7 +104,6 @@ public class IntervalEventTest extends UnitTest{
 		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
 		calendar.addEvent(testRemove);
 		testRemove.generateNextEvents(now.plusMonths(1));
-		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
 		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
 		Event nextReference = testRemove.getNextReference();
 		nextReference = nextReference.getNextReference();
@@ -122,7 +121,6 @@ public class IntervalEventTest extends UnitTest{
 		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
 		calendar.addEvent(testRemove);
 		testRemove.generateNextEvents(now.plusMonths(1));
-		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
 		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
 		Event nextReference = testRemove.getNextReference();
 		nextReference = nextReference.getNextReference();

@@ -310,6 +310,11 @@ public class Application extends Controller {
 			e.setOpen();
 			e.addUserToAttending(me);
 		}
+		
+		if (e.isOverlappingWithOtherEvent()) {
+			message = "OVERLAPPING WITH OTHER EVENT!\nOverlapping events: " + e.getOverlappingEvents();
+			addEditEvent(-1, calendarId, name, s_activeDate, message);
+		}
 
 		calendar.addEvent(e);
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
