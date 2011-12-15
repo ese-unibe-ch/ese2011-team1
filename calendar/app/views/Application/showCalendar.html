@@ -129,7 +129,10 @@
 
 				// Color observed calendars
 				int col = interval*c;
-	 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> '+cal.getName() + " (" +cal.getOwner()+ ")"+'<br>');
+				if(cal.getName().equals("Birthdays"))
+	 			out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> ' + cal.getName() + '<br>');
+	 			else
+	 				out.print('><font style="color: hsl(' + col + ',100%, 50%)">&#10026;</font> ' + cal.getName() +' '+"&lpar;" +cal.getOwner()+ "&rpar;"+'<br>')
 	 			c++;
 				statementClosed = true;
 				break;
