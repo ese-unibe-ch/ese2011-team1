@@ -55,7 +55,7 @@ function deleteAccount(calendarId) {
 <h2>Followed calendars</h2>
 #{list items:me.getObservedCalendars(), as:'calendar'}
 #{if calendar.getName()!="Birthdays"}
-<a href="@{Application.showCalendar(calendar.getId(), calendar.getOwner(), s_activeDate)}"> ${calendar.getName()} </a><br>
+<a href="@{Application.showCalendar(calendar.getId(), calendar.getOwner(), s_activeDate)}"> ${calendar.getName() + " (" + calendar.getOwner() + ")"} </a><br>
 #{/if}
 #{/list}
 

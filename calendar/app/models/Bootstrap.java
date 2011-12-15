@@ -1,6 +1,8 @@
 package models;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
@@ -15,6 +17,8 @@ import enums.Visibility;
  */
 @OnApplicationStart
 public class Bootstrap extends Job {
+	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
+			.forPattern("dd/MM/yyyy");
 
 	/**
 	 * Loads several Users along with their default Calendars and some Events.
@@ -27,93 +31,109 @@ public class Bootstrap extends Job {
 	 */
 	public void doJob() {
 		// Event(Date start, Date end, String name, boolean is_visible)
-
+		DateTime now2HourAgo = new DateTime().minusHours(2);
+		DateTime now1HourAgo = new DateTime().minusHours(1);
 		DateTime now = new DateTime();
+		DateTime nowIn1Hour = new DateTime().plusHours(1);
+		DateTime nowIn2Hours = new DateTime().plusHours(2);
+		DateTime nowIn3Hours = new DateTime().plusHours(3);
+		DateTime tomorrow = new DateTime().plusDays(1);
+		DateTime tomorrowPlus1Hour = new DateTime().plusDays(1).plusHours(1);
+		DateTime tomorrowPlus2Hours = new DateTime().plusDays(1).plusHours(2);
+		DateTime tomorrowPlus3Hours = new DateTime().plusDays(1).plusHours(3);
 		// dataset 1
-		User simplay = new User("simplay", "123", now, "senderos", Database.messageSystem);
+		User simplay = new User("simplay", "123",
+				birthdayFormatter.parseDateTime("24/12/1989"), "senderos",
+				Database.messageSystem);
 		Calendar simplayDefaultCal = simplay.getdefaultCalendar();
-		Event abc = new PointEvent("abc", now, now, Visibility.PUBLIC,
-				simplayDefaultCal);
-		simplayDefaultCal.addEvent(abc);
+		Event football_Evening = new PointEvent("Football Evening at my Home",
+				now, nowIn3Hours, Visibility.PUBLIC, simplayDefaultCal);
+		simplayDefaultCal.addEvent(football_Evening);
 
-		Calendar secondSimplay = new Calendar("2nd simplay", simplay);
-		simplay.addCalendar(secondSimplay);
+		Calendar schoolCalendar = new Calendar("School", simplay);
+		simplay.addCalendar(schoolCalendar);
 
-		Calendar thirdSimplay = new Calendar("3rd simplay", simplay);
-		simplay.addCalendar(thirdSimplay);
+		Calendar ExamsCalendar = new Calendar("Exam", simplay);
+		simplay.addCalendar(ExamsCalendar);
 
 		Database.addUser(simplay);
 
 		// dataset 2
-		User mib = new User("mib", "1337", now, "fox", Database.messageSystem);
+		User mib = new User("mib", "1337",
+				birthdayFormatter.parseDateTime("12/12/1989"), "fox",
+				Database.messageSystem);
 		mib.setBirthdayPublic(true);
 		Database.addUser(mib);
 		Calendar mibsFirstCalendar = mib.getdefaultCalendar();
 
-		// mibs first calendar
-		Event mib_ev1_1 = new PointEvent("mib_ev1", now, now,
-				Visibility.PUBLIC, mibsFirstCalendar);
-		mib_ev1_1.setOpen();
-		mib_ev1_1.addUserToAttending(mib);
-		mibsFirstCalendar.addEvent(mib_ev1_1);
+		// mibs personal calendar
+		Event drinkABeerInTown = new PointEvent("Drink a Beer in Town",
+				nowIn1Hour, nowIn2Hours, Visibility.PUBLIC, mibsFirstCalendar);
+		drinkABeerInTown.setOpen();
+		drinkABeerInTown.addUserToAttending(mib);
+		mibsFirstCalendar.addEvent(drinkABeerInTown);
 		simplay.addObservedCalendar(mib.getdefaultCalendar());
 		simplay.addShownObservedCalendar(mibsFirstCalendar.getId());
 
-		Event mib_ev1_2 = new PointEvent("mib_ev2", now, now,
+		Event mib_ev1_2 = new PointEvent("ESE Presentation", now, nowIn1Hour,
 				Visibility.PUBLIC, mibsFirstCalendar);
 		mibsFirstCalendar.addEvent(mib_ev1_2);
 
-		Event mib_ev1_3 = new PointEvent("mib_ev3", now, now,
+		Event mib_ev1_3 = new PointEvent("ESE Lecture", now2HourAgo, now,
 				Visibility.PUBLIC, mibsFirstCalendar);
 		mibsFirstCalendar.addEvent(mib_ev1_3);
 
-		// mibs second calendar
-		Calendar mibsSecondCalendar = new Calendar("second mib", mib);
+		// mibs University calendar
+		Calendar mibsSecondCalendar = new Calendar("Shopping", mib);
 		mib.addCalendar(mibsSecondCalendar);
 
-		Event mib_ev2_1 = new PointEvent("second mib_ev1", now, now,
-				Visibility.PUBLIC, mibsSecondCalendar);
+		Event mib_ev2_1 = new PointEvent("Buy some cigarettes", now,
+				nowIn1Hour, Visibility.PUBLIC, mibsSecondCalendar);
 		mibsSecondCalendar.addEvent(mib_ev2_1);
 
-		Event mib_ev2_2 = new PointEvent("second mib_ev2", now, now,
-				Visibility.PUBLIC, mibsSecondCalendar);
+		Event mib_ev2_2 = new PointEvent("Meeting with Andy", nowIn1Hour,
+				nowIn2Hours, Visibility.PUBLIC, mibsSecondCalendar);
 		mibsSecondCalendar.addEvent(mib_ev2_2);
 
-		Event mib_ev2_3 = new PointEvent("second mib_ev3", now, now,
-				Visibility.PUBLIC, mibsSecondCalendar);
+		Event mib_ev2_3 = new PointEvent("Make dinner for my dog", nowIn2Hours,
+				nowIn3Hours, Visibility.PUBLIC, mibsSecondCalendar);
 		mibsSecondCalendar.addEvent(mib_ev2_3);
 
-		User simon = new User("simon", "1337", now, "simu", Database.messageSystem);
+		// dataset 3
+		User simon = new User("simon", "1337", now, "simu",
+				Database.messageSystem);
 		Database.addUser(simon);
 		Calendar simonsFirstCalendar = simon.getdefaultCalendar();
 
-		Event simon1_1 = new PointEvent("simonb_ev1", now, now,
-				Visibility.PUBLIC, simonsFirstCalendar);
-		simonsFirstCalendar.addEvent(simon1_1);
+		Event getSomeFood = new PointEvent("Shop some food for tonight", now,
+				nowIn1Hour, Visibility.PUBLIC, simonsFirstCalendar);
+		simonsFirstCalendar.addEvent(getSomeFood);
 		simplay.addObservedCalendar(simon.getdefaultCalendar());
 
-		Event simon1_2 = new PointEvent("simonb_ev2", now, now,
-				Visibility.PUBLIC, simonsFirstCalendar);
-		simonsFirstCalendar.addEvent(simon1_2);
+		Event playBasketball = new PointEvent("Play Basketball", now2HourAgo,
+				now, Visibility.PUBLIC, simonsFirstCalendar);
+		simonsFirstCalendar.addEvent(playBasketball);
 
-		Event simon1_3 = new PointEvent("simonb_ev3", now, now,
+		Event watchTV = new PointEvent("Watch TV", now, nowIn3Hours,
 				Visibility.PUBLIC, simonsFirstCalendar);
-		simonsFirstCalendar.addEvent(simon1_3);
+		simonsFirstCalendar.addEvent(watchTV);
 
-		Calendar simonsSecondCalendar = new Calendar("second simon", simon);
+		Calendar simonsSecondCalendar = new Calendar("Meeting", simon);
 		simon.addCalendar(simonsSecondCalendar);
 
-		Event simon2_1 = new PointEvent("second simon_ev1", now, now,
-				Visibility.PUBLIC, simonsSecondCalendar);
-		simonsSecondCalendar.addEvent(simon2_1);
+		Event meetingCoach = new PointEvent("Meeting with Coach", tomorrow,
+				tomorrowPlus1Hour, Visibility.PUBLIC, simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(meetingCoach);
 
-		Event simon2_2 = new PointEvent("second simon_ev2", now, now,
-				Visibility.PUBLIC, simonsSecondCalendar);
-		simonsSecondCalendar.addEvent(simon2_2);
+		Event meetingClient = new PointEvent("Meeting with Client",
+				tomorrowPlus1Hour, tomorrowPlus2Hours, Visibility.PUBLIC,
+				simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(meetingClient);
 
-		Event simon2_3 = new PointEvent("second simon_ev3", now, now,
-				Visibility.PUBLIC, simonsSecondCalendar);
-		simonsSecondCalendar.addEvent(simon2_3);
+		Event meetingWithNewClient = new PointEvent(
+				"Meeting with potential Client", tomorrowPlus2Hours,
+				tomorrowPlus3Hours, Visibility.PUBLIC, simonsSecondCalendar);
+		simonsSecondCalendar.addEvent(meetingWithNewClient);
 
 	}
 }

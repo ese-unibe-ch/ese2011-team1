@@ -1,4 +1,5 @@
 package models;
+
 // subscriber to a messagesystem.
 import java.util.LinkedList;
 
@@ -10,8 +11,8 @@ import enums.Visibility;
 /**
  * The User class represents a User of this Calendar application. Users may have
  * multiple Calendars, all of which can contain multiple Events. Users are
- * responsible for maintaining the calendar.
- * a user observes a message system which notifies him if there is a new message for him.
+ * responsible for maintaining the calendar. a user observes a message system
+ * which notifies him if there is a new message for him.
  * 
  * @see {@link Calendar}
  * 
@@ -43,7 +44,6 @@ public class User {
 	private boolean isDescriptionVisible;
 	private static long counter;
 
-
 	/**
 	 * Create a new User for this calendar application.
 	 * 
@@ -55,8 +55,8 @@ public class User {
 	 *            The Users birthday.
 	 * @param nickname
 	 *            The Users nickname.
-	 *  @param messageSystem
-	 *  		  The message system.          
+	 * @param messageSystem
+	 *            The message system.
 	 * @see {@link User}
 	 */
 	public User(String name, String password, DateTime birthDate,
@@ -69,7 +69,7 @@ public class User {
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
 		eventsToAccept = new LinkedList<long[]>();
-		
+
 		this.name = name;
 		this.nickname = nickname;
 		this.password = password;
@@ -78,16 +78,14 @@ public class User {
 		initializeBirthday(birthDate);
 
 		// each user x has a default a calender called: x's first calendar
-		calendars.add(new Calendar(name + "'s first calendar", this));
+		calendars.add(new Calendar("Personal", this));
 		this.messageSystem = messageSystem;
 		this.messageSystem.subscribe(this);
-		
-		
+
 		// postconditions
 		assert this.name.equals(name);
 		assert calendars != null;
-		
-		
+
 	}
 
 	/**
@@ -103,9 +101,9 @@ public class User {
 		this.birthdayCalendar = new Calendar("Birthdays", this);
 		DateTime birthdayStart = birthDate.withHourOfDay(0).withMinuteOfHour(0);
 		DateTime birthdayEnd = birthDate.withHourOfDay(23).withMinuteOfHour(59);
-		this.birthday = new RepeatingEvent(this.name + "'s birthday", birthdayStart,
-				birthdayEnd, Visibility.PRIVATE, birthdayCalendar,
-				Interval.YEARLY);
+		this.birthday = new RepeatingEvent(this.name + "'s birthday",
+				birthdayStart, birthdayEnd, Visibility.PRIVATE,
+				birthdayCalendar, Interval.YEARLY);
 		this.birthday.setOriginId(birthday.getId());
 		this.birthdayCalendar.addEvent(birthday);
 		this.birthday.generateNextEvents(birthDate.plusYears(1));
@@ -200,7 +198,7 @@ public class User {
 		RepeatingEvent birthday = this.birthday;
 		birthday.edit(birthday.getName(), birthday.getStart(),
 				birthday.getEnd(), visibility, birthday.getInterval());
-		while(birthday.hasNext()) {
+		while (birthday.hasNext()) {
 			birthday = (RepeatingEvent) birthday.getNextReference();
 			birthday.edit(birthday.getName(), birthday.getStart(),
 					birthday.getEnd(), visibility, birthday.getInterval());
@@ -610,47 +608,56 @@ public class User {
 	public String toString() {
 		return this.name;
 	}
-	
+
 	/**
-	 * this user wants to send a message to user with with given id userId
-	 * use this method in event
+	 * this user wants to send a message to user with with given id userId use
+	 * this method in event
 	 */
-	public void sendMessage(long userId, long calendarId, long eventId, String message){
+	public void sendMessage(long userId, long calendarId, long eventId,
+			String message) {
 		System.out.println("do something here - maybe send a message :D");
-		this.messageSystem.notifyObservingUser(userId, calendarId, eventId, message);
+		this.messageSystem.notifyObservingUser(userId, calendarId, eventId,
+				message);
 	}
-	
+
 	/**
 	 * Receive message from message system and do something with it
 	 */
-	public void receiveMessage(long userId, long calendarId, long eventId, String message){
-		long[] triple = {userId,calendarId,eventId};
+	public void receiveMessage(long userId, long calendarId, long eventId,
+			String message) {
+		long[] triple = { userId, calendarId, eventId };
 		this.eventsToAccept.add(triple);
 
 		System.out.println("received message: " + message);
 	}
-	
+
 	/**
 	 * this user accept invitation to a given event.
+	 * 
 	 * @param userId
 	 * @param calendarId
 	 * @param eventId
 	 */
-	public void acceptInvitation(long userId, long calendarId, long eventId){
-		// get source user by ids and invoke futureMethodAddUserToAttending 
-		// => add this user to attendingUser list of source user corresponding event
-		getEventByUserCalendarEventId(userId, calendarId, eventId).futureMethodAddUserToAttending(this);
+	public void acceptInvitation(long userId, long calendarId, long eventId) {
+		// get source user by ids and invoke futureMethodAddUserToAttending
+		// => add this user to attendingUser list of source user corresponding
+		// event
+		getEventByUserCalendarEventId(userId, calendarId, eventId)
+				.futureMethodAddUserToAttending(this);
 	}
-	
+
 	/**
 	 * Helper
+	 * 
 	 * @param userId
 	 * @param calendarId
 	 * @param eventId
 	 * @return
 	 */
-	private Event getEventByUserCalendarEventId(long userId, long calendarId, long eventId){
-		return Database.getUserById(userId).getCalendarById(calendarId).getEventById(eventId);
+	private Event getEventByUserCalendarEventId(long userId, long calendarId,
+			long eventId) {
+		return Database.getUserById(userId).getCalendarById(calendarId)
+				.getEventById(eventId);
 	}
 
 }
