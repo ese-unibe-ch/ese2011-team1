@@ -30,11 +30,14 @@ public class RepeatingEventTest extends UnitTest {
 	@Before
 	public void setUp() throws Exception {
 		Database.clearDatabase();
-		this.user = new User("hans", "1234", today, "hans2",Database.messageSystem);
-		this.francis = new User("francis", "1234", today, "fran",Database.messageSystem);
+		this.user = new User("hans", "1234", today, "hans2",
+				Database.messageSystem);
+		this.francis = new User("francis", "1234", today, "fran",
+				Database.messageSystem);
 		Database.addUser(francis);
 		assertTrue(Database.getUserList().contains(francis));
-		this.stefan = new User("stefan", "1234", today, "stef",Database.messageSystem);
+		this.stefan = new User("stefan", "1234", today, "stef",
+				Database.messageSystem);
 		Database.addUser(stefan);
 		assertTrue(Database.getUserList().contains(stefan));
 		this.calendar = new Calendar("testCalendar", user);
@@ -98,19 +101,23 @@ public class RepeatingEventTest extends UnitTest {
 				.getNextReference().getStart());
 
 	}
-	
+
 	@Test
 	public void testRemove() {
 		DateTime now = new DateTime();
-		Event testRemove = new RepeatingEvent("test", now, now, Visibility.PRIVATE, calendar, Interval.DAILY);
+		Event testRemove = new RepeatingEvent("test", now, now,
+				Visibility.PRIVATE, calendar, Interval.DAILY);
 		calendar.addEvent(testRemove);
 		testRemove.generateNextEvents(now.plusMonths(1));
-		//calendar.generateNextEvents(testRemove, now.plusMonths(1));
-		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(), user));
+		// calendar.generateNextEvents(testRemove, now.plusMonths(1));
+		assertTrue(calendar.hasEventOnDate(testRemove.getStart().toLocalDate(),
+				user));
 		Event nextReference = testRemove.getNextReference();
 		nextReference = nextReference.getNextReference();
 		nextReference = nextReference.getNextReference();
-		testRemove.getNextReference().getNextReference().getNextReference().remove();
-		assertFalse(calendar.hasEventOnDate(nextReference.getStart().toLocalDate(), user));
+		testRemove.getNextReference().getNextReference().getNextReference()
+				.remove();
+		assertFalse(calendar.hasEventOnDate(nextReference.getStart()
+				.toLocalDate(), user));
 	}
 }
