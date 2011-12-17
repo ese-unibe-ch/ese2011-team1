@@ -30,7 +30,7 @@ ${calendar.getName()} -
 <a href="@{Application.showEditProfile()}"> edit profile </a><br>
 <a href="javascript: deleteAccount()"> delete account</a>
 
-<h4>Invitations to events</h4>
+<h4>invitations to events</h4>
 #{if !me.eventsToAccept.isEmpty()} you have been invited to the follwing events #{/if}
 #{list me.eventsToAccept, as:'request'}
 	${(String)request[3]} <a href="@{MessageSystem.accept((long)request[0],(long)request[1],(long)request[2])}"> accept </a>
