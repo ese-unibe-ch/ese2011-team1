@@ -14,11 +14,11 @@ public class MessageSystem extends Controller{
 		Application.index(me.getName());
 	}
 	
-	public static void decline(Object[] victim){
+	public static void decline(long userId, long calendarId, long eventId){
 		User me = Database.users.get(Security.connected());
-		System.out.println(victim);
+
 		
-		me.declineInvitation(victim);
+		me.declineInvitation(userId, calendarId, eventId);
 		Application.index(me.getName());
 	}
 }

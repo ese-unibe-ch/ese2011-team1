@@ -647,23 +647,29 @@ public class User {
 	public void acceptInvitation(long userId, long calendarId, long eventId) {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
 				.addUserToAttending(this);
+		this.removeInvitation(userId, calendarId, eventId);
 	}
 	
 	/**
 	 * removes victim from invitation list
 	 * @param victim
 	 */
-	public void declineInvitation(Object[] victim){
-		long UserId = (Long) victim[0]; 
-		long CalendarId = (Long)victim[1];
-		long EventId = (Long)victim[2];
+	public void declineInvitation(long userId, long calendarId,
+			long eventId){
+
+		this.removeInvitation(userId, calendarId, eventId);
+	}
+	
+	// TODO add javadoc
+	private void removeInvitation(long userId, long calendarId,
+			long eventId){
 		
 		for(Object[] invitation : this.eventsToAccept){
 			long compareUserId = (Long) invitation[0]; 
 			long compareCalendarId = (Long)invitation[1];
 			long compareEventId = (Long)invitation[2];
-			if(compareUserId == UserId && compareCalendarId == CalendarId 
-					&& compareEventId == EventId){ 
+			if(compareUserId == userId && compareCalendarId == calendarId 
+					&& compareEventId == eventId){
 				this.eventsToAccept.remove(invitation);
 				return;
 			}
