@@ -645,6 +645,14 @@ public class User {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
 				.futureMethodAddUserToAttending(this);
 	}
+	
+	/**
+	 * removes victim from invitation list
+	 * @param victim
+	 */
+	public void declineInvitation(long[] victim){
+		this.eventsToAccept.remove(victim);
+	}
 
 	/**
 	 * Helper
@@ -663,5 +671,6 @@ public class User {
 		Event event = calendar.getEventById(eventId);
 		return event;
 	}
+	
 
 }

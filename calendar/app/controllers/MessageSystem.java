@@ -14,7 +14,9 @@ public class MessageSystem extends Controller{
 		Application.index(me.getName());
 	}
 	
-	public static void decline(){
-		
+	public static void decline(long[] victim){
+		User me = Database.users.get(Security.connected());
+		me.declineInvitation(victim);
+		Application.index(me.getName());
 	}
 }
