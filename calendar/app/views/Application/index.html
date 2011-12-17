@@ -34,7 +34,6 @@ ${calendar.getName()} -
 #{if !me.eventsToAccept.isEmpty()} you have been invited to the following events: <br> #{/if}
 #{list me.eventsToAccept, as:'request'}
 	${(String)request[3]}: <a href="@{MessageSystem.accept((long)request[0],(long)request[1],(long)request[2])}"> accept </a>
-	or <a href="@{MessageSystem.decline((long)request[0],(long)request[1],(long)request[2])}"> decline </a>
 	<br>
 #{/list}
 
