@@ -770,13 +770,17 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	// TODO rename this method after using message system to requestAttedningUser
 	public void sendInvitationRequest(User user) {
-		long targetUserId = user.getId();
-		long fromUserId = this.getOwner().getId();
-		long calendarId = this.getCalendar().getId();
-		long eventId = this.getId();
-		if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
-			String message = this.getName()+" by "+ getOwner().getName();
-			this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
+		// adding ourself to an invent should be instantly without a message over ms.
+		if(user == this.getOwner()) addUserToAttending(user);
+		else{
+			long targetUserId = user.getId();
+			long fromUserId = this.getOwner().getId();
+			long calendarId = this.getCalendar().getId();
+			long eventId = this.getId();
+			if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
+				String message = this.getName()+" by "+ getOwner().getName();
+				this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
+			}
 		}
 	}
 	
