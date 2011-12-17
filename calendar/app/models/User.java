@@ -653,8 +653,21 @@ public class User {
 	 * removes victim from invitation list
 	 * @param victim
 	 */
-	public void declineInvitation(long[] victim){
-		this.eventsToAccept.remove(victim);
+	public void declineInvitation(Object[] victim){
+		long UserId = (Long) victim[0]; 
+		long CalendarId = (Long)victim[1];
+		long EventId = (Long)victim[2];
+		
+		for(Object[] invitation : this.eventsToAccept){
+			long compareUserId = (Long) invitation[0]; 
+			long compareCalendarId = (Long)invitation[1];
+			long compareEventId = (Long)invitation[2];
+			if(compareUserId == UserId && compareCalendarId == CalendarId 
+					&& compareEventId == EventId){ 
+				this.eventsToAccept.remove(invitation);
+				return;
+			}
+		}
 	}
 
 	/**
@@ -680,6 +693,8 @@ public class User {
 	 * @param eventId
 	 * @return
 	 */
+	
+	// TODO export this method to user data class which we are going to introduce
 	public boolean hasSuchInvitation(long userId, long calendarId, long eventId){
 		for(Object[] invitation : this.eventsToAccept){
 			long compareUserId = (Long) invitation[0]; 
