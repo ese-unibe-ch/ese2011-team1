@@ -630,7 +630,7 @@ public class Application extends Controller {
 		}
 
 		assert (event != null);
-		event.addUserToAttending(userToAdd);
+		event.sendInvitationRequest(userToAdd); //TODO rename, check
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}

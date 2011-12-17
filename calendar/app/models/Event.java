@@ -769,12 +769,14 @@ public abstract class Event implements Comparable<Event> {
 	 *            user which we want to add to attendingUsers list.
 	 */
 	// TODO rename this method after using message system to requestAttedningUser
-	public void addUserToAttending(User user) {
-		if (!this.attendingUsers.contains(user)){
-			//this.attendingUsers.add(user); // TODO comment out , if we use the message system.
-			
-			// TODO wenn message system zum einsatz kommt, kommentiere aus
-			this.getOwner().sendMessage(user.getId(),this.getOwner().getId(),this.getCalendar().getId(), this.getId(), getOwner().getName()+" hat "+user.getName()+" geadded");
+	public void sendInvitationRequest(User user) {
+		long targetUserId = user.getId();
+		long fromUserId = this.getOwner().getId();
+		long calendarId = this.getCalendar().getId();
+		long eventId = this.getId();
+		if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
+			String message = this.getName()+" by "+ getOwner().getName();
+			this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
 		}
 	}
 	
@@ -782,8 +784,10 @@ public abstract class Event implements Comparable<Event> {
 	/**
 	 * Add destination user to attending user list.
 	 */
-	public void futureMethodAddUserToAttending(User user){
-		this.attendingUsers.add(user);
+	public void addUserToAttending(User user){
+		if (!this.attendingUsers.contains(user)){
+			this.attendingUsers.add(user);
+		}
 	}
 
 	/**
@@ -795,7 +799,8 @@ public abstract class Event implements Comparable<Event> {
 	public void removeUserFromAttending(User user) {
 		this.attendingUsers.remove(user);
 	}
-
+	
+	// TODO add javadoc
 	public boolean isOverlappingWithOtherEvent() {
 		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
 			if (this.overlaps(event)) {
@@ -809,14 +814,16 @@ public abstract class Event implements Comparable<Event> {
 		}
 		return false;
 	}
-
+	
+	// TODO add javadoc
 	private boolean overlaps(Event event) {
 		if (this.end.isBefore(event.start) || this.start.isAfter(event.end)) {
 			return false;
 		}
 		return true;
 	}
-
+	
+	// TODO add javadoc
 	public ArrayList<Event> getOverlappingEvents() {
 		ArrayList<Event> overlappingevents = new ArrayList<Event>();
 		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {

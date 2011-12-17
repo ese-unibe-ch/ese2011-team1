@@ -25,7 +25,7 @@ public class User {
 	// display in our calendar
 	private LinkedList<Calendar> observedCalendars;
 	private LinkedList<Long> shownObservedCalendars;
-	private LinkedList<long[]> eventsToAccept;
+	private LinkedList<Object[]> eventsToAccept;
 	private String password;
 	private RepeatingEvent birthday;
 	private MessageSystem messageSystem;
@@ -68,7 +68,7 @@ public class User {
 		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
 		shownObservedCalendars = new LinkedList<Long>();
-		eventsToAccept = new LinkedList<long[]>();
+		eventsToAccept = new LinkedList<Object[]>();
 
 		this.name = name;
 		this.nickname = nickname;
@@ -498,6 +498,14 @@ public class User {
 	public boolean getIsDescriptionVisible() {
 		return this.isDescriptionVisible;
 	}
+	
+	/**
+	 * get invitation list of this user
+	 * @return
+	 */
+	public LinkedList getEventsToAccept(){
+		return this.eventsToAccept;
+	}
 
 	/**
 	 * sets Private Email for this user.
@@ -625,10 +633,8 @@ public class User {
 	 */
 	public void receiveMessage(long userId, long calendarId, long eventId,
 			String message) {
-		long[] triple = { userId, calendarId, eventId};
-		this.eventsToAccept.add(triple);
-
-		System.out.println("received message: " + message);
+		Object[] quartet = {userId, calendarId, eventId, message};
+		this.eventsToAccept.add(quartet);
 	}
 
 	/**
@@ -639,11 +645,8 @@ public class User {
 	 * @param eventId
 	 */
 	public void acceptInvitation(long userId, long calendarId, long eventId) {
-		// get source user by ids and invoke futureMethodAddUserToAttending
-		// => add this user to attendingUser list of source user corresponding
-		// event
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
-				.futureMethodAddUserToAttending(this);
+				.addUserToAttending(this);
 	}
 	
 	/**
@@ -664,13 +667,28 @@ public class User {
 	 */
 	private Event getEventByUserCalendarEventId(long userId, long calendarId,
 			long eventId) {
-		System.out.println(userId + " " + calendarId + " " + eventId);
 		User user = Database.getUserById(userId);
-		System.out.println("username " + user.getName());
 		Calendar calendar = user.getCalendarById(calendarId);
 		Event event = calendar.getEventById(eventId);
 		return event;
 	}
 	
+	/**
+	 * checks, if this user already has an invitation with those given ids received
+	 * @param userId
+	 * @param calendarId
+	 * @param eventId
+	 * @return
+	 */
+	public boolean hasSuchInvitation(long userId, long calendarId, long eventId){
+		for(Object[] invitation : this.eventsToAccept){
+			long compareUserId = (Long) invitation[0]; 
+			long compareCalendarId = (Long)invitation[1];
+			long compareEventId = (Long)invitation[2];
+			if(compareUserId == userId && compareCalendarId == calendarId 
+					&& compareEventId == eventId) return true;
+		}
+		return false;
+	}
 
 }
