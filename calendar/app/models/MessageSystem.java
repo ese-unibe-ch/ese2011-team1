@@ -22,9 +22,9 @@ public class MessageSystem {
 	 * @param message massage for destination user
 	 */
 	
-	public void notifyObservingUser(long userId, long calendarId, long eventId, String message){
+	public void notifyObservingUser(long targetUserId,long fromUserId, long calendarId, long eventId, String message){
 		for(User user : listeners)
-			if(user.getId() == userId) user.receiveMessage(userId, calendarId, eventId, message);
+			if(user.getId() == targetUserId) user.receiveMessage(fromUserId, calendarId, eventId, message);
 	}
 	
 	

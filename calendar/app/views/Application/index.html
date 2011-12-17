@@ -30,6 +30,11 @@ ${calendar.getName()} -
 <a href="@{Application.showEditProfile()}"> edit profile </a><br>
 <a href="javascript: deleteAccount()"> delete account</a>
 
+<h4>requests</h4>
+#{list me.eventsToAccept, as:'request'}
+	new invitation ${request[0]} <a href="@{MessageSystem.accept(request[0],request[1],request[2])}"> accept </a><br>
+#{/list}
+
 <script type="text/javascript">
 function deleteCalendar(calendarId) {
 	calendarId = parseInt(calendarId, 10);

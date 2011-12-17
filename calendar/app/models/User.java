@@ -257,7 +257,7 @@ public class User {
 	 */
 	public Calendar getCalendarById(long calId) {
 		Calendar result = null;
-		for (Calendar cal : calendars) {
+		for (Calendar cal : this.calendars) {
 			if (cal.getId() == calId)
 				result = cal;
 		}
@@ -613,10 +613,10 @@ public class User {
 	 * this user wants to send a message to user with with given id userId use
 	 * this method in event
 	 */
-	public void sendMessage(long userId, long calendarId, long eventId,
+	public void sendMessage(long targetUserId, long fromUserId, long calendarId, long eventId,
 			String message) {
 		System.out.println("do something here - maybe send a message :D");
-		this.messageSystem.notifyObservingUser(userId, calendarId, eventId,
+		this.messageSystem.notifyObservingUser(targetUserId, fromUserId,calendarId, eventId,
 				message);
 	}
 
@@ -625,7 +625,7 @@ public class User {
 	 */
 	public void receiveMessage(long userId, long calendarId, long eventId,
 			String message) {
-		long[] triple = { userId, calendarId, eventId };
+		long[] triple = { userId, calendarId, eventId};
 		this.eventsToAccept.add(triple);
 
 		System.out.println("received message: " + message);
@@ -656,8 +656,12 @@ public class User {
 	 */
 	private Event getEventByUserCalendarEventId(long userId, long calendarId,
 			long eventId) {
-		return Database.getUserById(userId).getCalendarById(calendarId)
-				.getEventById(eventId);
+		System.out.println(userId + " " + calendarId + " " + eventId);
+		User user = Database.getUserById(userId);
+		System.out.println("username " + user.getName());
+		Calendar calendar = user.getCalendarById(calendarId);
+		Event event = calendar.getEventById(eventId);
+		return event;
 	}
 
 }
