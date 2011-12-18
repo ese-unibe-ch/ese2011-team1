@@ -669,54 +669,13 @@ public class Application extends Controller {
 		System.out.println("========================================================");
 		
 		String s_activeDate = s_eventDate;
-		
-		event.sendInvitationRequest(userToAdd); //TODO rename, check
-		//event.addUserToAttending(userToAdd);
-		showCalendar(calendarId, me.getName(), s_activeDate,
-				activeDate.getDayOfMonth(), null);
-	}
-	
-	
-	
-	public static void addUserToEvent2(String userToAddStr, long calendarId,
-			long eventId, String s_eventDate) {
-		User me = Database.getUserByName(Security.connected());
-		User userToAdd = Database.getUserByName(userToAddStr);
-		Calendar cal = me.getCalendarById(calendarId);
-		assert (cal != null);
-		DateTime activeDate = dateTimeInputFormatter
-				.parseDateTime(s_eventDate);
-		Event event = null;
-
-		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
-				activeDate.getMonthOfYear(), activeDate.getYear(), me).equals(
-				null)) {
-			for (Event e : cal.getAllVisibleEventsOfDate(
-					activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
-					activeDate.getYear(), me)) {
-				if (e.getId() == eventId) {
-					event = e;
-				}
-			}
-		}
-		
-		System.out.println("========================================================");
-		System.out.println("Trying to fetch the calendar " + calendarId + " from User " + me.getName());
-		System.out.println("(Date: "+s_eventDate+"), Calendar name: "+cal.getName());
-		System.out.println("Trying to get event Id "+eventId);
-		System.out.println("User to add: "+userToAdd.getName());
-		System.out.println("========================================================");
-		
-		String s_activeDate = s_eventDate;
-		
-		event.addUserToAttending(userToAdd); //TODO rename, check
+		if(event.isOpen()) event.addUserToAttending(userToAdd);
+		else event.sendInvitationRequest(userToAdd);
 		
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
-	
-	
-
+		
 	public static void removeUserFromEvent(String userToRemoveStr, String eventOwner, long calendarId,
 			long eventId, String s_activeDate) {
 		System.out.println("Called removeUserFromEvent with eventOwner:"+eventOwner);
