@@ -249,7 +249,7 @@ Created by: ${event.getOwner()}
   You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
   #{/if}
   #{else}
-  <a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
+  <a href="@{Application.addUserToEvent2(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
   #{/else}
 #{/if}
 #{if event.getOwner() == me}
