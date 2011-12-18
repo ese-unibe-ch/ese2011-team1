@@ -676,9 +676,8 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), null);
 	}
 		
-	public static void removeUserFromEvent(String userToRemoveStr, String eventOwner, long calendarId,
+	public static void removeUserFromEvent(String userToRemoveStr, long calendarId,
 			long eventId, String s_activeDate) {
-		System.out.println("Called removeUserFromEvent with eventOwner:"+eventOwner);
 		System.out.println("calendarId: "+calendarId+", eventId: "+eventId);
 		System.out.println("User to remove:"+userToRemoveStr);
 		

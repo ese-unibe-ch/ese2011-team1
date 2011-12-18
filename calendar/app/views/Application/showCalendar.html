@@ -225,7 +225,7 @@ Created by: ${event.getOwner()}
 
 #{list items:event.getAttendingUsers(), as:'attendingUser'}
   #{if me==event.getOwner()}
-  <a href="@{Application.removeUserFromEvent(attendingUser.getName(), event.getOwner(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <a href="@{Application.removeUserFromEvent(attendingUser.getName(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
   <img src="/public/images/minus.png " width="12" alt="plus" /></a> 
   #{/if}
   
@@ -244,14 +244,14 @@ Created by: ${event.getOwner()}
     #{/if}
 #{/if}
 
-#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
   #{if event.userIsAttending(me.getName())}
   You are attending!<a href="@{Application.removeUserFromEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
   #{/if}
   #{else}
-  <a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
+  	#{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
+	  <a href="@{Application.addUserToEvent(event.getOwner().getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
+	 #{/if}
   #{/else}
-#{/if}
 #{if event.getOwner() == me}
 	<br>Add user: <input type="text" id="userSearch${event.getId()}"><br>
 #{/if}
