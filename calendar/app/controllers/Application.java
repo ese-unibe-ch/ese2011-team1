@@ -669,8 +669,17 @@ public class Application extends Controller {
 		System.out.println("========================================================");
 		
 		String s_activeDate = s_eventDate;
-		if(event.isOpen() && userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
-		else event.sendInvitationRequest(userToAdd);
+		//if(event.isOpen() && userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
+		//else event.sendInvitationRequest(userToAdd);
+		
+		if(event.isOpen()){
+			if(userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
+			else{
+				if(me == userToAdd) event.addUserToAttending(userToAdd);
+				else event.sendInvitationRequest(userToAdd);
+			}
+		}else event.sendInvitationRequest(userToAdd);
+		
 		
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
