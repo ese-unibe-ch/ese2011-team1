@@ -76,7 +76,7 @@ public class Application extends Controller {
 
 	public static void searchUserForAdding(String userName,
 			String calendarOwner, long calendarId, long eventId,
-			String s_activeDate) {
+			String s_eventDate) {
 		User me = Database.users.get(Security.connected());
 
 		if (userName.isEmpty())
@@ -85,7 +85,9 @@ public class Application extends Controller {
 		List<User> results = Database.searchUser(userName);
 		DateTime activeDate = new DateTime();
 
-		render(me, results, userName, calendarId, eventId, activeDate);
+		//DateTime eventDate = dateTimeInputFormatter.parseDateTime(s_eventDate);
+		
+		render(me, results, userName, calendarId, eventId, s_eventDate, activeDate);
 	}
 
 	public static void searchUser(String userName) {
@@ -638,23 +640,14 @@ public class Application extends Controller {
 	}
 
 	public static void addUserToEvent(String userToAddStr, long calendarId,
-			long eventId, String s_activeDate) {
+			long eventId, String s_eventDate) {
 		User me = Database.getUserByName(Security.connected());
 		User userToAdd = Database.getUserByName(userToAddStr);
 		Calendar cal = me.getCalendarById(calendarId);
 		assert (cal != null);
 		DateTime activeDate = dateTimeInputFormatter
-				.parseDateTime(s_activeDate);
+				.parseDateTime(s_eventDate);
 		Event event = null;
-
-		// System.out
-		// .println("====================================================================");
-		// System.out.println("Trying to fetch the calendar " + calendarId
-		// + " from User " + me.getName());
-		// System.out
-		// .println("====================================================================");
-
-		System.out.println("cal:" + cal.getName());
 
 		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
 				activeDate.getMonthOfYear(), activeDate.getYear(), me).equals(
@@ -667,9 +660,15 @@ public class Application extends Controller {
 				}
 			}
 		}
-
-		System.out.println("Event Name+: "+event.getName());
-		System.out.println("User: "+userToAdd.getName());
+		
+		System.out.println("========================================================");
+		System.out.println("Trying to fetch the calendar " + calendarId + " from User " + me.getName());
+		System.out.println("(Date: "+s_eventDate+"), Calendar name: "+cal.getName());
+		System.out.println("Trying to get event Id "+eventId);
+		System.out.println("User to add: "+userToAdd.getName());
+		System.out.println("========================================================");
+		
+		String s_activeDate = s_eventDate;
 		
 		event.sendInvitationRequest(userToAdd); //TODO rename, check
 		showCalendar(calendarId, me.getName(), s_activeDate,

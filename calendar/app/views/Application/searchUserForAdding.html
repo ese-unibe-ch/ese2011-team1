@@ -5,7 +5,7 @@
 
   #{list items:results, as:'user'}
   
-  <a href="@{Application.addUserToEvent(user.getName(), calendarId, eventId, activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <a href="@{Application.addUserToEvent(user.getName(), calendarId, eventId, s_eventDate)}">
   <img src="/public/images/plus.png " width="12" alt="plus" /></a> ${user.getName()}<br>
   
   #{/list}
