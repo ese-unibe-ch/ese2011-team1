@@ -143,6 +143,7 @@ public class IntervalEvent extends RepeatingEvent {
 		this.setInterval(interval);
 		this.setFrom(from);
 		this.setTo(to);
+		this.removeAttendantInvitations();
 	}
 
 	/**
@@ -390,6 +391,7 @@ public class IntervalEvent extends RepeatingEvent {
 				((IntervalEvent) cursor).setTo(postVictim.getStart());
 			}
 		}
+		this.removeAttendantInvitations();
 	}
 
 	/**

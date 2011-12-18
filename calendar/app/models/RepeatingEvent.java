@@ -569,6 +569,7 @@ public class RepeatingEvent extends Event {
 				cursor.setBaseId(postVictim.getId());
 			}
 		}
+		this.removeAttendantInvitations();
 	}
 
 	/**
@@ -630,7 +631,7 @@ public class RepeatingEvent extends Event {
 		this.setEnd(end);
 		this.setVisiblility(visibility);
 		this.editDescription(description);
-
+		this.removeAttendantInvitations();
 	}
 
 	/**
@@ -656,5 +657,6 @@ public class RepeatingEvent extends Event {
 		this.setName(name);
 		this.setVisiblility(visibility);
 		this.setInterval(interval);
+		this.removeAttendantInvitations();
 	}
 }

@@ -120,6 +120,7 @@ public class PointEvent extends Event {
 	@Override
 	public void remove() {
 		this.getCalendar().removeHeadFromHeadList(this);
+		this.removeAttendantInvitations();
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class PointEvent extends Event {
 			this.setVisiblility(visibility);
 			this.editDescription(description);
 		}
-
+		this.removeAttendantInvitations();
 	}
 
 }

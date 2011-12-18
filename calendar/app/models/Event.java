@@ -44,6 +44,7 @@ public abstract class Event implements Comparable<Event> {
 
 	private Calendar calendar;
 	private List<User> attendingUsers;
+	private List<User> pendingAttendingUsers;
 	protected Event next;
 	protected Event previous;
 
@@ -84,6 +85,7 @@ public abstract class Event implements Comparable<Event> {
 		this.visibility = visibility;
 		this.calendar = calendar;
 		this.attendingUsers = new ArrayList<User>();
+		this.pendingAttendingUsers = new ArrayList<User>();
 		counter++;
 		this.id = counter;
 	}
@@ -285,6 +287,11 @@ public abstract class Event implements Comparable<Event> {
 		//return sb.toString();
 		
 		return new LinkedList<User>(attendingUsers);
+	}
+	
+	// TODO javadoc
+	public List<User> getPendingAttendingUsers() {
+		return this.pendingAttendingUsers;
 	}
 
 	/**
@@ -523,7 +530,16 @@ public abstract class Event implements Comparable<Event> {
 	 * Removes/deletes this event.
 	 */
 	public abstract void remove();
-
+	
+	/**
+	 * removes for each attending user its invitation to this event
+	 * use this method if we delete or edit an event.
+	 */
+	public void removeAttendantInvitations(){
+		for(User user : this.getPendingAttendingUsers())
+			user.removeInvitation(this.getOwner().getId(), this.getCalendarId(), this.getId());
+	}
+	
 	/**
 	 * find an event in head-tails event structure starting from this event on
 	 * which has an id equals input argument. this method implements a chain
@@ -771,6 +787,7 @@ public abstract class Event implements Comparable<Event> {
 	// TODO rename this method after using message system to requestAttedningUser
 	public void sendInvitationRequest(User user) {
 		// adding ourself to an invent should be instantly without a message over ms.
+		this.pendingAttendingUsers.add(user);
 		if(user == this.getOwner()) addUserToAttending(user);
 		else{
 			long targetUserId = user.getId();
@@ -787,10 +804,12 @@ public abstract class Event implements Comparable<Event> {
 	// TODO have a better name
 	/**
 	 * Add destination user to attending user list.
+	 * removes this user from pending attending user list, since he answered.
 	 */
 	public void addUserToAttending(User user){
 		if (!this.attendingUsers.contains(user)){
 			this.attendingUsers.add(user);
+			this.removeUserFromPendingAttending(user);
 		}
 	}
 
@@ -802,6 +821,10 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	public void removeUserFromAttending(User user) {
 		this.attendingUsers.remove(user);
+	}
+	
+	public void removeUserFromPendingAttending(User user){
+		this.pendingAttendingUsers.remove(user);
 	}
 	
 	// TODO add javadoc

@@ -688,12 +688,14 @@ public class User {
 	 */
 	public void declineInvitation(long userId, long calendarId,
 			long eventId){
-
+		getEventByUserCalendarEventId(userId, calendarId, eventId)
+		.removeUserFromPendingAttending(this);
 		this.removeInvitation(userId, calendarId, eventId);
+		
 	}
 	
 	// TODO add javadoc
-	private void removeInvitation(long userId, long calendarId,
+	public void removeInvitation(long userId, long calendarId,
 			long eventId){
 		
 		for(Object[] invitation : this.eventsToAccept){
