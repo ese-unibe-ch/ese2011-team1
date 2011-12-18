@@ -5,6 +5,7 @@
 #{if editingEvent} <body onload="printWeekDays();"> <h1> Editing Event ${event.getName()}</h1>  #{/if}
 #{else} <body> <h1> Add Event to ${calendar.getName()} </h1> #{/else}
 
+<!-- EDIT SIMU -->
 #{if flash.error}
 <p style="color:#c00;">
 	${flash.error}
@@ -12,10 +13,11 @@
 		<input type="button"  name="save" value="proceed" onclick="javascript: submit_form()" />
 		<input type="button" name="abort" value="abort" onclick="javascript:history.back()">
 	#{/if}
+<!-- bis hier -->
 </p>
 #{/if}
 	#{if message} <font style = "font-size: 30px; color: red;">${message}</font><br> #{/if}
-	<form name="before" action="" method="post">
+	<form name="before" action="" method="post">										<!-- EDIT SIMU -->
 		Name: <input type="text" name="titlename" value="#{if editingEvent}${event.name}#{/if}#{else}${flash.name}#{/else}" />
 	</form>
 
@@ -23,7 +25,12 @@
 <form name="startdate" method="post" action="">
 Start date:
 <select name="sday" onChange="OnChange(this.form.sday)">
+
+<!-- EDIT SIMU: kšnnte man hier beim Time picker evtl reinbauen, dass die
+			Zeit aus dem flash scope genommen wird, wenns abgefangen wird (zb. wegen overlapping?
+			Sonst muss der user alles nochmal eingeben -->
 	%{
+	
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
@@ -87,6 +94,7 @@ Start date:
 			if (editingEvent && i == event.getStart().getHourOfDay()) choice += ' selected';
 			if (!editingEvent && i == activeDate.getHourOfDay()) choice += ' selected';
 			
+			
 			choice += '>'+i+'</option>';
 			out.println(choice);
 		}
@@ -100,7 +108,6 @@ Start date:
 			
 			if (editingEvent && i == event.getStart().getMinuteOfHour()) choice += ' selected';
 			if (!editingEvent && i == activeDate.getMinuteOfHour()) choice += ' selected';
-			if (!editingEvent && i == flash.start) choice += ' selected';
 			
 			choice += '>'+i+'</option>';
 			out.println(choice);
@@ -187,6 +194,7 @@ End date:
 </select> o'clock <div id="endday" style="display:inline;"></div>
 </form>
 	
+	<!-- EDIT SIMU: sollte alles beim alten sein, bin aber nicht sicher -->
 	#{if editingEvent}
 	<form name="hiddenform" onsubmit="return send()" action="@{Application.saveEditedEvent()}" method="GET">
 	<input type="hidden" name="eventId" value="${eventId}" />
@@ -199,6 +207,8 @@ End date:
 	<input type="hidden" name="name" value="" />
 	<input type="hidden" name="start" value="" />
 	<input type="hidden" name="end" value="" />
+	
+	<!-- bis hier -->
 		
 			<br> Visibility:
 			<select name="visibility" onChange="javascript: changeVisibility(this.options[this.selectedIndex].value)">
@@ -244,6 +254,7 @@ function changeVisibility(val) {
 	}
 }
 
+// EDIT SIMU
 function submit_form() {
 	document.forms.hiddenform.forceCreate.value = true;
 	document.forms.hiddenform.save.click();
