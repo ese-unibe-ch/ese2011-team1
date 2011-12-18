@@ -687,6 +687,9 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
+		
+		System.out.println("CALENDAR: " + cal);
+		
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me)) {
@@ -694,6 +697,8 @@ public class Application extends Controller {
 				event = e;
 			}
 		}
+		
+		
 		assert (event != null);
 		event.removeUserFromAttending(userToRemove);
 		showCalendar(calendarId, me.getName(), s_activeDate,
