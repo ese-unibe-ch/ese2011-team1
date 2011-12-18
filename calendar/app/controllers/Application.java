@@ -676,14 +676,15 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), null);
 	}
 		
-	public static void removeUserFromEvent(String userToRemoveStr, long calendarId,
+	public static void removeUserFromEvent(String userToRemoveStr, String eventOwnerStr, long calendarId,
 			long eventId, String s_activeDate) {
 		System.out.println("calendarId: "+calendarId+", eventId: "+eventId);
 		System.out.println("User to remove:"+userToRemoveStr);
 		
 		User me = Database.getUserByName(Security.connected());
 		User userToRemove = Database.getUserByName(userToRemoveStr);
-		Calendar cal = me.getCalendarById(calendarId);
+		User eventOwner = Database.getUserByName(eventOwnerStr);
+		Calendar cal = eventOwner.getCalendarById(calendarId);
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
@@ -695,13 +696,14 @@ public class Application extends Controller {
 				activeDate.getYear(), me)) {
 			if (e.getId() == eventId) {
 				event = e;
+				break;
 			}
 		}
 		
 		
 		assert (event != null);
 		event.removeUserFromAttending(userToRemove);
-		showCalendar(calendarId, me.getName(), s_activeDate,
+		showCalendar(calendarId, eventOwner.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 
