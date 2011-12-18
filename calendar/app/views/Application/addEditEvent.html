@@ -8,7 +8,7 @@
 #{if flash.error}
 <p style="color:#c00;">
 	${flash.error}
-	#{if flash.contains("overlapping")}
+	#{if flash.contains("overlapping")}<br>
 		<input type="button"  name="save" value="proceed" onclick="javascript: submit_form()" />
 		<input type="button" name="abort" value="abort" onclick="javascript:history.back()">
 	#{/if}
@@ -16,7 +16,7 @@
 #{/if}
 	#{if message} <font style = "font-size: 30px; color: red;">${message}</font><br> #{/if}
 	<form name="before" action="" method="post">
-		Name: <input type="text" name="titlename" value="${flash.name}" />
+		Name: <input type="text" name="titlename" value="#{if editingEvent}${event.name}#{/if}#{else}${flash.name}#{/else}" />
 	</form>
 
 <br>
@@ -27,7 +27,6 @@ Start date:
 		for (int i=1; i<=31; i++) {
 			String choice = "";
 			choice = '<option value="'+i+'"';
-			
 			if (editingEvent && i == event.getStart().getDayOfMonth()) choice += ' selected';
 			if (!editingEvent && i == activeDate.getDayOfMonth()) choice += ' selected';
 			
@@ -101,6 +100,7 @@ Start date:
 			
 			if (editingEvent && i == event.getStart().getMinuteOfHour()) choice += ' selected';
 			if (!editingEvent && i == activeDate.getMinuteOfHour()) choice += ' selected';
+			if (!editingEvent && i == flash.start) choice += ' selected';
 			
 			choice += '>'+i+'</option>';
 			out.println(choice);
@@ -177,6 +177,7 @@ End date:
 			
 			if (editingEvent && i == event.getEnd().getMinuteOfHour()) choice += ' selected';
 			if (!editingEvent && i == activeDate.getMinuteOfHour()) choice += ' selected';
+			if (!editingEvent && i == flash.end) choice += ' selected';
 			
 			choice += '>'+i+'</option>';
 			out.println(choice);

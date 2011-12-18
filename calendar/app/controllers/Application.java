@@ -169,9 +169,10 @@ public class Application extends Controller {
 	}
 
 	public static void editProfile(@Required String name, String oldname,
-			@Required String password, @Required String confirmPW, @Required String birthday,
-			@Required String nickname, @Required boolean is_visible,
-			String emailP, boolean is_emailP_visible, String emailB,
+			@Required String password, @Required String confirmPW,
+			@Required String birthday, @Required String nickname,
+			@Required boolean is_visible, String emailP,
+			boolean is_emailP_visible, String emailB,
 			boolean is_emailB_visible, String telP, boolean is_telP_visible,
 			String telB, boolean is_telB_visible, String notes,
 			boolean is_note_visible) {
@@ -184,13 +185,13 @@ public class Application extends Controller {
 			params.flash();
 			validation.keep();
 			showEditProfile();
-			//NEW***
+			// NEW***
 		} else if (!password.equals(confirmPW)) {
 			params.flash();
 			validation.keep();
 			flash.error("Incorrect password confirmation!");
 			showEditProfile();
-			//***
+			// ***
 		} else if (validation.hasErrors()) {
 			params.flash();
 			validation.keep();
@@ -255,7 +256,8 @@ public class Application extends Controller {
 	public static void createEvent(@Required long calendarId,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, Interval interval,
-			String description, String s_activeDate, boolean isOpen, boolean forceCreate) {
+			String description, String s_activeDate, boolean isOpen,
+			boolean forceCreate) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -317,18 +319,18 @@ public class Application extends Controller {
 		}
 
 		calendar.generateAllNextEvents(d_start);
-		
+
 		// Must be commented out until next week, this is a requirement for next
 		// week
 		// TODO: Add flash notice instead of message, ask customer if Events can
 		// still be created/edited or redirect to create page?
 		if (!forceCreate) {
 			if (event.isOverlappingWithOtherEvent()) {
-				flash.error("Warning: This event overlaps an existing Event. Do you want to proceed?");
+				flash.error("Warning: This event overlaps with an existing Event. If you want to proceed, please verify your input and click 'proceed'.");
 				params.flash();
 				validation.keep();
 				flash.put("overlapping", "overlapping");
-				addEditEvent(-1, calendarId, name, s_activeDate, message);
+				addEditEvent(-1, calendarId, name, start, message);
 			}
 		}
 
@@ -341,7 +343,7 @@ public class Application extends Controller {
 			@Required long calendarId, @Required String name,
 			@Required String start, @Required String end,
 			Visibility visibility, Interval interval, String description,
-			String s_activeDate, boolean isOpen) {
+			String s_activeDate, boolean isOpen, boolean forceCreate) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -353,7 +355,9 @@ public class Application extends Controller {
 			d_start = dateTimeInputFormatter.parseDateTime(start);
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
-			message = "INVALID INPUT: PLEASE TRY AGAIN!";
+			flash.error("Invalid Input: Please try again.");
+			params.flash();
+			validation.keep();
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
 
@@ -404,15 +408,16 @@ public class Application extends Controller {
 			event.addUserToAttending(me);
 		}
 
-		// Must be commented out until next week, this is a requirement for next
-		// week
-		// TODO: Add flash notice instead of message, ask customer if Events can
-		// still be created/edited or redirect to create page?
-//		if (event.isOverlappingWithOtherEvent()) {
-//			message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n"
-//					+ event.getOverlappingEvents();
-//			addEditEvent(eventId, calendarId, name, s_activeDate, message);
-//		}
+		if (!forceCreate) {
+			if (event.isOverlappingWithOtherEvent()) {
+				flash.error("Warning: This event overlaps with an existing Event."
+							+ "If you want to proceed, please verify your input and click 'proceed'.");
+				params.flash();
+				validation.keep();
+				flash.put("overlapping", "overlapping");
+				addEditEvent(eventId, calendarId, name, start, message);
+			}
+		}
 
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
@@ -626,12 +631,12 @@ public class Application extends Controller {
 				.parseDateTime(s_activeDate);
 		Event event = null;
 
-//		System.out
-//				.println("====================================================================");
-//		System.out.println("Trying to fetch the calendar " + calendarId
-//				+ " from User " + me.getName());
-//		System.out
-//				.println("====================================================================");
+		// System.out
+		// .println("====================================================================");
+		// System.out.println("Trying to fetch the calendar " + calendarId
+		// + " from User " + me.getName());
+		// System.out
+		// .println("====================================================================");
 
 		System.out.println("cal:" + cal.getName());
 
@@ -648,17 +653,20 @@ public class Application extends Controller {
 		}
 
 		assert (event != null);
-		event.sendInvitationRequest(userToAdd); //TODO rename, check
+		event.sendInvitationRequest(userToAdd); // TODO rename, check
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 
-	public static void removeUserFromEvent(String userToRemoveStr, String eventOwner, long calendarId,
-			long eventId, String s_activeDate) {
-		System.out.println("Called removeUserFromEvent with eventOwner:"+eventOwner);
-		System.out.println("calendarId: "+calendarId+", eventId: "+eventId);
-		System.out.println("User to remove:"+userToRemoveStr);
-		
+	public static void removeUserFromEvent(String userToRemoveStr,
+			String eventOwner, long calendarId, long eventId,
+			String s_activeDate) {
+		System.out.println("Called removeUserFromEvent with eventOwner:"
+				+ eventOwner);
+		System.out.println("calendarId: " + calendarId + ", eventId: "
+				+ eventId);
+		System.out.println("User to remove:" + userToRemoveStr);
+
 		User me = Database.getUserByName(Security.connected());
 		User userToRemove = Database.getUserByName(userToRemoveStr);
 		Calendar cal = me.getCalendarById(calendarId);
