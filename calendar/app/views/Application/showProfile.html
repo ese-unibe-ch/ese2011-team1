@@ -4,7 +4,7 @@
 <h1>${user.name}'s profile</h1>
 
 	<li><b> Name:</b> ${user.name} </li> <br>
-	<li><b> Nickname:</b> ${nickname} </li> <br>
+	<li><b> Fullname:</b> ${nickname} </li> <br>
 	
 	#{if user.isBirthdayPublic()}<li><b> Birthday:</b> ${birthday.start.toString("dd/MM/yyyy")}</li> <br>#{/if}
 	#{if user.getIsPrivateEmailVisible()}<li><b> E-Mail (P):</b> ${emailP}</li> <br>#{/if}

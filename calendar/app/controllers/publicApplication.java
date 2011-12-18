@@ -19,7 +19,7 @@ public class publicApplication extends Controller {
 	}
 
 	public static void RegUser(@Required String name,
-			@Required String nickname, @Required String password,
+			@Required String nickname, @Required String password, @Required String confirmPW,
 			@Required String birthday, @Required boolean is_visible,
 			String emailP, boolean is_emailP_visible, String emailB,
 			boolean is_emailB_visible, String telP, boolean is_telP_visible,
@@ -31,6 +31,13 @@ public class publicApplication extends Controller {
 			params.flash();
 			validation.keep();
 			showRegistration();
+			//NEW***
+		} else if (!password.equals(confirmPW)) {
+			params.flash();
+			validation.keep();
+			flash.error("Incorrect password confirmation!");
+			showRegistration();
+			//***
 		} else if (validation.hasErrors()) {
 			params.flash();
 			validation.keep();
@@ -72,5 +79,4 @@ public class publicApplication extends Controller {
 			}
 		}
 	}
-
 }

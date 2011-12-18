@@ -19,7 +19,7 @@
 </p>
 	<input type="hidden" name="oldname" value="${oldname}" style="position:absolute;left:300px;"/>
 <p>
-	<label for="nickname"> Nickname*: </label>
+	<label for="nickname"> Fullname*: </label>
 	<input type="text" name="nickname" id="nickname" value ="${nickname}" style="position:absolute;left:300px;"/>
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'nickname' /}</span>
 </p>
@@ -27,6 +27,11 @@
 	<label for="password"> Password*: </label>
 	<input type="text" name="password" id="password" value ="${password}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'password' /}</span>
+</p>
+<p>
+	<label for="confirmPW"> Confirm Password*: </label>
+	<input type="text" name="confirmPW" id="confirmPW" value ="${password}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'confirmPW' /}</span>
 </p>
 <p>
 	<label for="birthday"> Birthday Date*: </label>

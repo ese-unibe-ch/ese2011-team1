@@ -18,7 +18,7 @@
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'name' /}</span>
 </p>
 <p>
-	<label for="nickname"> Nickname*: </label>
+	<label for="nickname"> Fullname*: </label>
 	<input type="text" name="nickname" id="nickname" value ="${flash.nickname}" style="position:absolute;left:300px;"/>
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'nickname' /}</span>
 </p>
@@ -26,6 +26,11 @@
 	<label for="password"> Password*: </label>
 	<input type="password" name="password" id="password" value ="${flash.password}" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'password' /}</span>
+</p>
+<p>
+	<label for="confirmPW"> Confirm Password*: </label>
+	<input type="password" name="confirmPW" id="confirmPW" value ="${flash.confirmPW}" style="position:absolute;left:300px;"/ >
+	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'confirmPW' /}</span>
 </p>
 <p>
 	<label for="birthday"> Birthday Date*: </label>

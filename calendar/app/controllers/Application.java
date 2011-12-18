@@ -168,7 +168,7 @@ public class Application extends Controller {
 	}
 
 	public static void editProfile(@Required String name, String oldname,
-			@Required String password, @Required String birthday,
+			@Required String password, @Required String confirmPW, @Required String birthday,
 			@Required String nickname, @Required boolean is_visible,
 			String emailP, boolean is_emailP_visible, String emailB,
 			boolean is_emailB_visible, String telP, boolean is_telP_visible,
@@ -183,6 +183,13 @@ public class Application extends Controller {
 			params.flash();
 			validation.keep();
 			showEditProfile();
+			//NEW***
+		} else if (!password.equals(confirmPW)) {
+			params.flash();
+			validation.keep();
+			flash.error("Incorrect password confirmation!");
+			showEditProfile();
+			//***
 		} else if (validation.hasErrors()) {
 			params.flash();
 			validation.keep();
