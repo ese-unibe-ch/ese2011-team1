@@ -32,12 +32,27 @@ public class Application extends Controller {
 	public static void index(String username) {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
-		String s_activeDate = new DateTime().toString("dd/MM/yyyy, HH:mm");
+		DateTime now = new DateTime();
+		String s_activeDate = now.toString("dd/MM/yyyy, HH:mm");
 
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = me.getCalendars();
-
-		render(users, me, s_activeDate, calendars, user);
+		
+		boolean freshlyLoggedIn;
+		
+		System.out.println("Last login: "+me.getLastLogin());
+		System.out.println("Now: "+(new DateTime()));
+		System.out.println("User is notified: "+me.isNotified());
+		// not notified yet
+		if (!me.getLastLogin().plusHours(2).isBeforeNow() && !me.isNotified()) {
+			freshlyLoggedIn = true;
+			me.setNotified(true);
+		}
+		else {
+			freshlyLoggedIn = false;
+		}	
+		
+		render(users, me, s_activeDate, calendars, user, freshlyLoggedIn);
 	}
 
 	public static void showMe(String s_activeDate) {
@@ -629,7 +644,9 @@ public class Application extends Controller {
 			}
 		}
 
-		assert (event != null);
+		System.out.println("Event Name+: "+event.getName());
+		System.out.println("User: "+userToAdd.getName());
+		
 		event.sendInvitationRequest(userToAdd); //TODO rename, check
 		showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);

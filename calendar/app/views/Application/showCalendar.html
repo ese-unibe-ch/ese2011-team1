@@ -270,7 +270,7 @@ Created by: ${event.getOwner()}
 
 <!-- user search -->
 <script type="text/javascript" charset="utf-8">
-var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), event.getStart().toString('dd/MM/yyyy, HH:mm')) /}
 $(document).ready(function() { $('#userSearch${event.getId()}').keyup(function() { $('#userResults${event.getId()} p').load(userSearch${event.getId()}({query: this.value})); });});
 </script>
 #{/list}

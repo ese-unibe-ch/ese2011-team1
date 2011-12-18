@@ -48,6 +48,7 @@ public class Bootstrap extends Job {
 		User simplay = new User("simplay", "123",
 				birthdayFormatter.parseDateTime("24/12/1989"), "senderos",
 				Database.messageSystem);
+		simplay.setLastLogin(new DateTime());
 		Calendar simplayDefaultCal = simplay.getdefaultCalendar();
 		Event football_Evening = new PointEvent("Football Evening at my Home",
 				now, nowIn3Hours, Visibility.PUBLIC, simplayDefaultCal);
@@ -68,7 +69,8 @@ public class Bootstrap extends Job {
 		mib.setBirthdayPublic(true);
 		Database.addUser(mib);
 		Calendar mibsPersonalCalendar = mib.getdefaultCalendar();
-
+		mib.setLastLogin(new DateTime());
+		
 		// mibs personal calendar
 		Event drinkABeerInTown = new PointEvent("Drink a Beer in Town",
 				nowIn1Hour, nowIn2Hours, Visibility.PUBLIC,
@@ -107,6 +109,7 @@ public class Bootstrap extends Job {
 		User simon = new User("Simon", "1337", now, "simu",
 				Database.messageSystem);
 		Database.addUser(simon);
+		simon.setLastLogin(new DateTime());
 		Calendar simonsFirstCalendar = simon.getdefaultCalendar();
 
 		Event getSomeFood = new PointEvent("Shop some food for tonight", now,
@@ -146,7 +149,8 @@ public class Bootstrap extends Job {
 		anna.setBirthdayPublic(true);
 		Database.addUser(anna);
 		Calendar annasPersonalCalendar = anna.getdefaultCalendar();
-
+		anna.setLastLogin(new DateTime());
+		
 		// Anna's personal calendar
 		Event meetWithTheGirls = new PointEvent("Meet with the Girls", now,
 				nowIn3Hours, Visibility.PUBLIC, annasPersonalCalendar);
@@ -168,7 +172,8 @@ public class Bootstrap extends Job {
 		bob.setBirthdayPublic(true);
 		Database.addUser(bob);
 		Calendar bobPersonalCalendar = bob.getdefaultCalendar();
-
+		bob.setLastLogin(new DateTime());
+		
 		// Bob's personal Calendar
 		DateTime special = dateTimeInputFormatter
 				.parseDateTime("02/12/2011, 20:00");
@@ -186,7 +191,8 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		oskar.setBirthdayPublic(true);
 		Database.addUser(oskar);
-
+		oskar.setLastLogin(new DateTime());
+		
 		Calendar oskarsHolidaysCalendar = new Calendar("Holiday", oskar);
 		oskar.addCalendar(oskarsHolidaysCalendar);
 		DateTime holidayBeginn = dateTimeInputFormatter
@@ -206,13 +212,15 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		stefanie.setBirthdayPublic(true);
 		Database.addUser(stefanie);
-
+		stefanie.setLastLogin(new DateTime());
+		
 		// dataset 8
 		User julian = new User("Julian", "123",
 				birthdayFormatter.parseDateTime("27/08/1970"), "Julian",
 				Database.messageSystem);
 		julian.setBirthdayPublic(true);
 		Database.addUser(julian);
+		julian.setLastLogin(new DateTime());
 
 		// dataset 9
 		User bruno = new User("Bruno", "123",
@@ -220,27 +228,31 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		bruno.setBirthdayPublic(true);
 		Database.addUser(bruno);
-
+		bruno.setLastLogin(new DateTime());
+		
 		// dataset 10
 		User alibaba = new User("Alibaba", "123",
 				birthdayFormatter.parseDateTime("12/01/1955"), "Alibaba",
 				Database.messageSystem);
 		alibaba.setBirthdayPublic(true);
 		Database.addUser(alibaba);
-
+		alibaba.setLastLogin(new DateTime());
+		
 		// dataset 11
 		User carla = new User("Carla", "123",
 				birthdayFormatter.parseDateTime("01/02/1971"), "Carla",
 				Database.messageSystem);
 		carla.setBirthdayPublic(true);
 		Database.addUser(carla);
-
+		carla.setLastLogin(new DateTime());
+		
 		// dataset 12
 		User camillo = new User("Camillo", "123",
 				birthdayFormatter.parseDateTime("03/05/1999"), "Camillo",
 				Database.messageSystem);
 		camillo.setBirthdayPublic(true);
 		Database.addUser(camillo);
+		camillo.setLastLogin(new DateTime());
 
 		// dataset 13
 		User debby = new User("Debby", "123",
@@ -248,6 +260,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		debby.setBirthdayPublic(true);
 		Database.addUser(debby);
+		debby.setLastLogin(new DateTime());
 
 		// dataset 14
 		User donald = new User("Donald", "123",
@@ -255,41 +268,47 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		donald.setBirthdayPublic(true);
 		Database.addUser(donald);
-
+		donald.setLastLogin(new DateTime());
+		
 		// dataset 15
 		User emma = new User("Emma", "123",
 				birthdayFormatter.parseDateTime("01/09/1995"), "Emma",
 				Database.messageSystem);
 		emma.setBirthdayPublic(true);
 		Database.addUser(emma);
-
+		emma.setLastLogin(new DateTime());
+		
 		// dataset 16
 		User elvis = new User("Elvis", "123",
 				birthdayFormatter.parseDateTime("10/10/1903"), "Elvis",
 				Database.messageSystem);
 		elvis.setBirthdayPublic(true);
 		Database.addUser(elvis);
-
+		elvis.setLastLogin(new DateTime());
+		
 		// dataset 17
 		User francis = new User("Francis", "123",
 				birthdayFormatter.parseDateTime("15/02/1989"), "Francis",
 				Database.messageSystem);
 		francis.setBirthdayPublic(true);
 		Database.addUser(francis);
-
+		francis.setLastLogin(new DateTime());
+		
 		// dataset 18
 		User michael = new User("Michael", "123",
 				birthdayFormatter.parseDateTime("01/02/1990"), "Michael",
 				Database.messageSystem);
 		michael.setBirthdayPublic(true);
 		Database.addUser(michael);
-
+		michael.setLastLogin(new DateTime());
+		
 		// dataset 19
 		User adrianus = new User("Adrianus", "123",
 				birthdayFormatter.parseDateTime("19/06/1987"), "Adrianus",
 				Database.messageSystem);
 		adrianus.setBirthdayPublic(true);
 		Database.addUser(adrianus);
+		adrianus.setLastLogin(new DateTime());
 
 		// dataset 20
 		User kate = new User("Kate", "123",
@@ -297,6 +316,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		kate.setBirthdayPublic(true);
 		Database.addUser(kate);
+		kate.setLastLogin(new DateTime());
 
 		// dataset 21
 		User nemo = new User("Nemo", "123",
@@ -304,6 +324,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		nemo.setBirthdayPublic(true);
 		Database.addUser(nemo);
+		nemo.setLastLogin(new DateTime());
 
 		// dataset 22
 		User laura = new User("Laura", "123",
@@ -311,6 +332,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		laura.setBirthdayPublic(true);
 		Database.addUser(laura);
+		laura.setLastLogin(new DateTime());
 
 		// dataset 23
 		User tequilla = new User("Tequilla", "123",
@@ -318,6 +340,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		tequilla.setBirthdayPublic(true);
 		Database.addUser(tequilla);
+		tequilla.setLastLogin(new DateTime());
 
 		// dataset 24
 		User julia = new User("Julia", "123",
@@ -325,6 +348,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		julia.setBirthdayPublic(true);
 		Database.addUser(julia);
+		julia.setLastLogin(new DateTime());
 
 		// dataset 25
 		User romeo = new User("Romeo", "123",
@@ -332,6 +356,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		romeo.setBirthdayPublic(true);
 		Database.addUser(romeo);
+		romeo.setLastLogin(new DateTime());
 
 		// dataset 26
 		User xavier = new User("Xavier", "123",
@@ -339,6 +364,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		xavier.setBirthdayPublic(true);
 		Database.addUser(xavier);
+		xavier.setLastLogin(new DateTime());
 
 		// dataset 27
 		User obelix = new User("Obelix", "123",
@@ -346,6 +372,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		obelix.setBirthdayPublic(true);
 		Database.addUser(obelix);
+		obelix.setLastLogin(new DateTime());
 
 		// dataset 28
 		User asterix = new User("Asterix", "123",
@@ -353,6 +380,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		asterix.setBirthdayPublic(true);
 		Database.addUser(asterix);
+		asterix.setLastLogin(new DateTime());
 
 		// dataset 29
 		User geraldine = new User("Geraldine", "123",
@@ -360,6 +388,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		geraldine.setBirthdayPublic(true);
 		Database.addUser(geraldine);
+		geraldine.setLastLogin(new DateTime());
 
 		// dataset 30
 		User valentino = new User("Valentino", "123",
@@ -367,6 +396,7 @@ public class Bootstrap extends Job {
 				Database.messageSystem);
 		valentino.setBirthdayPublic(true);
 		Database.addUser(valentino);
+		valentino.setLastLogin(new DateTime());
 
 	}
 }

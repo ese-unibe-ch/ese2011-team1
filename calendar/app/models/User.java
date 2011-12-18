@@ -43,6 +43,8 @@ public class User {
 	private String description;
 	private boolean isDescriptionVisible;
 	private static long counter;
+	private DateTime lastLogin;
+	private boolean notified;
 
 	/**
 	 * Create a new User for this calendar application.
@@ -109,7 +111,37 @@ public class User {
 		this.birthday.generateNextEvents(birthDate.plusYears(1));
 		observedCalendars.add(birthdayCalendar);
 	}
+	
+	/**
+	 * Returns if the user has been notified
+	 */
+	public boolean isNotified() {
+		return notified;
+	}
+	
+	/**
+	 * Sets the login Date.
+	 */
+	public void setNotified(boolean b) {
+		this.notified = b;
+	}
+	
 
+	/**
+	 * Gets the last login Date.
+	 */
+	public DateTime getLastLogin() {
+		return lastLogin;
+	}
+	
+	/**
+	 * Sets the login Date.
+	 */
+	public void setLastLogin(DateTime lastL) {
+		this.lastLogin = lastL;
+	}
+	
+	
 	/**
 	 * Get this Users password.
 	 * 
