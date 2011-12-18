@@ -5,9 +5,18 @@
 #{if editingEvent} <body onload="printWeekDays();"> <h1> Editing Event ${event.getName()}</h1>  #{/if}
 #{else} <body> <h1> Add Event to ${calendar.getName()} </h1> #{/else}
 
+#{if flash.error}
+<p style="color:#c00;">
+	${flash.error}
+	#{if flash.contains("overlapping")}
+		<input type="button"  name="save" value="proceed" onclick="javascript: submit_form()" />
+		<input type="button" name="abort" value="abort" onclick="javascript:history.back()">
+	#{/if}
+</p>
+#{/if}
 	#{if message} <font style = "font-size: 30px; color: red;">${message}</font><br> #{/if}
 	<form name="before" action="" method="post">
-		Name: <input type="text" name="titlename" value="#{if editingEvent}${event.getName()}#{/if}" />
+		Name: <input type="text" name="titlename" value="${flash.name}" />
 	</form>
 
 <br>
@@ -218,7 +227,8 @@ End date:
 			<br> Event Description:	<br>
 			<textarea rows="6" cols="100" name="description">#{if editingEvent}${event.getDescription()}#{/if}</textarea>
 			<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" /> <br>
-			<input type="submit" value="save" />
+			<input type="hidden" name="forceCreate" value="false" /> <br>
+			<input type="submit" value="save" name="save" />
 			<input type="button" name="cancel" value="cancel" onclick="javascript:history.back()">
 		</form>
 			
@@ -231,6 +241,11 @@ function changeVisibility(val) {
 	else {
 		document.getElementById("openEvent").innerHTML = "";
 	}
+}
+
+function submit_form() {
+	document.forms.hiddenform.forceCreate.value = true;
+	document.forms.hiddenform.save.click();
 }
 </script>
 

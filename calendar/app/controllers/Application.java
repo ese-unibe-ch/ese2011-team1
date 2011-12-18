@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import play.data.validation.Required;
 import play.mvc.Controller;
+import play.mvc.Scope.Flash;
 import play.mvc.With;
 import enums.Interval;
 import enums.Visibility;
@@ -254,7 +255,7 @@ public class Application extends Controller {
 	public static void createEvent(@Required long calendarId,
 			@Required String name, @Required String start,
 			@Required String end, Visibility visibility, Interval interval,
-			String description, String s_activeDate, boolean isOpen) {
+			String description, String s_activeDate, boolean isOpen, boolean forceCreate) {
 
 		User me = Database.users.get(Security.connected());
 		Calendar calendar = me.getCalendarById(calendarId);
@@ -264,7 +265,9 @@ public class Application extends Controller {
 		DateTime d_end = null;
 
 		if (name.length() < 1) {
-			message = "INVALID INPUT: PLEASE ENTER A NAME!";
+			flash.error("Invalid Input: Please enter a name.");
+			params.flash();
+			validation.keep();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 
@@ -272,12 +275,15 @@ public class Application extends Controller {
 			d_start = dateTimeInputFormatter.parseDateTime(start);
 			d_end = dateTimeInputFormatter.parseDateTime(end);
 		} catch (Exception e) {
-			message = "INVALID INPUT: PLEASE TRY AGAIN!";
-
+			flash.error("Invalid Input: Please try again.");
+			params.flash();
+			validation.keep();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 		if (d_end.isBefore(d_start)) {
-			message = "INVALID INPUT: START DATE MUST BE BEFORE END DATE!";
+			flash.error("Invalid Input: Start date must be before end date.");
+			params.flash();
+			validation.keep();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
 
@@ -289,7 +295,9 @@ public class Application extends Controller {
 
 		} else {
 			if (!d_start.plusDays(interval.getDays()).isAfter(d_end)) {
-				message = "INVALID INPUT: REPEATING EVENT OVERLAPS WITH ITSELF ON NEXT OCCURRENCE!";
+				flash.error("Invalid Input: Repeating Event overlaps self on next occurence.");
+				params.flash();
+				validation.keep();
 				addEditEvent(-1, calendarId, name, s_activeDate, message);
 			}
 			event = new RepeatingEvent(name, d_start, d_end, visibility,
@@ -314,14 +322,17 @@ public class Application extends Controller {
 		// week
 		// TODO: Add flash notice instead of message, ask customer if Events can
 		// still be created/edited or redirect to create page?
-//		if (event.isOverlappingWithOtherEvent()) {
-//		message = "OVERLAPPING WITH OTHER EVENT! Overlapping events:\n" +
-//		event.getOverlappingEvents();
-//		addEditEvent(-1, calendarId, name, s_activeDate, message);
-//		}
+		if (!forceCreate) {
+			if (event.isOverlappingWithOtherEvent()) {
+				flash.error("Warning: This event overlaps an existing Event. Do you want to proceed?");
+				params.flash();
+				validation.keep();
+				flash.put("overlapping", "overlapping");
+				addEditEvent(-1, calendarId, name, s_activeDate, message);
+			}
+		}
 
 		calendar.addEvent(event);
-		
 		showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
 				message);
 	}
