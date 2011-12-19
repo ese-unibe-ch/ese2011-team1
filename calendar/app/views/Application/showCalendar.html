@@ -232,7 +232,8 @@ Created by: ${event.getOwner()}
   ${attendingUser.getName()}
   
   #{if !event.isOpen() && me == attendingUser}
-  	<a href="@{Application.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
+  	<a href="@{Application.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"><br>
+  	<img src="/public/images/minus.png " width="12" alt="plus" /></a>
   #{/if}
 #{/list}
 <br>
@@ -250,10 +251,18 @@ Created by: ${event.getOwner()}
 
 #{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
   #{if event.userIsAttending(me.getName())}
-  You are attending!<a href="@{Application.removeUserFromEvent(me.getName(), user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> no longer attend </a><br>
+  <a href="@{Application.removeUserFromEvent(me.getName(), user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <img src="/public/images/minus.png " width="12" alt="plus" /> No longer attend </a>
   #{/if}
   #{else}
-	 <a href="@{Application.addUserToEvent(user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> attend </a>
+  	#{if me != calendar.getOwner()}
+		<a href="@{Application.addUserToEvent(me.getName(), user.getName(), event.getOwner().getName(), event.getCalendarId(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
+  	#{/if}
+	#{else}
+		<a href="@{Application.addUserToEvent(me.getName(), user.getName(), user.getName(), calendar.getId(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
+  	#{/else}
   #{/else}
 #{/if}
 

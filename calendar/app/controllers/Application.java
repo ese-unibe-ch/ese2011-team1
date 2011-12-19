@@ -639,16 +639,16 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), message);
 	}
 
-	public static void addUserToEvent(String userToAddStr, long calendarId,
-			long eventId, String s_eventDate) {
-		User me = Database.getUserByName(Security.connected());
-		User userToAdd = Database.getUserByName(userToAddStr);
-		Calendar cal = me.getCalendarById(calendarId);
-		assert (cal != null);
+	public static void addUserToEvent(String userToAddStr, String user, String calendarOwnerStr, long eventCalendarId,
+			long calendarId, long eventId, String s_eventDate) {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_eventDate);
 		Event event = null;
-
+		User me = Database.getUserByName(Security.connected());
+		User userToAdd = Database.getUserByName(userToAddStr);
+		User calendarOwner = Database.getUserByName(calendarOwnerStr);
+		Calendar cal = calendarOwner.getCalendarById(eventCalendarId);
+	
 		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
 				activeDate.getMonthOfYear(), activeDate.getYear(), me).equals(
 				null)) {
@@ -681,14 +681,12 @@ public class Application extends Controller {
 		}else event.sendInvitationRequest(userToAdd);
 		
 		
-		showCalendar(calendarId, me.getName(), s_activeDate,
+		showCalendar(calendarId, user, s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
 		
 	public static void removeUserFromEvent(String userToRemoveStr, String eventOwnerStr, long calendarId,
 			long eventId, String s_activeDate) {
-		System.out.println("calendarId: "+calendarId+", eventId: "+eventId);
-		System.out.println("User to remove:"+userToRemoveStr);
 		
 		User me = Database.getUserByName(Security.connected());
 		User userToRemove = Database.getUserByName(userToRemoveStr);
@@ -697,8 +695,6 @@ public class Application extends Controller {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
-		
-		System.out.println("CALENDAR: " + cal);
 		
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
