@@ -244,8 +244,8 @@ Created by: ${event.getOwner()}
   <a href="@{Application.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
   - <a href="@{Application.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
     #{if event.isRepeating()}
-    <a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> - remove all repeating </a>
-    <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">- cancel repetition from here </a>
+    - <a href="@{Application.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove all repeating </a>
+    - <a href="@{Application.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> cancel repetition from here </a>
     #{/if}
 #{/if}
 
@@ -284,7 +284,7 @@ Created by: ${event.getOwner()}
 
 <!-- user search -->
 <script type="text/javascript" charset="utf-8">
-var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), event.getStart().toString('dd/MM/yyyy, HH:mm')) /}
+var userSearch${event.getId()} = #{jsAction @searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), event.getStart().toString('dd/MM/yyyy, HH:mm'), calendar.getId()) /}
 $(document).ready(function() { $('#userSearch${event.getId()}').keyup(function() { $('#userResults${event.getId()} p').load(userSearch${event.getId()}({query: this.value})); });});
 </script>
 #{/list}

@@ -73,21 +73,35 @@ public class Application extends Controller {
 		}
 		render(me, user, calendars, s_activeDate);
 	}
-
-	public static void searchUserForAdding(String userName,
-			String calendarOwner, long calendarId, long eventId,
-			String s_eventDate) {
+	
+	/**
+	 * Searches for Users which can be added to a event.
+	 * (renders searchUserForAdding.html)
+	 * 
+	 * @param meStr me
+	 * @param userToAddStr the user to add
+	 * @param calendarOwnerStr the calendar owner
+	 * @param calendarId the id of the calendar
+	 * @param eventId the id of the event
+	 * @param s_eventDate the event date
+	 */
+	public static void searchUserForAdding(String userSearchStr, String calendarOwnerStr, 
+			long eventCalendarId, long eventId, String s_eventDate, long calendarId) {
 		User me = Database.users.get(Security.connected());
+		
+		//if (userName.isEmpty())
+		//	render(me, null);
 
-		if (userName.isEmpty())
-			render(me, null);
-
-		List<User> results = Database.searchUser(userName);
+		List<User> results = Database.searchUser(userSearchStr);
 		DateTime activeDate = new DateTime();
 
-		//DateTime eventDate = dateTimeInputFormatter.parseDateTime(s_eventDate);
+		//DateTime event = dateTimeInputFormatter.parseDateTime(s_eventDate);
 		
-		render(me, results, userName, calendarId, eventId, s_eventDate, activeDate);
+		System.out.println("======================");
+		System.out.println("Watching calendar: "+eventCalendarId);
+		System.out.println("======================");
+		
+		render(me, results, calendarId, eventCalendarId, eventId, s_eventDate, activeDate, calendarOwnerStr);
 	}
 
 	public static void searchUser(String userName) {
@@ -532,18 +546,26 @@ public class Application extends Controller {
 	}
 
 	public static void showCalendar(long calendarId, String username,
-			String s_activeDate, int counter, String message) {
+			String activeDateStr, int counter, String message) {
 		message = null;
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
+		
+		System.out.println("==================");
+		System.out.println("username: "+username);
+		System.out.println("activeDate: "+activeDateStr);
+		System.out.println("CalendarId: "+calendarId);
+		System.out.println("calendar name: "+calendar.getName());
+		System.out.println("==================");
+		
 		assert (calendar != null) : "Calendar must not be null";
 
 		// get active date
 		DateTime activeDate = null;
 		DateTime today = new DateTime();
 		try {
-			activeDate = dateTimeInputFormatter.parseDateTime(s_activeDate);
+			activeDate = dateTimeInputFormatter.parseDateTime(activeDateStr);
 		} catch (Exception e) {
 			activeDate = today;
 		}
@@ -639,8 +661,16 @@ public class Application extends Controller {
 				activeDate.getDayOfMonth(), message);
 	}
 
-	public static void addUserToEvent(String userToAddStr, String user, String calendarOwnerStr, long eventCalendarId,
-			long calendarId, long eventId, String s_eventDate) {
+	/**
+	 * Adds an user to a event.
+	 * Be careful to not mess up with the different users involved:
+	 * 
+	 * @param userToAddStr the user to add
+	 * @param userWatchingStr the user clicking on 'add', 
+	 * @param calendarOwnerStr the owner of the calendar of the event
+	 */
+	public static void addUserToEvent(String userWatchingStr, String userToAddStr, String calendarOwnerStr, long eventCalendarId,
+			long eventId, String s_eventDate, long calendarId) {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_eventDate);
 		Event event = null;
@@ -662,10 +692,9 @@ public class Application extends Controller {
 		}
 		
 		System.out.println("========================================================");
-		System.out.println("Trying to fetch the calendar " + calendarId + " from User " + me.getName());
-		System.out.println("(Date: "+s_eventDate+"), Calendar name: "+cal.getName());
-		System.out.println("Trying to get event Id "+eventId);
-		System.out.println("User to add: "+userToAdd.getName());
+		System.out.println("userToAddStr:"+userToAddStr);
+		System.out.println("userWatchingStr:"+userWatchingStr);
+		System.out.println("calendarOwnerStr:"+calendarOwnerStr);
 		System.out.println("========================================================");
 		
 		String s_activeDate = s_eventDate;
@@ -680,6 +709,7 @@ public class Application extends Controller {
 			}
 		}else event.sendInvitationRequest(userToAdd);
 		
+		String user = userWatchingStr;
 		
 		showCalendar(calendarId, user, s_activeDate,
 				activeDate.getDayOfMonth(), null);

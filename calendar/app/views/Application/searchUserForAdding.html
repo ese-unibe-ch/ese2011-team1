@@ -4,10 +4,8 @@
 <div id="searchForUsers">
 
   #{list items:results, as:'user'}
-  
-  <a href="@{Application.addUserToEvent(user.getName(), calendarId, eventId, s_eventDate)}">
+  <a href="@{Application.addUserToEvent(me, user.getName(), calendarOwnerStr, eventCalendarId, eventId, s_eventDate, calendarId)}">
   <img src="/public/images/plus.png " width="12" alt="plus" /></a> ${user.getName()}<br>
-  
   #{/list}
 </div> 
 #{/else}
