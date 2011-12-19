@@ -1,0 +1,8 @@
+	#{if (results.equals(null) || results.size() == 0)}
+		No users found...
+	#{/if}
+	#{else}
+		#{list items:results, as:'user'}
+			<a href="#" modal-user-name="${user.getName()}" data-reveal-id="modal">${user.getName()}</a><br />
+		#{/list}
+	#{/else}

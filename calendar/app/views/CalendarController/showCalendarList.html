@@ -1,0 +1,7 @@
+<h3><a href="@{UserController.showProfile(user.name)}"> ${user.name}</a></h3>
+
+#{list items:calendars, as:'calendar'}
+<li><a href="@{CalendarController.showCalendar(calendar.getId(), user.name, s_activeDate)}"> ${calendar.name}</a></li>
+#{/list}
+	
+<a class="close-reveal-modal">&#215;</a>

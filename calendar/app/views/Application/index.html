@@ -6,7 +6,7 @@
      <h1>New calendar</h1>
      <p>
      Please enter a name for your new Calendar: 
-     <form name="form" action="@{Application.createCalendar()}" method="GET">
+     <form name="form" action="@{CalendarController.createCalendar()}" method="GET">
      <input type="text" name="calendarName" value="">
      <input type="hidden" name="userName" value="${me.getName()}">
      <input type="button" value="create" onClick="submit()">
@@ -20,14 +20,14 @@
 <h2>Your calendars <input type="button" value="new calendar" id="myButton" onclick="#myButton"> </h2>
 #{list items:calendars, as:'calendar'}
 ${calendar.getName()} - 
-  <a href="@{Application.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
+  <a href="@{CalendarController.showCalendar(calendar.getId(), me.getName(), s_activeDate)}"> view </a> - 
   <a  href="javascript: deleteCalendar(${calendar.getId()})"> delete </a> <br>
 #{/list}
-<form name="deleteCal" action="@{Application.deleteCalendar()}" method="GET"><input type="hidden" name="calendarId" value="" /></form>
+<form name="deleteCal" action="@{CalendarController.deleteCalendar()}" method="GET"><input type="hidden" name="calendarId" value="" /></form>
 
 <h2>Your account</h2>
-<a href="@{Application.showProfile(me.getName())}"> view profile </a><br>
-<a href="@{Application.showEditProfile()}"> edit profile </a><br>
+<a href="@{UserController.showProfile(me.getName())}"> view profile </a><br>
+<a href="@{UserController.showEditProfile()}"> edit profile </a><br>
 <a href="javascript: deleteAccount()"> delete account</a>
 
 <!-- 
@@ -79,7 +79,7 @@ function deleteAccount(calendarId) {
 	
 	var answer = confirm ("Are you REALLY sure? This can NOT be undone!")
 	if (answer)
-		window.location.href = "@{Application.deleteMyAccount()}";
+		window.location.href = "@{UserController.deleteMyAccount()}";
 }
 
 </script>
@@ -87,14 +87,14 @@ function deleteAccount(calendarId) {
 <h2>Followed calendars</h2>
 #{list items:me.getObservedCalendars(), as:'calendar'}
 #{if calendar.getName()!="Birthdays"}
-<a href="@{Application.showCalendar(calendar.getId(), calendar.getOwner(), s_activeDate)}"> ${calendar.getName() + " (" + calendar.getOwner() + ")"} </a><br>
+<a href="@{CalendarController.showCalendar(calendar.getId(), calendar.getOwner(), s_activeDate)}"> ${calendar.getName() + " (" + calendar.getOwner() + ")"} </a><br>
 #{/if}
 #{/list}
 
 <script type="text/javascript" charset="utf-8">
-var searchAction = #{jsAction @searchUser(':query') /}
-var editAction = #{jsAction @showCalendarList(':userName') /}
-var saveAction = #{jsAction @showCalendar(':userName') /}
+var searchAction = #{jsAction @UserController.searchUser(':query') /}
+var editAction = #{jsAction @CalendarController.showCalendarList(':userName') /}
+var saveAction = #{jsAction @CalendarController.showCalendar(':userName') /}
 
 //If you type in the #search field, an ajax request is fired and the response is stored in the results-div
 $(document).ready(function (){
