@@ -334,7 +334,7 @@ public class EventController extends Controller {
 	 * @param calendarOwnerStr the owner of the calendar of the event
 	 */
 	public static void addUserToEvent(String userWatchingStr, String userToAddStr, String calendarOwnerStr, long eventCalendarId,
-			long eventId, String s_eventDate, long calendarId) {
+			 long calendarId, long eventId, String s_eventDate) {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_eventDate);
 		Event event = null;
