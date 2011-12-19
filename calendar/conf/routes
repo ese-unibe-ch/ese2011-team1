@@ -4,20 +4,20 @@
 
 # Home page
 
-GET		/										Application.index
-GET 	/calendars/{username}/					Application.showCalendarList
-GET		/addEditEvents/{name}/{calendarId}/{eventId}/	Application.addEditEvent
-GET 	/showCalendar/{username}/{calendarId}/		Application.showCalendar
-GET		/Registration							publicApplication.showRegistration
-GET		/showProfile/{userName}/				Application.showProfile
+GET		/												Application.index
+GET 	/calendars/{username}/							CalendarController.showCalendarList
+GET		/addEditEvents/{name}/{calendarId}/{eventId}/	EventController.addEditEvent
+GET 	/showCalendar/{username}/{calendarId}/			CalendarController.showCalendar
+GET		/Registration									publicApplication.showRegistration
+GET		/showProfile/{userName}/						UserController.showProfile
 
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET     /favicon.ico                            		404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET     /public/                                		staticDir:public
 
 # Catch all
-*       /{controller}/{action}                  {controller}.{action}
+*       /{controller}/{action}                  		{controller}.{action}
 # Import Secure routes
-*     	/                                       module:secure
+*     	/                                       		module:secure
