@@ -1,8 +1,8 @@
-import models.Bootstrap;
 
 import org.junit.Test;
 
 import play.test.UnitTest;
+import utility.Bootstrap;
 
 public class BootstrapTest extends UnitTest {
 

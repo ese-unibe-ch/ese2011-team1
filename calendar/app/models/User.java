@@ -63,9 +63,6 @@ public class User {
 	 */
 	public User(String name, String password, DateTime birthDate,
 			String nickname, MessageSystem messageSystem) {
-		// preconditions
-		assert name != null : "Parameter not allowed to be null";
-		assert name.isEmpty() == false : "Empty name, User must have a name";
 
 		calendars = new LinkedList<Calendar>();
 		observedCalendars = new LinkedList<Calendar>();
@@ -83,11 +80,6 @@ public class User {
 		calendars.add(new Calendar("Personal", this));
 		this.messageSystem = messageSystem;
 		this.messageSystem.subscribe(this);
-
-		// postconditions
-		assert this.name.equals(name);
-		assert calendars != null;
-
 	}
 
 	/**
@@ -655,7 +647,6 @@ public class User {
 	 */
 	public void sendMessage(long targetUserId, long fromUserId, long calendarId, long eventId,
 			String message) {
-		System.out.println("do something here - maybe send a message :D");
 		this.messageSystem.notifyObservingUser(targetUserId, fromUserId,calendarId, eventId,
 				message);
 	}
@@ -718,6 +709,7 @@ public class User {
 	 * @param eventId
 	 * @return
 	 */
+	// TODO add javadoc
 	private Event getEventByUserCalendarEventId(long userId, long calendarId,
 			long eventId) {
 		User user = Database.getUserById(userId);
