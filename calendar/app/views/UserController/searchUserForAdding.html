@@ -4,7 +4,7 @@
 <div id="searchForUsers">
 
   #{list items:results, as:'user'}
-  <a href="@{EventController.addUserToEvent(me, user.getName(), calendarOwnerStr, eventCalendarId, eventId, s_eventDate, calendarId)}">
+  <a href="@{EventController.addUserToEvent(me, user.getName(), calendarOwnerStr, eventCalendarId, calendarId, eventId, s_eventDate)}">
   <img src="/public/images/plus.png " width="12" alt="plus" /></a> ${user.getName()}<br>
   #{/list}
 </div> 
