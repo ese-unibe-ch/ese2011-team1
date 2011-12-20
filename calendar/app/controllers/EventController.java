@@ -187,7 +187,7 @@ public class EventController extends Controller {
 		if (!forceCreate) {
 			if (event.isOverlappingWithOtherEvent()) {
 				flash.error("Warning: This event overlaps with an existing Event."
-							+ "If you want to proceed, please verify your input and click 'proceed'.");
+							+ " If you want to proceed, please verify your input and click 'proceed'.");
 				params.flash();
 				validation.keep();
 				flash.put("overlapping", "overlapping");

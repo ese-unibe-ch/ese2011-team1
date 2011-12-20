@@ -822,16 +822,14 @@ public abstract class Event implements Comparable<Event> {
 	 * @return is this event overlapping?
 	 */
 	public boolean isOverlappingWithOtherEvent() {
-		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
-			if (this.overlaps(event)) {
-				return true;
+		LocalDate eventDate = this.start.toLocalDate();
+		while (eventDate.isBefore(this.end.toLocalDate().plusDays(1))) {
+			for (Event event : calendar.getEventsOfDate(eventDate, getOwner())) {
+				if (this.overlaps(event)) {
+					return true;
+				}
 			}
-		}
-		
-		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
-			if (this.overlaps(event)) {
-				return true;
-			}
+			eventDate = eventDate.plusDays(1);
 		}
 		return false;
 	}
@@ -839,10 +837,10 @@ public abstract class Event implements Comparable<Event> {
 	/**
 	 * Checks if this event overlaps with given event
 	 * @param event compare event
-	 * @return is this event oberlapping with given event
+	 * @return is this event overlapping with given event
 	 */
 	private boolean overlaps(Event event) {
-		if (this.end.isBefore(event.start) 
+		if (this.id == event.getId() || this.end.isBefore(event.start) 
 				|| this.start.isAfter(event.end)) {
 			return false;
 		}
