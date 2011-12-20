@@ -322,15 +322,18 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	// TODO write javadocs
 	public String getDatesFor(DateTime activeDate, User requester) {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer stringbuffer = new StringBuffer();
 		LocalDate activeLocalDate = activeDate.toLocalDate();
+		
 		if (!start.toLocalDate().equals(activeLocalDate))
-			sb.append(start.toString("yyyy-MM-dd") + " ");
-		sb.append(start.toString("HH:mm") + " - ");
+			stringbuffer.append(start.toString("yyyy-MM-dd") + " ");
+		
+		stringbuffer.append(start.toString("HH:mm") + " - ");
 		if (!end.toLocalDate().equals(activeLocalDate))
-			sb.append(end.toString("yyyy-MM-dd") + " ");
-		sb.append(end.toString("HH:mm"));
-		return sb.toString();
+			stringbuffer.append(end.toString("yyyy-MM-dd") + " ");
+		
+		stringbuffer.append(end.toString("HH:mm"));
+		return stringbuffer.toString();
 	}
 
 	/**
