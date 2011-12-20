@@ -53,6 +53,7 @@
 <h2>Events</h2>
 <table border="1">
 	<tr>
+		<td>name</td>
 		<td>id</td>
 		<td>baseId</td>
 		<td>orginId</td>
@@ -66,6 +67,7 @@
 	</tr>
 	#{list items:events, as:'event'}
 	<tr>
+		<td>${event.getName()}</td>
 		<td>${event.getId()}</td>
 		<td>${event.getBaseId()}</td>
 		<td>${event.getOriginId()}</td>
