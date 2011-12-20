@@ -25,11 +25,12 @@ import play.mvc.With;
 public class EventController extends Controller {
 	
 	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
-	public static String message = null;
+			.forPattern("yyyy-MM-dd");
 	
+	public static String message = null;
+			
 	public static void searchEvent(String eventName, String calendarOwner,
 			String displayedCalendarId, String s_activeDate) {
 

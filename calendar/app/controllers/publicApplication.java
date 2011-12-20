@@ -12,7 +12,7 @@ import play.mvc.Controller;
 
 public class publicApplication extends Controller {
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
+			.forPattern("yyyy-MM-dd");
 
 	public static void showRegistration() {
 		render();

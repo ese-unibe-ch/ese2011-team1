@@ -19,10 +19,10 @@ import play.mvc.With;
 public class CalendarController extends Controller {
 	
 	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
-	
+			.forPattern("yyyy-MM-dd");
+			
 	public static void showCalendarList(String username, String s_activeDate) {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);

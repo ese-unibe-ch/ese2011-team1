@@ -1,12 +1,12 @@
 function send() {
-	//format dd/MM/yyyy, HH:mm
+	//format yyyy-MM-dd-HH-mm
 	var yy = document.forms.startdate.syear.selectedIndex+2011;
 	var mm = document.forms.startdate.smonth.selectedIndex+1;
 	var dd = document.forms.startdate.sday.selectedIndex+1;
 	var hh = document.forms.startdate.shour.selectedIndex;
 	var mmi = (document.forms.startdate.smins.selectedIndex)*5;
 	
-	var str = dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mmi;
+	var str = yy + '-' + mm + '-' + dd + '-' + hh + '-' + mmi;
 	//alert(str);
 	
 	document.forms.hiddenform.start.value = str;
@@ -17,20 +17,10 @@ function send() {
 	hh = document.forms.enddate.hour.selectedIndex;
 	mmi = (document.forms.enddate.mins.selectedIndex)*5;
 	
-	str = dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mmi;
+	str = yy + '-' + mm + '-' + dd + '-' + hh + '-' + mmi;
 	
 	document.forms.hiddenform.end.value = str;
 	document.forms.hiddenform.name.value = document.forms.before.titlename.value;
-	//document.forms.hiddenform.visibility.value = document.forms.after.visibility.value;
-	//document.forms.hiddenform.is_repeated.value = document.forms.after.is_repeated.value;
-	//document.forms.hiddenform.description.value = document.forms.after.description.value;
-
-	//alert('Event wird hinzugefügt...');
-	//alert(document.forms.hiddenform.calendarId.value);
-	//alert(document.forms.hiddenform.name.value);
-	//alert(document.forms.hiddenform.start.value);
-	//alert(document.forms.hiddenform.end.value);
-	//document.hiddenform.submit();
 	//return true;
 }
 
@@ -41,13 +31,13 @@ function checkdate(m, d, y) {
 
 function printDate(d) {
 	var weekday = new Array(7);	
-	weekday[0]="Sunday";
-	weekday[1]="Monday";
-	weekday[2]="Tuesday";
-	weekday[3]="Wednesday";
-	weekday[4]="Thursday";
-	weekday[5]="Friday";
-	weekday[6]="Saturday";
+	weekday[0] = "Sunday";
+	weekday[1] = "Monday";
+	weekday[2] = "Tuesday";
+	weekday[3] = "Wednesday";
+	weekday[4] = "Thursday";
+	weekday[5] = "Friday";
+	weekday[6] = "Saturday";
 	var ret = weekday[d.getDay()];
 	return ret;
 }

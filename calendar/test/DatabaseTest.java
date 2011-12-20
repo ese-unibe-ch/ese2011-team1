@@ -11,11 +11,11 @@ import play.test.UnitTest;
 
 public class DatabaseTest extends UnitTest {
 	DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	private User francis;
 	private User stefan;
 	private DateTime today = dateTimeInputFormatter
-			.parseDateTime("15/11/2011, 12:00");
+			.parseDateTime("2011-11-15-12-00");
 
 	@Before
 	public void setUp() throws Exception {

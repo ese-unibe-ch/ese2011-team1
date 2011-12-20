@@ -18,7 +18,7 @@ import enums.Visibility;
 //TODO: remove unused tests from EventTest
 public class RepeatingEventTest extends UnitTest {
 	DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	private RepeatingEvent repeatingEvent;
 	private User user;
 	private User francis;

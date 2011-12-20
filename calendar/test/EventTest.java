@@ -233,10 +233,10 @@ public class EventTest extends UnitTest {
 	@Test
 	public void testGetDatesFor() {
 		DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy, HH:mm");
+				.forPattern("yyyy-MM-dd-HH-mm");
 		this.event = new PointEvent("anEvent",
-				dateTimeInputFormatter.parseDateTime("13/11/2011, 12:00"),
-				dateTimeInputFormatter.parseDateTime("13/11/2011, 13:00"),
+				dateTimeInputFormatter.parseDateTime("2011-11-13-12-00"),
+				dateTimeInputFormatter.parseDateTime("2011-11-13-13-00"),
 				Visibility.PRIVATE, calendar);
 		assertEquals("12:00 - 13:00",
 				event.getDatesFor(dateTimeInputFormatter
@@ -244,7 +244,7 @@ public class EventTest extends UnitTest {
 
 		assertEquals("13/11/2011 12:00 - 13/11/2011 13:00",
 				event.getDatesFor(dateTimeInputFormatter
-						.parseDateTime("20/11/2011, 12:00"), user));
+						.parseDateTime("2011-11-20-12-00"), user));
 	}
 
 	@Test

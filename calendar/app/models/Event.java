@@ -223,14 +223,14 @@ public abstract class Event implements Comparable<Event> {
 	/**
 	 * Get a String representation of a given date.
 	 * 
-	 * Returns a String representation in the form "dd/MM/yyyy, HH:mm".
+	 * Returns a String representation in the form "yyyy-MM-dd-HH-mm".
 	 * 
 	 * @param date
 	 *            The date to be parsed.
 	 * @return String representation of argument.
 	 */
 	public String getParsedDate(DateTime date) {
-		return date.toString("dd/MM/yyyy, HH:mm");
+		return date.toString("yyyy-MM-dd-HH-mm");//("dd/MM/yyyy, HH:mm");
 	}
 
 	/**
@@ -243,22 +243,22 @@ public abstract class Event implements Comparable<Event> {
 
 	/**
 	 * get string representation for the start of this event by the format
-	 * dd/MM/yyyy, HH:mm
+	 * "yyyy-MM-dd-HH-mm"
 	 * 
 	 * @return formated start date
 	 */
 	public String getParsedStartDate() {
-		return this.getStart().toString("dd/MM/yyyy, HH:mm");
+		return this.getStart().toString("yyyy-MM-dd-HH-mm");//("dd/MM/yyyy, HH:mm");
 	}
 
 	/**
 	 * get string representation for the end of this event by the format
-	 * dd/MM/yyyy, HH:mm
+	 * "yyyy-MM-dd-HH-mm"
 	 * 
 	 * @return formated end date
 	 */
 	public String getParsedEndDate() {
-		return this.getEnd().toString("dd/MM/yyyy, HH:mm");
+		return this.getEnd().toString("yyyy-MM-dd-HH-mm");
 	}
 
 	/**
@@ -325,10 +325,10 @@ public abstract class Event implements Comparable<Event> {
 		StringBuffer sb = new StringBuffer();
 		LocalDate activeLocalDate = activeDate.toLocalDate();
 		if (!start.toLocalDate().equals(activeLocalDate))
-			sb.append(start.toString("dd/MM/yyyy") + " ");
+			sb.append(start.toString("yyyy-MM-dd") + " ");
 		sb.append(start.toString("HH:mm") + " - ");
 		if (!end.toLocalDate().equals(activeLocalDate))
-			sb.append(end.toString("dd/MM/yyyy") + " ");
+			sb.append(end.toString("yyyy-MM-dd") + " ");
 		sb.append(end.toString("HH:mm"));
 		return sb.toString();
 	}

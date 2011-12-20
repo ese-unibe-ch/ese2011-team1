@@ -237,7 +237,7 @@ End date:
 			
 			<br> Event Description:	<br>
 			<textarea rows="6" cols="100" name="description">#{if editingEvent}${event.getDescription()}#{/if}</textarea>
-			<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" /> <br>
+			<input type="hidden" name="s_activeDate" value="${activeDate.toString('yyyy-MM-dd-HH-mm')}" /> <br>
 			<input type="hidden" name="forceCreate" value="false" /> <br>
 			<input type="submit" value="save" name="save" />
 			<input type="button" name="cancel" value="cancel" onclick="javascript:history.back()">

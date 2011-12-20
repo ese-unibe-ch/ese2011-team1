@@ -9,11 +9,11 @@
 	  %{//Add transparent star (normal calendar) or yellow star (faved calendar)
 		if (me != user) {
 			if (faved) {
-				%}<a href="@{CalendarController.removeObserve(user.getName(), calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
+				%}<a href="@{CalendarController.removeObserve(user.getName(), calendar.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'), message)}">%{
 				out.println('<img src="/public/images/star_fav.png" border=0>');
 			}
 			else {
-				%}<a href="@{CalendarController.addObserve(user.getName(), calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'), message)}">%{
+				%}<a href="@{CalendarController.addObserve(user.getName(), calendar.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'), message)}">%{
 				out.println('<img src="/public/images/star.png" border=0>');
 			}
 		}
@@ -25,10 +25,10 @@
 
 <body>
 	<div id="calendarNavigation">
-			<span id="previousMonth"><a class="button" href="@{CalendarController.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}"><<</a></span>
+			<span id="previousMonth"><a class="button" href="@{CalendarController.showCalendar(calendar.getId(), user.getName(), prevMonth.toString('yyyy-MM-dd-HH-mm'), activeDate.getDayOfMonth())}"><<</a></span>
 			<span id="currentMonth">${activeDate.toString("MMM")} ${activeDate.getYear().toString()}</span>
 			<span id= "jump_today"><a class="button" href="@{CalendarController.showCalendar(calendar.getId(), user.getName(), null, activeDate.getDayOfMonth())}">Jump to Today</a></span>
-			<span id="nextMonth"><a class="button" href="@{CalendarController.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('dd/MM/yyyy, HH:mm'), activeDate.getDayOfMonth())}">>></a></span>
+			<span id="nextMonth"><a class="button" href="@{CalendarController.showCalendar(calendar.getId(),user.getName(), nextMonth.toString('yyyy-MM-dd-HH-mm'), activeDate.getDayOfMonth())}">>></a></span>
 			<br><br>
 	</div>
 	
@@ -83,7 +83,7 @@
 						out.println('<b>');
 						}
 							%} 
-							<a href="@{CalendarController.showCalendar(calendar.getId(), user.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'), counter)}"> ${counter}</a>
+							<a href="@{CalendarController.showCalendar(calendar.getId(), user.getName(), activeDate.toString('yyyy-MM-dd-HH-mm'), counter)}"> ${counter}</a>
 							%{
 							if (hasEvent) {
 								out.println('</b>');
@@ -153,7 +153,7 @@
 
 	<!-- Event search -->
 	<script type="text/javascript" charset="utf-8">
-	var eventSearch = #{jsAction @EventController.searchEvent(':query', user, calendar.getId(), activeDate.toString('dd/MM/yyyy, HH:mm')) /}
+	var eventSearch = #{jsAction @EventController.searchEvent(':query', user, calendar.getId(), activeDate.toString('yyyy-MM-dd-HH-mm')) /}
 	$(document).ready(function() {
 		$('#eventSearch').keyup(function() {
 			$('#eventResults p').load(eventSearch({query: this.value}));
@@ -173,12 +173,12 @@
 
 	<div id="Nav">
 		#{if user==me} 
-		<form name="form" action="javascript: document.location = '@{EventController.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}'">
+		<form name="form" action="javascript: document.location = '@{EventController.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('yyyy-MM-dd-HH-mm'))}'">
 		<input type="submit" value="New Event"> 
 		</form>
 		#{/if}
 		<!-- #{if user==me} 
-	 		<a class="button" href="@{EventController.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> New Event</a>  <br>
+	 		<a class="button" href="@{EventController.addEditEvent(-1, calendar.getId(), me.getName(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"> New Event</a>  <br>
 		#{/if} -->
 	</div>
 	<table id="events">
@@ -225,14 +225,14 @@ Created by: ${event.getOwner()}
 
 #{list items:event.getAttendingUsers(), as:'attendingUser'}
   #{if me==event.getOwner()}
-  <a href="@{EventController.removeUserFromEvent(attendingUser.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <a href="@{EventController.removeUserFromEvent(attendingUser.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
   <img src="/public/images/minus.png " width="12" alt="plus" /></a> 
   #{/if}
   
   ${attendingUser.getName()}
   
   #{if !event.isOpen() && me == attendingUser}
-  	<a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"><br>
+  	<a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"><br>
   	<img src="/public/images/minus.png " width="12" alt="plus" /></a>
   #{/if}
 #{/list}
@@ -250,26 +250,26 @@ Created by: ${event.getOwner()}
 #{/if}
 
 #{if user == me && me==event.getOwner() && !user.isBirthday(event)}
-  <a href="@{EventController.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> edit </a>
-  - <a href="@{EventController.removeEvent(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove </a>
+  <a href="@{EventController.addEditEvent(event.getId(), calendar.getId(), me.getName(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"> edit </a>
+  - <a href="@{EventController.removeEvent(calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"> remove </a>
     #{if event.isRepeating()}
-    - <a href="@{EventController.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> remove all repeating </a>
-    - <a href="@{EventController.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}"> cancel repetition from here </a>
+    - <a href="@{EventController.removeRepeatingEvents(calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"> remove all repeating </a>
+    - <a href="@{EventController.cancelEventRepetition(calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"> cancel repetition from here </a>
     #{/if}
 #{/if}
 
 #{if event.getOwner() == me && event.isOpen() || event.isPublic() && event.isOpen()}
   #{if event.userIsAttending(me.getName())}
-  <a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+  <a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
   <img src="/public/images/minus.png " width="12" alt="plus" /> No longer attend </a>
   #{/if}
   #{else}
   	#{if me != calendar.getOwner()}
-		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), event.getOwner().getName(), event.getCalendarId(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), event.getOwner().getName(), event.getCalendarId(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
 		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
   	#{/if}
 	#{else}
-		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), user.getName(), calendar.getId(), calendar.getId(), event.getId(), activeDate.toString('dd/MM/yyyy, HH:mm'))}">
+		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), user.getName(), calendar.getId(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
 		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
   	#{/else}
   #{/else}
@@ -293,7 +293,7 @@ Created by: ${event.getOwner()}
 
 <!-- user search -->
 <script type="text/javascript" charset="utf-8">
-var userSearch${event.getId()} = #{jsAction @UserController.searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), event.getStart().toString('dd/MM/yyyy, HH:mm'), calendar.getId()) /}
+var userSearch${event.getId()} = #{jsAction @UserController.searchUserForAdding(':query', user, event.getCalendarId(),  event.getId(), event.getStart().toString('yyyy-MM-dd-HH-mm'), calendar.getId()) /}
 $(document).ready(function() { $('#userSearch${event.getId()}').keyup(function() { $('#userResults${event.getId()} p').load(userSearch${event.getId()}({query: this.value})); });});
 </script>
 #{/list}
@@ -305,7 +305,7 @@ $(document).ready(function() { $('#userSearch${event.getId()}').keyup(function()
 
 <input type="hidden" name="username" value="${user.getName()}" />
 <input type="hidden" name="calendarId" value="${calendar.getId()}" />
-<input type="hidden" name="s_activeDate" value="${activeDate.toString('dd/MM/yyyy, HH:mm')}" />
+<input type="hidden" name="s_activeDate" value="${activeDate.toString('yyyy-MM-dd-HH-mm')}" />
 <input type="hidden" name="message" value="${message}" />
 </form>
 

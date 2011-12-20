@@ -12,10 +12,10 @@ import play.test.UnitTest;
 
 public class UserTest extends UnitTest {
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
+			.forPattern("yyyy-MM-dd");
 	private User user;
 	private Calendar calendarTest;
-	private DateTime myBirthday = birthdayFormatter.parseDateTime("24/10/1989");
+	private DateTime myBirthday = birthdayFormatter.parseDateTime("1989-10-24");
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,11 +50,11 @@ public class UserTest extends UnitTest {
 	@Test
 	public void testSetBrithdayDate() {
 		final DateTimeFormatter birthdayFormatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy");
-		user.setBirthdayDate(birthdayFormatter.parseDateTime("24/10/1989"));
-		assertEquals("24/10/1989",
+				.forPattern("yyyy-MM-dd");
+		user.setBirthdayDate(birthdayFormatter.parseDateTime("1989-10-24"));
+		assertEquals("1989-10-24",
 				user.getBirthday().getStart().toString(birthdayFormatter));
-		assertEquals("24/10/1989",
+		assertEquals("1989-10-24",
 				user.getBirthday().getEnd().toString(birthdayFormatter));
 	}
 

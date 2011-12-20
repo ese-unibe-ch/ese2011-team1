@@ -25,24 +25,19 @@ import enums.Visibility;
 public class Application extends Controller {
 
 	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
+			.forPattern("yyyy-MM-dd");
 	public static String message = null;
 
 	public static void index(String username) {
 		User me = Database.users.get(Security.connected());
 		List<User> users = Database.getUserList();
 		DateTime now = new DateTime();
-		String s_activeDate = now.toString("dd/MM/yyyy, HH:mm");
+		String s_activeDate = now.toString("yyyy-dd-MM-HH-mm");
 
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = me.getCalendars();
-		
-		
-//		System.out.println("Last login: "+me.getLastLogin());
-//		System.out.println("Now: "+(new DateTime()));
-//		System.out.println("User is notified: "+me.isNotified());
 		
 		boolean freshlyLoggedIn;
 		// not notified yet

@@ -18,10 +18,10 @@ import play.mvc.With;
 public class UserController extends Controller {
 	
 	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy, HH:mm");
+			.forPattern("yyyy-MM-dd-HH-mm");
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
-			.forPattern("dd/MM/yyyy");
-	
+			.forPattern("yyyy-MM-dd");
+			
 	/**
 	 * Searches for Users which can be added to a event.
 	 * (renders searchUserForAdding.html)
@@ -95,7 +95,8 @@ public class UserController extends Controller {
 		String oldname = name;
 		String nickname = me.getNickname();
 		String password = me.getPassword();
-		String birthday = me.getBirthday().getStart().toString("dd/MM/yyyy");
+		String birthday = me.getBirthday().getStart().toString("yyyy-MM-dd"); //("dd/MM/yyyy");
+		
 		boolean is_visible = me.isBirthdayPublic();
 
 		// NEW
