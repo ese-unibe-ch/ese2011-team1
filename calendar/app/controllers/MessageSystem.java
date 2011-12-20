@@ -16,8 +16,6 @@ public class MessageSystem extends Controller{
 	
 	public static void decline(long userId, long calendarId, long eventId){
 		User me = Database.users.get(Security.connected());
-
-		
 		me.declineInvitation(userId, calendarId, eventId);
 		Application.index(me.getName());
 	}

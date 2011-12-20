@@ -23,7 +23,6 @@ public class Debug extends Controller {
 		for (Calendar cal : calendars) {
 			events.addAll(cal.getEventHeads());
 		}
-
 		render(users, calendars, events);
 	}
 }

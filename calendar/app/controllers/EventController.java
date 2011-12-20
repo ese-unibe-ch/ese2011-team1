@@ -94,6 +94,7 @@ public class EventController extends Controller {
 			validation.keep();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
+		
 		if (d_end.isBefore(d_start)) {
 			flash.error("Invalid Input: Start date must be before end date.");
 			params.flash();
@@ -117,13 +118,11 @@ public class EventController extends Controller {
 			event = new RepeatingEvent(name, d_start, d_end, visibility,
 					calendar, interval);
 			event.setOriginId(event.getId());
-			event.setBaseId(event.getId()); // nicht notwendig
+			event.setBaseId(event.getId());
 
 			event.generateNextEvents(event.getStart());
 		}
 
-		// Event e = new Event(me, d_start, d_end, name, visibility, repeated,
-		// intervall, calendarId, is_open);
 		event.editDescription(description);
 		if (isOpen) {
 			event.setOpen();
@@ -132,10 +131,6 @@ public class EventController extends Controller {
 
 		calendar.generateAllNextEvents(d_start);
 
-		// Must be commented out until next week, this is a requirement for next
-		// week
-		// TODO: Add flash notice instead of message, ask customer if Events can
-		// still be created/edited or redirect to create page?
 		if (!forceCreate) {
 			if (event.isOverlappingWithOtherEvent()) {
 				flash.error("Warning: This event overlaps with an existing Event. If you want to proceed, please verify your input and click 'proceed'.");
@@ -177,42 +172,10 @@ public class EventController extends Controller {
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
 
-		// for(Event head : calendar.getEventHeads())
-		// calendar.PrintHeadAndHisTail(head);
-
 		event.editDescription(description);
 
 		event.edit(name, d_start, d_end, visibility, interval, d_start,
 				d_start, description);
-
-		//
-		// if (repeated && !event.wasPreviouslyRepeating) {
-		// event.wasPreviouslyRepeating = true;
-		// calendar.addToRepeated(event);
-		// }
-		//
-		//
-		// event.edit(d_start, d_end, name, visibility, repeated, interval);
-
-		/*
-		 * if(!repeated){
-		 * 
-		 * ((PointEvent) event).edit(name, d_start, d_end, visibility); }else{
-		 * // TODO here wo do have bugs... if(event instanceof IntervalEvent){
-		 * ((IntervalEvent) event).edit(name, d_start, d_end, visibility,
-		 * interval, ((IntervalEvent) event).getFrom(), ((IntervalEvent)
-		 * event).getTo()); }else{ // TODO irgendwas ist in showCalendar.html
-		 * nicht iO, denn für den 1. Tag zeigt es nach edit den event doppelt an
-		 * in liste. // event ist nicht mehrfach gespeichert, habe das
-		 * verifiziert - siehe print statements below // auch möglich, dass der
-		 * bug in der methode showCalendar in der klasse application ist und die
-		 * liste mit den daten, // welche dargestellt werden sollen, falsch
-		 * berechnet wir... calendar.removeEvent(event.getBaseId());
-		 * RepeatingEvent newEvent = new RepeatingEvent((PointEvent)event,
-		 * interval); calendar.addEvent(newEvent);
-		 * newEvent.editDescription(description);
-		 * calendar.generateNextEvents(newEvent, newEvent.getStart()); } }
-		 */
 
 		if (!isOpen) {
 			event.setClosed();
@@ -272,23 +235,6 @@ public class EventController extends Controller {
 		render(me, calendar, event, calendarId, eventId, activeDate, message,
 				editingEvent);
 	}
-
-	// public static void editEvent(long eventId, long calendarId, String name,
-	// String s_activeDate, String message) {
-	// User me = Database.users.get(Security.connected());
-	// Calendar calendar = me.getCalendarById(calendarId);
-	// Event event = calendar.getEventById(eventID);
-	// render(me, calendar, event, calendarId, eventId, s_activeDate, message);
-	// }
-	//
-	// public static void addEvent(long calendarId, String name,
-	// String s_activeDate, String message) {
-	// User me = Database.users.get(Security.connected());
-	// Calendar calendar = me.getCalendarById(calendarId);
-	// DateTime activeDate = dateTimeInputFormatter
-	// .parseDateTime(s_activeDate);
-	// render(me, calendar, calendarId, activeDate, message);
-	// }
 
 	public static void removeEvent(long calendarId, long eventId,
 			String s_activeDate) {
@@ -375,8 +321,6 @@ public class EventController extends Controller {
 		User userToAdd = Database.getUserByName(userToAddStr);
 		User calendarOwner = Database.getUserByName(calendarOwnerStr);
 		Calendar cal = calendarOwner.getCalendarById(eventCalendarId);
-		
-//		System.out.println("Calendar" + cal);
 	
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
@@ -387,8 +331,6 @@ public class EventController extends Controller {
 		}
 
 		String s_activeDate = s_eventDate;
-		//if(event.isOpen() && userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
-		//else event.sendInvitationRequest(userToAdd);
 		
 		if(event.isOpen()){
 			if(userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
@@ -423,9 +365,7 @@ public class EventController extends Controller {
 				break;
 			}
 		}
-		
-		
-		assert (event != null);
+
 		event.removeUserFromAttending(userToRemove);
 		CalendarController.showCalendar(calendarId, eventOwner.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), null);
