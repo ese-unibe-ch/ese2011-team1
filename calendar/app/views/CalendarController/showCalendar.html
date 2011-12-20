@@ -231,10 +231,6 @@ Created by: ${event.getOwner()}
   
   ${attendingUser.getName()}
   
-  #{if !event.isOpen() && me == attendingUser}
-  	<a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"><br>
-  	<img src="/public/images/minus.png " width="12" alt="plus" /></a>
-  #{/if}
 #{/list}
 <br>
 #{/if}
