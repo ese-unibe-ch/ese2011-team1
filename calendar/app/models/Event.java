@@ -789,8 +789,12 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	// TODO rename this method after using message system to requestAttedningUser
 	public void sendInvitationRequest(User user) {
-		// adding ourself to an invent should be instantly without a message over ms.
-		this.pendingAttendingUsers.add(user);
+		
+		// if user is already in pending attending or attending status
+		if (!this.pendingAttendingUsers.contains(user) && !this.attendingUsers.contains(user))
+			this.pendingAttendingUsers.add(user);
+		
+		// if this user is the owner, add him instantly
 		if(user == this.getOwner()) addUserToAttending(user);
 		else{
 			long targetUserId = user.getId();
