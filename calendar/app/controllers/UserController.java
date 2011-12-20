@@ -42,12 +42,6 @@ public class UserController extends Controller {
 
 		List<User> results = Database.searchUser(userSearchStr);
 		DateTime activeDate = new DateTime();
-
-		//DateTime event = dateTimeInputFormatter.parseDateTime(s_eventDate);
-		
-//		System.out.println("======================");
-//		System.out.println("Watching calendar: "+eventCalendarId);
-//		System.out.println("======================");
 		
 		render(me, results, calendarId, eventCalendarId, eventId, s_eventDate, activeDate, calendarOwnerStr);
 	}
@@ -99,7 +93,6 @@ public class UserController extends Controller {
 		
 		boolean is_visible = me.isBirthdayPublic();
 
-		// NEW
 		String emailP = me.getPrivateEmailAddress();
 		boolean is_emailP_visible = me.getIsPrivateEmailVisible();
 
@@ -137,13 +130,13 @@ public class UserController extends Controller {
 			params.flash();
 			validation.keep();
 			showEditProfile();
-			// NEW***
+
 		} else if (!password.equals(confirmPW)) {
 			params.flash();
 			validation.keep();
 			flash.error("Incorrect password confirmation!");
 			showEditProfile();
-			// ***
+
 		} else if (validation.hasErrors()) {
 			params.flash();
 			validation.keep();
@@ -151,10 +144,7 @@ public class UserController extends Controller {
 			showEditProfile();
 		} else {
 			try {
-				// User user = Database.getUserByName(oldname);
 				User newUser = user;
-				// Database.deleteUser(user.getName(), user.getPassword());
-
 				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
 				newUser.setName(name);
 				newUser.setNickname(nickname);
@@ -172,8 +162,6 @@ public class UserController extends Controller {
 				newUser.setDescription(notes);
 				newUser.setIsDescriptionVisible(is_note_visible);
 
-				// Database.addUser(newUser);
-
 				// TODO delete old user
 				Database.changeUserName(newUser, user.getName(),
 						user.getPassword());
@@ -185,8 +173,6 @@ public class UserController extends Controller {
 				flash.error("Invalid date format");
 				showEditProfile();
 			}
-
-			// Database.deleteUser(user.getName(), user.getPassword());
 		}
 	}
 	

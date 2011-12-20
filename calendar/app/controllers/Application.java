@@ -45,10 +45,7 @@ public class Application extends Controller {
 			freshlyLoggedIn = true;
 			me.setNotified(true);
 		}
-		else {
-			freshlyLoggedIn = false;
-		}	
-		
+		else freshlyLoggedIn = false;
 		render(users, me, s_activeDate, calendars, user, freshlyLoggedIn);
 	}
 

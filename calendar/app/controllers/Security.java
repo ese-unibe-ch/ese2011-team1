@@ -16,7 +16,6 @@ public class Security extends Secure.Security {
         	else {
         		return false;
         	}
-        	//return Database.users.get(username).getPassword().equals(password);
         }
         return false;
     }

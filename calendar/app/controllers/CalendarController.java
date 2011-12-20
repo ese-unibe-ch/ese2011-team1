@@ -27,9 +27,7 @@ public class CalendarController extends Controller {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		LinkedList<Calendar> calendars = null;
-		if (me != null && user != null) {
-			calendars = user.getCalendars();
-		}
+		if (me != null && user != null) calendars = user.getCalendars();
 		render(me, user, calendars, s_activeDate);
 	}
 	
@@ -39,31 +37,23 @@ public class CalendarController extends Controller {
 		User me = Database.users.get(Security.connected());
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
-		
-//		System.out.println("==================");
-//		System.out.println("username: "+username);
-//		System.out.println("activeDate: "+activeDateStr);
-//		System.out.println("CalendarId: "+calendarId);
-//		System.out.println("calendar name: "+calendar.getName());
-//		System.out.println("==================");
-		
-		assert (calendar != null) : "Calendar must not be null";
 
 		// get active date
 		DateTime activeDate = null;
 		DateTime today = new DateTime();
+		
 		try {
 			activeDate = dateTimeInputFormatter.parseDateTime(activeDateStr);
 		} catch (Exception e) {
 			activeDate = today;
 		}
+		
 		// set day of active date
 		try {
 			activeDate = activeDate.withDayOfMonth(counter);
 		} catch (Exception e) {
 			activeDate.withDayOfMonth(activeDate.getDayOfMonth());
 		}
-		assert (activeDate != null) : "must not be null!";
 
 		LinkedList<Event> eventsOfDate = calendar.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
@@ -136,12 +126,9 @@ public class CalendarController extends Controller {
 
 		User user = Database.users.get(username);
 
-		if (chk == true) {
-			user.addShownObservedCalendar(calId);
-		} else {
-			user.removeShownObservedCalendar(calId);
-		}
-
+		if (chk == true) user.addShownObservedCalendar(calId);
+		else user.removeShownObservedCalendar(calId);
+		
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 
@@ -160,10 +147,8 @@ public class CalendarController extends Controller {
 	public static void createCalendar(@Required String userName,
 			@Required String calendarName) {
 		User me = Database.users.get(Security.connected());
-
 		Calendar cal = new Calendar(calendarName, me);
 		me.addCalendar(cal);
-
 		Application.index(userName);
 	}
 

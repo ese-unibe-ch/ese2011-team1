@@ -31,18 +31,19 @@ public class publicApplication extends Controller {
 			params.flash();
 			validation.keep();
 			showRegistration();
-			//NEW***
+
 		} else if (!password.equals(confirmPW)) {
 			params.flash();
 			validation.keep();
 			flash.error("Incorrect password confirmation!");
 			showRegistration();
-			//***
+
 		} else if (validation.hasErrors()) {
 			params.flash();
 			validation.keep();
 			flash.error("All (*) fields required!");
 			showRegistration();
+			
 		} else {
 			try {
 				DateTime birthdate = birthdayFormatter.parseDateTime(birthday);
@@ -64,7 +65,6 @@ public class publicApplication extends Controller {
 				user.setIsDescriptionVisible(is_note_visible);
 
 				Database.addUser(user);
-				// user.setBirthdayPublic(is_visible);
 
 				try {
 					Secure.login();
