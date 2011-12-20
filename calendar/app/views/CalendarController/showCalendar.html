@@ -270,7 +270,7 @@ Created by: ${event.getOwner()}
   #{/else}
 #{/if}
 
-#{if event.getOwner() == me}
+#{if event.getOwner() == me && calendar.getOwner() == me}
 	<br>Add user: <input type="text" id="userSearch${event.getId()}"><br>
 #{/if}
 
