@@ -83,3 +83,13 @@ Run the tests to check if your app runs properly.
 	- enter: play test
 	
 	- Open a browser to the http://localhost:9000/@tests URL to see the test runner
+
+
+Further Notes
+******************************************************************************************
+Optimized for all major browsers and Operating systems.
+Although there are some combinations that might display certain things not as intended:
+
+	- On Ubuntu 11.x, use Chromium for best user experience.
+
+
