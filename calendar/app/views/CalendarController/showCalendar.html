@@ -265,14 +265,8 @@ Created by: ${event.getOwner()}
   <img src="/public/images/minus.png " width="12" alt="plus" /> No longer attend </a>
   #{/if}
   #{else}
-  	#{if me != calendar.getOwner()}
-		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), event.getOwner().getName(), event.getCalendarId(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
-		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
-  	#{/if}
-	#{else}
-		<a href="@{EventController.addUserToEvent(me.getName(), user.getName(), user.getName(), calendar.getId(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
-		<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
-  	#{/else}
+	<a href="@{EventController.addMyselfToEvent(calendar.getOwner(), event.getOwner().getName(), event.getCalendarId(), calendar.getId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
+	<img src="/public/images/plus.png " width="12" alt="plus" /> attend </a>
   #{/else}
 #{/if}
 

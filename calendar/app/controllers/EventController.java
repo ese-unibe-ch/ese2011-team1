@@ -327,11 +327,43 @@ public class EventController extends Controller {
 	}
 	
 	/**
+	 * Add myself to event
+	 * 
+	 * @param calendarOwnerStr watching
+	 * @param eventOwnerStr the user to add
+	 */
+	public static void addMyselfToEvent(String calendarOwnerStr, String eventOwnerStr, long eventCalendarId,
+			 long calendarId, long eventId, String s_activeDate) {
+		DateTime activeDate = dateTimeInputFormatter
+				.parseDateTime(s_activeDate);
+		Event event = null;
+		User me = Database.getUserByName(Security.connected());
+		User eventOwner = Database.getUserByName(eventOwnerStr);
+		
+		Calendar cal = eventOwner.getCalendarById(eventCalendarId);
+		
+		for (Event e : cal.getAllVisibleEventsOfDate(
+				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
+				activeDate.getYear(), eventOwner)) {
+			if (e.getId() == eventId) {
+				event = e;
+			}
+		}
+		
+		event.addUserToAttending(me);
+		String user = calendarOwnerStr;
+		
+		CalendarController.showCalendar(calendarId, user, s_activeDate,
+				activeDate.getDayOfMonth(), null);
+	}
+	
+	
+	/**
 	 * Adds an user to a event.
 	 * Be careful to not mess up with the different users involved:
 	 * 
-	 * @param userToAddStr the user to add
 	 * @param userWatchingStr the user clicking on 'add', 
+	 * @param userToAddStr the user to add
 	 * @param calendarOwnerStr the owner of the calendar of the event
 	 */
 	public static void addUserToEvent(String userWatchingStr, String userToAddStr, String calendarOwnerStr, long eventCalendarId,
@@ -353,13 +385,7 @@ public class EventController extends Controller {
 				event = e;
 			}
 		}
-		
-//		System.out.println("========================================================");
-//		System.out.println("userToAddStr:"+userToAddStr);
-//		System.out.println("userWatchingStr:"+userWatchingStr);
-//		System.out.println("calendarOwnerStr:"+calendarOwnerStr);
-//		System.out.println("========================================================");
-		
+
 		String s_activeDate = s_eventDate;
 		//if(event.isOpen() && userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
 		//else event.sendInvitationRequest(userToAdd);
@@ -372,7 +398,7 @@ public class EventController extends Controller {
 			}
 		}else event.sendInvitationRequest(userToAdd);
 		
-		String user = userWatchingStr;
+		String user = calendarOwnerStr;
 		
 		CalendarController.showCalendar(calendarId, user, s_activeDate,
 				activeDate.getDayOfMonth(), null);
