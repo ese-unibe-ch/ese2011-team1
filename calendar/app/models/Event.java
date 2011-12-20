@@ -289,7 +289,10 @@ public abstract class Event implements Comparable<Event> {
 		return new LinkedList<User>(attendingUsers);
 	}
 	
-	// TODO javadoc
+	/**
+	 * get a List of users that are pending to attend an Event.
+	 * @return a List of users that are pending to attend an Event.
+	 */
 	public List<User> getPendingAttendingUsers() {
 		return this.pendingAttendingUsers;
 	}

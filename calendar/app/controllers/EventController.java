@@ -342,16 +342,14 @@ public class EventController extends Controller {
 		User userToAdd = Database.getUserByName(userToAddStr);
 		User calendarOwner = Database.getUserByName(calendarOwnerStr);
 		Calendar cal = calendarOwner.getCalendarById(eventCalendarId);
+		
+		System.out.println("Calendar" + cal);
 	
-		if (!cal.getAllVisibleEventsOfDate(activeDate.getDayOfMonth(),
-				activeDate.getMonthOfYear(), activeDate.getYear(), me).equals(
-				null)) {
-			for (Event e : cal.getAllVisibleEventsOfDate(
-					activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
-					activeDate.getYear(), me)) {
-				if (e.getId() == eventId) {
-					event = e;
-				}
+		for (Event e : cal.getAllVisibleEventsOfDate(
+				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
+				activeDate.getYear(), me)) {
+			if (e.getId() == eventId) {
+				event = e;
 			}
 		}
 		

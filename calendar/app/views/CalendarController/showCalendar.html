@@ -220,8 +220,8 @@ Created by: ${event.getOwner()}
 #{if event.getVisibilityFor(me) != null} - ${event.getVisibilityFor(me).toLowerCase()} #{/if}
 </div>
 
-#{if event.getAttendingUsers() != null}
-<b>Attending: </b> 
+#{if !event.getAttendingUsers().isEmpty()}
+<b>Attending: </b>
 
 #{list items:event.getAttendingUsers(), as:'attendingUser'}
   #{if me==event.getOwner()}
@@ -237,7 +237,16 @@ Created by: ${event.getOwner()}
   #{/if}
 #{/list}
 <br>
+#{/if}
 
+#{if me == event.getOwner() && !event.getPendingAttendingUsers().isEmpty()}
+<b>Pending:</b>
+#{list items:event.getPendingAttendingUsers(), as:'attendingUser'}
+  
+  <i>${attendingUser.getName()}</i>
+  
+#{/list}
+<br>
 #{/if}
 
 #{if user == me && me==event.getOwner() && !user.isBirthday(event)}
