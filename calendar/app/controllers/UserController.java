@@ -37,8 +37,8 @@ public class UserController extends Controller {
 			long eventCalendarId, long eventId, String s_eventDate, long calendarId) {
 		User me = Database.users.get(Security.connected());
 		
-		//if (userName.isEmpty())
-		//	render(me, null);
+		if (userSearchStr.isEmpty())
+			render(me, null);
 
 		List<User> results = Database.searchUser(userSearchStr);
 		DateTime activeDate = new DateTime();
