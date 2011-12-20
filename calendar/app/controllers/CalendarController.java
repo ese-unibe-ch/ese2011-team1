@@ -40,12 +40,12 @@ public class CalendarController extends Controller {
 		User user = Database.users.get(username);
 		Calendar calendar = user.getCalendarById(calendarId);
 		
-		System.out.println("==================");
-		System.out.println("username: "+username);
-		System.out.println("activeDate: "+activeDateStr);
-		System.out.println("CalendarId: "+calendarId);
-		System.out.println("calendar name: "+calendar.getName());
-		System.out.println("==================");
+//		System.out.println("==================");
+//		System.out.println("username: "+username);
+//		System.out.println("activeDate: "+activeDateStr);
+//		System.out.println("CalendarId: "+calendarId);
+//		System.out.println("calendar name: "+calendar.getName());
+//		System.out.println("==================");
 		
 		assert (calendar != null) : "Calendar must not be null";
 

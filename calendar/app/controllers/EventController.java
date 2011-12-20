@@ -343,7 +343,7 @@ public class EventController extends Controller {
 		User calendarOwner = Database.getUserByName(calendarOwnerStr);
 		Calendar cal = calendarOwner.getCalendarById(eventCalendarId);
 		
-		System.out.println("Calendar" + cal);
+//		System.out.println("Calendar" + cal);
 	
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
@@ -353,11 +353,11 @@ public class EventController extends Controller {
 			}
 		}
 		
-		System.out.println("========================================================");
-		System.out.println("userToAddStr:"+userToAddStr);
-		System.out.println("userWatchingStr:"+userWatchingStr);
-		System.out.println("calendarOwnerStr:"+calendarOwnerStr);
-		System.out.println("========================================================");
+//		System.out.println("========================================================");
+//		System.out.println("userToAddStr:"+userToAddStr);
+//		System.out.println("userWatchingStr:"+userWatchingStr);
+//		System.out.println("calendarOwnerStr:"+calendarOwnerStr);
+//		System.out.println("========================================================");
 		
 		String s_activeDate = s_eventDate;
 		//if(event.isOpen() && userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
