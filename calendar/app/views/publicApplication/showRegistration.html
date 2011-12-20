@@ -14,7 +14,7 @@
 	<label for="public" style="position:absolute;left:470px;top:50px;"> public: </label>
 
 	<label for="name" title="used for login"> Username*: </label>
-	<input type="text" name="name" id="name" value ="${flash.name}" style="position:absolute;left:300px;" />
+	<input type="text" name="name" id="name" title="used for login" placeholder="used for login" value ="${flash.name}" style="position:absolute;left:300px;" />
 	<span class ="error" style="color:#c00;position:absolute;left:470px;"> #{error 'name' /}</span>
 </p>
 <p>
@@ -34,7 +34,7 @@
 </p>
 <p>
 	<label for="birthday"> Birthday Date*: </label>
-	<input type="birthday" name="birthday" id="birthday" value="dd/MM/yyyy" style="position:absolute;left:300px;"/ >
+	<input type="birthday" name="birthday" id="birthday" placeholder="dd/MM/yyyy" style="position:absolute;left:300px;"/ >
 	<span class ="error" style="color:#c00;position:absolute;left:500px;"> #{error 'birthday' /}</span>
 
 	<input type="checkbox" name="is_visible" style = "position:absolute;left:470px;"/>
