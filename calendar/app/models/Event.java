@@ -10,10 +10,6 @@ import org.joda.time.LocalDate;
 import enums.Interval;
 import enums.Visibility;
 
-// TODO find in an efficient and correct way (without any side-effects) the last event of a series of events.
-// TODO improve some performance issues.
-// TODO add birthday stuff and observed stuff - shouldn't be that hard 
-//		but think about a global date structure for all the "to be rendered" stuff..
 
 /**
  * Event is an abstract class which provides some base methods and fields for
@@ -29,8 +25,14 @@ import enums.Visibility;
  * the baseId indicates the id of its head. the originId indicates a set of
  * correlated heads and is set only for head events. See (*) for further
  * explanation. An event has a name, an end date, an start date, and a
- * visibility Remark: We assume: if an event.next == null, then event is a leaf
+ * visibility and a flag if the event is open, i.e may a user join without
+ * any invitation. otherwise an user can be only join an event after an 
+ * invitation of the owner of this event.
+ * Remark: We assume: if an event.next == null, then event is a leaf
  * and if event.previous == null, then event is a root so care about references.
+ * events do have a attending list which contains all user which attend this event
+ * and a pending attending list which contains all user which are invited to this event
+ * but have not answered yet (i.e. decline or accept).
  * 
  * @author team1
  * 
@@ -39,6 +41,12 @@ import enums.Visibility;
  *         we get: [head,...,preVictim] and [postVictim,...,inf] both this
  *         series have same originId we need this id to delete correlated
  *         intervals as a whole, i.e. removeAll() functionality.
+ *         
+ * Remark1: there are some improvements for performance issues: Use tail smart.
+ * last element of a series of linked events - remember only an event in the
+ * head list
+ * has a reference to a leaf which is not null (due performance issues)
+ * Remark2: we need an origin id for deleting different depending event-series
  */
 public abstract class Event implements Comparable<Event> {
 
@@ -47,10 +55,6 @@ public abstract class Event implements Comparable<Event> {
 	private List<User> pendingAttendingUsers;
 	protected Event next;
 	protected Event previous;
-
-	// last element of a series of linked events - remember only an event in the
-	// head list
-	// has a reference to a leaf which is not null (due performance issues)
 	private Event leaf = null;
 	private DateTime start;
 	private DateTime end;
@@ -59,8 +63,7 @@ public abstract class Event implements Comparable<Event> {
 	private static long counter;
 	private long id;
 	private long baseId;
-	private long originId = -1; // for deleting different depending event-series
-								// ==> for removeAll(), default = -1
+	private long originId = -1;
 	private Visibility visibility;
 	private boolean isOpen;
 
@@ -276,16 +279,14 @@ public abstract class Event implements Comparable<Event> {
 	 * @return returns users which are attending this event.
 	 */
 	public List<User> getAttendingUsers() {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer stringbuffer = new StringBuffer();
 		for (User user : this.attendingUsers) {
-			sb.append(user.getName());
-			sb.append(", ");
+			stringbuffer.append(user.getName());
+			stringbuffer.append(", ");
 		}
-		if (sb.length() > 0) {
-			sb.setLength(sb.length() - 2);
+		if (stringbuffer.length() > 0) {
+			stringbuffer.setLength(stringbuffer.length() - 2);
 		}
-		//return sb.toString();
-		
 		return new LinkedList<User>(attendingUsers);
 	}
 	
@@ -298,11 +299,13 @@ public abstract class Event implements Comparable<Event> {
 	}
 
 	/**
-	 * 
-	 * @param requester
-	 * @return
+	 * Get string representation for this event for a given user
+	 * i.r.t. its names depending in the event's visibility.
+	 * i.e if event is public show for everyone the event's name
+	 * else output depending on visibility policy.
+	 * @param requester user which request for this information.
+	 * @return returns string representation of names for given user
 	 */
-	// TODO write javadocs
 	public String getNameFor(User requester) {
 		String visibleName = null;
 		if (this.isPublic())
@@ -315,12 +318,13 @@ public abstract class Event implements Comparable<Event> {
 	}
 
 	/**
-	 * 
-	 * @param activeDate
-	 * @param requester
-	 * @return
+	 * Get string representation for this event for a given user
+	 * i.r.t. its dates.
+	 * @param activeDate corresponding date from which we want this information
+	 * @param requester user which request for this information.
+	 * @return returns string representation of dates for given user
 	 */
-	// TODO write javadocs
+	
 	public String getDatesFor(DateTime activeDate, User requester) {
 		StringBuffer stringbuffer = new StringBuffer();
 		LocalDate activeLocalDate = activeDate.toLocalDate();
@@ -352,11 +356,6 @@ public abstract class Event implements Comparable<Event> {
 		return visibleDescription;
 	}
 
-	// TODO remove this method soon.
-	public String getRepetitionFor(User requester) {
-		return null;
-	}
-
 	/**
 	 * get the visibility of this event as a string for a given user
 	 * 
@@ -368,6 +367,26 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	public String getVisibilityFor(User requester) {
 		return requester == getOwner() ? this.visibility.toString() : null;
+	}
+	
+	/**
+	 * Get all events which overlap with this event
+	 * @return list of overlapping events
+	 */
+	public List<Event> getOverlappingEvents() {
+		List<Event> overlappingevents = new ArrayList<Event>();
+		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
+			if (this.overlaps(event) && !overlappingevents.contains(event)) {
+				overlappingevents.add(event);
+			}
+		}
+		
+		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
+			if (this.overlaps(event) && !overlappingevents.contains(event)) {
+				overlappingevents.add(event);
+			}
+		}
+		return overlappingevents;
 	}
 
 	/**
@@ -484,6 +503,46 @@ public abstract class Event implements Comparable<Event> {
 		this.isOpen = false;
 		this.attendingUsers = new ArrayList<User>();
 	}
+	
+	/**
+	 * adds an user to the attending user list for this event.
+	 * i.e. given user gets an invitation by the message system.
+	 * until the invited user has accepted or declined the invitation
+	 * he well be put into a pending attending list.
+	 * @param user
+	 *            user which we want to add to attendingUsers list.
+	 */
+	public void sendInvitationRequest(User user) {
+		
+		// if user is already in pending attending or attending status
+		if (!this.pendingAttendingUsers.contains(user) && !this.attendingUsers.contains(user))
+			this.pendingAttendingUsers.add(user);
+		
+		// if this user is the owner, add him instantly
+		if(user == this.getOwner()) addUserToAttending(user);
+		else{
+			long targetUserId = user.getId();
+			long fromUserId = this.getOwner().getId();
+			long calendarId = this.getCalendar().getId();
+			long eventId = this.getId();
+			if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
+				String message = this.getName()+" by "+ getOwner().getName();
+				this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
+			}
+		}
+	}
+	
+	/**
+	 * Add destination/target user to attending user list.
+	 * removes this user from pending attending user list, since he answered.
+	 * @param user user we want to add in attending list for this event.
+	 */
+	public void addUserToAttending(User user){
+		if (!this.attendingUsers.contains(user)){
+			this.attendingUsers.add(user);
+			this.removeUserFromPendingAttending(user);
+		}
+	}
 
 	/**
 	 * Edit the description of this Event.
@@ -547,6 +606,24 @@ public abstract class Event implements Comparable<Event> {
 	}
 	
 	/**
+	 * removes an user from the attending user list for this event.
+	 * 
+	 * @param user
+	 *            user which we want to remove from attendingUsers list.
+	 */
+	public void removeUserFromAttending(User user) {
+		this.attendingUsers.remove(user);
+	}
+	
+	/**
+	 * Removes a given user from pending attending list of this event.
+	 * @param user user we are going to remove.
+	 */
+	public void removeUserFromPendingAttending(User user){
+		this.pendingAttendingUsers.remove(user);
+	}
+	
+	/**
 	 * find an event in head-tails event structure starting from this event on
 	 * which has an id equals input argument. this method implements a chain
 	 * pattern for finding events.
@@ -563,8 +640,7 @@ public abstract class Event implements Comparable<Event> {
 		else {
 			if (this.hasNext())
 				return this.getNextReference().findEventById(id);
-			else
-				return null;
+			else return null;
 		}
 	}
 
@@ -586,11 +662,14 @@ public abstract class Event implements Comparable<Event> {
 			if (this.hasNext())
 				return this.getNextReference().findHasEventOnDate(date,
 						requester);
-			else
-				return null;
+			else return null;
 		}
 	}
 
+	/*
+	 * checks
+	 */
+	
 	/**
 	 * Checks if a given user may see this event
 	 * 
@@ -603,39 +682,6 @@ public abstract class Event implements Comparable<Event> {
 		return this.getVisibility() != Visibility.PRIVATE
 				|| this.getOwner() == requester;
 	}
-
-	// TODO currently this method is a mess and is not used but i plan to get it
-	// ready.
-	// SIMU: added method name and changed last arg from null to date, seems to
-	// work...
-	public Event findEventByIdForUserOnDate(long id, User requester,
-			LocalDate date) {
-		if (this.equalId(id)) {
-			if (checkHappensOnAndVisibility(this, requester, date))
-				return this;
-		} else {
-			if (this.hasNext()) {
-				if (checkHappensOnAndVisibility(this, requester, date))
-					return this.getNextReference().findHasEventOnDate(date,
-							requester);
-			} else
-				return null;
-		}
-		return null;
-	}
-
-	// TODO messy code + messy name => trash, well it is only used in a "trashy"
-	// method-
-	private boolean checkHappensOnAndVisibility(Event cursor, User requester,
-			LocalDate compareDate) {
-		return happensOn(compareDate)
-				&& (cursor.getVisibility() != Visibility.PRIVATE || this
-						.getOwner() == requester);
-	}
-
-	/*
-	 * checks
-	 */
 
 	/**
 	 * @return if this event has a next reference
@@ -770,80 +816,18 @@ public abstract class Event implements Comparable<Event> {
 	public boolean equalOriginId(long originId) {
 		return this.getOriginId() == originId;
 	}
-
-	/*
-	 * helpers
-	 */
-
-	/**
-	 * this method returns the name of this event as a string.
-	 * 
-	 * @return returns name of this event
-	 */
-	public String toString() {
-		return this.name;
-	}
-
-	/**
-	 * adds an user to the attending user list for this event.
-	 * 
-	 * @param user
-	 *            user which we want to add to attendingUsers list.
-	 */
-	// TODO rename this method after using message system to requestAttedningUser
-	public void sendInvitationRequest(User user) {
-		
-		// if user is already in pending attending or attending status
-		if (!this.pendingAttendingUsers.contains(user) && !this.attendingUsers.contains(user))
-			this.pendingAttendingUsers.add(user);
-		
-		// if this user is the owner, add him instantly
-		if(user == this.getOwner()) addUserToAttending(user);
-		else{
-			long targetUserId = user.getId();
-			long fromUserId = this.getOwner().getId();
-			long calendarId = this.getCalendar().getId();
-			long eventId = this.getId();
-			if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
-				String message = this.getName()+" by "+ getOwner().getName();
-				this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
-			}
-		}
-	}
 	
-	// TODO have a better name
 	/**
-	 * Add destination user to attending user list.
-	 * removes this user from pending attending user list, since he answered.
+	 * Checks if this event is overlapping with any other event.
+	 * @return is this event overlapping?
 	 */
-	public void addUserToAttending(User user){
-		if (!this.attendingUsers.contains(user)){
-			this.attendingUsers.add(user);
-			this.removeUserFromPendingAttending(user);
-		}
-	}
-
-	/**
-	 * removes an user from the attending user list for this event.
-	 * 
-	 * @param user
-	 *            user which we want to remove from attendingUsers list.
-	 */
-	public void removeUserFromAttending(User user) {
-		this.attendingUsers.remove(user);
-	}
-	
-	public void removeUserFromPendingAttending(User user){
-		this.pendingAttendingUsers.remove(user);
-	}
-	
-	// TODO add javadoc
 	public boolean isOverlappingWithOtherEvent() {
 		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
 			if (this.overlaps(event)) {
 				return true;
 			}
 		}
+		
 		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
 			if (this.overlaps(event)) {
 				return true;
@@ -852,28 +836,28 @@ public abstract class Event implements Comparable<Event> {
 		return false;
 	}
 	
-	// TODO add javadoc
+	/**
+	 * Checks if this event overlaps with given event
+	 * @param event compare event
+	 * @return is this event oberlapping with given event
+	 */
 	private boolean overlaps(Event event) {
-		if (this.end.isBefore(event.start) || this.start.isAfter(event.end)) {
+		if (this.end.isBefore(event.start) 
+				|| this.start.isAfter(event.end)) {
 			return false;
 		}
 		return true;
 	}
-	
-	// TODO add javadoc
-	public ArrayList<Event> getOverlappingEvents() {
-		ArrayList<Event> overlappingevents = new ArrayList<Event>();
-		for (Event event : calendar.getEventsOfDate(this.start.toLocalDate(), getOwner())) {
-			if (this.overlaps(event) && !overlappingevents.contains(event)) {
-				overlappingevents.add(event);
-			}
-		}
-		for (Event event : calendar.getEventsOfDate(this.end.toLocalDate(), getOwner())) {
-			if (this.overlaps(event) && !overlappingevents.contains(event)) {
-				overlappingevents.add(event);
-			}
-		}
-		return overlappingevents;
-	}
 
+	/*
+	 * helpers
+	 */
+
+	/**
+	 * this method returns the name of this event as a string.
+	 * @return returns name of this event
+	 */
+	public String toString() {
+		return this.name;
+	}
 }

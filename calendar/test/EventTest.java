@@ -284,16 +284,6 @@ public class EventTest extends UnitTest {
 	}
 	
 	@Test
-	public void testFindEventByIdForUserOnDate() {
-		long eventId = event.getId();
-		User eventOwner = event.getOwner();
-		LocalDate testDate = event.getStart().toLocalDate();
-		assertNotNull(event.findEventByIdForUserOnDate(eventId, eventOwner, testDate));
-		User notEventOwner = francis;
-		assertNull(event.findEventByIdForUserOnDate(eventId, notEventOwner, testDate));
-	}
-	
-	@Test
 	public void testGetVisibilityFor() {
 		Visibility eventVisibility = event.getVisibility();
 		User eventOwner = event.getOwner();
