@@ -669,6 +669,9 @@ public class User {
 			String message) {
 		Object[] quartet = { userId, calendarId, eventId, message };
 		this.eventsToAccept.add(quartet);
+		User user = Database.getUserById(userId);
+		Calendar cal = user.getCalendarById(calendarId);
+		this.addObservedCalendar(cal);
 	}
 
 	/**

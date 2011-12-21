@@ -529,7 +529,7 @@ public abstract class Event implements Comparable<Event> {
 			long calendarId = this.getCalendar().getId();
 			long eventId = this.getId();
 			if (!user.hasSuchInvitation(fromUserId,calendarId,eventId)){ 			
-				String message = this.getName()+" by "+ getOwner().getName();
+				String message = this.getName()+" by "+ getOwner().getName() + " " + this.getParsedStartDate() + " - " + this.getParsedEndDate();
 				this.getOwner().sendMessage(targetUserId, fromUserId, calendarId, eventId, message);
 			}
 		}

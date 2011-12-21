@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
+import play.mvc.Http.Response;
 import enums.Interval;
 import enums.Visibility;
 
