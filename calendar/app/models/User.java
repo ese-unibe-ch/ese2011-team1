@@ -11,8 +11,11 @@ import enums.Visibility;
 /**
  * The User class represents a User of this Calendar application. Users may have
  * multiple Calendars, all of which can contain multiple Events. Users are
- * responsible for maintaining the calendar. a user observes a message system
+ * responsible for maintaining the calendar. a user can observe calendars of
+ * other users.
+ * a user observes a message system
  * which notifies him if there is a new message for him.
+ * A user stores all messages which he gets from the message system in 
  * 
  * @see {@link Calendar}
  * 
@@ -20,9 +23,6 @@ import enums.Visibility;
 public class User {
 	private String name;
 	private LinkedList<Calendar> calendars;
-
-	// in this list we store all calendars of other user which we want to
-	// display in our calendar
 	private LinkedList<Calendar> observedCalendars;
 	private LinkedList<Long> shownObservedCalendars;
 	private LinkedList<Object[]> eventsToAccept;
@@ -652,7 +652,9 @@ public class User {
 	}
 
 	/**
-	 * Receive message from message system and do something with it
+	 * Receive message from message system and 
+	 * store the message (i.e. a quartet, consisting of
+	 * userId, calendarId, eventId, message) in eventsToAccept.
 	 */
 	public void receiveMessage(long userId, long calendarId, long eventId,
 			String message) {
@@ -661,11 +663,12 @@ public class User {
 	}
 
 	/**
-	 * this user accept invitation to a given event.
-	 * 
-	 * @param userId
-	 * @param calendarId
-	 * @param eventId
+	 * this user accept invitation to the event which belongs to
+	 * given user with user id, calendar with calendar id,
+	 * event with event id from this user's accepting list.
+	 * @param userId id of user which owns the event we are invited
+	 * @param calendarId calendar id to which the event we are invited belongs to
+	 * @param eventId id of event we are invited to
 	 */
 	public void acceptInvitation(long userId, long calendarId, long eventId) {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
@@ -674,8 +677,13 @@ public class User {
 	}
 	
 	/**
-	 * removes victim from invitation list
-	 * @param victim
+	 * removes this user from invitation list, i.e. this user declined offered 
+	 * invitation to the event which belongs to
+	 * given user with user id, calendar with calendar id,
+	 * event with event id from this user's accepting list.
+	 * @param userId id of user which owns the event we are invited
+	 * @param calendarId calendar id to which the event we are invited belongs to
+	 * @param eventId id of event we are invited to
 	 */
 	public void declineInvitation(long userId, long calendarId,
 			long eventId){
@@ -685,7 +693,14 @@ public class User {
 		
 	}
 	
-	// TODO add javadoc
+	/**
+	 * removes invitation to the event which belongs to
+	 * given user with user id, calendar with calendar id,
+	 * event with event id from this user's accepting list.
+	 * @param userId id of user which owns the event we are invited
+	 * @param calendarId calendar id to which the event we are invited belongs to
+	 * @param eventId id of event we are invited to
+	 */
 	public void removeInvitation(long userId, long calendarId,
 			long eventId){
 		
@@ -702,14 +717,13 @@ public class User {
 	}
 
 	/**
-	 * Helper
-	 * 
-	 * @param userId
-	 * @param calendarId
-	 * @param eventId
-	 * @return
+	 * private helper method
+	 * get the event which corresponds to the given user-, calendar-and event id
+	 * @param userId id of user which owns the event we are invited
+	 * @param calendarId calendar id to which the event we are invited belongs to
+	 * @param eventId id of event we are invited to
+	 * @return returns the event for which we are looking for.
 	 */
-	// TODO add javadoc
 	private Event getEventByUserCalendarEventId(long userId, long calendarId,
 			long eventId) {
 		User user = Database.getUserById(userId);
@@ -719,14 +733,13 @@ public class User {
 	}
 	
 	/**
-	 * checks, if this user already has an invitation with those given ids received
-	 * @param userId
-	 * @param calendarId
-	 * @param eventId
-	 * @return
+	 * checks, if this user already has an invitation to corresponding event
+	 * which corresponds to the given user-, calendar-and event id
+	 * @param userId id of user which owns the event we are invited
+	 * @param calendarId calendar id to which the event we are invited belongs to
+	 * @param eventId id of event we are invited to
+	 * @return has this user an invitation to corresponding event?
 	 */
-	
-	// TODO export this method to user data class which we are going to introduce
 	public boolean hasSuchInvitation(long userId, long calendarId, long eventId){
 		for(Object[] invitation : this.eventsToAccept){
 			long compareUserId = (Long) invitation[0]; 

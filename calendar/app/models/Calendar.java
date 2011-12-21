@@ -83,8 +83,6 @@ public class Calendar {
 	 *            event from which we are looking for its tail.
 	 * @return leaf of head-tail structure
 	 */
-	// TODO currently not used. use this later in generateNextEvents for
-	// performance issues.
 	public Event getLeafOfEventSeries(Event event) {
 		if (event.getBaseId() == event.getId())
 			return event.getLeaf();
@@ -131,8 +129,6 @@ public class Calendar {
 	 */
 	public Event getHeadById(long id) {
 		for (Event event : this.eventHeads)
-			// TODO remove if new version is approved to be correct.
-			// if(event.getId() == id) return event;
 			if (event.equalId(id))
 				return event;
 		return null;
@@ -148,8 +144,6 @@ public class Calendar {
 	public LinkedList<Event> getHeadsByOriginId(long originId) {
 		LinkedList<Event> result = new LinkedList<Event>();
 		for (Event head : this.getEventHeads())
-			// TODO remove if new version is approved to be correct.
-			// if(head.getOriginId() == originId) result.add(head);
 			if (head.equalOriginId(originId))
 				result.add(head);
 		return result;
@@ -576,7 +570,6 @@ public class Calendar {
 	 *         of the shown observed calendars that happens the date.
 	 *         <code>false</code> if no such Event exists.
 	 */
-	// TODO add other lists, which we have to check
 	public boolean hasEventOnDateIncludingObserved(int day, int month,
 			int year, User requester) {
 		boolean hasEvent = false;
