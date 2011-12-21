@@ -18,4 +18,7 @@
 		<textarea rows="6" cols="100" name="notes" value="${notes}" readonly>${notes}</textarea>
 	#{/if}
 	<br>
+#{if me == user}
+<form name="form" action="javascript: document.location = '@{UserController.showEditProfile()}'"><input type="submit" value="edit Profile"> 
+#{/if}
 <input type="button" name="back" value="back" onclick="javascript:history.back()">
