@@ -549,6 +549,19 @@ public class CalendarTest extends UnitTest {
 				.toLocalDate(), owner));
 		assertFalse(calendarOfOwner.hasEventOnDate(repetition7.getStart()
 				.toLocalDate(), owner));
+		assertFalse(calendarOfOwner.getEventHeads().contains(repetition7));
+	}
+	
+	@Test
+	public void testSearchEvent() {
+		calendarOfOwner.addEvent(event);
+		System.out.println("avafdv: " + calendarOfOwner.searchEvent("", owner, event.getStart()));
+		assertTrue(calendarOfOwner.searchEvent(event.getName(), owner, event.getStart()).contains(event));
+		assertTrue(calendarOfOwner.searchEvent("", owner, event.getStart()).contains(event));
+		assertTrue(calendarOfOwner.searchEvent("ev", owner, event.getStart()).contains(event));
+		event.editDescription("danidanidanidani");
+		assertTrue(calendarOfOwner.searchEvent("ni", owner, event.getStart()).contains(event));
+		
 	}
 
 }

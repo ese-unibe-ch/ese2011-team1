@@ -156,7 +156,7 @@ public class RepeatingEvent extends Event {
 
 		// as long as whole month is calculated or is in cursor is in bounds
 		while (cursor.getStart().isBefore(limiter) && isCurrentInBounds(cursor)) {
-
+			
 			// if there is no next event, then create a new one.
 			if (!cursor.hasNext()) {
 				nextEvent = generateNextEventDailyWeekly(cursor);

@@ -308,7 +308,7 @@ public abstract class Event implements Comparable<Event> {
 	 * @return returns string representation of names for given user
 	 */
 	public String getNameFor(User requester) {
-		String visibleName = null;
+		String visibleName = "";
 		if (this.isPublic())
 			visibleName = this.getName();
 		if (this.isBusy())

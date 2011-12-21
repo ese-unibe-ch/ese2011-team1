@@ -88,7 +88,7 @@ public class RepeatingEventTest extends UnitTest {
 		// should only show up on every 31st
 		Interval interval = Interval.MONTHLY;
 		DateTime special = dateTimeInputFormatter
-				.parseDateTime("31/01/2011, 12:20");
+				.parseDateTime("2011-01-31-12-20");
 		RepeatingEvent specialEvent = new RepeatingEvent("testSpecial",
 				special, special, Visibility.PRIVATE, calendar, interval);
 		calendar.addEvent(specialEvent);

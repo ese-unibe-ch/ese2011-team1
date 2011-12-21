@@ -32,6 +32,15 @@ public class DatabaseTest extends UnitTest {
 		assertTrue(Database.getUserList().contains(francis));
 		assertTrue(Database.getUserList().contains(stefan));
 	}
+	
+	@Test
+	public void testGetUserById() {
+		Database.clearDatabase();
+		Database.addUser(francis);
+		Database.addUser(stefan);
+		assertTrue(Database.getUserById(francis.getId()).equals(francis));
+		assertTrue(Database.getUserById(stefan.getId()).equals(stefan));
+	}
 
 	@Test
 	public void testAddUserWihtoutObject() {

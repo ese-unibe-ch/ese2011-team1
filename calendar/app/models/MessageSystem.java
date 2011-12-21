@@ -2,6 +2,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * message system which is observable by users (we call them listeners). a user
@@ -50,5 +51,10 @@ public class MessageSystem {
 	 */
 	public void unsubscribe(User user){
 		listeners.remove(user);
+	}
+
+
+	public List<User> getListeners() {
+		return this.listeners;
 	}
 }

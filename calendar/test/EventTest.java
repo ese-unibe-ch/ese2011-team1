@@ -172,17 +172,17 @@ public class EventTest extends UnitTest {
 
 	@Test
 	public void testGetParsedDate() {
-		assertEquals("01/01/1970, 01:00", event.getParsedDate(today));
+		assertEquals("1970-01-01-01-00", event.getParsedDate(today));
 	}
 
 	@Test
 	public void testGetParsedStartDate() {
-		assertEquals("01/01/1970, 01:00", event.getParsedStartDate());
+		assertEquals("1970-01-01-01-00", event.getParsedStartDate());
 	}
 
 	@Test
 	public void testGetParsedEndDate() {
-		assertEquals("01/01/1970, 01:00", event.getParsedEndDate());
+		assertEquals("1970-01-01-01-00", event.getParsedEndDate());
 	}
 
 	@Test
@@ -224,10 +224,15 @@ public class EventTest extends UnitTest {
 				Visibility.BUSY, calendar);
 		Event publicEvent = new PointEvent("public Event", today, tomorrow,
 				Visibility.PUBLIC, calendar);
+		Event privateEvent = new PointEvent("private Event", today, tomorrow,
+				Visibility.PRIVATE, calendar);
 		assertEquals("public Event", publicEvent.getNameFor(francis));
 		assertEquals("public Event", publicEvent.getNameFor(user));
 		assertEquals("Busy", busyEvent.getNameFor(francis));
 		assertEquals("anEvent", event.getNameFor(user));
+		privateEvent.addUserToAttending(francis);
+		assertEquals("", event.getNameFor(stefan));
+		assertEquals("private Event", privateEvent.getNameFor(francis));
 	}
 
 	@Test
@@ -240,9 +245,9 @@ public class EventTest extends UnitTest {
 				Visibility.PRIVATE, calendar);
 		assertEquals("12:00 - 13:00",
 				event.getDatesFor(dateTimeInputFormatter
-						.parseDateTime("13/11/2011, 12:00"), user));
+						.parseDateTime("2011-11-13-12-00"), user));
 
-		assertEquals("13/11/2011 12:00 - 13/11/2011 13:00",
+		assertEquals("2011-11-13 12:00 - 2011-11-13 13:00",
 				event.getDatesFor(dateTimeInputFormatter
 						.parseDateTime("2011-11-20-12-00"), user));
 	}
@@ -291,6 +296,11 @@ public class EventTest extends UnitTest {
 		assertEquals(eventVisibility.toString(), event.getVisibilityFor(eventOwner));
 		User notEventOwner = francis;
 		assertNull(event.getVisibilityFor(notEventOwner));
+	}
+	
+	@Test
+	public void testOverlappingEvents() {
+		
 	}
 	
 }
