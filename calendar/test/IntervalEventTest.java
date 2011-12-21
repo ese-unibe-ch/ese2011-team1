@@ -157,13 +157,4 @@ public class IntervalEventTest extends UnitTest {
 		next.remove();
 	}
 
-	@Test
-	public void testGenerateDailyOrWeekly() {
-		IntervalEvent intervalEvent = new IntervalEvent("intervalEvent", today, tomorrow, today,
-				today.plusWeeks(1), Visibility.PRIVATE, calendar,
-				Interval.DAILY);
-		intervalEvent.init();
-		assertTrue(intervalEvent.hasNext());
-	}
-
 }

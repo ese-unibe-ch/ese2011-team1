@@ -74,16 +74,6 @@ password: 1337
 
 If you do not need them you can delete these accounts when you are logged in as the corresponding username via the option "delete account".
 
-Run Tests
-******************************************************************************************
-Run the tests to check if your app runs properly.
-
-	- Open the CommandLine (cmd.exe)
-	- Guide to .../calendar/test
-	- enter: play test
-	
-	- Open a browser to the http://localhost:9000/@tests URL to see the test runner
-
 
 Further Notes
 ******************************************************************************************
