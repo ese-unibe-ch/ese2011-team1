@@ -223,7 +223,18 @@ Created by: ${event.getOwner()}
 #{if !event.getAttendingUsers().isEmpty()}
 <b>Attending: </b>
 
-#{list items:event.getAttendingUsers(), as:'attendingUser'}
+%{
+	attendingSize = event.getAttendingUsers().size();
+	maxSize = 3;
+	if(attendingSize <= maxSize) {
+		maxSize = event.getAttendingUsers().size();	
+	}
+%}
+
+#{list items:0..maxSize-1, as:'i'}
+  %{
+  	attendingUser = event.getAttendingUsers().get(i);
+  %}
   #{if me==event.getOwner()}
   <a href="@{EventController.removeUserFromEvent(attendingUser.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}">
   <img src="/public/images/minus.png " width="12" alt="plus" /></a> 
@@ -231,20 +242,20 @@ Created by: ${event.getOwner()}
   
   ${attendingUser.getName()}
   
-  <!-- HERE HERE HERE GOOKS! -->
-  <!-- {if !event.isOpen() && me == attendingUser}  -->
-  <!-- 	<a href="@{EventController.removeUserFromEvent(me.getName(), user.getName(), event.getCalendarId(), event.getId(), activeDate.toString('yyyy-MM-dd-HH-mm'))}"><br>  -->
-  <!-- 	<img src="/public/images/minus.png " width="12" alt="plus" /></a>  -->
-  <!-- {/if}  -->
 #{/list}
+#{if attendingSize > 3}
+  <i>and ${attendingSize - 3} more</i>
+  <i><input type="button" value="show all" id="attendingUserButton" onclick="#attendingUserButton(event.getAttendingUsers())"> </i>
+#{/if}
 <br>
 #{/if}
 
 #{if me == event.getOwner() && !event.getPendingAttendingUsers().isEmpty()}
 <b>Pending:</b>
-#{list items:event.getPendingAttendingUsers(), as:'attendingUser'}
+
+#{list items:event.getPendingAttendingUsers(), as:'pendingUser'}
   
-  <i>${attendingUser.getName()}</i>
+  <i>${pendingUser.getName()}</i>
   
 #{/list}
 <br>
@@ -319,7 +330,34 @@ function changeSelection(boxName) {
 	}
 
 	document.hiddenform.submit();
-} 
+}
+
+$(document).ready(function() {
+	$('#attendingUserButton').click(function(e) {
+		e.preventDefault();
+		$('#attendingUsersModal').reveal();
+	});
+	$('#pendingUserButton').click(function(e) {
+		e.preventDefault();
+		$('#pendingUsersModal').reveal();
+	});
+	
+});
 </script>
+<!-- MODALS -->
+<div id="attendingUsersModal" class="reveal-modal">
+     <h1>Attending Users</h1>
+     #{list event.getAttendingUsers(), as:'attendingUser'}
+     	${attendingUser.getName()}
+     #{/list}
+     <a class="close-reveal-modal">&#215;</a>
+</div>
+<div id="pendingUsersModal" class="reveal-modal">
+     <h1>Pending Users</h1>
+     #{list item:event.getPendingAttendingUsers(), as:'pendingUser'}
+     	${pendingUser.getName()}
+     #{/list}
+     <a class="close-reveal-modal">&#215;</a>
+</div>
 </body>	
 </div>

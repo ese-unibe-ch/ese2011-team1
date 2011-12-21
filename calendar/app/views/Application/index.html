@@ -46,7 +46,7 @@ You have been invited to the following events: <br>
 <div id="invitations" class="reveal-modal">
 	<h2>Invitations to events</h2>
 	<p>
-	#{if !me.eventsToAccept.isEmpty()} 
+	#{if !me.eventsToAccept.isEmpty()}
 		You have been invited to the following events: <br>
 		#{list me.eventsToAccept, as:'request'}
 		${(String)request[3]}: <a href="@{MessageSystem.accept((long)request[0],(long)request[1],(long)request[2])}"> accept </a>

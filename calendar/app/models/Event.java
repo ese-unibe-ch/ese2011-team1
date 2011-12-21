@@ -279,6 +279,7 @@ public abstract class Event implements Comparable<Event> {
 	 * @return returns users which are attending this event.
 	 */
 	public List<User> getAttendingUsers() {
+		
 		StringBuffer stringbuffer = new StringBuffer();
 		for (User user : this.attendingUsers) {
 			stringbuffer.append(user.getName());
