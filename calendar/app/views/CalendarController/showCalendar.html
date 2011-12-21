@@ -270,9 +270,9 @@ Created by: ${event.getOwner()}
 	}
 %}
 
-#{list items:event.getPendingAttendingUsers(), as:'pendingUser'}
-  
-  <i>${pendingUser.getName()}</i>
+#{list items:0..maxSize-1, as:'i'}
+	
+	<i>${event.getPendingAttendingUsers().get(i).getName()}</i>
   
 #{/list}
 #{if pendingSize > 3}

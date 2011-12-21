@@ -14,23 +14,22 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import enums.Interval;
-import enums.Visibility;
-
 import play.data.validation.Required;
 import play.mvc.Controller;
 import play.mvc.With;
+import enums.Interval;
+import enums.Visibility;
 
 @With(Secure.class)
 public class EventController extends Controller {
-	
+
 	final static DateTimeFormatter dateTimeInputFormatter = DateTimeFormat
 			.forPattern("yyyy-MM-dd-HH-mm");
 	final static DateTimeFormatter birthdayFormatter = DateTimeFormat
 			.forPattern("yyyy-MM-dd");
-	
+
 	public static String message = null;
-			
+
 	public static void searchEvent(String eventName, String calendarOwner,
 			String displayedCalendarId, String s_activeDate) {
 
@@ -58,7 +57,7 @@ public class EventController extends Controller {
 		LinkedList<Event> events = new LinkedList<Event>();
 		render(me, user, events, calendarName, calendars, calendarId);
 	}
-	
+
 	/**
 	 * 
 	 * Creates a new event of the right subclass (PointEvent or RepeatingEvent)
@@ -94,7 +93,7 @@ public class EventController extends Controller {
 			validation.keep();
 			addEditEvent(-1, calendarId, name, s_activeDate, message);
 		}
-		
+
 		if (d_end.isBefore(d_start)) {
 			flash.error("Invalid Input: Start date must be before end date.");
 			params.flash();
@@ -137,16 +136,17 @@ public class EventController extends Controller {
 				params.flash();
 				validation.keep();
 				flash.put("overlapping", "overlapping");
+				// List<Event> overlappingEvents = event.getOverlappingEvents();
 				addEditEvent(-1, calendarId, name, start, message);
 			}
 		}
 
 		calendar.addEvent(event);
-		
-		CalendarController.showCalendar(calendarId, me.getName(), start, d_start.getDayOfMonth(),
-				message);
+
+		CalendarController.showCalendar(calendarId, me.getName(), start,
+				d_start.getDayOfMonth(), message);
 	}
-	
+
 	public static void saveEditedEvent(@Required long eventId,
 			@Required long calendarId, @Required String name,
 			@Required String start, @Required String end,
@@ -168,16 +168,14 @@ public class EventController extends Controller {
 			validation.keep();
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
-		
-		
 
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
-		
+
 		if (!forceCreate) {
 			if (event.isOverlappingWithOtherEvent()) {
 				flash.error("Warning: This event overlaps with an existing Event."
-							+ " If you want to proceed, please verify your input and click 'proceed'.");
+						+ " If you want to proceed, please verify your input and click 'proceed'.");
 				params.flash();
 				validation.keep();
 				flash.put("overlapping", "overlapping");
@@ -273,23 +271,26 @@ public class EventController extends Controller {
 		CalendarController.showCalendar(calendarId, me.getName(), s_activeDate,
 				activeDate.getDayOfMonth(), message);
 	}
-	
+
 	/**
 	 * Add myself to event
 	 * 
-	 * @param calendarOwnerStr watching
-	 * @param eventOwnerStr the user to add
+	 * @param calendarOwnerStr
+	 *            watching
+	 * @param eventOwnerStr
+	 *            the user to add
 	 */
-	public static void addMyselfToEvent(String calendarOwnerStr, String eventOwnerStr, long eventCalendarId,
-			 long calendarId, long eventId, String s_activeDate) {
+	public static void addMyselfToEvent(String calendarOwnerStr,
+			String eventOwnerStr, long eventCalendarId, long calendarId,
+			long eventId, String s_activeDate) {
 		DateTime activeDate = dateTimeInputFormatter
 				.parseDateTime(s_activeDate);
 		Event event = null;
 		User me = Database.getUserByName(Security.connected());
 		User eventOwner = Database.getUserByName(eventOwnerStr);
-		
+
 		Calendar cal = eventOwner.getCalendarById(eventCalendarId);
-		
+
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), eventOwner)) {
@@ -297,33 +298,35 @@ public class EventController extends Controller {
 				event = e;
 			}
 		}
-		
+
 		event.addUserToAttending(me);
 		String user = calendarOwnerStr;
-		
+
 		CalendarController.showCalendar(calendarId, user, s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
-	
-	
+
 	/**
-	 * Adds an user to a event.
-	 * Be careful to not mess up with the different users involved:
+	 * Adds an user to a event. Be careful to not mess up with the different
+	 * users involved:
 	 * 
-	 * @param userWatchingStr the user clicking on 'add', 
-	 * @param userToAddStr the user to add
-	 * @param calendarOwnerStr the owner of the calendar of the event
+	 * @param userWatchingStr
+	 *            the user clicking on 'add',
+	 * @param userToAddStr
+	 *            the user to add
+	 * @param calendarOwnerStr
+	 *            the owner of the calendar of the event
 	 */
-	public static void addUserToEvent(String userWatchingStr, String userToAddStr, String calendarOwnerStr, long eventCalendarId,
-			 long calendarId, long eventId, String s_eventDate) {
-		DateTime activeDate = dateTimeInputFormatter
-				.parseDateTime(s_eventDate);
+	public static void addUserToEvent(String userWatchingStr,
+			String userToAddStr, String calendarOwnerStr, long eventCalendarId,
+			long calendarId, long eventId, String s_eventDate) {
+		DateTime activeDate = dateTimeInputFormatter.parseDateTime(s_eventDate);
 		Event event = null;
 		User me = Database.getUserByName(Security.connected());
 		User userToAdd = Database.getUserByName(userToAddStr);
 		User calendarOwner = Database.getUserByName(calendarOwnerStr);
 		Calendar cal = calendarOwner.getCalendarById(eventCalendarId);
-	
+
 		for (Event e : cal.getAllVisibleEventsOfDate(
 				activeDate.getDayOfMonth(), activeDate.getMonthOfYear(),
 				activeDate.getYear(), me)) {
@@ -333,24 +336,29 @@ public class EventController extends Controller {
 		}
 
 		String s_activeDate = s_eventDate;
-		
-		if(event.isOpen()){
-			if(userToAdd == event.getOwner()) event.addUserToAttending(userToAdd);
-			else{
-				if(me == userToAdd) event.addUserToAttending(userToAdd);
-				else event.sendInvitationRequest(userToAdd);
+
+		if (event.isOpen()) {
+			if (userToAdd == event.getOwner())
+				event.addUserToAttending(userToAdd);
+			else {
+				if (me == userToAdd)
+					event.addUserToAttending(userToAdd);
+				else
+					event.sendInvitationRequest(userToAdd);
 			}
-		}else event.sendInvitationRequest(userToAdd);
-		
+		} else
+			event.sendInvitationRequest(userToAdd);
+
 		String user = calendarOwnerStr;
-		
+
 		CalendarController.showCalendar(calendarId, user, s_activeDate,
 				activeDate.getDayOfMonth(), null);
 	}
-		
-	public static void removeUserFromEvent(String userToRemoveStr, String eventOwnerStr, long calendarId,
-			long eventId, String s_activeDate) {
-		
+
+	public static void removeUserFromEvent(String userToRemoveStr,
+			String eventOwnerStr, long calendarId, long eventId,
+			String s_activeDate) {
+
 		User me = Database.getUserByName(Security.connected());
 		User userToRemove = Database.getUserByName(userToRemoveStr);
 		User eventOwner = Database.getUserByName(eventOwnerStr);
@@ -368,8 +376,8 @@ public class EventController extends Controller {
 		}
 
 		event.removeUserFromAttending(userToRemove);
-		CalendarController.showCalendar(calendarId, eventOwner.getName(), s_activeDate,
-				activeDate.getDayOfMonth(), null);
+		CalendarController.showCalendar(calendarId, eventOwner.getName(),
+				s_activeDate, activeDate.getDayOfMonth(), null);
 	}
-	
+
 }

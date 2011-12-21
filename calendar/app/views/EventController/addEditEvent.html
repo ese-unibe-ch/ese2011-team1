@@ -10,9 +10,9 @@
 <p style="color:#c00;">
 	${flash.error}
 	#{if flash.contains("overlapping")}<br>
-		#{list items:event.getOverlappingEvents(), as:'overlappingEvent'}
-			${overlappingEvent}, ${overlappingEvent.getStart().toString('yyyy-MM-dd  HH:mm')} - ${overlappingEvent.getEnd().toString('yyyy-MM-dd  HH:mm')} 
-		#{/list}
+		<!-- {list items:event.getOverlappingEvents(), as:'overlappingEvent'}-->
+		<!-- 	{overlappingEvent}, {overlappingEvent.getStart().toString('yyyy-MM-dd  HH:mm')} - {overlappingEvent.getEnd().toString('yyyy-MM-dd  HH:mm')} -->
+		<!-- {/list}-->
 		<br>
 		<input type="button"  name="save" value="proceed" onclick="javascript: submit_form()" />
 		<input type="button" name="abort" value="abort" onclick="javascript:history.back()">
