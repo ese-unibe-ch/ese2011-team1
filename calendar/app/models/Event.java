@@ -315,6 +315,8 @@ public abstract class Event implements Comparable<Event> {
 			visibleName = "Busy";
 		if (this.getOwner().equals(requester))
 			visibleName = this.getName();
+		if (this.attendingUsers.contains(requester))
+			visibleName = this.getName();
 		return visibleName;
 	}
 

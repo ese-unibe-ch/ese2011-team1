@@ -168,9 +168,22 @@ public class EventController extends Controller {
 			validation.keep();
 			addEditEvent(eventId, calendarId, name, s_activeDate, message);
 		}
+		
+		
 
 		boolean repeated = interval != Interval.NONE;
 		Event event = calendar.getEventById(eventId);
+		
+		if (!forceCreate) {
+			if (event.isOverlappingWithOtherEvent()) {
+				flash.error("Warning: This event overlaps with an existing Event."
+							+ " If you want to proceed, please verify your input and click 'proceed'.");
+				params.flash();
+				validation.keep();
+				flash.put("overlapping", "overlapping");
+				addEditEvent(eventId, calendarId, name, start, message);
+			}
+		}
 
 		event.editDescription(description);
 
@@ -182,17 +195,6 @@ public class EventController extends Controller {
 		} else if (isOpen) {
 			event.setOpen();
 			event.addUserToAttending(me);
-		}
-
-		if (!forceCreate) {
-			if (event.isOverlappingWithOtherEvent()) {
-				flash.error("Warning: This event overlaps with an existing Event."
-							+ " If you want to proceed, please verify your input and click 'proceed'.");
-				params.flash();
-				validation.keep();
-				flash.put("overlapping", "overlapping");
-				addEditEvent(eventId, calendarId, name, start, message);
-			}
 		}
 
 		DateTime activeDate = dateTimeInputFormatter

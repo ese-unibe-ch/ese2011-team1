@@ -2,6 +2,7 @@
 #{set title:'Home' /}
 #{navigation /}
 
+EVENT: ${event}
 #{if editingEvent} <body onload="printWeekDays();"> <h1> Editing Event ${event.getName()}</h1>  #{/if}
 #{else} <body> <h1> Add Event to ${calendar.getName()} </h1> #{/else}
 
