@@ -12,10 +12,9 @@ import enums.Visibility;
  * The User class represents a User of this Calendar application. Users may have
  * multiple Calendars, all of which can contain multiple Events. Users are
  * responsible for maintaining the calendar. a user can observe calendars of
- * other users.
- * a user observes a message system
- * which notifies him if there is a new message for him.
- * A user stores all messages which he gets from the message system in 
+ * other users. a user observes a message system which notifies him if there is
+ * a new message for him. A user stores all messages which he gets from the
+ * message system in
  * 
  * @see {@link Calendar}
  * 
@@ -103,21 +102,20 @@ public class User {
 		this.birthday.generateNextEvents(birthDate.plusYears(1));
 		observedCalendars.add(birthdayCalendar);
 	}
-	
+
 	/**
 	 * Returns if the user has been notified
 	 */
 	public boolean isNotified() {
 		return notified;
 	}
-	
+
 	/**
 	 * Sets the login Date.
 	 */
 	public void setNotified(boolean b) {
 		this.notified = b;
 	}
-	
 
 	/**
 	 * Gets the last login Date.
@@ -125,15 +123,14 @@ public class User {
 	public DateTime getLastLogin() {
 		return lastLogin;
 	}
-	
+
 	/**
 	 * Sets the login Date.
 	 */
 	public void setLastLogin(DateTime lastL) {
 		this.lastLogin = lastL;
 	}
-	
-	
+
 	/**
 	 * Get this Users password.
 	 * 
@@ -371,6 +368,17 @@ public class User {
 		for (Calendar cal : calendars) {
 			if (cal.getId() == calendarId) {
 				this.calendars.remove(cal);
+
+				// use here instead an observer pattern
+				for (User user : Database.getUserList()) {
+					for (Calendar calendar : user.getObservedCalendars()) {
+						if (calendar == cal) {
+							user.removeObservedCalendar(calendar);
+							break;
+						}
+					}
+				}
+				// end ugly null pointer fix
 				break;
 			}
 		}
@@ -522,12 +530,13 @@ public class User {
 	public boolean getIsDescriptionVisible() {
 		return this.isDescriptionVisible;
 	}
-	
+
 	/**
 	 * get invitation list of this user
+	 * 
 	 * @return
 	 */
-	public LinkedList getEventsToAccept(){
+	public LinkedList getEventsToAccept() {
 		return this.eventsToAccept;
 	}
 
@@ -645,71 +654,81 @@ public class User {
 	 * this user wants to send a message to user with with given id userId use
 	 * this method in event
 	 */
-	public void sendMessage(long targetUserId, long fromUserId, long calendarId, long eventId,
-			String message) {
-		this.messageSystem.notifyObservingUser(targetUserId, fromUserId,calendarId, eventId,
-				message);
+	public void sendMessage(long targetUserId, long fromUserId,
+			long calendarId, long eventId, String message) {
+		this.messageSystem.notifyObservingUser(targetUserId, fromUserId,
+				calendarId, eventId, message);
 	}
 
 	/**
-	 * Receive message from message system and 
-	 * store the message (i.e. a quartet, consisting of
-	 * userId, calendarId, eventId, message) in eventsToAccept.
+	 * Receive message from message system and store the message (i.e. a
+	 * quartet, consisting of userId, calendarId, eventId, message) in
+	 * eventsToAccept.
 	 */
 	public void receiveMessage(long userId, long calendarId, long eventId,
 			String message) {
-		Object[] quartet = {userId, calendarId, eventId, message};
+		Object[] quartet = { userId, calendarId, eventId, message };
 		this.eventsToAccept.add(quartet);
 	}
 
 	/**
-	 * this user accept invitation to the event which belongs to
-	 * given user with user id, calendar with calendar id,
-	 * event with event id from this user's accepting list.
-	 * @param userId id of user which owns the event we are invited
-	 * @param calendarId calendar id to which the event we are invited belongs to
-	 * @param eventId id of event we are invited to
+	 * this user accept invitation to the event which belongs to given user with
+	 * user id, calendar with calendar id, event with event id from this user's
+	 * accepting list.
+	 * 
+	 * @param userId
+	 *            id of user which owns the event we are invited
+	 * @param calendarId
+	 *            calendar id to which the event we are invited belongs to
+	 * @param eventId
+	 *            id of event we are invited to
 	 */
 	public void acceptInvitation(long userId, long calendarId, long eventId) {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
 				.addUserToAttending(this);
 		this.removeInvitation(userId, calendarId, eventId);
 	}
-	
+
 	/**
-	 * removes this user from invitation list, i.e. this user declined offered 
-	 * invitation to the event which belongs to
-	 * given user with user id, calendar with calendar id,
-	 * event with event id from this user's accepting list.
-	 * @param userId id of user which owns the event we are invited
-	 * @param calendarId calendar id to which the event we are invited belongs to
-	 * @param eventId id of event we are invited to
+	 * removes this user from invitation list, i.e. this user declined offered
+	 * invitation to the event which belongs to given user with user id,
+	 * calendar with calendar id, event with event id from this user's accepting
+	 * list.
+	 * 
+	 * @param userId
+	 *            id of user which owns the event we are invited
+	 * @param calendarId
+	 *            calendar id to which the event we are invited belongs to
+	 * @param eventId
+	 *            id of event we are invited to
 	 */
-	public void declineInvitation(long userId, long calendarId,
-			long eventId){
+	public void declineInvitation(long userId, long calendarId, long eventId) {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
-		.removeUserFromPendingAttending(this);
+				.removeUserFromPendingAttending(this);
 		this.removeInvitation(userId, calendarId, eventId);
-		
+
 	}
-	
+
 	/**
-	 * removes invitation to the event which belongs to
-	 * given user with user id, calendar with calendar id,
-	 * event with event id from this user's accepting list.
-	 * @param userId id of user which owns the event we are invited
-	 * @param calendarId calendar id to which the event we are invited belongs to
-	 * @param eventId id of event we are invited to
+	 * removes invitation to the event which belongs to given user with user id,
+	 * calendar with calendar id, event with event id from this user's accepting
+	 * list.
+	 * 
+	 * @param userId
+	 *            id of user which owns the event we are invited
+	 * @param calendarId
+	 *            calendar id to which the event we are invited belongs to
+	 * @param eventId
+	 *            id of event we are invited to
 	 */
-	public void removeInvitation(long userId, long calendarId,
-			long eventId){
-		
-		for(Object[] invitation : this.eventsToAccept){
-			long compareUserId = (Long) invitation[0]; 
-			long compareCalendarId = (Long)invitation[1];
-			long compareEventId = (Long)invitation[2];
-			if(compareUserId == userId && compareCalendarId == calendarId 
-					&& compareEventId == eventId){
+	public void removeInvitation(long userId, long calendarId, long eventId) {
+
+		for (Object[] invitation : this.eventsToAccept) {
+			long compareUserId = (Long) invitation[0];
+			long compareCalendarId = (Long) invitation[1];
+			long compareEventId = (Long) invitation[2];
+			if (compareUserId == userId && compareCalendarId == calendarId
+					&& compareEventId == eventId) {
 				this.eventsToAccept.remove(invitation);
 				return;
 			}
@@ -717,11 +736,15 @@ public class User {
 	}
 
 	/**
-	 * private helper method
-	 * get the event which corresponds to the given user-, calendar-and event id
-	 * @param userId id of user which owns the event we are invited
-	 * @param calendarId calendar id to which the event we are invited belongs to
-	 * @param eventId id of event we are invited to
+	 * private helper method get the event which corresponds to the given user-,
+	 * calendar-and event id
+	 * 
+	 * @param userId
+	 *            id of user which owns the event we are invited
+	 * @param calendarId
+	 *            calendar id to which the event we are invited belongs to
+	 * @param eventId
+	 *            id of event we are invited to
 	 * @return returns the event for which we are looking for.
 	 */
 	private Event getEventByUserCalendarEventId(long userId, long calendarId,
@@ -731,22 +754,27 @@ public class User {
 		Event event = calendar.getEventById(eventId);
 		return event;
 	}
-	
+
 	/**
 	 * checks, if this user already has an invitation to corresponding event
 	 * which corresponds to the given user-, calendar-and event id
-	 * @param userId id of user which owns the event we are invited
-	 * @param calendarId calendar id to which the event we are invited belongs to
-	 * @param eventId id of event we are invited to
+	 * 
+	 * @param userId
+	 *            id of user which owns the event we are invited
+	 * @param calendarId
+	 *            calendar id to which the event we are invited belongs to
+	 * @param eventId
+	 *            id of event we are invited to
 	 * @return has this user an invitation to corresponding event?
 	 */
-	public boolean hasSuchInvitation(long userId, long calendarId, long eventId){
-		for(Object[] invitation : this.eventsToAccept){
-			long compareUserId = (Long) invitation[0]; 
-			long compareCalendarId = (Long)invitation[1];
-			long compareEventId = (Long)invitation[2];
-			if(compareUserId == userId && compareCalendarId == calendarId 
-					&& compareEventId == eventId) return true;
+	public boolean hasSuchInvitation(long userId, long calendarId, long eventId) {
+		for (Object[] invitation : this.eventsToAccept) {
+			long compareUserId = (Long) invitation[0];
+			long compareCalendarId = (Long) invitation[1];
+			long compareEventId = (Long) invitation[2];
+			if (compareUserId == userId && compareCalendarId == calendarId
+					&& compareEventId == eventId)
+				return true;
 		}
 		return false;
 	}
