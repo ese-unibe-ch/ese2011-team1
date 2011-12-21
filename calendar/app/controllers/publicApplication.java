@@ -67,6 +67,7 @@ public class publicApplication extends Controller {
 				Database.addUser(user);
 
 				try {
+					Secure.authenticate(name, password, true);
 					Secure.login();
 				} catch (Throwable e) {
 					e.printStackTrace();
