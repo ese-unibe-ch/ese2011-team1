@@ -669,9 +669,6 @@ public class User {
 			String message) {
 		Object[] quartet = { userId, calendarId, eventId, message };
 		this.eventsToAccept.add(quartet);
-		User user = Database.getUserById(userId);
-		Calendar cal = user.getCalendarById(calendarId);
-		this.addObservedCalendar(cal);
 	}
 
 	/**
@@ -690,6 +687,10 @@ public class User {
 		getEventByUserCalendarEventId(userId, calendarId, eventId)
 				.addUserToAttending(this);
 		this.removeInvitation(userId, calendarId, eventId);
+		User user = Database.getUserById(userId);
+		Calendar cal = user.getCalendarById(calendarId);
+		if(!this.getObservedCalendars().contains(cal))
+			this.addObservedCalendar(cal);
 	}
 
 	/**
