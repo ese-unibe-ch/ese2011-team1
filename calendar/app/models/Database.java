@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -67,6 +68,18 @@ public class Database {
 	public static void deleteUser(String username, String password) {
 		if (users.containsKey(username)
 				&& users.get(username).getPassword().equals(password)) {
+			
+			// null pointer fix ugly
+			User victimUser = getUserByName(username);
+			for(User user : getUserList()){
+				LinkedList<Calendar> helper = new LinkedList<Calendar>(user.getObservedCalendars());
+				for (Calendar calendar : helper) {
+					if(calendar.getOwner() == victimUser){
+						user.removeObservedCalendar(calendar);
+					}
+				}
+			}
+			// end null pointer fix
 			users.remove(username);
 		}
 	}
